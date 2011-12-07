@@ -10,7 +10,10 @@ configuration files for Astropy and affiliated packages.
 """
 
 from __future__ import division
-from ..extern.configobj import configobj,validate
+
+import os
+
+from ..extern.configobj import configobj, validate
 
 __all__ = ['ConfigurationItem','InvalidConfigurationItemWarning','get_config',
            'save_config','reload_config']
@@ -55,6 +58,12 @@ class ConfigurationItem(object):
         remaining items determine the section. If None, the package will be
         inferred from the package within whiich this object's initializer is
         called.
+    envvar : str or None
+        The name of an environment variable that may contain the value of this
+        item. If the environment variable is set, its value will override this
+        parameter's default value, as well as any value in the configuration
+        file. The value in the environment variable is subject to the same type
+        validation as values in the configuration file.
 
     Raises
     ------
@@ -87,7 +96,7 @@ class ConfigurationItem(object):
     _validator = validate.Validator()
 
     def __init__(self, name, defaultvalue='', description=None, cfgtype=None,
-                 module=None):
+                 module=None, envvar=None):
         from warnings import warn
         from ..utils import find_current_module
 
@@ -103,10 +112,11 @@ class ConfigurationItem(object):
         self.name = name
         self.module = module
         self.description = description
+        self.envvar = envvar
 
-        #now determine cfgtype if it is not given
+        # now determine cfgtype if it is not given
         if cfgtype is None:
-            if isinstance(defaultvalue,list):
+            if isinstance(defaultvalue, list):
                 #it is an options list
                 dvstr = [str(v) for v in defaultvalue]
                 cfgtype = 'option(' + ', '.join(dvstr) + ')'
@@ -141,7 +151,7 @@ class ConfigurationItem(object):
             else:
                 raise
 
-    def set(self,value):
+    def set(self, value):
         """ Sets the current value of this `ConfigurationItem`.
 
         This also updates the comments that give the description and type
@@ -167,7 +177,7 @@ class ConfigurationItem(object):
             value = self._validate_val(value)
         except validate.ValidateError as e:
             msg = 'Provided value for configuration item {0} not valid: {1}'
-            raise TypeError(msg.format(self.name,e.args[0]))
+            raise TypeError(msg.format(self.name, e.args[0]))
 
         sec = get_config(self.module)
 
@@ -199,7 +209,13 @@ class ConfigurationItem(object):
         """
 
         try:
-            value = self() if value is None else self._validate_val(value)
+            if value is None:
+                if hasattr(self, '_orig_value'):
+                    value = self._orig_value
+                else:
+                    value = self()
+            else:
+                self._validate_val(value)
         except validate.ValidateError as e:
             msg = 'Provided value for configuration item {0} not valid: {1}'
             raise TypeError(msg.format(self.name, e.args[0]))
@@ -247,7 +263,6 @@ class ConfigurationItem(object):
 
         baseobj[self.name] = newobj[self.name]
 
-
     def __call__(self):
         """ Returns the value of this `ConfigurationItem`
 
@@ -263,16 +278,25 @@ class ConfigurationItem(object):
             If the configuration value as stored is not this item's type.
         """
 
-        # get the value from the relevant `configobj.ConfigObj` object
+        # get the value from the relevant `configobj.ConfigObj` object or from
+        # an environment variable if set
         sec = get_config(self.module)
-        if self.name not in sec:
-            self.set(self.defaultvalue)
-        val = sec[self.name]
-
+        if self.envvar is not None and self.envvar in os.environ:
+            val = os.environ[self.envvar]
+            if self.name in sec:
+                self._orig_value = sec[self.name]
+                self.set(val)
+        else:
+            if self.name not in sec:
+                self.set(self.defaultvalue)
+            val = sec[self.name]
         try:
             return self._validate_val(val)
         except validate.ValidateError as e:
-            raise TypeError('Configuration value not valid:' + e.args[0])
+            msg = 'Configuration value not valid:' + e.args[0]
+            if self.envvar is not None:
+                msg += '\nUsed value from environment variable ' + self.envvar
+            raise TypeError(msg)
 
     def _validate_val(self, val):
         """ Validates the provided value based on cfgtype and returns the
@@ -280,9 +304,10 @@ class ConfigurationItem(object):
 
         throws the underlying configobj exception if it fails
         """
-        #note that this will normally use the *class* attribute `_validator`,
-        #but if some arcane reason is needed for making a special one for an
-        #instance or sub-class, it will be used
+
+        # note that this will normally use the *class* attribute `_validator`,
+        # but if some arcane reason is needed for making a special one for an
+        # instance or sub-class, it will be used
         return self._validator.check(self.cfgtype, val)
 
     def _generate_comments(self):
@@ -323,6 +348,7 @@ def get_config(packageormod=None, reload=False):
         be determined.
 
     """
+
     from os.path import join
     from .paths import get_config_dir
     from ..utils import find_current_module
@@ -330,9 +356,9 @@ def get_config(packageormod=None, reload=False):
     if packageormod is None:
         packageormod = find_current_module(2)
         if packageormod is None:
-            msg1 = 'Cannot automatically determine get_config module, '
-            msg2 = 'because it is not called from inside a valid module'
-            raise RuntimeError(msg1 + msg2)
+            RuntimeError(
+                'Cannot automatically determine get_config module, '
+                'because it is not called from inside a valid module')
         else:
             packageormod = packageormod.__name__
 
@@ -372,6 +398,7 @@ def save_config(packageormod=None):
     packageormod : str or None
         The package or module name - see `get_config` for details.
     """
+
     sec = get_config(packageormod)
     #look for the section that is its own parent - that's the base object
     while sec.parent is not sec:
