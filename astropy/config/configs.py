@@ -15,8 +15,8 @@ import os
 
 from ..extern.configobj import configobj, validate
 
-__all__ = ['ConfigurationItem','InvalidConfigurationItemWarning','get_config',
-           'save_config','reload_config']
+__all__ = ['ConfigurationItem', 'InvalidConfigurationItemWarning',
+           'get_config', 'save_config', 'reload_config']
 
 
 class InvalidConfigurationItemWarning(Warning):

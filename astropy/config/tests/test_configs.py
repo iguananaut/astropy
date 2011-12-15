@@ -8,7 +8,7 @@ def test_paths():
 
 
 def test_config_file():
-    from ..configs import get_config,reload_config,save_config
+    from ..configs import get_config, reload_config, save_config
     from os.path import exists
 
     apycfg = get_config('astropy')
@@ -21,14 +21,14 @@ def test_config_file():
 
     reload_config('astropy')
 
-    #saving shouldn't change the file, because reload should have made sure it
-    #is based on the current file.  But don't do it if there's no file
+    # saving shouldn't change the file, because reload should have made sure it
+    # is based on the current file.  But don't do it if there's no file
     if exists(apycfg.filename):
         save_config('astropy')
 
 
 def test_configitem(tmpdir):
-    from ..configs import ConfigurationItem,get_config
+    from ..configs import ConfigurationItem, get_config
     from shutil import copy
 
     ci = ConfigurationItem('tstnm', 34, 'this is a Description')
@@ -133,7 +133,7 @@ def test_configitem_options(tmpdir):
         cio.set('op5')
     assert sec['tstnmo'] == 'op2'
 
-    #now try saving
+    # now try saving
     apycfg = sec
     while apycfg.parent is not apycfg:
         apycfg = apycfg.parent
@@ -147,7 +147,7 @@ def test_configitem_options(tmpdir):
 
 def test_configitem_envvar(tmpdir):
     import os
-    from ..configs import ConfigurationItem, get_config
+    from ..configs import ConfigurationItem, get_config, save_config
 
     cio = ConfigurationItem('testnm5', defaultvalue=12345,
                             envvar='ASTROPY_TESTNM5')
@@ -160,14 +160,10 @@ def test_configitem_envvar(tmpdir):
     assert section['testnm5'] == 54321
 
     # Test that saving does *not* save the value from the environment variable
-    apycfg = section
-    while apycfg.parent is not apycfg:
-        apycfg = apycfg.parent
-    f = tmpdir.join('astropy.cfg')
-    apycfg.write(f)
-    lns = f.read().split('\n')
+    save_config('astropy')
+    lines = open(get_config('astropy').filename, 'r').readlines()
 
-    assert 'testnm5 = 12345' in lns
+    assert 'testnm5 = 12345' in lines
     # But the existing value hasn't changed, right?
     assert cio() == 54321
 
