@@ -10,12 +10,12 @@ of data to another.
 
 import re
 import math
-import inspect  # NB: get the function name with: inspect.stack()[0][3]
 import datetime as py_datetime
 
 import numpy as np
 
 from .errors import *
+from ..utils import format_exception
 
 
 def _check_hour_range(hrs):
@@ -135,8 +135,8 @@ def parse_degrees(degrees, output_dms=False):
                     pass
 
         if not string_parsed:
-            raise ValueError("{0}: Invalid input string! ('{1}')".format(
-                inspect.stack()[0][3], x))
+            raise ValueError(format_exception(
+                "{func}: Invalid input string! ('{0}')", x))
 
     elif isinstance(x, Angle):
         parsed_degrees = x.degrees
@@ -145,8 +145,8 @@ def parse_degrees(degrees, output_dms=False):
         parsed_degrees = dms_to_degrees(*x)
 
     else:
-        raise ValueError("{0}: could not parse value of {1}.".format(
-            inspect.stack()[0][3], type(x)))
+        raise ValueError(format_exception(
+            "{func}: could not parse value of {0}.", type(x)))
 
     return degrees_to_dms(parsed_degrees) if output_dms else parsed_degrees
 
@@ -224,9 +224,9 @@ def parse_hours(hours, output_hms=False):
                     elems = _hm_regex.search(x).groups()
                     string_parsed = True
                 except:
-                    raise ValueError(
-                        "{0}: Invalid input string, can't parse "
-                        "to HMS. ({1})".format(inspect.stack()[0][3], x))
+                    raise ValueError(format_exception(
+                        "{func}: Invalid input string, can't parse to "
+                        "HMS. ({0})", x))
                 h, m, s = float(elems[0]), int(elems[1]), 0.0
                 parsed_hours = hms_to_hours(h, m, s)
                 parsed_hms = (h, m, s)
@@ -244,10 +244,9 @@ def parse_hours(hours, output_hms=False):
             parsed_hours = hms_to_hours(*x)
             parsed_hms = x
         else:
-            raise ValueError(
-                "{0}.{1}: Incorrect number of values given, expected "
-                "(h,m,s), got: {2}".format(os.path.basename(__file__),
-                                           inspect.stack()[0][3], x))
+            raise ValueError(format_exception(
+                "{filename}:{func}: Incorrect number of values given, expected "
+                "(h,m,s), got: {0}", x))
 
     elif isinstance(x, list):
         if len(x) == 3:
@@ -256,10 +255,9 @@ def parse_hours(hours, output_hms=False):
                 m = float(x[1])
                 s = float(x[2])
             except ValueError:
-                raise ValueError(
-                    "{0}.{1}: Array values ([h,m,s] expected) could not be "
-                    "coerced into floats. {2}".format(os.path.basename(__file__),
-                                                      inspect.stack()[0][3], x))
+                raise ValueError(format_exception(
+                    "{filename}:{func}: Array values ([h,m,s] expected) "
+                    "could not be coerced into floats. {0}", x))
 
             parsed_hours = hms_to_hours(h, m, s)
             parsed_hms = (h, m, s)
@@ -269,12 +267,9 @@ def parse_hours(hours, output_hms=False):
                 return hms_to_hours(h, m, s)
 
         else:
-            raise ValueError(
-                "{0}.{1}: Array given must contain exactly three elements "
-                "([h,m,s]), provided: {2}".format(os.path.basename(__file__),
-                                                  inspect.stack()[0][3], x))
-                # TODO: current filename/method should be made into a
-                # convenience method
+            raise ValueError(format_exception(
+                "{filename}:{func}: Array given must contain exactly three "
+                "elements ([h,m,s]), provided: {0}", x))
 
     else:
         raise ValueError(
@@ -313,8 +308,8 @@ def parse_radians(radians):
     elif isinstance(x, Angle):
         return x.radians
     else:
-        raise ValueError("{0}: could not parse value of type {0}.".format(
-            inspect.stack()[0][3], type(x).__name__))
+        raise ValueError(format_exception(
+            "{func}: could not parse value of type {0}.", type(x).__name__))
 
 
 def degrees_to_dms(d):
@@ -348,9 +343,9 @@ def dms_to_degrees(d, m, s):
         m = int(abs(m))
         s = float(abs(s))
     except ValueError:
-        raise ValueError(
-            "{0}: dms values ({1[0]},{2[1]},{3[2]}) could not be converted to "
-            "numbers.".format(inspect.stack()[0][3], d, m, s))
+        raise ValueError(format_exception(
+            "{func}: dms values ({1[0]},{2[1]},{3[2]}) could not be "
+            "converted to numbers.", d, m, s))
 
     return sign * (d + m / 60. + s / 3600.)
 
@@ -365,9 +360,10 @@ def hms_to_hours(h, m, s):
         m = int(m)
         s = float(s)
     except ValueError:
-        raise ValueError(
-            "{0}: HMS values ({1[0]},{2[1]},{3[2]}) could not be converted to "
-            "numbers.".format(inspect.stack()[0][3], h, m, s))
+        raise ValueError(format_exception(
+            "{func}: HMS values ({1[0]},{2[1]},{3[2]}) could not be "
+            "converted to numbers.", h, m, s))
+
     return h + m / 60. + s / 3600.
 
 
@@ -429,9 +425,9 @@ def radians_to_degrees(r):
     try:
         r = float(r)
     except ValueError:
-        raise ValueError(
-            "{0}: degree value ({1[0]}) could not be converted to a "
-            "float.".format(inspect.stack()[0][3], r))
+        raise ValueError(format_exception(
+            "{func}: degree value ({1[0]}) could not be converted to a "
+            "float.", r))
 
     return math.degrees(r)
 
