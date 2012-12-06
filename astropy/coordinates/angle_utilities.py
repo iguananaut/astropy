@@ -7,10 +7,13 @@ This module contains utility functions that are for internal use in
 astropy.coordinates.angles. Mainly they are conversions from one format
 of data to another.
 """
+
 import re
 import math
 import inspect  # NB: get the function name with: inspect.stack()[0][3]
 import datetime as py_datetime
+
+import numpy as np
 
 from .errors import *
 
@@ -523,10 +526,8 @@ def small_angle_sphere_dist(lat1, lon1, lat2, lon2):
     Inputs must be in radians.
     """
 
-    from math import cos
-
     dlat = lat2 - lat1
-    dlon = (lon2 - lon1) * cos((lat1 + lat2) / 2.)
+    dlon = (lon2 - lon1) * np.cos((lat1 + lat2) / 2.)
 
     return (dlat ** 2 + dlon ** 2) ** 0.5
 
@@ -539,11 +540,9 @@ def simple_sphere_dist(lat1, lon1, lat2, lon2):
     Inputs must be in radians.
     """
 
-    # FIXME: array: use numpy functions
-    from math import acos, sin, cos
-
-    cdlon = cos(lon2 - lon1)
-    return acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(-lat2) * cdlon)
+    cdlon = np.cos(lon2 - lon1)
+    return np.arccos(np.sin(lat1) * np.sin(lat2) +
+                     np.cos(lat1) * np.cos(-lat2) * cdlon)
 
 
 def haversine_sphere_dist(lat1, lon1, lat2, lon2):
@@ -553,14 +552,11 @@ def haversine_sphere_dist(lat1, lon1, lat2, lon2):
     Inputs must be in radians.
     """
 
-    # FIXME: array: use numpy functions
-    from math import asin, sin, cos
+    sdlat = np.sin((lat2 - lat1) / 2)
+    sdlon = np.sin((lon2 - lon1) / 2)
+    coslats = np.cos(lat1) * np.cos(lat2)
 
-    sdlat = sin((lat2 - lat1) / 2)
-    sdlon = sin((lon2 - lon1) / 2)
-    coslats = cos(lat1) * cos(lat2)
-
-    return 2 * asin((sdlat ** 2 + coslats * sdlon ** 2) ** 0.5)
+    return 2 * np.arcsin((sdlat ** 2 + coslats * sdlon ** 2) ** 0.5)
 
 
 def haversine_atan_sphere_dist(lat1, lon1, lat2, lon2):
@@ -572,16 +568,13 @@ def haversine_atan_sphere_dist(lat1, lon1, lat2, lon2):
     Inputs must be in radians.
     """
 
-    # FIXME: array: use numpy functions
-    from math import atan2, sin, cos
-
-    sdlat = sin((lat2 - lat1) / 2)
-    sdlon = sin((lon2 - lon1) / 2)
-    coslats = cos(lat1) * cos(lat2)
+    sdlat = np.sin((lat2 - lat1) / 2)
+    sdlon = np.sin((lon2 - lon1) / 2)
+    coslats = np.cos(lat1) * np.cos(lat2)
 
     numerator = sdlat ** 2 + coslats * sdlon ** 2
 
-    return 2 * atan2(numerator ** 0.5, (1 - numerator) ** 0.5)
+    return 2 * np.arctan2(numerator ** 0.5, (1 - numerator) ** 0.5)
 
 
 def vicenty_sphere_dist(lat1, lon1, lat2, lon2):
@@ -596,18 +589,15 @@ def vicenty_sphere_dist(lat1, lon1, lat2, lon2):
     Inputs must be in radians.
     """
 
-    # FIXME: array: use numpy functions
-    from math import atan2, sin, cos
-
-    sdlon = sin(lon2 - lon1)
-    cdlon = cos(lon2 - lon1)
-    slat1 = sin(lat1)
-    slat2 = sin(lat2)
-    clat1 = cos(lat1)
-    clat2 = cos(lat2)
+    sdlon = np.sin(lon2 - lon1)
+    cdlon = np.cos(lon2 - lon1)
+    slat1 = np.sin(lat1)
+    slat2 = np.sin(lat2)
+    clat1 = np.cos(lat1)
+    clat2 = np.cos(lat2)
 
     num1 = clat2 * sdlon
     num2 = clat1 * slat2 - slat1 * clat2 * cdlon
     denominator = slat1 * slat2 + clat1 * clat2 * cdlon
 
-    return atan2((num1 ** 2 + num2 ** 2) ** 0.5, denominator)
+    return np.arctan2((num1 ** 2 + num2 ** 2) ** 0.5, denominator)
