@@ -11,6 +11,9 @@ import sys
 import urllib
 import urllib2
 
+# Because pkg_resources provides better version parsing than distutils
+import pkg_resources
+
 
 BASE_URL = 'https://api.github.com/repos/'
 
@@ -48,6 +51,7 @@ class GithubSuggestBackports(object):
             self._auth = None
 
     def _github_repo_request(self, *resource, **parameters):
+        resource = tuple(str(r) for r in resource)
         url = BASE_URL + '/'.join((self.owner, self.repo) + resource)
         if parameters:
             url += '?' + urllib.urlencode(parameters)
@@ -63,6 +67,9 @@ class GithubSuggestBackports(object):
                 raise GithubRequestError(response['message'])
             raise e
         return response
+
+    def get_tags(self):
+        return self._github_repo_request('tags')
 
     def get_milestones(self, state=None):
         parameters = {}
@@ -90,9 +97,54 @@ class GithubSuggestBackports(object):
 
         return issues
 
+    def get_issue_events(self, issue, filter_=None, count=None):
+        events = []
+        page = 1
+        while True:
+            # Events can be paginated
+            next = self._github_repo_request('issues', issue, 'events',
+                                             page=page)
+            if not next:
+                break
+            if filter_ is not None:
+                next = filter(lambda e: e['event'] == filter_, next)
+            events.extend(next)
+            if count is not None and len(events) >= count:
+                events = events[:count]
+                break
+            page += 1
+        return events
+
+    def get_pull_request_merge_commit(self, pr):
+        """Returns the full commit object of the merge commit for a pull
+        request or `None` if the given PR has not been merged.
+
+        This is different from the commit named by merge_commit_sha listed in a
+        pull request in that it's the commit that actually goes into mainline
+        branch. The commit listed in merge_commit_sha only seems to be an
+        artifact of how GitHub implements pull requests.
+        """
+
+        events = self.get_issue_events(pr, filter_='merged', count=1)
+        if events:
+            return self.get_commit(events[0]['commit_id'])
 
     def get_commits(self, sha):
+        """Get the first page of commits in the tree starting at sha.
+
+        Commits are returned 30 at a time and paginated according to sha. So in
+        order to get the second page of commits it's necessary to use a
+        subsequent call to get_commits using the sha of the last commit from
+        the previous call (which will be the first commit listed in the second
+        call).
+        """
+
         return self._github_repo_request('commits', sha=sha)
+
+    def get_commit(self, sha):
+        """Return a single commit."""
+
+        return self._github_repo_request('commits', sha)
 
     def get_pull_request(self, number):
         try:
@@ -103,29 +155,41 @@ class GithubSuggestBackports(object):
             raise
         return pr
 
-    def find_commit(self, sha, since=None):
-        if not self._cached_commits:
-            # Initialize with the first page of commits from the bug fix branch
-            self._cached_commits = self.get_commits(self.branch)
+    def find_unmerged_commit(self, commit, since=None):
+        def expand_cache():
+            if not self._cached_commits:
+                # Initialize with the first page of commits from the bug fix
+                # branch
+                next_commits = self.get_commits(self.branch)
+            else:
+                last_commit = self._cached_commits[-1]
+                if last_commit['commit']['committer']['date'] <= since:
+                    return False
+                next_commits = self.get_commits(last_commit['sha'])[1:]
+            if next_commits:
+                self._cached_commits.extend(next_commits)
+                return True
+            else:
+                return False
+
         idx = 0
+
         while True:
             try:
-                commit = self._cached_commits[idx]
+                merged_commit = self._cached_commits[idx]
             except IndexError:
                 # Try growing the list of commits; but if there are no more to be
                 # found return None
-                last_commit = self._cached_commits[-1]
-                next_commits = self.get_commits(last_commit['sha'])[1:]
-                if next_commits:
-                    self._cached_commits.extend(next_commits)
+                if expand_cache():
                     continue
                 return None
 
-            if commit['sha'] == sha:
-                return commit
-
-            if commit['commit']['author']['date'] < since:
-                return None
+            # For cherry-picks we can't rely on comparing the sha, but the
+            # author and commit message should be close enough
+            a = commit['commit']
+            b = merged_commit['commit']
+            if a['author'] == b['author'] and a['message'] == b['message']:
+                return merged_commit
 
             idx += 1
 
@@ -141,19 +205,58 @@ class GithubSuggestBackports(object):
         sort_key = lambda m: int(m['title'].rsplit('.', 1)[1])
         return sorted(milestones, key=sort_key)[0]
 
+    _last_tag = None
+    def get_last_tag(self):
+        if self._last_tag is not None:
+            return self._last_tag
+        branch_ver = pkg_resources.parse_version(self.branch.lstrip('v'))
+        tags = sorted(self.get_tags(),
+                      key=lambda t: pkg_resources.parse_version(t['name']),
+                      reverse=True)
+        # Get the last tag that should be in this branch
+        for tag in tags:
+            tag_ver = pkg_resources.parse_version(tag['name'].lstrip('v'))
+            if tag_ver[:2] == branch_ver[:2]:
+                self._last_tag = tag
+                return tag
+
+        self._last_tag = False
+
+    _last_tag_commit = None
+    def get_last_tag_commit(self):
+        if self._last_tag_commit is not None:
+            return self._last_tag_commit
+        last_tag = self.get_last_tag()
+        if last_tag:
+            last_tag_commit = self.get_commit(last_tag['commit']['sha'])
+        else:
+            last_tag_commit = False
+
+        self._last_tag_commit = last_tag_commit
+        return last_tag_commit
+
+
     def iter_suggested_prs(self):
         next_milestone = self.get_next_milestone()
         log.info("Finding PRs in milestone {0} that haven't been merged into "
                  "{1}".format(next_milestone['title'], self.branch))
+        last_tag_commit = self.get_last_tag_commit()
+        last_tag_date = last_tag_commit['commit']['committer']['date']
         for issue in self.get_issues(milestone=next_milestone['number'],
                                      state='closed'):
             pr = self.get_pull_request(issue['number'])
             if pr is None or not pr['merged']:
                 continue
-            import pdb; pdb.set_trace()
-            sha = pr['merge_commit_sha']
-            if self.find_commit(sha, since=pr['merged_at']):
-                yield pr['number'], pr['title'], sha
+            merge_commit = self.get_pull_request_merge_commit(pr['number'])
+            # If the commit in question was made before the last tag we don't
+            # search for it; the script assumes that the previous release
+            # correctly contained all relevant backports
+            if merge_commit['commit']['committer']['date'] < last_tag_date:
+                continue
+
+            if not self.find_unmerged_commit(merge_commit,
+                                             since=last_tag_date):
+                yield pr['number'], pr['title'], merge_commit['sha']
 
 
 def main(argv):
