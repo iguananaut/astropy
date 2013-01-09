@@ -78,7 +78,7 @@ class GithubSuggestBackports(object):
 
         return self._github_repo_request('milestones', **parameters)
 
-    def get_issues(self, milestone=None, state=None):
+    def iter_issues(self, milestone=None, state=None):
         parameters = {}
         if milestone is not None:
             parameters['milestone'] = milestone
@@ -88,32 +88,31 @@ class GithubSuggestBackports(object):
         parameters['page'] = 1
         issues = []
         while True:
-            response = self._github_repo_request('issues', **parameters)
-            if response:
-                issues.extend(response)
-                parameters['page'] += 1
-            else:
-                break
+            if not issues:
+                response = self._github_repo_request('issues', **parameters)
+                if response:
+                    issues.extend(response)
+                    parameters['page'] += 1
+                else:
+                    raise StopIteration
+            yield issues.pop(0)
 
-        return issues
-
-    def get_issue_events(self, issue, filter_=None, count=None):
+    def iter_issue_events(self, issue, filter_=None, count=None):
         events = []
         page = 1
-        while True:
+        while (count is None or count):
             # Events can be paginated
-            next = self._github_repo_request('issues', issue, 'events',
-                                             page=page)
-            if not next:
-                break
-            if filter_ is not None:
-                next = filter(lambda e: e['event'] == filter_, next)
-            events.extend(next)
-            if count is not None and len(events) >= count:
-                events = events[:count]
-                break
-            page += 1
-        return events
+            if not events:
+                next = self._github_repo_request('issues', issue, 'events',
+                                                 page=page)
+                if not next:
+                    raise StopIteration
+                if filter_ is not None:
+                    next = filter(lambda e: e['event'] == filter_, next)
+                events.extend(next)
+                page += 1
+            yield events.pop(0)
+            count -= 1
 
     def get_pull_request_merge_commit(self, pr):
         """Returns the full commit object of the merge commit for a pull
@@ -125,7 +124,7 @@ class GithubSuggestBackports(object):
         artifact of how GitHub implements pull requests.
         """
 
-        events = self.get_issue_events(pr, filter_='merged', count=1)
+        events = list(self.iter_issue_events(pr, filter_='merged', count=1))
         if events:
             return self.get_commit(events[0]['commit_id'])
 
@@ -145,6 +144,23 @@ class GithubSuggestBackports(object):
         """Return a single commit."""
 
         return self._github_repo_request('commits', sha)
+
+    def iter_pull_requests(self, state=None):
+        parameters = {}
+        if state is not None:
+            parameters['state'] = state
+
+        parameters['page'] = 1
+        prs = []
+        while True:
+            if not prs:
+                response = self._github_repo_request('pulls', **parameters)
+                if response:
+                    prs.extend(response)
+                    parameters['page'] += 1
+                else:
+                    raise StopIteration
+            yield prs.pop(0)
 
     def get_pull_request(self, number):
         try:
@@ -238,21 +254,30 @@ class GithubSuggestBackports(object):
 
     def iter_suggested_prs(self):
         next_milestone = self.get_next_milestone()
+        next_ms_num = next_milestone['number']
         log.info("Finding PRs in milestone {0} that haven't been merged into "
                  "{1}".format(next_milestone['title'], self.branch))
         last_tag_commit = self.get_last_tag_commit()
         last_tag_date = last_tag_commit['commit']['committer']['date']
-        for issue in self.get_issues(milestone=next_milestone['number'],
-                                     state='closed'):
-            pr = self.get_pull_request(issue['number'])
-            if pr is None or not pr['merged']:
+
+        # Get the issue #s of all closed issues in the relevant milestone
+        milestone_issues = set(issue['number'] for issue in
+                               self.iter_issues(milestone=next_ms_num,
+                                                state='closed'))
+
+        # Now get all PRs and filter by whether or not they belong to the
+        # milestone; requesting them all at once is still faster than
+        # requesting one at a time. This would also be easier if the API
+        # supported sorting on PR lists
+        for pr in self.iter_pull_requests(state='closed'):
+            if (pr['number'] not in milestone_issues or not pr['merged_at'] or
+                pr['merged_at'] < last_tag_date):
+                # If pull request was merged before the last tag we don't
+                # search for it; the script assumes that the previous release
+                # correctly contained all relevant backports
                 continue
+
             merge_commit = self.get_pull_request_merge_commit(pr['number'])
-            # If the commit in question was made before the last tag we don't
-            # search for it; the script assumes that the previous release
-            # correctly contained all relevant backports
-            if merge_commit['commit']['committer']['date'] < last_tag_date:
-                continue
 
             if not self.find_unmerged_commit(merge_commit,
                                              since=last_tag_date):
