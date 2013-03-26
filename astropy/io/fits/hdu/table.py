@@ -170,10 +170,27 @@ class _TableBaseHDU(ExtensionHDU, _TableLikeHDU):
             self._header = Header(cards)
 
             if isinstance(data, np.ndarray) and data.dtype.fields is not None:
+                # self._data_type is FITS_rec.
                 if isinstance(data, self._data_type):
                     self.data = data
                 else:
-                    self.data = data.view(self._data_type)
+                    #self.data = data.view(self._data_type)
+                    # Naively creating this view screws with unsigned columns.
+                    update_coldefs = dict()
+                    if 'u' in [data.dtype[k].kind for k in data.dtype.names]:
+                        bzeros = {2:np.uint16(2**15),4:np.uint32(2**31),8:np.uint64(2**63)}
+                        new_dtype = [(k,data.dtype[k].kind.replace('u','i')+str(data.dtype[k].itemsize))
+                            for k in data.dtype.names]
+                        new_data = np.zeros(data.shape,dtype=new_dtype)
+                        for k in data.dtype.fields:
+                            if data.dtype[k].kind == 'u':
+                                new_data[k] = data[k] - bzeros[data.dtype[k].itemsize]
+                                update_coldefs[k] = bzeros[data.dtype[k].itemsize]
+                        self.data = new_data.view(self._data_type)
+                    else:
+                        self.data = data.view(self._data_type)
+                    for k in update_coldefs:
+                        self.data._coldefs.change_attrib(k,'bzero',update_coldefs[k])
 
                 self._header['NAXIS1'] = self.data.itemsize
                 self._header['NAXIS2'] = self.data.shape[0]
