@@ -52,8 +52,10 @@ class PolynomialModel(ParametricModel):
                                      "of parameter sets ({1}).".format(lenpars, param_dim))
             self._validate_pars(**pars)
             self.set_coeff(pardim=param_dim, **pars)
-        super(PolynomialModel, self).__init__(self.param_names, n_inputs=n_inputs,
-                                              n_outputs=n_outputs, param_dim=param_dim)
+        super(PolynomialModel, self).__init__(self.param_names,
+                                              n_inputs=n_inputs,
+                                              n_outputs=n_outputs,
+                                              param_dim=param_dim)
 
     def _invlex(self):
         c = []

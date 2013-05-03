@@ -42,15 +42,16 @@ In all these cases the output has the same shape as the input.
 from __future__ import division
 import abc
 from itertools import izip
+
 import numpy as np
+
+from .utils import InputParameterError
 from . import parameters
 from . import constraints
-from .utils import InputParameterError
 
 
-__all__ = ['Model', 'ParametricModel', 'PCompositeModel', 'SCompositeModel',
-           'LabeledInput', '_convert_input', '_convert_output',
-           'Parametric1DModel']
+__all__ = ['Model', 'ParametricModel', 'Parametric1DModel', 'PCompositeModel',
+           'SCompositeModel', 'LabeledInput']
 
 
 def _convert_input(x, pdim):
@@ -104,6 +105,7 @@ def _convert_output(x, fmt):
     fmt : string
         original format
     """
+
     if fmt == 'N':
         return x
     elif fmt == 'T':
@@ -134,8 +136,8 @@ class _ParameterProperty(object):
         return par
 
     def __set__(self, obj, val):
-        if self.name in obj._parcheck:
-            obj._parcheck[self.name](val)
+        if self.name in obj.param_check:
+            getattr(obj, obj.param_check[self.name])(val)
         if isinstance(obj, ParametricModel):
             if not obj._parameters._changed:
                 par = parameters.Parameter(self.name, val, obj, obj.param_dim)
@@ -177,11 +179,17 @@ class Model(object):
     parameter validation.
 
     """
+
     __metaclass__ = abc.ABCMeta
 
     param_names = []
 
-    def __init__(self, param_names, n_inputs, n_outputs, param_dim=1):
+    # param_check is a dictionary with which to register parameter validation
+    # functions key: value pairs are parameter_name:
+    # parameter_validation_function_name see projections.AZP for example
+    param_check = {}
+
+    def __init__(self, param_names, n_inputs, b_outputs, param_dim=1):
         self._param_dim = param_dim
         self._n_inputs = n_inputs
         self._n_outputs = n_outputs
@@ -205,6 +213,7 @@ class Model(object):
         """
         Number of output variables returned when a model is evaluated.
         """
+
         return self._n_outputs
 
     @property
@@ -254,7 +263,7 @@ class Model(object):
               self.__class__.__name__,
               self.param_dim,
               "\n                   ".join(i + ': ' +
-                                           str(self.__getattribute__(i)) for i in self.param_names)
+                str(self.__getattribute__(i)) for i in self.param_names)
         )
 
         return fmt
@@ -265,9 +274,10 @@ class Model(object):
         Return parameters as a pset.
         This is an array where each column represents one parameter set.
         """
+
         parameters = [getattr(self, attr) for attr in self.param_names]
         shapes = [par.parshape for par in parameters]
-        lenshapes = np.asarray([len(p.parshape) for p in parameters])
+        lenshapes = np.asarray(len(p.parshape) for p in parameters)
         shapes = [p.parshape for p in parameters]
         if (lenshapes > 1).any():
             if () in shapes:
@@ -283,8 +293,9 @@ class Model(object):
         """
         Return a callable object which does the inverse transform
         """
-        raise NotImplementedError("An analytical inverse transform has not been"
-                                  " implemented for this model.")
+
+        raise NotImplementedError("An analytical inverse transform has not "
+                                  "been implemented for this model.")
 
     def invert(self):
         """
@@ -359,9 +370,9 @@ class ParametricModel(Model):
         property of a parameter may be used.
     bounds: dict
         a dictionary {parameter_name: boolean} of lower and upper bounds of
-        parameters. Keys  are parameter names. Values  are a list of length
-        2 giving the desired range for the parameter.
-        Alternatively the `~astropy.modeling.parameters.Parameter.min` and
+        parameters. Keys  are parameter names. Values  are a list of length 2
+        giving the desired range for the parameter.  Alternatively the
+        `~astropy.modeling.parameters.Parameter.min` and
         `~astropy.modeling.parameters.Parameter.max` properties of a parameter
         may be used.
     eqcons: list
@@ -373,10 +384,10 @@ class ParametricModel(Model):
         ieqcons[j](x0,*args) >= 0.0 is a successfully optimized
         problem.
     """
-    __metaclass__ = abc.ABCMeta
 
-    def __init__(self, param_names, n_inputs, n_outputs, param_dim=1, fittable=True,
-                 fixed=None, tied=None, bounds=None, eqcons=None, ineqcons=None):
+    def __init__(self, param_names, n_inputs, n_outputs, param_dim=1,
+                 fittable=True, fixed=None, tied=None, bounds=None,
+                 eqcons=None, ineqcons=None):
         self.linear = True
         super(ParametricModel, self).__init__(param_names, n_inputs, n_outputs,
                                               param_dim=param_dim)
@@ -398,18 +409,18 @@ class ParametricModel(Model):
                                                    ineqcons=ineqcons)
         # Set constraints
         if fixed:
-            for name in fixed:
+            for name, value in fixed.items():
                 par = getattr(self, name)
-                setattr(par, 'fixed', fixed[name])
+                setattr(par, 'fixed', value)
         if tied:
-            for name in tied:
+            for name, value in tied.items():
                 par = getattr(self, name)
-                setattr(par, 'tied', tied[name])
+                setattr(par, 'tied', value)
         if bounds:
-            for name in bounds:
+            for name, value in bounds.items():
                 par = getattr(self, name)
-                setattr(par, 'min', bounds[name][0])
-                setattr(par, 'max', bounds[name][1])
+                setattr(par, 'min', value[0])
+                setattr(par, 'max', value[1])
 
     def __repr__(self):
         try:
@@ -453,7 +464,7 @@ class ParametricModel(Model):
               degree,
               self.param_dim,
               "\n                   ".join(i + ': ' +
-                                           str(self.__getattribute__(i)) for i in self.param_names)
+                str(self.__getattribute__(i)) for i in self.param_names)
         )
 
         return fmt
@@ -623,7 +634,7 @@ class _CompositeModel(Model):
         fmt = """
             Model:  {0}
             """.format(self.__class__.__name__)
-        fmt1 = " %s  " * len(self._transforms) % tuple([repr(tr) for tr in self._transforms])
+        fmt_args = tuple(repr(tr) for tr in self._transforms)
         fmt = fmt + fmt1
         return fmt
 
@@ -631,9 +642,13 @@ class _CompositeModel(Model):
         fmt = """
             Model:  {0}
             """.format(self.__class__.__name__)
-        fmt1 = " %s  " * len(self._transforms) % tuple([str(tr) for tr in self._transforms])
+        fmt_args = tuple(str(tr) for tr in self._transforms)
+        fmt1 = (" %s  " * len(self._transforms)) % fmt_args
         fmt = fmt + fmt1
         return fmt
+
+    def add_model(self, transf, inmap, outmap):
+        self[transf] = [inmap, outmap]
 
     def invert(self):
         raise NotImplementedError("Subclasses should implement this")
@@ -683,7 +698,8 @@ class SCompositeModel(_CompositeModel):
         >>> result = scomptr(linp)
 
     """
-    def __init__(self, transforms, inmap=None, outmap=None, n_inputs=None, n_outputs=None):
+    def __init__(self, transforms, inmap=None, outmap=None, n_inputs=None,
+                 n_outputs=None):
         if n_inputs is None:
             n_inputs = max([tr.n_inputs for tr in transforms])
             # the output dimension is equal to the output dim of the last transform
@@ -740,7 +756,9 @@ class SCompositeModel(_CompositeModel):
                                                  "input is a labeled object")
                 assert self._outmap is not None, ("Parameter 'outmap' must be "
                                                   "provided when input is a labeled object")
-                for transform, incoo, outcoo in izip(self._transforms, self._inmap, self._outmap):
+                for transform, incoo, outcoo in izip(self._transforms,
+                                                     self._inmap,
+                                                     self._outmap):
                     inlist = [labeled_input[label] for label in incoo]
                     result = transform(*inlist)
                     if len(outcoo) == 1:
@@ -782,13 +800,15 @@ class PCompositeModel(_CompositeModel):
     Evaluate each model separately and add the results to the input_data.
 
     """
+
     def __init__(self, transforms, inmap=None, outmap=None):
         self._transforms = transforms
         n_inputs = self._transforms[0].n_inputs
         n_outputs = n_inputs
         for transform in self._transforms:
             assert transform.n_inputs == transform.n_outputs == n_inputs, \
-                ("A PCompositeModel expects n_inputs = n_outputs for all transforms")
+                ("A PCompositeModel expects n_inputs = n_outputs for all "
+                 "transforms")
         super(PCompositeModel, self).__init__(transforms, n_inputs, n_outputs)
 
         self._inmap = inmap
@@ -850,7 +870,7 @@ class Parametric1DModel(ParametricModel):
         param_dim = np.size(param_dict[self.param_names[0]])
 
         # Initialize model parameters. This is preliminary as long there is
-        # no new parameter class. It may be more reasonable and clear to init 
+        # no new parameter class. It may be more reasonable and clear to init
         # the parameters in the model constructor itself, with constraints etc.
         for param_name in self.param_names:
             setattr(self, "_" + param_name, parameters.Parameter(name=param_name,

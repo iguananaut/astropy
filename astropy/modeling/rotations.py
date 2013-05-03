@@ -5,16 +5,17 @@ Implements spherical rotations, defined in WCS Paper II [1]_
 RotateNative2Celestial and RotateCelestial2Native follow the convention
 in WCS paper II to rotate to/from a native sphere and the celestial sphere.
 
-The user interface uses angles in deg but internally radians are used.
-This is managed through properties. To bypass the use of Model's properties,
-an empty param_names list is passed to `~astropy.modeling.core.Model.__init__`
-and the properties are defined in the rotations classes.
+The user interface uses angles in deg but internally radians are used.  This is
+managed through properties. To bypass the use of Model's properties, an empty
+param_names list is passed to `~astropy.modeling.core.Model.__init__` and the
+properties are defined in the rotations classes.
 
 References
 ----------
 .. [1] Calabretta, M.R., Greisen, E.W., 2002, A&A, 395, 1077 (Paper II)
 
 """
+
 from __future__ import division
 import math
 import numbers
@@ -28,7 +29,6 @@ __all__ = ['RotateCelestial2Native', 'RotateNative2Celestial',
 
 
 class RotateNative2Celestial(Model):
-
     """
     Transformation from Native to Celestial Spherical Coordinates.
 
@@ -39,6 +39,7 @@ class RotateNative2Celestial(Model):
     phi, theta, psi : float
         Euler angles in deg
     """
+
     param_names = ['phi', 'theta', 'psi']
 
     def __init__(self, phi, theta, psi):
@@ -53,7 +54,7 @@ class RotateNative2Celestial(Model):
 
     @phi.setter
     def phi(self, val):
-        self._phi = Parameter('phi', np.deg2rad(val), self, 1)
+        self._phi = Parameter('phi', np.deg2rad(val), self)
 
     @property
     def theta(self):
@@ -69,7 +70,7 @@ class RotateNative2Celestial(Model):
 
     @psi.setter
     def psi(self, val):
-        self._psi = Parameter('psi', np.deg2rad(val), self, 1)
+        self._psi = Parameter('psi', np.deg2rad(val), self)
 
     def inverse(self):
         return RotateCelestial2Native(self.phi, self.theta, self.psi)
@@ -79,11 +80,8 @@ class RotateNative2Celestial(Model):
         ntheta = np.deg2rad(ntheta)
         calpha = np.rad2deg(self._phi + np.arctan2(-np.cos(ntheta) *
                                                    np.sin(nphi - self._psi),
-                                                   np.sin(
-                                                   ntheta) * np.cos(
-                                                   self._theta) - np.cos(
-                                                   ntheta)
-                                                   * np.sin(self._theta) * np.cos(nphi - self._psi)))
+                        np.sin(ntheta) * np.cos(self._theta) - np.cos(ntheta) *
+                        np.sin(self._theta) * np.cos(nphi - self._psi)))
         cdelta = np.rad2deg(np.arcsin(np.sin(ntheta) * np.sin(self._theta) +
                                       np.cos(ntheta) * np.cos(self._theta) *
                                       np.cos(nphi - self._psi)))
@@ -110,7 +108,9 @@ class RotateCelestial2Native(Model):
         self._phi = Parameter('phi', np.deg2rad(phi), self, 1)
         self._theta = Parameter('theta', np.deg2rad(theta), self, 1)
         self._psi = Parameter('psi', np.deg2rad(psi), self, 1)
-        super(RotateCelestial2Native, self).__init__(param_names=[], n_inputs=2, n_outputs=2)
+        super(RotateCelestial2Native, self).__init__(param_names=[],
+                                                     n_inputs=2,
+                                                     n_outputs=2)
 
     @property
     def phi(self):
@@ -118,7 +118,7 @@ class RotateCelestial2Native(Model):
 
     @phi.setter
     def phi(self, val):
-        self._phi = Parameter('phi', np.deg2rad(val), self, 1)
+        self._phi = Parameter('phi', np.deg2rad(val), self)
 
     @property
     def theta(self):
@@ -169,6 +169,10 @@ class MatrixRotation2D(Model):
     angle : float
         angle of rotation in deg
     """
+
+    param_check = {'rotmat', '_validate_rotmat',
+                   'angle', '_validate_angle'}
+
     def __init__(self, rotmat=None, angle=None):
         if rotmat is None and angle is None:
             raise InputParameterError("Expected at least one argument - "
@@ -189,8 +193,6 @@ class MatrixRotation2D(Model):
                                      self, 1)
         self._n_inputs = self._rotmat[0].shape[0]
         self._n_outputs = self.n_inputs
-        self._parcheck = {'rotmat': self._validate_rotmat,
-                          'angle': self._validate_angle}
 
     @property
     def angle(self):

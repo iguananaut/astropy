@@ -28,14 +28,14 @@ class TestNonLinearConstraints(object):
         self.ny2 = self.y2 + 2 * self.n
 
     @pytest.mark.skipif('not HAS_SCIPY')
-    def testFixedPar(self):
+    def test_fixed_par(self):
         g1 = models.Gaussian1DModel(10, mean=14.9, stddev=.3, fixed={'amplitude': True})
         fitter = fitting.NonLinearLSQFitter(g1)
         fitter(self.x, self.ny1)
         assert g1.amplitude == 10
 
     @pytest.mark.skipif('not HAS_SCIPY')
-    def testTiedPar(self):
+    def test_tied_par(self):
 
         def tied(model):
             mean = 50 * model.stddev[0]
@@ -46,7 +46,7 @@ class TestNonLinearConstraints(object):
         utils.assert_allclose(g1.mean, 50 * g1.stddev[0], rtol=10 ** (-5))
 
     @pytest.mark.skipif('not HAS_SCIPY')
-    def testJointFitter(self):
+    def test_joint_fitter(self):
         g1 = models.Gaussian1DModel(10, 14.9, stddev=.3)
         g2 = models.Gaussian1DModel(10, 13, stddev=.4)
         jf = fitting.JointFitter([g1, g2], {g1: ['amplitude'],
