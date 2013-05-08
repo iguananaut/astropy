@@ -332,7 +332,9 @@ class Chebyshev1DModel(PolynomialModel):
         keyword : value pairs, representing parameter_name: value
 
     """
-    def __init__(self, degree, domain=None, window=[-1, 1], param_dim=1, **pars):
+
+    def __init__(self, degree, domain=None, window=[-1, 1], param_dim=1,
+                 **pars):
         self.domain = domain
         self.window = window
         super(Chebyshev1DModel, self).__init__(degree, n_inputs=1, n_outputs=1,
@@ -424,7 +426,8 @@ class Legendre1DModel(PolynomialModel):
         keyword: value pairs, representing parameter_name: value
 
     """
-    def __init__(self, degree, domain=None, window=[-1, 1], param_dim=1, **pars):
+    def __init__(self, degree, domain=None, window=[-1, 1], param_dim=1,
+                 **pars):
         self.domain = domain
         self.window = window
         super(Legendre1DModel, self).__init__(degree, n_inputs=1, n_outputs=1,
@@ -511,9 +514,9 @@ class Poly1DModel(PolynomialModel):
     **pars : dict
         keyword: value pairs, representing parameter_name: value
     """
-    def __init__(self, degree,
-                 domain=[-1, 1], window=[-1, 1],
-                 param_dim=1, **pars):
+
+    def __init__(self, degree, domain=[-1, 1], window=[-1, 1], param_dim=1,
+                 **pars):
         self.domain = domain
         self.window = window
         super(Poly1DModel, self).__init__(degree, n_inputs=1, n_outputs=1,
@@ -801,6 +804,7 @@ class Chebyshev2DModel(OrthogPolyBase):
         """
         Derivative of 1D Chebyshev series
         """
+
         x = np.array(x, dtype=np.float, copy=False, ndmin=1)
         d = np.empty((deg + 1, len(x)), dtype=x.dtype)
         d[0] = x * 0 + 1
@@ -912,6 +916,7 @@ class Legendre2DModel(OrthogPolyBase):
         """
         Derivative of 1D Legendre polynomial
         """
+
         x = np.array(x, dtype=np.float, copy=False, ndmin=1)
         d = np.empty((deg + 1,) + x.shape, dtype=x.dtype)
         d[0] = x * 0 + 1
@@ -1108,9 +1113,10 @@ class SIPModel(SCompositeModel):
     .. [1] `David Shupe, et al, ADASS, ASP Conference Series, Vol. 347, 2005 <http://adsabs.harvard.edu/abs/2005ASPC..347..491S>`_
 
     """
+
     def __init__(self, crpix, a_order, a_coeff, b_order, b_coeff,
-                 a_inv_order=None, a_inv_coeff=None, b_inv_order=None, b_inv_coeff=None,
-                 param_dim=1):
+                 a_inv_order=None, a_inv_coeff=None, b_inv_order=None,
+                 b_inv_coeff=None, param_dim=1):
         self.shifta = ShiftModel(-crpix[0])
         self.shiftb = ShiftModel(-crpix[1])
         self.sip1da = _SIP1D(a_order, coeff_prefix='A',
@@ -1119,15 +1125,19 @@ class SIPModel(SCompositeModel):
                              param_dim=param_dim, **b_coeff)
         if a_inv_order is not None and a_inv_coeff is not None and \
                 b_inv_order is not None and b_inv_coeff is not None:
-            self.inversea = _SIP1D(a_inv_order, coeff_prefix='A', **a_inv_coeff)
-            self.inverseb = _SIP1D(b_inv_order, coeff_prefix='BP', **b_inv_coeff)
+            self.inversea = _SIP1D(a_inv_order, coeff_prefix='A',
+                                   **a_inv_coeff)
+            self.inverseb = _SIP1D(b_inv_order, coeff_prefix='BP',
+                                   **b_inv_coeff)
             self.inverse = True
         else:
             self.inverse = None
-        super(SIPModel, self).__init__([self.shifta, self.shiftb, self.sip1da, self.sip1db],
-                                       inmap=[['x'], ['y'], ['x', 'y'], ['x', 'y']],
-                                       outmap=[['x'], ['y'], ['x1'], ['y1']], n_inputs=2,
-                                       n_outputs=2)
+        super(SIPModel, self).__init__([self.shifta, self.shiftb, self.sip1da,
+                                        self.sip1db],
+                                       inmap=[['x'], ['y'], ['x', 'y'],
+                                              ['x', 'y']],
+                                       outmap=[['x'], ['y'], ['x1'], ['y1']],
+                                       n_inputs=2, n_outputs=2)
 
     def __repr__(self):
         models = [self.shifta, self.shiftb, self.sip1da, self.sip1db]

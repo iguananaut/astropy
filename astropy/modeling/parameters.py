@@ -48,11 +48,9 @@ class Parameter(list):
     Wraps individual parameters.
 
     This class represents a model's parameter (in a somewhat broad
-    sense). To support multiple parameter sets, a parameter has a dimension
-    (param_dim) and is a list-like object. It supports indexing so that individual
-    parameters can be updated.
-    To support some level of validation a parameter has a shape
-    (parshape).
+    sense). To support multiple parameter sets, a
+    parameter has a dimension (param_dim). To support some level
+    of validation a parameter has also a shape (parshape).
     Parameter objects behave like numbers.
 
     Parameters

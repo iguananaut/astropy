@@ -202,7 +202,8 @@ class Constraints(object):
         Takes into account any constant or tied parameters
         and inserts them into the list of fitted parameters.
         """
-        fitpars = list(fp[:])
+
+        fitpars = list(fp)
         mpars = []
         for par in self.model.param_names:
             if self.fixed[par]:

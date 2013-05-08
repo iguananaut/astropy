@@ -13,14 +13,15 @@ from .. import ParametricModel, Parameter
 
 
 class TestParModel(ParametricModel):
-
     """
     A toy model to test parameters machinery
     """
+
     param_names = ['coeff', 'e']
 
     def __init__(self, coeff, e, param_dim=1):
-        self._coeff = Parameter(name='coeff', val=coeff, mclass=self, param_dim=param_dim)
+        self._coeff = Parameter(name='coeff', val=coeff, mclass=self,
+                                param_dim=param_dim)
         self._e = Parameter(name='e', val=e, mclass=self, param_dim=param_dim)
         ParametricModel.__init__(
             self,

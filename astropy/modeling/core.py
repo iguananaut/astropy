@@ -173,7 +173,7 @@ class Model(object):
     """
     Base class for all models.
 
-    This is an abstract class and should not be instanciated.
+    This is an abstract class and should not be instantiated.
 
     Notes
     -----
@@ -181,7 +181,6 @@ class Model(object):
 
     This class sets the properties for all individual parameters and performs
     parameter validation.
-
     """
 
     __metaclass__ = abc.ABCMeta
@@ -373,7 +372,7 @@ class ParametricModel(Model):
         property of a parameter may be used.
     bounds: dict
         a dictionary {parameter_name: boolean} of lower and upper bounds of
-        parameters. Keys  are parameter names. Values  are a list of length 2
+        parameters. Keys are parameter names. Values are a list of length 2
         giving the desired range for the parameter.  Alternatively the
         `~astropy.modeling.parameters.Parameter.min` and
         `~astropy.modeling.parameters.Parameter.max` properties of a parameter
@@ -552,6 +551,7 @@ class LabeledInput(dict):
            [4, 4, 4, 4, 4]])
 
     """
+
     def __init__(self, data, labels):
         dict.__init__(self)
         assert len(labels) == len(data)
@@ -620,7 +620,6 @@ class LabeledInput(dict):
 
 
 class _CompositeModel(Model):
-
     def __init__(self, transforms, n_inputs, n_outputs):
         """
         A Base class for all composite models.
@@ -780,6 +779,7 @@ class SCompositeModel(_CompositeModel):
             for transform in self._transforms[1:]:
                 result = transform(*result)
         return result
+
 
 
 class PCompositeModel(_CompositeModel):

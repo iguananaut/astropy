@@ -76,8 +76,8 @@ class Fitter(object):
     def __init__(self, model):
         self._model = model
         self._validate_constraints()
-        if any(self.model.constraints._fixed.values()) or \
-           any(self.model.constraints._tied.values()):
+        if (any(self.model.constraints._fixed.values()) or
+               any(self.model.constraints._tied.values())):
             self._fitpars = self.model.constraints.fitpars[:]
         else:
             self._fitpars = self.model._parameters[:]
@@ -96,8 +96,8 @@ class Fitter(object):
 
     @property
     def fitpars(self):
-        if any(self.model.constraints._fixed.values()) or \
-           any(self.model.constraints._tied.values()):
+        if (any(self.model.constraints._fixed.values()) or
+              any(self.model.constraints._tied.values())):
             return self.model.constraints.fitpars
         else:
             return self.model._parameters
@@ -123,8 +123,11 @@ class Fitter(object):
         set_bounds : callable
 
         """
-        if any(self.model.constraints._fixed.values()) or \
-           any(self.model.constraints._tied.values()):
+        # TODO: This little any fixed or any tied incantation is so frequent
+        # it seems like it should probably be a property on the constraints
+        # object
+        if (any(self.model.constraints._fixed.values()) or
+                any(self.model.constraints._tied.values())):
             self.model.constraints.fitpars = fps
             self._fitpars[:] = self.model.constraints.fitpars
         elif any([b != (-1E12, 1E12) for b in self.model.constraints.bounds.values()]):
@@ -660,6 +663,7 @@ class SLSQPFitter(Fitter):
         self.fit_info['numiter'] = numiter
         self.fit_info['exit_mode'] = exit_mode
         self.fit_info['message'] = mess
+
 
 
 class JointFitter(object):
