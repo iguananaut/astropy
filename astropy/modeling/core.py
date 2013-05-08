@@ -38,13 +38,17 @@ In all these cases the output has the same shape as the input.
 - A model with N parameter sets works with 1D input arrays. The shape
   of the output is (M, N)
 
+
 """
 from __future__ import division
 import abc
+
 from itertools import izip
+from textwrap import dedent
 
 import numpy as np
 
+from ..utils import indent
 from .utils import InputParameterError
 from . import parameters
 from . import constraints
@@ -257,16 +261,15 @@ class Model(object):
         fmt = """
         Model: {0}
         Parameter sets: {1}
-        Parameters:
-                   {2}
+        Parameters: \n{2}
         """.format(
               self.__class__.__name__,
               self.param_dim,
-              "\n                   ".join(i + ': ' +
-                str(self.__getattribute__(i)) for i in self.param_names)
-        )
+              indent('\n'.join('{0}: {1}'.format(n, getattr(self, n))
+                               for n in self.param_names),
+                     width=19))
 
-        return fmt
+        return dedent(fmt[1:])
 
     @property
     def param_sets(self):
@@ -451,23 +454,23 @@ class ParametricModel(Model):
             degree = str(self.deg)
         except AttributeError:
             degree = 'N/A'
+
         fmt = """
         Model: {0}
         Dim:   {1}
         Degree: {2}
         Parameter sets: {3}
-        Parameters:
-                   {4}
+        Parameters: \n{4}
         """.format(
               self.__class__.__name__,
               self.n_inputs,
               degree,
               self.param_dim,
-              "\n                   ".join(i + ': ' +
-                str(self.__getattribute__(i)) for i in self.param_names)
-        )
+              indent('\n'.join('{0}: {1}'.format(n, getattr(self, n))
+                     for n in self.param_names),
+                     width=19))
 
-        return fmt
+        return dedent(fmt[1:])
 
     @property
     def parameters(self):
