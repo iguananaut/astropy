@@ -28,6 +28,7 @@ MAXITER = 100
 EPS = np.sqrt(np.finfo(float).eps)
 
 # supported constraints
+# TODO: Register these automatically through a metaclass
 constraintsdef = {'NonLinearLSQFitter': ['fixed', 'tied', 'bounds'],
                   'SLSQPFitter': ['bounds', 'eqcons', 'ineqcons', 'fixed', 'tied'],
                   'LinearLSQFitter': ['fixed'],
@@ -340,7 +341,7 @@ class LinearLSQFitter(Fitter):
             if x.shape[0] != y.shape[0]:
                 raise ValueError("Expected measured and model data to have the same size")
             if y.ndim == 2:
-                assert y.shape[1] == self.model._parameters.param_dim, (
+                assert y.shape[1] == self.model.param_dim, (
                     "Number of data sets (Y array is expected to equal "
                     "the number of parameter sets")
             # map domain into window
@@ -387,7 +388,7 @@ class LinearLSQFitter(Fitter):
                 lhs *= weights[:, np.newaxis]
                 rhs *= weights
 
-        if not multiple and self.model._parameters.param_dim > 1:
+        if not multiple and self.model.param_dim > 1:
             raise ValueError("Attempting to fit a 1D data set to a model "
                              "with multiple parameter sets")
         if rcond is None:
@@ -400,12 +401,12 @@ class LinearLSQFitter(Fitter):
         self.fit_info['rank'] = rank
         self.fit_info['singular_values'] = sval
 
-        self.model._parameters._changed = True
+        self.model._parameters._modified = True
         # If y.n_inputs > model.n_inputs we are doing a simultanious 1D fitting
         # of several 1D arrays. Otherwise the model is 2D.
         # if y.n_inputs > self.model.n_inputs:
         if multiple:
-            self.model._parameters.param_dim = multiple
+            self.model._param_dim = multiple
         lacoef = (lacoef.T / scl).T
         self.fit_info['pars'] = lacoef
         if rank != self.model._order:
@@ -513,7 +514,7 @@ class NonLinearLSQFitter(Fitter):
         from scipy import optimize
         x = np.asarray(x, dtype=np.float)
         self.weights = weights
-        if self.model._parameters.param_dim != 1:
+        if self.model.param_dim != 1:
             # for now only single data sets ca be fitted
             raise ValueError("NonLinearLSQFitter can only fit one "
                              "data set at a time")
@@ -635,7 +636,7 @@ class SLSQPFitter(Fitter):
         x = np.asarray(x, dtype=np.float)
 
         self.weights = weights
-        if self.model._parameters.param_dim != 1:
+        if self.model.param_dim != 1:
             # for now only single data sets ca be fitted
             raise ValueError("NonLinearLSQFitter can only fit "
                              "one data set at a time")

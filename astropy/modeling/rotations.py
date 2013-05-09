@@ -17,20 +17,23 @@ References
 """
 
 from __future__ import division
+
 import math
 import numbers
+
 import numpy as np
+
 from .core import Model
-from .parameters import Parameter
-from .utils import InputParameterError
+from .parameters import Parameter, InputParameterError
+
 
 __all__ = ['RotateCelestial2Native', 'RotateNative2Celestial',
            'MatrixRotation2D']
 
 
-class RotateNative2Celestial(Model):
+class EulerAngleRotation(Model):
     """
-    Transformation from Native to Celestial Spherical Coordinates.
+    Base class for Euler angle rotations.
 
     Defines a ZXZ rotation.
 
@@ -41,12 +44,15 @@ class RotateNative2Celestial(Model):
     """
 
     param_names = ['phi', 'theta', 'psi']
+    phi = Parameter('phi')
+    theta = Parameter('theta')
+    psi = Parameter('psi')
 
     def __init__(self, phi, theta, psi):
-        self._phi = Parameter('phi', np.deg2rad(phi), self, 1)
-        self._theta = Parameter('theta', np.deg2rad(theta), self, 1)
-        self._psi = Parameter('psi', np.deg2rad(psi), self, 1)
-        super(RotateNative2Celestial, self).__init__(param_names=[], n_inputs=2, n_outputs=2)
+        self._phi = np.deg2rad(phi)
+        self._theta = np.deg2rad(theta)
+        self._psi = np.deg2rad(psi)
+        super(EulerAngleRotation, self).__init__(n_inputs=2, n_outputs=2)
 
     @property
     def phi(self):
@@ -54,7 +60,7 @@ class RotateNative2Celestial(Model):
 
     @phi.setter
     def phi(self, val):
-        self._phi = Parameter('phi', np.deg2rad(val), self)
+        self._phi = np.deg2rad(val)
 
     @property
     def theta(self):
@@ -62,7 +68,7 @@ class RotateNative2Celestial(Model):
 
     @theta.setter
     def theta(self, val):
-        self._theta = Parameter('theta', np.deg2rad(val), self, 1)
+        self._theta = np.deg2rad(val)
 
     @property
     def psi(self):
@@ -70,7 +76,20 @@ class RotateNative2Celestial(Model):
 
     @psi.setter
     def psi(self, val):
-        self._psi = Parameter('psi', np.deg2rad(val), self)
+        self._psi = np.deg2rad(val)
+
+
+class RotateNative2Celestial(EulerAngleRotation):
+    """
+    Transformation from Native to Celestial Spherical Coordinates.
+
+    Defines a ZXZ rotation.
+
+    Parameters
+    ----------
+    phi, theta, psi : float
+        Euler angles in deg
+    """
 
     def inverse(self):
         return RotateCelestial2Native(self.phi, self.theta, self.psi)
@@ -90,8 +109,7 @@ class RotateNative2Celestial(Model):
         return calpha, cdelta
 
 
-class RotateCelestial2Native(Model):
-
+class RotateCelestial2Native(EulerAngleRotation):
     """
     Transformation from Celestial to Native to Spherical Coordinates.
 
@@ -102,39 +120,6 @@ class RotateCelestial2Native(Model):
     phi, theta, psi : float
         Euler angles in deg
     """
-    param_names = ['phi', 'theta', 'psi']
-
-    def __init__(self, phi, theta, psi):
-        self._phi = Parameter('phi', np.deg2rad(phi), self, 1)
-        self._theta = Parameter('theta', np.deg2rad(theta), self, 1)
-        self._psi = Parameter('psi', np.deg2rad(psi), self, 1)
-        super(RotateCelestial2Native, self).__init__(param_names=[],
-                                                     n_inputs=2,
-                                                     n_outputs=2)
-
-    @property
-    def phi(self):
-        return np.rad2deg(self._phi)
-
-    @phi.setter
-    def phi(self, val):
-        self._phi = Parameter('phi', np.deg2rad(val), self)
-
-    @property
-    def theta(self):
-        return np.rad2deg(self._theta)
-
-    @theta.setter
-    def theta(self, val):
-        self._theta = Parameter('theta', np.deg2rad(val), self, 1)
-
-    @property
-    def psi(self):
-        return np.rad2deg(self._psi)
-
-    @psi.setter
-    def psi(self, val):
-        self._psi = Parameter('psi', np.deg2rad(val), self, 1)
 
     def inverse(self):
         return RotateNative2Celestial(self.phi, self.theta, self.psi)
@@ -160,50 +145,53 @@ class MatrixRotation2D(Model):
     Perform a clockwise 2D matrix rotation given either an angle or a
     rotation matrix.
 
-    If both rotmat and angle are given, angle will be ignored.
+    If both matrix and angle are given, angle will be ignored.
 
     Parameters
     ----------
-    rotmat : ndarray
+    matrix : ndarray
         rotation matrix
     angle : float
         angle of rotation in deg
     """
 
-    param_check = {'rotmat', '_validate_rotmat',
+    param_check = {'matrix', '_validate_matrix',
                    'angle', '_validate_angle'}
 
-    def __init__(self, rotmat=None, angle=None):
-        if rotmat is None and angle is None:
+    angle = Parameter('angle')
+    matrix = Parameter('matrix')
+
+    def __init__(self, matrix=None, angle=None):
+        if matrix is None and angle is None:
             raise InputParameterError("Expected at least one argument - "
-                                      "a rotation matrix or an angle")
-        if rotmat is not None:
-            self._validate_rotmat(rotmat)
-            self._rotmat = Parameter('rotmat', np.asarray(rotmat) + 0.,
-                                     self, 1)
-            super(MatrixRotation2D, self).__init__(param_names=['rotmat'], n_inputs=1,
-                                                   n_outputs=1, param_dim=1)
+                                           "a rotation matrix or an angle")
+        if matrix is not None:
+            self._validate_matrix(matrix)
+            # TODO: Why +0.0?
+            self._matrix = np.asarray(matrix) + 0.0
+            super(MatrixRotation2D, self).__init__(n_inputs=1, n_outputs=1,
+                                                   param_dim=1)
         else:
             self._validate_angle(angle)
-            self._angle = Parameter('angle', np.deg2rad(angle), self, 1)
-            super(MatrixRotation2D, self).__init__(param_names=[], n_inputs=1,
-                                                   n_outputs=1, param_dim=1)
+            self._angle = np.deg2rad(angle)
             self.param_names = ['angle']
-            self._rotmat = Parameter('rotmat', self._compute_matrix(angle),
-                                     self, 1)
-        self._n_inputs = self._rotmat[0].shape[0]
-        self._n_outputs = self.n_inputs
+            self._matrix = self._compute_matrix(angle)
+
+        n_inputs = self._matrix[0].shape[0]
+        super(MatrixRotation2D, self).__init__(n_inputs=n_inputs,
+                                               n_outputs=n_inputs,
+                                               param_dim=1)
 
     @property
     def angle(self):
-        return Parameter('angle', np.rad2deg(self._angle), self, param_dim=1)
+        return np.rad2deg(self._angle)
 
     @angle.setter
     def angle(self, val):
-        self._angle = Parameter('angle', np.deg2rad(val), self, param_dim=1)
+        self._angle = np.deg2rad(val)
 
-    def _validate_rotmat(self, rotmat):
-        assert rotmat.ndim == 2, "Expected rotation matrix to be a 2D array"
+    def _validate_matrix(self, matrix):
+        assert matrix.ndim == 2, "Expected rotation matrix to be a 2D array"
 
     def _validate_angle(self, angle):
         assert isinstance(angle, numbers.Number), \
@@ -211,12 +199,12 @@ class MatrixRotation2D(Model):
 
     def _compute_matrix(self, angle):
         return np.array([[math.cos(angle), math.sin(angle)],
-                        [-math.sin(angle), math.cos(angle)]],
+                         [-math.sin(angle), math.cos(angle)]],
                         dtype=np.float64)
 
     def inverse(self):
-        nrot = np.linalg.inv(self._rotmat[0])
-        return MatrixRotation2D(rotmat=nrot)
+        nrot = np.linalg.inv(self._matrix[0])
+        return MatrixRotation2D(matrix=nrot)
 
     def __call__(self, x, y):
         """
@@ -231,8 +219,8 @@ class MatrixRotation2D(Model):
         shape = x.shape
         inarr = np.array([x.flatten(), y.flatten()], dtype=np.float64)
         assert inarr.shape[0] == 2 and inarr.ndim == 2, \
-            "Incompatible shape in MatrixRotation"
-        result = np.dot(self._rotmat[0], inarr)
+                    "Incompatible shape in MatrixRotation"
+        result = np.dot(self._matrix[0], inarr)
         x, y = result[0], result[1]
         if x.shape != shape:
             x.shape = shape

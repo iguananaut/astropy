@@ -4,37 +4,107 @@ This module contains predefined polynomial models.
 """
 from __future__ import division
 import collections
+
 import numpy as np
-from ..logger import log
-from . import parameters
-from .core import ParametricModel, Model, SCompositeModel
-from .core import _convert_input, _convert_output
-from .core import LabeledInput
-from .utils import poly_map_domain, comb
+
+from .core import (ParametricModel, Model, SCompositeModel, _convert_input,
+                   _convert_output)
 from .functional_models import ShiftModel
+from .parameters import Parameter, Parameters
+from .utils import poly_map_domain, comb
+from ..logger import log
+from ..utils import lazyproperty
+
 
 __all__ = ['Chebyshev1DModel', 'Chebyshev2DModel', 'Legendre2DModel',
            'Legendre1DModel', 'Poly1DModel', 'Poly2DModel', 'SIPModel',
-           'OrthogPolyBase', 'PolynomialModel']
+           'OrthogonalPolynomialModel', 'PolynomialModel']
 
 
-class PolynomialModel(ParametricModel):
-
+class PolynomialBase(ParametricModel):
     """
-    Base class for all polynomial models.
+    Base class for all polynomial-like models with an arbitrary number of
+    parameters in the form of coeffecients.
+
+    In this case Parameter instances are returned through the class's
+    ``__getattr__`` rather than through class descriptors.
+    """
+
+    # Default _param_names list; this will be filled in by the implementation's
+    # __init__
+    _param_names = []
+
+
+    @lazyproperty
+    def param_names(self):
+        """Coefficient names generated based on the model's polynomial degree
+        and number of dimensions.
+
+        Subclasses should implement this to return parameter names in the
+        desired format.
+
+        On most `Model` classes this is a class attribute, but for polynomial
+        models it is an instance attribute since each polynomial model instance
+        can have different parameters depending on the degree of the polynomial
+        and the number of dimensions, for example.
+        """
+
+        return self._param_names
+
+    def __getattr__(self, attr):
+        if self._param_names and attr in self._param_names:
+            return Parameter(attr, instance=self)
+
+    def __setattr__(self, attr, value):
+        # TODO: Support a means of specifying default values for coefficients
+        # Check for self._ndim first--if it hasn't been defined then the
+        # instance hasn't been initialized yet and self.param_names probably
+        # won't work.
+        # This has to vaguely duplicate the functionality of
+        # Parameter.__set__.
+        # TODO: I wonder if there might be a way around that though...
+        if attr[0] != '_' and self._param_names and attr in self._param_names:
+            # Set the internal attribute for this parameter instead
+            super(PolynomialBase, self).__setattr__('_' + attr, value)
+            # Rebuild the internal Parameters list
+            self._parameters = Parameters(self)
+        else:
+            super(PolynomialBase, self).__setattr__(attr, value)
+
+    def _set_coeffs(self, param_dim, **pars):
+        """
+        Set default values for coefficients
+        """
+
+        for name in self.param_names:
+            value = pars.get(name)
+            if value is None:
+                if self.param_dim == 1:
+                    value = 0.0
+                else:
+                    value = [0.0] * param_dim
+            # This is just setting the default values, so set straight to the
+            # internal attributes instead of going through the __setattr__
+            # magic
+            setattr(self, '_' + name, value)
+
+
+class PolynomialModel(PolynomialBase):
+    """
+    Base class for polynomial models.
 
     Its main purpose is to determine how many coefficients are needed
     based on the polynomial order and dimension and to provide their
     default values, names and ordering.
 
     """
+
     def __init__(self, degree, n_inputs=1, n_outputs=1, param_dim=1, **pars):
-        self.deg = degree
-        self._order = self.get_numcoeff(n_inputs)
-        self.param_names = self._generate_coeff_names(n_inputs)
-        if not pars:
-            self.set_coeff(pardim=param_dim)
-        else:
+        self._degree = degree
+        self._order = self.get_num_coeff(n_inputs)
+        self._param_names = self._generate_coeff_names(n_inputs)
+
+        if pars:
             p = pars.get('c0', pars.get('c0_0'))
             if isinstance(p, collections.Sequence):
                 lenpars = len(p)
@@ -43,87 +113,74 @@ class PolynomialModel(ParametricModel):
             if param_dim != lenpars:
                 if param_dim == 1:
                     log.info("Inferred {0} dimensions when creating a {1} model. "
-                             "Resetting param_dim to {2}".format(lenpars,
-                                                                 self.__class__.__name__,
-                                                                 lenpars))
+                             "Resetting param_dim to {2}".format(
+                                 lenpars, self.__class__.__name__, lenpars))
                     param_dim = lenpars
                 else:
-                    raise ValueError("Number of coefficient sets ({0}) does not match number "
-                                     "of parameter sets ({1}).".format(lenpars, param_dim))
+                    raise ValueError("Number of coefficient sets ({0}) does "
+                                     "not match number of parameter sets "
+                                     "({1}).".format(lenpars, param_dim))
             self._validate_pars(**pars)
-            self.set_coeff(pardim=param_dim, **pars)
-        super(PolynomialModel, self).__init__(self.param_names,
-                                              n_inputs=n_inputs,
+
+        self._set_coeffs(param_dim, **pars)
+
+        super(PolynomialModel, self).__init__(n_inputs=n_inputs,
                                               n_outputs=n_outputs,
                                               param_dim=param_dim)
 
+    @property
+    def degree(self):
+        """TODO: Docstring for me"""
+
+        return self._degree
+
+    def get_num_coeff(self, ndim):
+        """
+        Return the number of coefficients in one parameter set
+        """
+
+        if self.degree < 1  or self.degree > 16:
+            raise ValueError("Degree of polynomial must be 1< deg < 16")
+        # deg+1 is used to account for the difference between iraf using
+        # degree and numpy using exact degree
+        if ndim != 1:
+            nmixed = comb(self.degree, ndim)
+        else:
+            nmixed = 0
+        numc = self.degree * ndim + nmixed + 1
+        return numc
+
     def _invlex(self):
         c = []
-        lencoeff = self.deg + 1
+        lencoeff = self.degree + 1
         for i in range(lencoeff):
             for j in range(lencoeff):
-                if i + j <= self.deg:
+                if i + j <= self.degree:
                     c.append((j, i))
         return c[::-1]
-
-    def _generate_coeff_names(self, ndim):
-        ncoeff = self._order
-        names = []
-        if ndim == 1:
-            for n in range(ncoeff):
-                names.append('c{0}'.format(n))
-        else:
-            for i in range(self.deg + 1):
-                names.append('c{0}_{1}'.format(i, 0))
-            for i in range(1, self.deg + 1):
-                names.append('c{0}_{1}'.format(0, i))
-            for i in range(1, self.deg):
-                for j in range(1, self.deg):
-                    if i + j < self.deg + 1:
-                        names.append('c{0}_{1}'.format(i, j))
-        return names
 
     def _validate_pars(self, **pars):
         numcoeff = self._order
         assert(len(pars) == numcoeff)
 
-    def set_coeff(self, pardim=1, **pars):
-        """
-        Set default values for coefficients
-        """
-        if not pars:
-            for name in self.param_names:
-                uname = '_' + name
-                if pardim == 1:
-                    self.__setattr__(uname, parameters.Parameter(
-                        name, 0., self, pardim))
-                else:
-                    self.__setattr__(uname, parameters.Parameter(
-                        name, [0.] * pardim, self, pardim))
+    def _generate_coeff_names(self, ndim):
+        names = []
+        if ndim == 1:
+            for n in range(self._order):
+                names.append('c{0}'.format(n))
         else:
-            for name in self.param_names:
-                uname = '_' + name
-                self.__setattr__(uname, parameters.Parameter(
-                                 name, pars[name], self, pardim))
-
-    def get_numcoeff(self, ndim):
-        """
-        Return the number of coefficients in one parameter set
-        """
-        if self.deg < 1 or self.deg > 16:
-            raise ValueError("Degree of polynomial must be 1< deg < 16")
-        # deg+1 is used to account for the difference between iraf using
-        # degree and numpy using exact degree
-        if ndim != 1:
-            nmixed = comb(self.deg, ndim)
-        else:
-            nmixed = 0
-        numc = self.deg * ndim + nmixed + 1
-        return numc
+            for i in range(self.degree + 1):
+                names.append('c{0}_{1}'.format(i, 0))
+            for i in range(1, self.degree + 1):
+                names.append('c{0}_{1}'.format(0, i))
+            for i in range(1, self.degree):
+                for j in range(1, self.degree):
+                    if i + j < self.degree + 1:
+                        names.append('c{0}_{1}'.format(i, j))
+        return names
 
 
-class OrthogPolyBase(ParametricModel):
-
+class OrthogonalPolynomialModel(PolynomialBase):
     """
 
     This is a base class for the 2D Chebyshev and Legendre models.
@@ -150,21 +207,20 @@ class OrthogPolyBase(ParametricModel):
     **pars : dict
         {keyword: value} pairs, representing {parameter_name: value}
     """
-    def __init__(self, x_degree, y_degree, x_domain=None, x_window=None, y_domain=None,
-                 y_window=None, param_dim=1, **pars):
-        self.xdeg = x_degree
-        self.ydeg = y_degree
-        self._order = self.get_numcoeff()
+
+    def __init__(self, x_degree, y_degree, x_domain=None, x_window=None,
+                 y_domain=None, y_window=None, param_dim=1, **pars):
+        # TODO: Perhaps some of these other parameters should be properties?
+        self.x_degree = x_degree
+        self.y_degree = y_degree
+        self._order = self.get_num_coeff()
         self.x_domain = x_domain
         self.y_domain = y_domain
         self.x_window = x_window
         self.y_window = y_window
-        self.param_names = self._generate_coeff_names()
+        self._param_names = self._generate_coeff_names()
 
-        if not pars:
-            self.set_coeff(pardim=param_dim)
-
-        else:
+        if pars:
             p = pars.get('c0_0')
             if isinstance(p, collections.Sequence):
                 lenpars = len(p)
@@ -172,39 +228,23 @@ class OrthogPolyBase(ParametricModel):
                 lenpars = 1
             if param_dim != lenpars:
                 if param_dim == 1:
-                    log.info("Inferred {0} dimensions when creating a {1} model. "
-                             "Resetting param_dim to {2}".format(lenpars,
-                                                                 self.__class__.__name__,
-                                                                 lenpars))
+                    log.info("Inferred {0} dimensions when creating a {1} "
+                             "model. Resetting param_dim to {2}".format(
+                                 lenpars, self.__class__.__name__, lenpars))
                     param_dim = lenpars
                 else:
-                    raise ValueError("Number of coefficient sets {0} does not match number "
-                                     "of parameter sets {1}".format(lenpars, param_dim))
+                    raise ValueError("Number of coefficient sets {0} does "
+                                     "not match number of parameter sets "
+                                     "({1})".format(lenpars, param_dim))
             self._validate_pars(**pars)
-            self.set_coeff(pardim=param_dim, **pars)
-        super(OrthogPolyBase, self).__init__(self.param_names, n_inputs=2, n_outputs=1,
-                                             param_dim=param_dim)
 
-    def _generate_coeff_names(self):
-        names = []
-        for j in range(self.ydeg + 1):
-            for i in range(self.xdeg + 1):
-                names.append('c{0}_{1}'.format(i, j))
-        return names
+        self._set_coeffs(param_dim, **pars)
 
-    def set_coeff(self, pardim=1, **pars):
-        if not pars:
-            for name in self.param_names:
-                uname = '_' + name
-                self.__setattr__(uname, parameters.Parameter(
-                                 name, [0.] * pardim, self, pardim))
-        else:
-            for name in self.param_names:
-                uname = '_' + name
-                self.__setattr__(uname, parameters.Parameter(
-                    name, pars[name], self, pardim))
+        super(OrthogonalPolynomialModel, self).__init__(n_inputs=2,
+                                                        n_outputs=1,
+                                                        param_dim=param_dim)
 
-    def get_numcoeff(self):
+    def get_num_coeff(self):
         """
         Determine how many coefficients are needed
 
@@ -212,19 +252,20 @@ class OrthogPolyBase(ParametricModel):
         -------
         numc : int
             number of coefficients
-
         """
-        numc = (self.xdeg + 1) * (self.ydeg + 1)
-        return numc
+
+        return (self.x_degree + 1) * (self.y_degree + 1)
 
     def _validate_pars(self, **pars):
-        numcoeff = self.get_numcoeff()
+        numcoeff = self.get_num_coeff()
         assert(len(pars) == numcoeff)
 
     def _invlex(self):
+        # TODO: This is a very slow way to do this; fix it and related methods
+        # like _alpha
         c = []
-        xvar = np.arange(self.xdeg + 1)
-        yvar = np.arange(self.ydeg + 1)
+        xvar = np.arange(self.x_degree + 1)
+        yvar = np.arange(self.y_degree + 1)
         for j in yvar:
             for i in xvar:
                 c.append((i, j))
@@ -232,19 +273,19 @@ class OrthogPolyBase(ParametricModel):
 
     def invlex_coeff(self):
         coeff = []
-        xvar = np.arange(self.xdeg + 1)
-        yvar = np.arange(self.ydeg + 1)
+        xvar = np.arange(self.x_degree + 1)
+        yvar = np.arange(self.y_degree + 1)
         for j in yvar:
             for i in xvar:
-                name = 'c' + str(i) + '_' + str(j)
+                name = 'c{0}_{1}'.format(i, j)
                 coeff.append(getattr(self, name))
         return np.array(coeff[::-1])
 
     def _alpha(self):
         invlexdeg = self._invlex()
-        invlexdeg[:, 1] = invlexdeg[:, 1] + self.xdeg + 1
-        nx = self.xdeg + 1
-        ny = self.ydeg + 1
+        invlexdeg[:, 1] = invlexdeg[:, 1] + self.x_degree + 1
+        nx = self.x_degree + 1
+        ny = self.y_degree + 1
         alpha = np.zeros((ny * nx + 3, ny + nx))
         for n in range(len(invlexdeg)):
             alpha[n][invlexdeg[n]] = [1, 1]
@@ -261,9 +302,9 @@ class OrthogPolyBase(ParametricModel):
 
         karr = np.diff(alpha, axis=0)
         kfunc = self._fcache(x, y)
-        xterms = self.xdeg + 1
-        yterms = self.ydeg + 1
-        nterms = xterms + yterms
+        x_terms = self.x_degree + 1
+        y_terms = self.y_degree + 1
+        nterms = x_terms + y_terms
         for n in range(1, nterms + 1 + 3):
             setattr(self, 'r' + str(n), 0.)
 
@@ -281,6 +322,13 @@ class OrthogPolyBase(ParametricModel):
         for i in range(1, nterms + 1 + 3):
             result = result + getattr(self, 'r' + str(i))
         return result
+
+    def _generate_coeff_names(self):
+        names = []
+        for j in range(self.y_degree + 1):
+            for i in range(self.x_degree + 1):
+                names.append('c{0}_{1}'.format(i, j))
+        return names
 
     def _fcache(self, x, y):
         """
@@ -313,7 +361,6 @@ class OrthogPolyBase(ParametricModel):
 
 
 class Chebyshev1DModel(PolynomialModel):
-
     """
 
     1D Chebyshev polynomial of the 1st kind.
@@ -381,11 +428,11 @@ class Chebyshev1DModel(PolynomialModel):
             The Vandermonde matrix
         """
         x = np.array(x, dtype=np.float, copy=False, ndmin=1)
-        v = np.empty((self.deg + 1,) + x.shape, dtype=x.dtype)
+        v = np.empty((self.degree + 1,) + x.shape, dtype=x.dtype)
         v[0] = x * 0 + 1
         x2 = 2 * x
         v[1] = x
-        for i in range(2, self.deg + 1):
+        for i in range(2, self.degree + 1):
             v[i] = v[i - 1] * x2 - v[i - 2]
         return np.rollaxis(v, 0, v.ndim)
 
@@ -471,10 +518,10 @@ class Legendre1DModel(PolynomialModel):
 
         """
         x = np.array(x, dtype=np.float, copy=False, ndmin=1)
-        v = np.empty((self.deg + 1,) + x.shape, dtype=x.dtype)
+        v = np.empty((self.degree + 1,) + x.shape, dtype=x.dtype)
         v[0] = x * 0 + 1
         v[1] = x
-        for i in range(2, self.deg + 1):
+        for i in range(2, self.degree + 1):
             v[i] = (v[i - 1] * x * (2 * i - 1) - v[i - 2] * (i - 1)) / i
         return np.rollaxis(v, 0, v.ndim)
 
@@ -542,10 +589,10 @@ class Poly1DModel(PolynomialModel):
 
         """
         x = np.array(x, dtype=np.float, copy=False, ndmin=1)
-        v = np.empty((self.deg + 1,) + x.shape, dtype=np.float)
+        v = np.empty((self.degree + 1,) + x.shape, dtype=np.float)
         v[0] = x * 0 + 1
         v[1] = x
-        for i in range(2, self.deg + 1):
+        for i in range(2, self.degree + 1):
             v[i] = v[i - 1] * x
         return np.rollaxis(v, 0, v.ndim)
 
@@ -660,13 +707,13 @@ class Poly2DModel(PolynomialModel):
         if x.size != y.size:
             raise ValueError('Expected x and y to be of equal size')
 
-        designx = x[:, None] ** np.arange(self.deg + 1)
-        designy = y[:, None] ** np.arange(1, self.deg + 1)
+        designx = x[:, None] ** np.arange(self.degree + 1)
+        designy = y[:, None] ** np.arange(1, self.degree + 1)
 
         designmixed = []
-        for i in range(1, self.deg):
-            for j in range(1, self.deg):
-                if i + j <= self.deg:
+        for i in range(1, self.degree):
+            for j in range(1, self.degree):
+                if i + j <= self.degree:
                     designmixed.append((x ** i) * (y ** j))
         designmixed = np.array(designmixed).T
         if designmixed.any():
@@ -677,11 +724,11 @@ class Poly2DModel(PolynomialModel):
 
     def invlex_coeff(self):
         coeff = []
-        lencoeff = range(self.deg + 1)
+        lencoeff = range(self.degree + 1)
         for i in lencoeff:
             for j in lencoeff:
-                if i + j <= self.deg:
-                    name = 'c' + str(j) + '_' + str(i)
+                if i + j <= self.degree:
+                    name = 'c{0}_{1}'.format(j, i)
                     coeff.append(getattr(self, name))
         return np.array(coeff[::-1])
 
@@ -707,8 +754,7 @@ class Poly2DModel(PolynomialModel):
         return _convert_output(result, fmt)
 
 
-class Chebyshev2DModel(OrthogPolyBase):
-
+class Chebyshev2DModel(OrthogonalPolynomialModel):
     """
     2D Chebyshev polynomial of the 1st kind.
 
@@ -737,11 +783,14 @@ class Chebyshev2DModel(OrthogPolyBase):
         keyword: value pairs, representing parameter_name: value
 
     """
+
     def __init__(self, x_degree, y_degree, x_domain=None, x_window=[-1, 1],
-                 y_domain=None, y_window=[-1, 1], param_dim=1, **pars):
+                 y_domain=None, y_window=[-1,1], param_dim=1, **pars):
         super(Chebyshev2DModel, self).__init__(x_degree, y_degree,
-                                               x_domain=x_domain, y_domain=y_domain,
-                                               x_window=x_window, y_window=y_window,
+                                               x_domain=x_domain,
+                                               y_domain=y_domain,
+                                               x_window=x_window,
+                                               y_window=y_window,
                                                param_dim=param_dim, **pars)
 
     def _fcache(self, x, y):
@@ -749,16 +798,17 @@ class Chebyshev2DModel(OrthogPolyBase):
         Calculate the individual Chebyshev functions once
         and store them in a dictionary to be reused.
         """
-        xterms = self.xdeg + 1
-        yterms = self.ydeg + 1
+
+        x_terms = self.x_degree + 1
+        y_terms = self.y_degree + 1
         kfunc = {}
         kfunc[0] = np.ones(x.shape)
         kfunc[1] = x.copy()
-        kfunc[xterms] = np.ones(y.shape)
-        kfunc[xterms + 1] = y.copy()
-        for n in range(2, xterms):
+        kfunc[x_terms] = np.ones(y.shape)
+        kfunc[x_terms + 1] = y.copy()
+        for n in range(2, x_terms):
             kfunc[n] = 2 * x * kfunc[n - 1] - kfunc[n - 2]
-        for n in range(xterms + 2, xterms + yterms):
+        for n in range(x_terms + 2, x_terms + y_terms):
             kfunc[n] = 2 * y * kfunc[n - 1] - kfunc[n - 2]
         return kfunc
 
@@ -786,17 +836,20 @@ class Chebyshev2DModel(OrthogPolyBase):
             The Vandermonde matrix
 
         """
+
         if x.shape != y.shape:
             raise ValueError("x and y must have the same shape")
+
         x = x.flatten()
         y = y.flatten()
-        xderiv = self._chebderiv1d(x, self.xdeg + 1).T
-        yderiv = self._chebderiv1d(y, self.ydeg + 1).T
+        x_deriv = self._chebderiv1d(x, self.x_degree + 1).T
+        y_deriv = self._chebderiv1d(y, self.y_degree + 1).T
 
         ij = []
-        for i in range(self.ydeg + 1):
-            for j in range(self.xdeg + 1):
-                ij.append(xderiv[j] * yderiv[i])
+        for i in range(self.y_degree + 1):
+            for j in range(self.x_degree + 1):
+                ij.append(x_deriv[j] * y_deriv[i])
+
         v = np.array(ij)
         return v.T
 
@@ -816,8 +869,8 @@ class Chebyshev2DModel(OrthogPolyBase):
         return np.rollaxis(d, 0, d.ndim)
 
 
-class Legendre2DModel(OrthogPolyBase):
 
+class Legendre2DModel(OrthogonalPolynomialModel):
     """
     Legendre 2D polynomial.
 
@@ -845,13 +898,15 @@ class Legendre2DModel(OrthogPolyBase):
         number of parameter sets
     pars : dict
         keyword: value pairs, representing parameter_name: value
-
     """
+
     def __init__(self, x_degree, y_degree, x_domain=None, x_window=[-1, 1],
                  y_domain=None, y_window=[-1, 1], param_dim=1, **pars):
         super(Legendre2DModel, self).__init__(x_degree, y_degree,
-                                              x_domain=x_domain, y_domain=y_domain,
-                                              x_window=x_window, y_window=y_window,
+                                              x_domain=x_domain,
+                                              y_domain=y_domain,
+                                              x_window=x_window,
+                                              y_window=y_window,
                                               param_dim=param_dim, **pars)
 
     def _fcache(self, x, y):
@@ -859,18 +914,19 @@ class Legendre2DModel(OrthogPolyBase):
         Calculate the individual Legendre functions once
         and store them in a dictionary to be reused.
         """
-        xterms = self.xdeg + 1
-        yterms = self.ydeg + 1
+
+        x_terms = self.x_degree + 1
+        y_terms = self.y_degree + 1
         kfunc = {}
         kfunc[0] = np.ones(x.shape)
         kfunc[1] = x.copy()
-        kfunc[xterms] = np.ones(y.shape)
-        kfunc[xterms + 1] = y.copy()
-        for n in range(2, xterms):
+        kfunc[x_terms] = np.ones(y.shape)
+        kfunc[x_terms + 1] = y.copy()
+        for n in range(2, x_terms):
             kfunc[n] = ((2 * (n - 1) + 1) * x * kfunc[n - 1] - (n - 1) * kfunc[n - 2]) / n
-        for n in range(2, yterms):
-            kfunc[n + xterms] = ((2 * (n - 1) + 1) * y * kfunc[n + xterms - 1] -
-                                 (n - 1) * kfunc[n + xterms - 2]) / (n)
+        for n in range(2, y_terms):
+            kfunc[n + x_terms] = ((2 * (n - 1) + 1) * y * kfunc[n + x_terms - 1] -
+                                  (n - 1) * kfunc[n + x_terms - 2]) / (n)
         return kfunc
 
     def deriv(self, pars=None, x=None, y=None, z=None):
@@ -901,13 +957,13 @@ class Legendre2DModel(OrthogPolyBase):
             raise ValueError("x and y must have the same shape")
         x = x.flatten()
         y = y.flatten()
-        xderiv = self._legendderiv1d(x, self.xdeg + 1).T
-        yderiv = self._legendderiv1d(y, self.ydeg + 1).T
+        x_deriv = self._legendderiv1d(x, self.x_degree + 1).T
+        y_deriv = self._legendderiv1d(y, self.y_degree + 1).T
 
         ij = []
-        for i in range(self.ydeg + 1):
-            for j in range(self.xdeg + 1):
-                ij.append(xderiv[j] * yderiv[i])
+        for i in range(self.y_degree + 1):
+            for j in range(self.x_degree + 1):
+                ij.append(x_deriv[j] * y_deriv[i])
 
         v = np.array(ij)
         return v.T
@@ -927,8 +983,7 @@ class Legendre2DModel(OrthogPolyBase):
         return np.rollaxis(d, 0, d.ndim)
 
 
-class _SIP1D(Model):
-
+class _SIP1D(PolynomialBase):
     """
     This implements the Simple Imaging Polynomial Model (SIP) in 1D.
 
@@ -939,30 +994,34 @@ class _SIP1D(Model):
     def __init__(self, order, coeff_prefix, param_dim=1, **pars):
         self.order = order
         self.coeff_prefix = coeff_prefix
-        self.param_names = self._generate_coeff_names(coeff_prefix)
+        self._param_names = self._generate_coeff_names(coeff_prefix)
+        coeffname = '{0}0_2'.format(coeff_prefix)
 
-        if not pars:
-            self.set_coeff(pardim=param_dim)
-        else:
-            p = pars.get('{0}0_2'.format(coeff_prefix, None))
+        if pars:
+            p = pars.get(coeffname, None)
             if isinstance(p, collections.Sequence):
                 lenpars = len(p)
             else:
                 lenpars = 1
+            # TODO: This pattern is repeated in so many models and seems like a
+            # check that could be moved into a method
             if param_dim != lenpars:
                 if param_dim == 1:
-                    log.info("Inferred {0} dimensions when creating a {1} model. "
-                             "Resetting param_dim to {2}".format(lenpars,
-                                                                 self.__class__.__name__,
-                                                                 lenpars))
+                    log.info("Inferred {0} dimensions when creating a {1} "
+                             "model. Resetting param_dim to {2}".format(
+                                 lenpars, self.__class__.__name__, lenpars))
                     param_dim = lenpars
                 else:
-                    raise ValueError("Number of coefficient sets ({0}) does not match number "
-                                     "of parameter sets ({1}).".format(lenpars, param_dim))
-            self._validate_pars(ndim=2, **pars)
-            self.set_coeff(pardim=param_dim, **pars)
+                    raise ValueError("Number of coefficient sets ({0}) does "
+                                     "not match number of parameter sets "
+                                     "({1}).".format(lenpars, param_dim))
 
-        super(_SIP1D, self).__init__(self.param_names, n_inputs=2, n_outputs=1,
+        if pars:
+            self._validate_pars(ndim=2, **pars)
+
+        self._set_coeffs(param_dim, **pars)
+
+        super(_SIP1D, self).__init__(n_inputs=2, n_outputs=1,
                                      param_dim=param_dim)
 
     def __repr__(self):
@@ -977,10 +1036,11 @@ class _SIP1D(Model):
               self.order,
               self.coeff_prefix,
               self._param_dim,
-              "\n                   ".join(i + ':  ' + str(getattr(self, i)) for
-                                           i in self.param_names)
-        )
-        return fmt
+              indent('\n'.join('{0}: {1}'.format(n, getattr(self, n))
+                     for n in self.param_names),
+                     width=19))
+
+        return dedent(fmt[1:])
 
     def __str__(self):
         fmt = """
@@ -994,13 +1054,14 @@ class _SIP1D(Model):
               self.__class__.__name__,
               self.order,
               self.coeff_prefix,
-              self.param_dim,
-              "\n                   ".join(i + ':  ' + str(getattr(self, i)) for
-                                           i in self.param_names)
-        )
-        return fmt
+              self._param_dim,
+              indent('\n'.join('{0}: {1}'.format(n, getattr(self, n))
+                     for n in self.param_names),
+                     width=19))
 
-    def get_numcoeff(self, ndim):
+        return dedent(fmt[1:])
+
+    def get_num_coeff(self, ndim):
         """
         Return the number of coefficients in one parset
         """
@@ -1022,25 +1083,8 @@ class _SIP1D(Model):
                     names.append('{0}{1}_{2}'.format(coeff_prefix, i, j))
         return names
 
-    def set_coeff(self, pardim=1, **pars):
-        if not pars:
-            # default values
-            for name in self.param_names:
-                if pardim == 1:
-                    self.__setattr__('_' + name,
-                                     parameters.Parameter(name, 0, self, 1))
-                else:
-                    self.__setattr__('_' + name,
-                                     parameters.Parameter(name, [0] * pardim,
-                                                          self, pardim))
-        else:
-            for name in self.param_names:
-                self.__setattr__('_' + name,
-                                 parameters.Parameter(name, pars[name],
-                                                      self, pardim))
-
     def _validate_pars(self, ndim, **pars):
-        numcoeff = self.get_numcoeff(ndim)
+        numcoeff = self.get_num_coeff(ndim)
         assert(len(pars) == numcoeff)
 
     def _coef_matrix(self, coeff_prefix):
@@ -1075,9 +1119,7 @@ class _SIP1D(Model):
 
 
 class SIPModel(SCompositeModel):
-
     """
-
     Simple Imaging Polynomial (SIP) model.
 
     The SIP convention is used to represent distortions in FITS image headers.

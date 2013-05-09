@@ -48,8 +48,8 @@ from textwrap import dedent
 
 import numpy as np
 
-from ..utils import indent
-from .utils import InputParameterError
+from ..utils import indent, isiterable
+from .parameters import InputParameterError
 from . import parameters
 from . import constraints
 
@@ -143,11 +143,11 @@ class _ParameterProperty(object):
         if self.name in obj.param_check:
             getattr(obj, obj.param_check[self.name])(val)
         if isinstance(obj, ParametricModel):
-            if not obj._parameters._changed:
+            if not obj._parameters._modified:
                 par = parameters.Parameter(self.name, val, obj, obj.param_dim)
                 oldpar = getattr(obj, self.name)
                 if oldpar is not None and oldpar.parshape != par.parshape:
-                    raise InputParameterError(
+                    raise parameters.InputParameterError(
                         "Input parameter {0} does not "
                         "have the required shape".format(self.name))
                 else:
@@ -161,7 +161,7 @@ class _ParameterProperty(object):
             par = parameters.Parameter(self.name, val, obj, obj.param_dim)
             oldpar = getattr(obj, self.name)
             if oldpar is not None and oldpar.parshape != par.parshape:
-                raise InputParameterError(
+                raise parameters.InputParameterError(
                     "Input parameter {0} does not "
                     "have the required shape".format(self.name))
             else:
@@ -192,71 +192,41 @@ class Model(object):
     # parameter_validation_function_name see projections.AZP for example
     param_check = {}
 
-    def __init__(self, param_names, n_inputs, b_outputs, param_dim=1):
-        self._param_dim = param_dim
+    def __init__(self, n_inputs, n_outputs, param_dim=1):
         self._n_inputs = n_inputs
         self._n_outputs = n_outputs
-        self._param_names = param_names
-        #_parcheck is a dictionary to register parameter validation funcitons
-        # key: value pairs are parameter_name: parameter_validation_function_name
-        # see projections.AZP for example
-        self._parcheck = {}
-        for par in param_names:
-            setattr(self.__class__, par, _ParameterProperty(par))
+        self._param_dim = param_dim
 
     @property
     def n_inputs(self):
-        """
-        Number of input variables in model evaluation.
-        """
+        """Number of input variables in model evaluation."""
+
         return self._n_inputs
 
     @property
     def n_outputs(self):
-        """
-        Number of output variables returned when a model is evaluated.
-        """
+        """Number of output valiables returned when a model is evaluated."""
 
         return self._n_outputs
 
     @property
     def param_dim(self):
-        """
-        Number of parameter sets in a model.
-        """
+        """Number of parameter sets in a model."""
+
         return self._param_dim
-
-    @param_dim.setter
-    def param_dim(self, val):
-        """
-        Set the number of parameter sets in a model.
-        """
-        self._param_dim = val
-
-    @property
-    def param_names(self):
-        """
-        A list of names of the parameters defining a model.
-        """
-        return self._param_names
-
-    @param_names.setter
-    def param_names(self, val):
-        self._param_names = val
 
     def __repr__(self):
         fmt = "{0}(".format(self.__class__.__name__)
-        for i in range(len(self.param_names)):
+        for name in self.param_names:
             fmt1 = """
             {0}={1},
-            """.format(self.param_names[i], getattr(self, self.param_names[i]))
+            """.format(name, getattr(self, name))
             fmt += fmt1
         fmt += ")"
 
         return fmt
 
     def __str__(self):
-
         fmt = """
         Model: {0}
         Parameter sets: {1}
@@ -277,19 +247,10 @@ class Model(object):
         This is an array where each column represents one parameter set.
         """
 
-        parameters = [getattr(self, attr) for attr in self.param_names]
-        shapes = [par.parshape for par in parameters]
-        lenshapes = np.asarray(len(p.parshape) for p in parameters)
-        shapes = [p.parshape for p in parameters]
-        if (lenshapes > 1).any():
-            if () in shapes:
-                psets = np.asarray(parameters, dtype=np.object)
-            else:
-                psets = np.asarray(parameters)
-        else:
-            psets = np.asarray(parameters)
-            psets.shape = (len(self.param_names), self.param_dim)
-        return psets
+        param_sets = np.asarray([getattr(self, attr).value
+                                 for attr in self.param_names])
+        param_sets.shape = (len(self.param_names), self.param_dim)
+        return param_sets
 
     def inverse(self):
         """
@@ -328,7 +289,8 @@ class Model(object):
         elif mode in ['serial', 's']:
             return SCompositeModel([self, newtr])
         else:
-            raise InputParameterError("Unrecognized mode {0}".format(mode))
+            raise parameters.InputParameterError(
+                    "Unrecognized mode {0}".format(mode))
 
     @abc.abstractmethod
     def __call__(self):
@@ -336,7 +298,6 @@ class Model(object):
 
 
 class ParametricModel(Model):
-
     """
     Base class for all fittable models.
 
@@ -349,8 +310,6 @@ class ParametricModel(Model):
 
     Parameters
     ----------
-    param_names: list
-        parameter names
     n_inputs: int
         number of inputs
     n_outputs: int
@@ -387,19 +346,19 @@ class ParametricModel(Model):
         problem.
     """
 
-    def __init__(self, param_names, n_inputs, n_outputs, param_dim=1,
-                 fittable=True, fixed=None, tied=None, bounds=None,
-                 eqcons=None, ineqcons=None):
+    def __init__(self, n_inputs, n_outputs, param_dim=1, fittable=True,
+                 fixed=None, tied=None, bounds=None, eqcons=None,
+                 ineqcons=None):
         self.linear = True
-        super(ParametricModel, self).__init__(param_names, n_inputs, n_outputs,
+        super(ParametricModel, self).__init__(n_inputs, n_outputs,
                                               param_dim=param_dim)
         self.fittable = fittable
-        self._parameters = parameters.Parameters(self, self.param_names,
-                                                 param_dim=param_dim)
+        self._parameters = parameters.Parameters(self)
+
         # Initialize the constraints for each parameter
-        _fixed = {}.fromkeys(self.param_names, False)
-        _tied = {}.fromkeys(self.param_names, False)
-        _bounds = {}.fromkeys(self.param_names, [-1.E12, 1.E12])
+        _fixed = dict.fromkeys(self.param_names, False)
+        _tied = dict.fromkeys(self.param_names, False)
+        _bounds = dict.fromkeys(self.param_names, [-1.E12, 1.E12])
         if eqcons is None:
             eqcons = []
         if ineqcons is None:
@@ -489,16 +448,16 @@ class ParametricModel(Model):
             if self._parameters._is_same_length(value):
                 self._parameters = value
             else:
-                raise InputParameterError(
+                raise parameters.InputParameterError(
                     "Expected the list of parameters to be the same "
                     "length as the initial list.")
-        elif isinstance(value, (list, np.ndarray)):
+        elif isiterable(value):
             _val = parameters._tofloat(value)[0]
             if self._parameters._is_same_length(_val):
-                self._parameters._changed = True
+                self._parameters._modified = True
                 self._parameters[:] = _val
             else:
-                raise InputParameterError(
+                raise parameters.InputParameterError(
                     "Expected the list of parameters to be the same "
                     "length as the initial list.")
         else:
@@ -510,6 +469,47 @@ class ParametricModel(Model):
         considered common for several models and are to be fitted together.
         """
         self.joint = jpars
+
+
+class Parametric1DModel(ParametricModel):
+    """
+    Base class for one dimensional parametric models
+
+    This class provides an easier interface to defining new models.
+    Examples can be found in functional_models.py
+
+    Parameters
+    ----------
+    parameter_dict : dictionary
+        Dictionary of model parameters with initialisation values
+        {'parameter_name': 'parameter_value'}
+    """
+
+    deriv = None
+    linear = False
+
+    def __init__(self, param_dict, **cons):
+        # Get parameter dimension
+        param_dim = np.size(param_dict[self.param_names[0]])
+
+        for param_name in self.param_names:
+            setattr(self, '_' + param_name, param_dict[param_name])
+
+        super(Parametric1DModel, self).__init__(n_inputs=1, n_outputs=1,
+                                                param_dim=param_dim, **cons)
+
+    def __call__(self, x):
+        """
+        Transforms data using this model.
+
+        Parameters
+        ----------
+        x : array like or a number
+            input
+        """
+        x, fmt = _convert_input(x, self.param_dim)
+        result = self.eval(x, *self.param_sets)
+        return _convert_output(result, fmt)
 
 
 class LabeledInput(dict):
@@ -637,6 +637,7 @@ class _CompositeModel(Model):
             Model:  {0}
             """.format(self.__class__.__name__)
         fmt_args = tuple(repr(tr) for tr in self._transforms)
+        fmt1 = (" %s  " * len(self._transforms)) % fmt_args
         fmt = fmt + fmt1
         return fmt
 
@@ -661,9 +662,7 @@ class _CompositeModel(Model):
 
 
 class SCompositeModel(_CompositeModel):
-
     """
-
     Execute models in series.
 
     Parameters
@@ -783,9 +782,7 @@ class SCompositeModel(_CompositeModel):
 
 
 class PCompositeModel(_CompositeModel):
-
     """
-
     Execute models in parallel.
 
     Parameters
@@ -849,48 +846,3 @@ class PCompositeModel(_CompositeModel):
             for tr in self._transforms:
                 result += tr(*data)
             return result
-
-
-class Parametric1DModel(ParametricModel):
-    """
-    Base class for one dimensional parametric models
-
-    This class provides an easier interface to defining new models.
-    Examples can be found in functional_models.py
-
-    Parameters
-    ----------
-    parameter_dict : dictionary
-        Dictionary of model parameters with initialisation values
-        {'parameter_name': 'parameter_value'}
-
-    """
-    deriv = None
-    linear = False
-
-    def __init__(self, param_dict, **cons):
-        # Get parameter dimension
-        param_dim = np.size(param_dict[self.param_names[0]])
-
-        # Initialize model parameters. This is preliminary as long there is
-        # no new parameter class. It may be more reasonable and clear to init
-        # the parameters in the model constructor itself, with constraints etc.
-        for param_name in self.param_names:
-            setattr(self, "_" + param_name, parameters.Parameter(name=param_name,
-                            val=param_dict[param_name], mclass=self, param_dim=param_dim))
-
-        super(Parametric1DModel, self).__init__(self.param_names, n_inputs=1,
-                                                n_outputs=1, param_dim=param_dim, **cons)
-
-    def __call__(self, x):
-        """
-        Transforms data using this model.
-
-        Parameters
-        ----------
-        x : array like or a number
-            input
-        """
-        x, fmt = _convert_input(x, self.param_dim)
-        result = self.eval(x, *self.param_sets)
-        return _convert_output(result, fmt)
