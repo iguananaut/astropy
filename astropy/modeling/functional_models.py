@@ -8,8 +8,6 @@ from __future__ import division
 import collections
 
 import numpy as np
-
-from . import parameters
 from .core import (ParametricModel, Parametric1DModel, Model, _convert_input,
                    _convert_output)
 from .parameters import Parameter, InputParameterError
