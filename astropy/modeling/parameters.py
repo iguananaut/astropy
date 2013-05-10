@@ -82,7 +82,7 @@ class Parameter(object):
     """
 
     def __init__(self, name, fixed=False, tied=False, minvalue=None,
-                 maxvalue=None, instance=None):
+                 maxvalue=None, model=None):
         super(Parameter, self).__init__()
         self._name = name
         self._attr = '_' + name
@@ -91,14 +91,14 @@ class Parameter(object):
         self._min = min
         self._max = max
 
-        self._instance = instance
+        self._model = model
 
-        if instance is not None:
-            value = getattr(instance, self._attr)
-            _, self._shape = self._validate_value(instance, value)
+        if model is not None:
+            value = getattr(model, self._attr)
+            _, self._shape = self._validate_value(model, value)
 
     def __get__(self, obj, objtype):
-        return self.__class__(self._name, instance=obj)
+        return self.__class__(self._name, model=obj)
 
     def __set__(self, obj, value):
         value, shape = self._validate_value(obj, value)
@@ -124,13 +124,13 @@ class Parameter(object):
             setattr(obj, self._attr, value)
 
     def __len__(self):
-        if self._instance is None:
+        if self._model is None:
             raise TypeError('Parameter definitions do not have a length.')
-        return self._instance.param_dim
+        return self._model.param_dim
 
     def __getitem__(self, key):
-        value = getattr(self._instance, self._attr)
-        if self._instance.param_dim == 1:
+        value = getattr(self._model, self._attr)
+        if self._model.param_dim == 1:
             # Wrap the value in a list so that getitem can work for sensible
             # indcies like [0] and [-1]
             value = [value]
@@ -139,8 +139,8 @@ class Parameter(object):
     def __setitem__(self, key, value):
         # Get the existing value and check whether it even makes sense to
         # apply this index
-        oldvalue = getattr(self._instance, self._attr)
-        param_dim = self._instance.param_dim
+        oldvalue = getattr(self._model, self._attr)
+        param_dim = self._model.param_dim
 
         if param_dim == 1:
             # Convert the single-dimension value to a list to allow some slices
@@ -158,14 +158,14 @@ class Parameter(object):
             try:
                 oldvalue[key] = value
                 if param_dim == 1:
-                    setattr(self._instance, self._attr, value)
+                    setattr(self._model, self._attr, value)
             except IndexError:
                 raise InputParameterError(
                     "Input dimension {0} invalid for {1!r} parameter with "
                     "dimension {2}".format(key, self.name, param_dim))
 
     def __repr__(self):
-        if self._instance is None:
+        if self._model is None:
             return 'Parameter({0!r})'.format(self._name)
         else:
             return 'Parameter({0!r}, value={1!r})'.format(
@@ -181,8 +181,8 @@ class Parameter(object):
 
     @property
     def value(self):
-        if self._instance is not None:
-            return getattr(self._instance, self._attr)
+        if self._model is not None:
+            return getattr(self._model, self._attr)
         raise AttributeError('Parameter definition does not have a value')
 
     @property
@@ -199,11 +199,11 @@ class Parameter(object):
 
     @fixed.setter
     def fixed(self, value):
-        if self._instance is not None:
+        if self._model is not None:
             assert isinstance(value, bool), "Fixed can be True or False"
             self._fixed = value
-            self._instance.constraints._fixed.update({self.name: value})
-            self._instance.constraints._update()
+            self._model.constraints._fixed.update({self.name: value})
+            self._model.constraints._update()
         else:
             raise AttributeError("can't set attribute 'fixed' on Parameter "
                                  "definition")
@@ -219,12 +219,12 @@ class Parameter(object):
 
     @tied.setter
     def tied(self, value):
-        if self._instance is not None:
+        if self._model is not None:
             assert callable(value) or value in (False, None), \
                     "Tied must be a callable"
             self._tied = value
-            self._instance.constraints._tied.update({self.name:value})
-            self._instance.constraints._update()
+            self._model.constraints._tied.update({self.name:value})
+            self._model.constraints._update()
         else:
             raise AttributeError("can't set attribute 'tied' on Parameter "
                                  "definition")
@@ -239,11 +239,11 @@ class Parameter(object):
 
     @min.setter
     def min(self, value):
-        if self._instance is not None:
+        if self._model is not None:
             assert isinstance(value, numbers.Number), \
                     "Min value must be a number"
             self._min = float(value)
-            self._instance.constraints.set_range(
+            self._model.constraints.set_range(
                     {self.name: (value, self.max)})
         else:
             raise AttributeError("can't set attribute 'min' on Parameter "
@@ -258,11 +258,11 @@ class Parameter(object):
 
     @max.setter
     def max(self, value):
-        if self._instance is not None:
+        if self._model is not None:
             assert isinstance(value, numbers.Number), \
                     "Max value must be a number"
             self._max = float(value)
-            self._instance.constraints.set_range(
+            self._model.constraints.set_range(
                     {self.name: (self.min, value)})
         else:
             raise AttributeError("can't set attribute 'max' on Parameter "
@@ -379,8 +379,8 @@ class Parameters(list):
         an instance of a subclass of `~astropy.modeling.core.ParametricModel`
     """
 
-    def __init__(self, instance):
-        self._instance = instance
+    def __init__(self, model):
+        self._model = model
         # A flag set to True by a fitter to indicate that the flat
         # list of parameters has been changed.
         self._modified = False
@@ -413,7 +413,7 @@ class Parameters(list):
             par = self[sl]
             if len(par) == 1:
                 par = par[0]
-            setattr(self._instance, key, par)
+            setattr(self._model, key, par)
         self._modified = False
 
     def _is_same_length(self, newpars):
@@ -433,8 +433,8 @@ class Parameters(list):
         Create a list of model parameters
         """
 
-        param_names = self._instance.param_names
-        parlist = [getattr(self._instance, attr) for attr in param_names]
+        param_names = self._model.param_names
+        parlist = [getattr(self._model, attr) for attr in param_names]
         flatpars = []
         start = 0
         for (name, par) in zip(param_names, parlist):
