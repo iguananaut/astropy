@@ -79,7 +79,7 @@ class PolynomialBase(ParametricModel):
         for name in self.param_names:
             value = pars.get(name)
             if value is None:
-                if self.param_dim == 1:
+                if param_dim == 1:
                     value = 0.0
                 else:
                     value = [0.0] * param_dim
@@ -99,13 +99,14 @@ class PolynomialModel(PolynomialBase):
 
     """
 
-    def __init__(self, degree, n_inputs=1, n_outputs=1, param_dim=1, **pars):
+    def __init__(self, degree, n_inputs=1, n_outputs=1, param_dim=1,
+                 **parameters):
         self._degree = degree
         self._order = self.get_num_coeff(n_inputs)
         self._param_names = self._generate_coeff_names(n_inputs)
 
-        if pars:
-            p = pars.get('c0', pars.get('c0_0'))
+        if parameters:
+            p = parameters.get('c0', parameters.get('c0_0'))
             if isinstance(p, collections.Sequence):
                 lenpars = len(p)
             else:
@@ -120,9 +121,10 @@ class PolynomialModel(PolynomialBase):
                     raise ValueError("Number of coefficient sets ({0}) does "
                                      "not match number of parameter sets "
                                      "({1}).".format(lenpars, param_dim))
-            self._validate_pars(**pars)
 
-        self._set_coeffs(param_dim, **pars)
+            self._validate_pars(**parameters)
+
+        self._set_coeffs(param_dim, **parameters)
 
         super(PolynomialModel, self).__init__(n_inputs=n_inputs,
                                               n_outputs=n_outputs,
@@ -204,12 +206,12 @@ class OrthogonalPolynomialModel(PolynomialBase):
         range of the y independent variable
     param_dim : int
         number of parameter sets
-    **pars : dict
+    **parameters : dict
         {keyword: value} pairs, representing {parameter_name: value}
     """
 
     def __init__(self, x_degree, y_degree, x_domain=None, x_window=None,
-                 y_domain=None, y_window=None, param_dim=1, **pars):
+                 y_domain=None, y_window=None, param_dim=1, **parameters):
         # TODO: Perhaps some of these other parameters should be properties?
         self.x_degree = x_degree
         self.y_degree = y_degree
@@ -220,12 +222,12 @@ class OrthogonalPolynomialModel(PolynomialBase):
         self.y_window = y_window
         self._param_names = self._generate_coeff_names()
 
-        if pars:
-            p = pars.get('c0_0')
+        if parameters:
+            p = parameters.get('c0_0')
             if isinstance(p, collections.Sequence):
-                lenpars = len(p)
+                lenparameters = len(p)
             else:
-                lenpars = 1
+                lenparameters = 1
             if param_dim != lenpars:
                 if param_dim == 1:
                     log.info("Inferred {0} dimensions when creating a {1} "
@@ -236,9 +238,10 @@ class OrthogonalPolynomialModel(PolynomialBase):
                     raise ValueError("Number of coefficient sets {0} does "
                                      "not match number of parameter sets "
                                      "({1})".format(lenpars, param_dim))
-            self._validate_pars(**pars)
 
-        self._set_coeffs(param_dim, **pars)
+            self._validate_pars(**parameters)
+
+        self._set_coeffs(param_dim, **parameters)
 
         super(OrthogonalPolynomialModel, self).__init__(n_inputs=2,
                                                         n_outputs=1,
@@ -375,17 +378,18 @@ class Chebyshev1DModel(PolynomialModel):
         Fitters will remap the domain to this window
     param_dim : int
         number of parameter sets
-    **pars : dict
+    **parameters : dict
         keyword : value pairs, representing parameter_name: value
 
     """
 
     def __init__(self, degree, domain=None, window=[-1, 1], param_dim=1,
-                 **pars):
+                 **parameters):
         self.domain = domain
         self.window = window
         super(Chebyshev1DModel, self).__init__(degree, n_inputs=1, n_outputs=1,
-                                               param_dim=param_dim, **pars)
+                                               param_dim=param_dim,
+                                               **parameters)
 
     def clenshaw(self, x, coeff):
         """
@@ -469,16 +473,17 @@ class Legendre1DModel(PolynomialModel):
         Fitters will remap the domain to this window
     param_dim : int
         number of parameter sets
-    **pars : dict
+    **parameters : dict
         keyword: value pairs, representing parameter_name: value
 
     """
     def __init__(self, degree, domain=None, window=[-1, 1], param_dim=1,
-                 **pars):
+                 **parameters):
         self.domain = domain
         self.window = window
         super(Legendre1DModel, self).__init__(degree, n_inputs=1, n_outputs=1,
-                                              param_dim=param_dim, **pars)
+                                              param_dim=param_dim,
+                                              **parameters)
 
     def clenshaw(self, x, coeff):
         if isinstance(x, tuple) or isinstance(x, list):
@@ -558,16 +563,16 @@ class Poly1DModel(PolynomialModel):
         Fitters will remap the domain to this window
     param_dim : int
         number of parameter sets
-    **pars : dict
+    **parameters : dict
         keyword: value pairs, representing parameter_name: value
     """
 
     def __init__(self, degree, domain=[-1, 1], window=[-1, 1], param_dim=1,
-                 **pars):
+                 **parameters):
         self.domain = domain
         self.window = window
         super(Poly1DModel, self).__init__(degree, n_inputs=1, n_outputs=1,
-                                          param_dim=param_dim, **pars)
+                                          param_dim=param_dim, **parameters)
 
     def deriv(self, pars=None, x=None, y=None):
         """
@@ -643,15 +648,16 @@ class Poly2DModel(PolynomialModel):
         range of the y independent variable
     param_dim : int
         number of parameter sets
-    pars : dict
+    **parameters : dict
         keyword: value pairs, representing parameter_name: value
 
     """
+
     def __init__(self, degree, x_domain=[-1, 1], y_domain=[-1, 1],
                  x_window=[-1, 1], y_window=[-1, 1],
-                 param_dim=1, **pars):
+                 param_dim=1, **parameters):
         super(Poly2DModel, self).__init__(degree, n_inputs=2, n_outputs=1,
-                                          param_dim=param_dim, **pars)
+                                          param_dim=param_dim, **parameters)
         self.x_domain = x_domain
         self.y_domain = y_domain
         self.x_window = x_window
@@ -779,19 +785,20 @@ class Chebyshev2DModel(OrthogonalPolynomialModel):
         range of the y independent variable
     param_dim : int
         number of parameter sets
-    pars : dict
+    **parameters : dict
         keyword: value pairs, representing parameter_name: value
 
     """
 
     def __init__(self, x_degree, y_degree, x_domain=None, x_window=[-1, 1],
-                 y_domain=None, y_window=[-1,1], param_dim=1, **pars):
+                 y_domain=None, y_window=[-1,1], param_dim=1, **parameters):
         super(Chebyshev2DModel, self).__init__(x_degree, y_degree,
                                                x_domain=x_domain,
                                                y_domain=y_domain,
                                                x_window=x_window,
                                                y_window=y_window,
-                                               param_dim=param_dim, **pars)
+                                               param_dim=param_dim,
+                                               **parameters)
 
     def _fcache(self, x, y):
         """
@@ -896,18 +903,19 @@ class Legendre2DModel(OrthogonalPolynomialModel):
         range of the y independent variable
     param_dim : int
         number of parameter sets
-    pars : dict
+    **parameters : dict
         keyword: value pairs, representing parameter_name: value
     """
 
     def __init__(self, x_degree, y_degree, x_domain=None, x_window=[-1, 1],
-                 y_domain=None, y_window=[-1, 1], param_dim=1, **pars):
+                 y_domain=None, y_window=[-1, 1], param_dim=1, **parameters):
         super(Legendre2DModel, self).__init__(x_degree, y_degree,
                                               x_domain=x_domain,
                                               y_domain=y_domain,
                                               x_window=x_window,
                                               y_window=y_window,
-                                              param_dim=param_dim, **pars)
+                                              param_dim=param_dim,
+                                              **parameters)
 
     def _fcache(self, x, y):
         """
@@ -991,14 +999,14 @@ class _SIP1D(PolynomialBase):
     and SIPModel should be used instead.
 
     """
-    def __init__(self, order, coeff_prefix, param_dim=1, **pars):
+    def __init__(self, order, coeff_prefix, param_dim=1, **parameters):
         self.order = order
         self.coeff_prefix = coeff_prefix
         self._param_names = self._generate_coeff_names(coeff_prefix)
         coeffname = '{0}0_2'.format(coeff_prefix)
 
-        if pars:
-            p = pars.get(coeffname, None)
+        if parameters:
+            p = parameters.get(coeffname, None)
             if isinstance(p, collections.Sequence):
                 lenpars = len(p)
             else:
@@ -1016,10 +1024,10 @@ class _SIP1D(PolynomialBase):
                                      "not match number of parameter sets "
                                      "({1}).".format(lenpars, param_dim))
 
-        if pars:
-            self._validate_pars(ndim=2, **pars)
+        if parameters:
+            self._validate_pars(ndim=2, **parameters)
 
-        self._set_coeffs(param_dim, **pars)
+        self._set_coeffs(param_dim, **parameters)
 
         super(_SIP1D, self).__init__(n_inputs=2, n_outputs=1,
                                      param_dim=param_dim)
