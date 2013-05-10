@@ -64,8 +64,10 @@ class PolynomialBase(ParametricModel):
         # Parameter.__set__.
         # TODO: I wonder if there might be a way around that though...
         if attr[0] != '_' and self._param_names and attr in self._param_names:
-            # Set the internal attribute for this parameter instead
-            super(PolynomialBase, self).__setattr__('_' + attr, value)
+            param = Parameter(attr, instance=self)
+            # This is a little hackish, but we can actually reuse the
+            # Parameter.__set__ method here
+            param.__set__(self, value)
             # Rebuild the internal Parameters list
             self._parameters = Parameters(self)
         else:
