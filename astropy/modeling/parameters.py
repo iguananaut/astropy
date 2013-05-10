@@ -81,8 +81,11 @@ class Parameter(object):
         the upper bound of a parameter
     """
 
-    def __init__(self, name, fixed=False, tied=False, minvalue=None,
-                 maxvalue=None, model=None):
+    # See the _nextid classmethod
+    _nextid = 1
+
+    def __init__(self, name, fixed=False, tied=False, min=None,
+                 max=None, model=None):
         super(Parameter, self).__init__()
         self._name = name
         self._attr = '_' + name
@@ -90,12 +93,18 @@ class Parameter(object):
         self._tied = tied
         self._min = min
         self._max = max
+        self._order = None
 
         self._model = model
 
         if model is not None:
             value = getattr(model, self._attr)
             _, self._shape = self._validate_value(model, value)
+        else:
+            # Only Parameters declared as class-level descriptors require
+            # and ordering ID
+            self._order = self._get_nextid()
+
 
     def __get__(self, obj, objtype):
         return self.__class__(self._name, model=obj)
@@ -267,6 +276,19 @@ class Parameter(object):
         else:
             raise AttributeError("can't set attribute 'max' on Parameter "
                                  "definition")
+
+    @classmethod
+    def _get_nextid(cls):
+        """Returns a monotonically increasing ID used to order Parameter
+        descriptors delcared at the class-level of Model subclasses.
+
+        This allows the desired parameter order to be determined without
+        having to list it manually in the param_names class attribute.
+        """
+
+        nextid = cls._nextid
+        cls._nextid += 1
+        return nextid
 
     def _validate_value(self, model, value):
         if model is None:

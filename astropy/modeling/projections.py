@@ -101,7 +101,6 @@ class Pix2Sky_AZP(Zenithal):
 
     """
 
-    param_names = ['mu', 'gamma']
     param_check = {'mu': 'check_mu'}
     mu = Parameter('mu')
     gamma = Parameter('gamma')
@@ -164,7 +163,6 @@ class Sky2Pix_AZP(Zenithal):
 
     """
 
-    param_names = ['mu', 'gamma']
     param_check = {'mu': 'check_mu'}
     mu = Parameter('mu')
     gamma = Parameter('gamma')
@@ -348,7 +346,6 @@ class Pix2Sky_CYP(Cylindrical):
     CYP : Cylindrical perspective - pixel to sky.
     """
 
-    param_names = ['mu', 'lam']
     param_check = {'mu': 'check_mu', 'lam': 'check_lam'}
 
     mu = Parameter('mu')
@@ -386,7 +383,6 @@ class Sky2Pix_CYP(Cylindrical):
     CYP : Cylindrical Perspective - sky to pixel.
     """
 
-    param_names = ['mu', 'lam']
     param_check = {'mu': 'check_mu', 'lam': 'check_lam'}
 
     mu = Parameter('mu')
@@ -423,7 +419,6 @@ class Pix2Sky_CEA(Cylindrical):
     CEA : Cylindrical equal area projection - pixel to sky.
     """
 
-    param_names = ['lam']
     lam = Parameter('lam')
 
     def __init__(self, lam=1):
@@ -445,7 +440,6 @@ class Sky2Pix_CEA(Cylindrical):
     CEA: Cylindrical equal area projection - sky to pixel.
     """
 
-    param_names = ['lam']
     lam = Parameter('lam')
 
     def __init__(self, lam=1):

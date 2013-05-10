@@ -43,7 +43,6 @@ class EulerAngleRotation(Model):
         Euler angles in deg
     """
 
-    param_names = ['phi', 'theta', 'psi']
     phi = Parameter('phi')
     theta = Parameter('theta')
     psi = Parameter('psi')

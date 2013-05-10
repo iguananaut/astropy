@@ -19,7 +19,6 @@ class TestParModel(ParametricModel):
     A toy model to test parameters machinery
     """
 
-    param_names = ['coeff', 'e']
     coeff = Parameter('coeff')
     e = Parameter('e')
 

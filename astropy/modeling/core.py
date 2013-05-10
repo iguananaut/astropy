@@ -166,6 +166,43 @@ class _ParameterProperty(object):
                 setattr(obj, self.aname, par)
 
 
+class _ModelMeta(abc.ABCMeta):
+    """
+    Metaclass for Model.
+
+    Currently just handles auto-generating the param_names list based on
+    Parameter descriptors declared at the class-level of Model subclasses.
+    """
+
+    def __new__(mcls, name, bases, members):
+        param_names = members.get('param_names', [])
+        parameters = dict((value.name, value) for value in members.values()
+                          if isinstance(value, Parameter))
+
+        # If no parameters were defined get out early--this is especially
+        # important for PolynomialModels which take a different approach to
+        # parameters, since they can have a variable number of them
+        if not parameters:
+            return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+
+        # If param_names was declared explicitly we use only the parameters
+        # listed manually in param_names, but still check that all listed
+        # parameters were declared
+        if param_names and isiterable(param_names):
+            for param_name in param_names:
+                if param_name not in parameters:
+                    raise RuntimeError(
+                        "Parameter {0!r} listed in {1}.param_names was not "
+                        "declared in the class body.".format(param_name, name))
+        else:
+            param_names = [param.name for param in
+                           sorted(parameters.values(),
+                                  key=lambda p: p._order)]
+            members['param_names'] = param_names
+
+        return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+
+
 class Model(object):
 
     """
@@ -181,7 +218,7 @@ class Model(object):
     parameter validation.
     """
 
-    __metaclass__ = abc.ABCMeta
+    __metaclass__ = _ModelMeta
 
     param_names = []
 

@@ -34,7 +34,6 @@ class Gaussian1DModel(Parametric1DModel):
         Standard deviation of the gaussian
     """
 
-    param_names = ['amplitude', 'mean', 'stddev']
     amplitude = Parameter('amplitude')
     mean = Parameter('mean')
     stddev = Parameter('stddev')
@@ -97,9 +96,6 @@ class Gaussian2DModel(ParametricModel):
         A 2x2 covariance matrix. If specified, overrides stddev, fwhm, and
         theta specification.
     """
-
-    param_names = ['amplitude', 'x_mean', 'y_mean',
-                   'x_stddev', 'y_stddev', 'theta']
 
     amplitude = Parameter('amplitude')
     x_mean = Parameter('x_mean')
@@ -223,7 +219,6 @@ class ShiftModel(Model):
 
     """
 
-    param_names = ['offsets']
     offsets = Parameter('offsets')
 
     def __init__(self, offsets):
@@ -266,7 +261,6 @@ class ScaleModel(Model):
 
     """
 
-    param_names = ['factors']
     factors = Parameter('factors')
 
     def __init__(self, factors):
