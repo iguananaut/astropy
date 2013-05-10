@@ -365,17 +365,19 @@ class Parameters(list):
     """
     Store model parameters as a flat list of floats.
 
-    This is a list-like object which stores model parameters. Only  instances
-    of `~astropy.modeling.core.ParametricModel` keep an instance of this class
-    as an attribute. The list of parameters can be modified by the user or by
-    an instance of `~astropy.modeling.fitting.Fitter`.
-    This list of parameters is kept in sync with single model parameter attributes.
-    When more than one dimensional, a `~astropy.modeling.fitting.Fitter` treats each
-    set of parameters as belonging to the same model but different set of data.
+    This is a sequence object which provides a view of model parameters. Only
+    instances of `~astropy.modeling.core.ParametricModel` keep an instance of
+    this class as an attribute. The list of parameters can be modified by the
+    user or by an instance of `~astropy.modeling.fitting.Fitter`.
+
+    This list of parameters is kept in sync with single model parameter
+    attributes.  When more than one dimensional, a
+    `~astropy.modeling.fitting.Fitter` treats each set of parameters as
+    belonging to the same model but different set of data.
 
     Parameters
     ----------
-    instance : object
+    model : object
         an instance of a subclass of `~astropy.modeling.core.ParametricModel`
     """
 

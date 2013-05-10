@@ -53,7 +53,7 @@ class PolynomialBase(ParametricModel):
 
     def __getattr__(self, attr):
         if self._param_names and attr in self._param_names:
-            return Parameter(attr, instance=self)
+            return Parameter(attr, model=self)
 
     def __setattr__(self, attr, value):
         # TODO: Support a means of specifying default values for coefficients
@@ -64,7 +64,7 @@ class PolynomialBase(ParametricModel):
         # Parameter.__set__.
         # TODO: I wonder if there might be a way around that though...
         if attr[0] != '_' and self._param_names and attr in self._param_names:
-            param = Parameter(attr, instance=self)
+            param = Parameter(attr, model=self)
             # This is a little hackish, but we can actually reuse the
             # Parameter.__set__ method here
             param.__set__(self, value)
