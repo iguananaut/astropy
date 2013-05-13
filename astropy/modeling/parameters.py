@@ -39,7 +39,7 @@ def _tofloat(value):
     elif isinstance(value, bool):
         raise InputParameterError(
             "Expected parameter to be of numerical type, not boolean")
-    elif isinstance(value, numbers.Number):
+    elif isinstance(value, (numbers.Number, np.number)):
         value = float(value)
         shape = ()
     else:
