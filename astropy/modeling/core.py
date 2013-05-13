@@ -175,11 +175,6 @@ class Model(object):
 
     param_names = []
 
-    # param_check is a dictionary with which to register parameter validation
-    # functions key: value pairs are parameter_name:
-    # parameter_validation_function_name see projections.AZP for example
-    param_check = {}
-
     def __init__(self, n_inputs, n_outputs, param_dim=1):
         self._n_inputs = n_inputs
         self._n_outputs = n_outputs

@@ -9,6 +9,8 @@ from __future__ import division
 
 
 import bisect
+import inspect
+import functools
 import numbers
 
 import numpy as np
@@ -85,11 +87,12 @@ class Parameter(object):
     # See the _nextid classmethod
     _nextid = 1
 
-    def __init__(self, name, fixed=False, tied=False, min=None,
-                 max=None, model=None):
+    def __init__(self, name, getter=None, setter=None, fixed=False,
+                 tied=False, min=None, max=None, model=None):
         super(Parameter, self).__init__()
         self._name = name
         self._attr = '_' + name
+
         self._fixed = fixed
         self._tied = tied
         self._min = min
@@ -98,9 +101,22 @@ class Parameter(object):
 
         self._model = model
 
+        # The getter/setter functions take one or two arguments: The first
+        # argument is always the value itself (either the value returned or the
+        # value being set).  The second argument is optional, but if present
+        # will contain a reference to the model object tied to a parameter (if
+        # it exists)
+        if getter is not None:
+            self._getter = self._create_value_wrapper(getter, model)
+        else:
+            self._getter = None
+        if setter is not None:
+            self._setter = self._create_value_wrapper(setter, model)
+        else:
+            self._setter = None
+
         if model is not None:
-            value = getattr(model, self._attr)
-            _, self._shape = self._validate_value(model, value)
+            _, self._shape = self._validate_value(model, self.value)
         else:
             # Only Parameters declared as class-level descriptors require
             # and ordering ID
@@ -108,18 +124,26 @@ class Parameter(object):
 
 
     def __get__(self, obj, objtype):
-        return self.__class__(self._name, model=obj)
+        return self.__class__(self._name, getter=self._getter,
+                              setter=self._setter, model=obj)
 
     def __set__(self, obj, value):
         value, shape = self._validate_value(obj, value)
         # Compare the shape against the previous value's shape, if it exists
         if hasattr(obj, self._attr):
             oldvalue = getattr(obj, self._attr)
+            if self._getter is not None:
+                getter = self._create_value_wrapper(self._getter, obj)
+                oldvalue = getter(oldvalue)
             oldvalue, oldshape = self._validate_value(obj, oldvalue)
             if shape != oldshape:
                 raise InputParameterError(
                     "Input value for parameter {0!r} does not have the "
                     "required shape {1}".format(self.name, oldshape))
+
+        if self._setter is not None:
+            setter = self._create_value_wrapper(self._setter, obj)
+            value = setter(value)
 
         if (hasattr(obj, '_parameters') and
                 isinstance(obj._parameters, Parameters)):
@@ -139,7 +163,7 @@ class Parameter(object):
         return self._model.param_dim
 
     def __getitem__(self, key):
-        value = getattr(self._model, self._attr)
+        value = self.value
         if self._model.param_dim == 1:
             # Wrap the value in a list so that getitem can work for sensible
             # indcies like [0] and [-1]
@@ -149,7 +173,7 @@ class Parameter(object):
     def __setitem__(self, key, value):
         # Get the existing value and check whether it even makes sense to
         # apply this index
-        oldvalue = getattr(self._model, self._attr)
+        oldvalue = self.value
         param_dim = self._model.param_dim
 
         if param_dim == 1:
@@ -168,7 +192,7 @@ class Parameter(object):
             try:
                 oldvalue[key] = value
                 if param_dim == 1:
-                    setattr(self._model, self._attr, value)
+                    self.value = value
             except IndexError:
                 raise InputParameterError(
                     "Input dimension {0} invalid for {1!r} parameter with "
@@ -192,8 +216,20 @@ class Parameter(object):
     @property
     def value(self):
         if self._model is not None:
-            return getattr(self._model, self._attr)
+            value = getattr(self._model, self._attr)
+            if self._getter is None:
+                return value
+            else:
+                return self._getter(value)
         raise AttributeError('Parameter definition does not have a value')
+
+    @value.setter
+    def value(self, val):
+        if self._model is not None:
+            if self._setter is not None:
+                val = self._setter(val)
+            setattr(self._model, self._attr, val)
+        raise AttributeError('Cannot set a value on a parameter definition')
 
     @property
     def shape(self):
@@ -336,6 +372,38 @@ class Parameter(object):
             # Return the value for each dimension as a list, along with the
             # shape
             return np.array([v[0] for v in values]), shapes.pop()
+
+    def _create_value_wrapper(self, wrapper, model):
+        """Wrappers a getter/setter function to support optionally passing in
+        a reference to the model object as the second argument.
+
+        If a model is tied to this parameter and its getter/setter supports
+        a second argument then this creates a partial function using the model
+        instance as the second argument.
+        """
+
+        if isinstance(wrapper, np.ufunc):
+            if wrapper.nin != 1:
+                raise TypeError("A numpy.ufunc used for Parameter "
+                                "getter/setter may only take one input "
+                                "argument")
+        else:
+            wrapper_args = inspect.getargspec(wrapper)
+            nargs = len(wrapper_args.args)
+
+            if nargs == 1:
+                pass
+            elif nargs == 2:
+                if model is not None:
+                    # Don't make a partial function unless we're tied to a
+                    # specific model instance
+                    model_arg = wrapper_args.args[1]
+                    wrapper = functools.partial(wrapper, {model_arg: model})
+            else:
+                raise TypeError("Parameter getter/setter must be a function "
+                                "of either one or two arguments")
+
+        return wrapper
 
     def __add__(self, value):
         return np.asarray(self) + value

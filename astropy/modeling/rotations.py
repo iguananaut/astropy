@@ -43,39 +43,15 @@ class EulerAngleRotation(Model):
         Euler angles in deg
     """
 
-    phi = Parameter('phi')
-    theta = Parameter('theta')
-    psi = Parameter('psi')
+    phi = Parameter('phi', getter=np.rad2deg, setter=np.deg2rad)
+    theta = Parameter('theta', getter=np.rad2deg, setter=np.deg2rad)
+    psi = Parameter('psi', getter=np.rad2deg, setter=np.deg2rad)
 
     def __init__(self, phi, theta, psi):
-        self._phi = np.deg2rad(phi)
-        self._theta = np.deg2rad(theta)
-        self._psi = np.deg2rad(psi)
         super(EulerAngleRotation, self).__init__(n_inputs=2, n_outputs=2)
-
-    @property
-    def phi(self):
-        return np.rad2deg(self._phi)
-
-    @phi.setter
-    def phi(self, val):
-        self._phi = np.deg2rad(val)
-
-    @property
-    def theta(self):
-        return np.rad2deg(self._theta)
-
-    @theta.setter
-    def theta(self, val):
-        self._theta = np.deg2rad(val)
-
-    @property
-    def psi(self):
-        return np.rad2deg(self._psi)
-
-    @psi.setter
-    def psi(self, val):
-        self._psi = np.deg2rad(val)
+        self.phi = phi
+        self.theta = theta
+        self.psi = psi
 
 
 class RotateNative2Celestial(EulerAngleRotation):
@@ -154,11 +130,26 @@ class MatrixRotation2D(Model):
         angle of rotation in deg
     """
 
-    param_check = {'matrix', '_validate_matrix',
-                   'angle', '_validate_angle'}
+    def _validate_angle(angle):
+        """Validates that an input angle is a number and converts it from
+        degrees to radians.
+        """
 
-    angle = Parameter('angle')
-    matrix = Parameter('matrix')
+        if not isinstance(angle, numbers.Number):
+            raise TypeError("Expected angle to be a number")
+
+        return np.deg2rad(angle)
+
+    def _validate_matrix(matrix):
+        """Validates that the input matrix is a 2D array."""
+
+        matrix = np.array(matrix)
+        if matrix.ndim != 2:
+            raise ValueError("Expected rotation matrix to be a 2D array")
+        return matrix
+
+    angle = Parameter('angle', getter=np.deg2rad, setter=_validate_angle)
+    matrix = Parameter('matrix', setter=_validate_matrix)
 
     def __init__(self, matrix=None, angle=None):
         if matrix is None and angle is None:
@@ -166,35 +157,18 @@ class MatrixRotation2D(Model):
                                            "a rotation matrix or an angle")
         if matrix is not None:
             self._validate_matrix(matrix)
-            # TODO: Why +0.0?
-            self._matrix = np.asarray(matrix) + 0.0
             super(MatrixRotation2D, self).__init__(n_inputs=1, n_outputs=1,
                                                    param_dim=1)
+            # TODO: Why +0.0?
+            self.matrix = np.asarray(matrix) + 0.0
         else:
-            self._validate_angle(angle)
-            self._angle = np.deg2rad(angle)
             self.param_names = ['angle']
-            self._matrix = self._compute_matrix(angle)
-
-        n_inputs = self._matrix[0].shape[0]
-        super(MatrixRotation2D, self).__init__(n_inputs=n_inputs,
-                                               n_outputs=n_inputs,
-                                               param_dim=1)
-
-    @property
-    def angle(self):
-        return np.rad2deg(self._angle)
-
-    @angle.setter
-    def angle(self, val):
-        self._angle = np.deg2rad(val)
-
-    def _validate_matrix(self, matrix):
-        assert matrix.ndim == 2, "Expected rotation matrix to be a 2D array"
-
-    def _validate_angle(self, angle):
-        assert isinstance(angle, numbers.Number), \
-            "Expected angle to be a number"
+            n_inputs = self._matrix[0].shape[0]
+            super(MatrixRotation2D, self).__init__(n_inputs=n_inputs,
+                                                   n_outputs=n_inputs,
+                                                   param_dim=1)
+            self.angle = angle
+            self.matrix = self._compute_matrix(angle)
 
     def _compute_matrix(self, angle):
         return np.array([[math.cos(angle), math.sin(angle)],
