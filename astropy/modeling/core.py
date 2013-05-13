@@ -119,53 +119,6 @@ def _convert_output(x, fmt):
         raise ValueError("Unrecognized output conversion format")
 
 
-class _ParameterProperty(object):
-
-    """
-    Create a property for a parameter.
-
-    Parameters
-    ----------
-    name: string
-        the name of the parameter
-
-    """
-    def __init__(self, name):
-        self.aname = '_' + name
-        self.name = name
-
-    def __get__(self, obj, objtype):
-        par = getattr(obj, self.aname)
-        return par
-
-    def __set__(self, obj, val):
-        if self.name in obj.param_check:
-            getattr(obj, obj.param_check[self.name])(val)
-        if isinstance(obj, ParametricModel):
-            if not obj._parameters._modified:
-                par = Parameter(self.name, val, obj, obj.param_dim)
-                oldpar = getattr(obj, self.name)
-                if oldpar is not None and oldpar.parshape != par.parshape:
-                    raise InputParameterError(
-                        "Input parameter {0} does not "
-                        "have the required shape".format(self.name))
-                else:
-                    setattr(obj, self.aname, par)
-                obj._parameters = Parameters(obj, obj.param_names,
-                                             param_dim=obj.param_dim)
-            else:
-                setattr(obj, self.aname, val)
-        else:
-            par = Parameter(self.name, val, obj, obj.param_dim)
-            oldpar = getattr(obj, self.name)
-            if oldpar is not None and oldpar.parshape != par.parshape:
-                raise InputParameterError(
-                    "Input parameter {0} does not "
-                    "have the required shape".format(self.name))
-            else:
-                setattr(obj, self.aname, par)
-
-
 class _ModelMeta(abc.ABCMeta):
     """
     Metaclass for Model.
