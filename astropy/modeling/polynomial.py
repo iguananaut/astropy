@@ -54,6 +54,8 @@ class PolynomialBase(ParametricModel):
     def __getattr__(self, attr):
         if self._param_names and attr in self._param_names:
             return Parameter(attr, model=self)
+        else:
+            raise AttributeError(attr)
 
     def __setattr__(self, attr, value):
         # TODO: Support a means of specifying default values for coefficients
@@ -73,18 +75,16 @@ class PolynomialBase(ParametricModel):
         else:
             super(PolynomialBase, self).__setattr__(attr, value)
 
-    def _set_coeffs(self, param_dim, **pars):
+    def _set_default_coeffs(self, param_dim):
         """
         Set default values for coefficients
         """
 
         for name in self.param_names:
-            value = pars.get(name)
-            if value is None:
-                if param_dim == 1:
-                    value = 0.0
-                else:
-                    value = [0.0] * param_dim
+            if param_dim == 1:
+                value = 0.0
+            else:
+                value = np.zeros(param_dim, dtype=float)
             # This is just setting the default values, so set straight to the
             # internal attributes instead of going through the __setattr__
             # magic
@@ -126,11 +126,12 @@ class PolynomialModel(PolynomialBase):
 
             self._validate_pars(**parameters)
 
-        self._set_coeffs(param_dim, **parameters)
+        self._set_default_coeffs(param_dim)
 
         super(PolynomialModel, self).__init__(n_inputs=n_inputs,
                                               n_outputs=n_outputs,
-                                              param_dim=param_dim)
+                                              param_dim=param_dim,
+                                              **parameters)
 
     @property
     def degree(self):
@@ -243,11 +244,12 @@ class OrthogonalPolynomialModel(PolynomialBase):
 
             self._validate_pars(**parameters)
 
-        self._set_coeffs(param_dim, **parameters)
+        self._set_default_coeffs(param_dim)
 
         super(OrthogonalPolynomialModel, self).__init__(n_inputs=2,
                                                         n_outputs=1,
-                                                        param_dim=param_dim)
+                                                        param_dim=param_dim,
+                                                        **parameters)
 
     def get_num_coeff(self):
         """
@@ -999,8 +1001,8 @@ class _SIP1D(PolynomialBase):
 
     It's unlikely it will be used in 1D so this class is private
     and SIPModel should be used instead.
-
     """
+
     def __init__(self, order, coeff_prefix, param_dim=1, **parameters):
         self.order = order
         self.coeff_prefix = coeff_prefix
@@ -1029,10 +1031,10 @@ class _SIP1D(PolynomialBase):
         if parameters:
             self._validate_pars(ndim=2, **parameters)
 
-        self._set_coeffs(param_dim, **parameters)
+        self._set_default_coeffs(param_dim)
 
         super(_SIP1D, self).__init__(n_inputs=2, n_outputs=1,
-                                     param_dim=param_dim)
+                                     param_dim=param_dim, **parameters)
 
     def __repr__(self):
         fmt = """
