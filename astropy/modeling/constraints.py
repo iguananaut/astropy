@@ -5,6 +5,7 @@ Constraints implementation
 from __future__ import division
 import numpy as np
 
+
 __all__ = ['Constraints']
 
 
@@ -211,8 +212,8 @@ class Constraints(object):
             elif self.tied[par]:
                 mpars.extend([self.tied[par](self.model)])
             else:
-                sl = self.model._parameters.parinfo[par][0]
-                plen = sl.stop - sl.start
+                slc = self.model.parameters.slices[par]
+                plen = slc.stop - slc.start
                 mpars.extend(fitpars[:plen])
                 del fitpars[:plen]
         self.model.parameters = mpars
@@ -226,8 +227,8 @@ class Constraints(object):
         pars = self.model._parameters[:]
         for item in self.model.param_names:
             if self._fixed[item] or self.tied[item]:
-                sl = self.model._parameters.parinfo[item][0]
-                del pars[sl]
+                slc = self.model.parameters.slices[item]
+                del pars[slc]
         return pars
 
     def _update(self):

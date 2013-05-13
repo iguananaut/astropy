@@ -401,7 +401,6 @@ class LinearLSQFitter(Fitter):
         self.fit_info['rank'] = rank
         self.fit_info['singular_values'] = sval
 
-        self.model._parameters._modified = True
         # If y.n_inputs > model.n_inputs we are doing a simultanious 1D fitting
         # of several 1D arrays. Otherwise the model is 2D.
         # if y.n_inputs > self.model.n_inputs:
@@ -702,10 +701,10 @@ class JointFitter(object):
         fpars = []
         fpars.extend(self.initvals)
         for model in self.models:
-            pars = model._parameters[:]
+            pars = model.parameters[:]
             for pname in model.joint:
-                sl = model._parameters.parinfo[pname][0]
-                del pars[sl]
+                slc = model.parameters.slices[pname]
+                del pars[slc]
             fpars.extend(pars)
         return fpars
 
@@ -743,8 +742,8 @@ class JointFitter(object):
                     # parameter is not a number
                     mpars.extend([jointfitpars[index]])
                 else:
-                    sl = model._parameters.parinfo[pname][0]
-                    plen = sl.stop - sl.start
+                    slc = model.parameters.slices[pname]
+                    plen = slc.stop - slc.start
                     mpars.extend(mfpars[:plen])
                     del mfpars[:plen]
             modelfit = model.eval(margs[:-1], *mpars)
@@ -788,8 +787,8 @@ class JointFitter(object):
                     # is not a number
                     mpars.extend([jointfitpars[index]])
                 else:
-                    sl = model._parameters.parinfo[pname][0]
-                    plen = sl.stop - sl.start
+                    slc = model.parameters.slices[pname]
+                    plen = slc.stop - slc.start
                     mpars.extend(mfpars[:plen])
                     del mfpars[:plen]
-            model._parameters[:] = np.array(mpars)
+            model.parameters[:] = np.array(mpars)

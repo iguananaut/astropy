@@ -7,11 +7,13 @@ unless they define their own models.
 
 from __future__ import division
 
+
+import bisect
 import numbers
 
 import numpy as np
 
-from ..utils import misc
+from ..utils import isiterable, lazyproperty
 
 
 __all__ = ['Parameters', 'Parameter']
@@ -20,10 +22,9 @@ __all__ = ['Parameters', 'Parameter']
 def _tofloat(value):
     """
     Convert a parameter to float or float array
-
     """
 
-    if misc.isiterable(value):
+    if isiterable(value):
         try:
             value = np.array(value, dtype=np.float)
             shape = value.shape
@@ -157,7 +158,7 @@ class Parameter(object):
             oldvalue = [oldvalue]
 
         if isinstance(key, slice):
-            if not oldvalue[key]:
+            if len(oldvalue[key]) == 0:
                 raise InputParameterError(
                     "Slice assignment outside the parameter dimensions for "
                     "{0!r}".format(self.name))
@@ -196,7 +197,19 @@ class Parameter(object):
 
     @property
     def shape(self):
+        """The shape of this parameter's value array."""
+
         return self._shape
+
+    @property
+    def size(self):
+        """The size of this parameter's value array."""
+
+        if isinstance(self.value, np.ndarray):
+            return self.value.size
+        else:
+            # A scalar value
+            return 1
 
     @property
     def fixed(self):
@@ -322,7 +335,7 @@ class Parameter(object):
 
             # Return the value for each dimension as a list, along with the
             # shape
-            return [v[0] for v in values], shapes.pop()
+            return np.array([v[0] for v in values]), shapes.pop()
 
     def __add__(self, value):
         return np.asarray(self) + value
@@ -382,10 +395,9 @@ class Parameter(object):
         return np.abs(np.asarray(self))
 
 
-class Parameters(list):
-
+class Parameters(object):
     """
-    Store model parameters as a flat list of floats.
+    View model parameters as a flat list of floats.
 
     This is a sequence object which provides a view of model parameters. Only
     instances of `~astropy.modeling.core.ParametricModel` keep an instance of
@@ -405,40 +417,112 @@ class Parameters(list):
 
     def __init__(self, model):
         self._model = model
-        # A flag set to True by a fitter to indicate that the flat
-        # list of parameters has been changed.
-        self._modified = False
-        self.parinfo = {}
-        flat = self._flatten()
-        super(Parameters, self).__init__(flat)
 
-    # Although deprecated the list class implements __setslice__ so we must
-    # do the same here
-    def __setslice__(self, i, j, value):
-        self.__setitem__(slice(i, j), value)
+    def __repr__(self):
+        return repr(self._flatten())
+
+    def __len__(self):
+        return self.size
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            # TODO: For now slices are handled by generating the full flattened
+            # list and slicing it, but this can be made much more efficient
+            return self._flatten()[key]
+        else:
+            if key >= self.size:
+                raise IndexError
+            starts_idx = bisect.bisect_left(self.starts, (key, ''))
+            if starts_idx == len(self.starts):
+                starts_idx -= 1
+            param_start, param_name = self.starts[starts_idx]
+
+            if param_start > key:
+                # We want the previous parameter bin
+                param_start, param_name = self.starts[starts_idx - 1]
+
+            param = getattr(self._model, param_name)
+            if param.size == 1:
+                # Quick out for scalar parameter values
+                return param.value
+
+            # key is the index of the virtual flattened array; here we want to
+            # convert it into the correct index for this parameter's array
+            param_idx = key - param_start
+            return getattr(self._model, param_name).value.flat[param_idx]
 
     def __setitem__(self, key, value):
         if isinstance(key, slice):
             for idx, val in zip(range(*key.indices(len(self))), value):
                 self.__setitem__(idx, val)
         else:
-            _value = _tofloat(value)[0]
-            super(Parameters, self).__setitem__(key, _value)
-            self._modified = True
-            self._update_model_pars()
+            if key >= self.size:
+                raise IndexError
+            starts_idx = bisect.bisect_left(self.starts, (key, ''))
+            if starts_idx == len(self.starts):
+                starts_idx -= 1
+            param_start, param_name = self.starts[starts_idx]
+            if param_start > key:
+                # We want the previous parameter bin
+                param_start, param_name = self.starts[starts_idx - 1]
 
-    def _update_model_pars(self):
-        """
-        Update single parameters
+            param = getattr(self._model, param_name)
+
+            if param.size == 1:
+                setattr(self._model, param_name, value)
+            else:
+                param_idx = key - param_start
+                param.value.flat[param_idx] = value
+
+    def __eq__(self, other):
+        """Implement list equality."""
+
+        return self[:] == other
+
+    def __ne__(self, other):
+        """Implement list inequality."""
+
+        return self[:] != other
+
+    @lazyproperty
+    def size(self):
+        """The number of items in the flattened array."""
+
+        # This is just the end index of the last parameter
+        last = self._model.param_names[-1]
+        return self.slices[last].stop
+
+    @lazyproperty
+    def slices(self):
+        """The start and stop indces in the flattened array for each parameter.
+
+        Each parameter can have multiple items in the flattened array depending
+        on the number of parameter dimensions and the shape of each parameter.
+        This number is already fixed once a model has been created, so this
+        mapping only needs to be generated once.
         """
 
-        for key, value in self.parinfo.items():
-            sl = value[0]
-            par = self[sl]
-            if len(par) == 1:
-                par = par[0]
-            setattr(self._model, key, par)
-        self._modified = False
+        slices = {}
+        index = 0
+
+        for name in self._model.param_names:
+            parameter = getattr(self._model, name)
+            size = parameter.size
+            slices[parameter.name] = slice(index, index + size)
+            index += size
+
+        return slices
+
+    @lazyproperty
+    def starts(self):
+        """A list of tuples pairing the start index of a parameter with
+        the parameter name.
+
+        This is most useful for mapping some index in the "flattened" parameter
+        value list to a specific parameter (see `__getitem__` for example).
+        """
+
+        return sorted((slc.start, name) for name, slc in self.slices.items())
 
     def _is_same_length(self, newpars):
         """
@@ -454,19 +538,15 @@ class Parameters(list):
 
     def _flatten(self):
         """
-        Create a list of model parameters
+        Create a flat list of model parameters.
         """
 
-        param_names = self._model.param_names
-        parlist = [getattr(self._model, attr) for attr in param_names]
-        flatpars = []
-        start = 0
-        for (name, par) in zip(param_names, parlist):
-            pararr = np.array(par)
-            fpararr = pararr.flatten()
+        params = []
+        for name in self._model.param_names:
+            value = getattr(self._model, name).value
+            if isinstance(value, np.ndarray):
+                params.extend(value.flatten())
+            else:
+                params.append(value)
 
-            stop = start + len(fpararr)
-            self.parinfo[name] = (slice(start, stop, 1), pararr.shape)
-            start = stop
-            flatpars.extend(list(fpararr))
-        return flatpars
+        return params

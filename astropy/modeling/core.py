@@ -490,18 +490,18 @@ class ParametricModel(Model):
             else:
                 raise InputParameterError(
                     "Expected the list of parameters to be the same "
-                    "length as the initial list.")
+                    "length as the existing parameters list.")
         elif isiterable(value):
             _val = _tofloat(value)[0]
             if self._parameters._is_same_length(_val):
-                self._parameters._modified = True
                 self._parameters[:] = _val
             else:
                 raise InputParameterError(
                     "Expected the list of parameters to be the same "
-                    "length as the initial list.")
+                    "length as the existing parameters list.")
         else:
-            raise TypeError("Parameters must be of type 'list' or 'Parameters'")
+            raise TypeError("Parameters must be an iterable or a Parameters "
+                            "object")
 
     def set_joint_parameters(self, jpars):
         """
