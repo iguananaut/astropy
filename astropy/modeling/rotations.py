@@ -156,7 +156,6 @@ class MatrixRotation2D(Model):
             raise InputParameterError("Expected at least one argument - "
                                            "a rotation matrix or an angle")
         if matrix is not None:
-            self._validate_matrix(matrix)
             super(MatrixRotation2D, self).__init__(n_inputs=1, n_outputs=1,
                                                    param_dim=1)
             # TODO: Why +0.0?
