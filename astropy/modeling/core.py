@@ -48,9 +48,8 @@ from textwrap import dedent
 
 import numpy as np
 
-from ..utils import indent, isiterable
-from .parameters import InputParameterError
-from . import parameters
+from ..utils import isiterable, indent
+from .parameters import Parameter, Parameters, InputParameterError, _tofloat
 from . import constraints
 
 
@@ -144,24 +143,23 @@ class _ParameterProperty(object):
             getattr(obj, obj.param_check[self.name])(val)
         if isinstance(obj, ParametricModel):
             if not obj._parameters._modified:
-                par = parameters.Parameter(self.name, val, obj, obj.param_dim)
+                par = Parameter(self.name, val, obj, obj.param_dim)
                 oldpar = getattr(obj, self.name)
                 if oldpar is not None and oldpar.parshape != par.parshape:
-                    raise parameters.InputParameterError(
+                    raise InputParameterError(
                         "Input parameter {0} does not "
                         "have the required shape".format(self.name))
                 else:
                     setattr(obj, self.aname, par)
-                obj._parameters = parameters.Parameters(obj,
-                                                        obj.param_names,
-                                                        param_dim=obj.param_dim)
+                obj._parameters = Parameters(obj, obj.param_names,
+                                             param_dim=obj.param_dim)
             else:
                 setattr(obj, self.aname, val)
         else:
-            par = parameters.Parameter(self.name, val, obj, obj.param_dim)
+            par = Parameter(self.name, val, obj, obj.param_dim)
             oldpar = getattr(obj, self.name)
             if oldpar is not None and oldpar.parshape != par.parshape:
-                raise parameters.InputParameterError(
+                raise InputParameterError(
                     "Input parameter {0} does not "
                     "have the required shape".format(self.name))
             else:
@@ -289,8 +287,7 @@ class Model(object):
         elif mode in ['serial', 's']:
             return SCompositeModel([self, newtr])
         else:
-            raise parameters.InputParameterError(
-                    "Unrecognized mode {0}".format(mode))
+            raise InputParameterError("Unrecognized mode {0}".format(mode))
 
     @abc.abstractmethod
     def __call__(self):
@@ -348,13 +345,18 @@ class ParametricModel(Model):
 
     def __init__(self, n_inputs, n_outputs, param_dim=1, fittable=True,
                  fixed=None, tied=None, bounds=None, eqcons=None,
-                 ineqcons=None):
+                 ineqcons=None, **parameters):
         self.linear = True
         super(ParametricModel, self).__init__(n_inputs, n_outputs,
                                               param_dim=param_dim)
-        self.fittable = fittable
-        self._parameters = parameters.Parameters(self)
 
+        for name in self.param_names:
+            if name in parameters:
+                setattr(self, name, parameters[name])
+
+        self.fittable = fittable
+
+        self._parameters = Parameters(self)
         # Initialize the constraints for each parameter
         _fixed = dict.fromkeys(self.param_names, False)
         _tied = dict.fromkeys(self.param_names, False)
@@ -444,20 +446,21 @@ class ParametricModel(Model):
         Reset the parameters attribute as an instance of
         `~astropy.modeling.parameters.Parameters`
         """
-        if isinstance(value, parameters.Parameters):
+
+        if isinstance(value, Parameters):
             if self._parameters._is_same_length(value):
                 self._parameters = value
             else:
-                raise parameters.InputParameterError(
+                raise InputParameterError(
                     "Expected the list of parameters to be the same "
                     "length as the initial list.")
         elif isiterable(value):
-            _val = parameters._tofloat(value)[0]
+            _val = _tofloat(value)[0]
             if self._parameters._is_same_length(_val):
                 self._parameters._modified = True
                 self._parameters[:] = _val
             else:
-                raise parameters.InputParameterError(
+                raise InputParameterError(
                     "Expected the list of parameters to be the same "
                     "length as the initial list.")
         else:

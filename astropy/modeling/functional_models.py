@@ -39,8 +39,8 @@ class Gaussian1DModel(Parametric1DModel):
     mean = Parameter('mean')
     stddev = Parameter('stddev')
 
-    def __init__(self, amplitude, mean, stddev, **cons):
-        super(Gaussian1DModel, self).__init__(locals(), **cons)
+    def __init__(self, amplitude, mean, stddev, **constraints):
+        super(Gaussian1DModel, self).__init__(locals(), **constraints)
 
     @staticmethod
     def eval(x, amplitude, mean, stddev):
@@ -110,7 +110,7 @@ class Gaussian2DModel(ParametricModel):
 
     def __init__(self, amplitude, x_mean, y_mean, x_stddev=None, y_stddev=None,
                  theta=0.0, x_fwhm=None, y_fwhm=None, cov_matrix=None,
-                 jacobian_func=None, **cons):
+                 jacobian_func=None, **constraints):
 
         try:
             param_dim = len(amplitude)
@@ -158,7 +158,8 @@ class Gaussian2DModel(ParametricModel):
         self._theta = theta
 
         super(Gaussian2DModel, self).__init__(n_inputs=2, n_outputs=1,
-                                              param_dim=param_dim, **cons)
+                                              param_dim=param_dim,
+                                              **constraints)
 
         self.linear = False
         if jacobian_func:
@@ -230,9 +231,9 @@ class ShiftModel(Model):
             param_dim = 1
         else:
             param_dim = len(offsets)
-        self._offsets = offsets
         super(ShiftModel, self).__init__(n_inputs=1, n_outputs=1,
                                          param_dim=param_dim)
+        self.offsets = offsets
 
     def inverse(self):
         if self.param_dim == 1:
@@ -273,9 +274,9 @@ class ScaleModel(Model):
             param_dim = 1
         else:
             param_dim = len(factors)
-        self._factors = factors
         super(ScaleModel, self).__init__(n_inputs=1, n_outputs=1,
                                          param_dim=param_dim)
+        self.factors = factors
 
     def inverse(self):
         if self.param_dim == 1:

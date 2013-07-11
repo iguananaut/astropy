@@ -24,10 +24,9 @@ class TestParModel(ParametricModel):
     e = Parameter('e')
 
     def __init__(self, coeff, e, param_dim=1):
-        self._coeff = coeff
-        self._e = e
         super(TestParModel, self).__init__(n_inputs=1, n_outputs=1,
-                                           param_dim=param_dim)
+                                           param_dim=param_dim, coeff=coeff,
+                                           e=e)
 
     def __call__(self):
         pass
@@ -202,6 +201,7 @@ class TestParameters(object):
         sh1 = models.ShiftModel(2)
         with pytest.raises(InputParameterError):
             sh1.offsets = [3, 3]
+
 
 
 class TestMultipleParameterSets(object):

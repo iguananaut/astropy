@@ -3,12 +3,16 @@
 This module defines two classes that deal with parameters.
 It is unlikely users will need to work with these classes directly,
 unless they define their own models.
-
 """
+
 from __future__ import division
+
 import numbers
+
 import numpy as np
+
 from ..utils import misc
+
 
 __all__ = ['Parameters', 'Parameter']
 
@@ -49,8 +53,8 @@ class InputParameterError(Exception):
     Called when there's a problem with input parameters.
     """
 
-class Parameter(list):
 
+class Parameter(object):
     """
     Wraps individual parameters.
 
@@ -79,7 +83,7 @@ class Parameter(list):
 
     def __init__(self, name, fixed=False, tied=False, minvalue=None,
                  maxvalue=None, instance=None):
-
+        super(Parameter, self).__init__()
         self._name = name
         self._attr = '_' + name
         self._fixed = fixed
@@ -91,41 +95,74 @@ class Parameter(list):
 
         if instance is not None:
             value = getattr(instance, self._attr)
-            if isinstance(value, numbers.Number):
-                value, shape = _tofloat(value)
-                value = [value]
-            # colections.Sequence covers lists but not ndarrays
-            # which are checked for in _tofloat()
-            # misc.iterable allows dict which is failed in _tofloat()
-            elif misc.isiterable(value):
-                # TODO: Is this superfluous?  Need to better understand exactly
-                # what the intent is here...
-                value = [_tofloat(v)[0] for v in value]
-            else:
-                raise InputParameterError(
-                    "Parameter {0} is not a number".format(name))
-            super(Parameter, self).__init__(value)
-        else:
-            super(Parameter, self).__init__([])
+            _, self._shape = self._validate_value(instance, value)
 
     def __get__(self, obj, objtype):
         return self.__class__(self._name, instance=obj)
 
     def __set__(self, obj, value):
+        value, shape = self._validate_value(obj, value)
+        # Compare the shape against the previous value's shape, if it exists
+        if hasattr(obj, self._attr):
+            oldvalue = getattr(obj, self._attr)
+            oldvalue, oldshape = self._validate_value(obj, oldvalue)
+            if shape != oldshape:
+                raise InputParameterError(
+                    "Input value for parameter {0!r} does not have the "
+                    "required shape {1}".format(self.name, oldshape))
+
         if (hasattr(obj, '_parameters') and
                 isinstance(obj._parameters, Parameters)):
             # Model instance has a Parameters list (in general this means it's
             # a ParametricModel)
-            # TODO: Here too we need shape checking
             setattr(obj, self._attr, value)
             # Rebuild the Parameters list
             # TODO: Is this really necessary? Could we get away with just
             # updating this parameter's value in the Parameters list?
             obj._parameters = Parameters(obj)
         else:
-            # TODO: This needs to check that the parameter shapes match up like
-            # in _ParameterProperty
             setattr(obj, self._attr, value)
+
+    def __len__(self):
+        if self._instance is None:
+            raise TypeError('Parameter definitions do not have a length.')
+        return self._instance.param_dim
+
+    def __getitem__(self, key):
+        value = getattr(self._instance, self._attr)
+        if self._instance.param_dim == 1:
+            # Wrap the value in a list so that getitem can work for sensible
+            # indcies like [0] and [-1]
+            value = [value]
+        return value[key]
+
+    def __setitem__(self, key, value):
+        # Get the existing value and check whether it even makes sense to
+        # apply this index
+        oldvalue = getattr(self._instance, self._attr)
+        param_dim = self._instance.param_dim
+
+        if param_dim == 1:
+            # Convert the single-dimension value to a list to allow some slices
+            # that would be compatible with a length-1 array like [:] and [0:]
+            oldvalue = [oldvalue]
+
+        if isinstance(key, slice):
+            if not oldvalue[key]:
+                raise InputParameterError(
+                    "Slice assignment outside the parameter dimensions for "
+                    "{0!r}".format(self.name))
+            for idx, val in zip(range(*key.indices(len(self))), value):
+                self.__setitem__(idx, val)
+        else:
+            try:
+                oldvalue[key] = value
+                if param_dim == 1:
+                    setattr(self._instance, self._attr, value)
+            except IndexError:
+                raise InputParameterError(
+                    "Input dimension {0} invalid for {1!r} parameter with "
+                    "dimension {2}".format(key, self.name, param_dim))
 
     def __repr__(self):
         if self._instance is None:
@@ -147,6 +184,10 @@ class Parameter(list):
         if self._instance is not None:
             return getattr(self._instance, self._attr)
         raise AttributeError('Parameter definition does not have a value')
+
+    @property
+    def shape(self):
+        return self._shape
 
     @property
     def fixed(self):
@@ -227,18 +268,39 @@ class Parameter(list):
             raise AttributeError("can't set attribute 'max' on Parameter "
                                  "definition")
 
-    # Although deprecated the list class implements __setslice__ so we must
-    # do the same here
-    def __setslice__(self, i, j, value):
-        self.__setitem__(slice(i, j), value)
+    def _validate_value(self, model, value):
+        if model is None:
+            return
 
-    def __setitem__(self, key, value):
-        if isinstance(key, slice):
-            for idx, val in zip(range(*key.indices(len(self))), value):
-                self.__setitem__(idx, val)
+        param_dim = model.param_dim
+        if param_dim == 1:
+            # Just validate the value with _tofloat
+            return _tofloat(value)
         else:
-            super(Parameter, self).__setitem__(key, value)
-            setattr(self._instance, self.name, value)
+            # If there are more parameter dimensions the value should
+            # be a sequence with at least one item
+            try:
+                if len(value) != param_dim:
+                    raise InputParameterError(
+                        "Expected parameter {0!r} to be of dimension "
+                        "{1}".format(self.name, param_dim))
+                # Validate each value
+                values = [_tofloat(v) for v in value]
+            except (TypeError, IndexError):
+                raise InputParameterError(
+                    "Expected a multivalued input of dimension {0} "
+                    "for parameter {1!r}".format(param_dim, self.name))
+
+            # Check that the value for each dimension has the same shape
+            shapes = set(v[1] for v in values)
+            if len(shapes) != 1:
+                raise InputParameterError(
+                    "The value for parameter {0!r} does not have the same "
+                    "shape for every dimension".format(self.name))
+
+            # Return the value for each dimension as a list, along with the
+            # shape
+            return [v[0] for v in values], shapes.pop()
 
     def __add__(self, value):
         return np.asarray(self) + value
