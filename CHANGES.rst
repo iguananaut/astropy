@@ -139,7 +139,7 @@ Other Changes and Additions
 
 - When importing Astropy from a source checkout without having built the
   extension modules first an ``ImportError`` is raised rather than a
-  ``SystemExit`` exception. 
+  ``SystemExit`` exception. [#1269]
 
 
 0.2.3 (2013-05-30)
