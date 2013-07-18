@@ -128,13 +128,18 @@ Bug Fixes
 
 - ``astropy.io.ascii``
 
-  - The ``write()`` function was ignoring the ``fill_values`` argument (#910).
+  - The ``write()`` function was ignoring the ``fill_values`` argument. [#910].
 
 
 0.2.4 (unreleased)
 ------------------
 
- - Nothing yet.
+Other Changes and Additions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- When importing Astropy from a source checkout without having built the
+  extension modules first an ``ImportError`` is raised rather than a
+  ``SystemExit`` exception. 
 
 
 0.2.3 (2013-05-30)
