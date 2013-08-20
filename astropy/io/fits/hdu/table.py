@@ -101,6 +101,7 @@ class _TableLikeHDU(_ValidHDU):
         data._buffer = self._buffer
         tbsize = self._header['NAXIS1'] * self._header['NAXIS2']
         data._gap = self._theap - tbsize
+        data._uint = self._uint
 
         # pass the attributes
         fidx = 0
@@ -181,11 +182,17 @@ class _TableBaseHDU(ExtensionHDU, _TableLikeHDU):
                     # columns, so treat those more carefully.
                     update_coldefs = dict()
                     if 'u' in [data.dtype[k].kind for k in data.dtype.names]:
-                        bzeros = { 2:np.uint16(2**15), 4:np.uint32(2**31), 8:np.uint64(2**63)}
-                        new_dtype = [(k, data.dtype[k].kind.replace('u','i') +
-                            str(data.dtype[k].itemsize))
-                            for k in data.dtype.names]
-                        new_data = np.zeros(data.shape,dtype=new_dtype)
+                        bzeros = {2: np.uint16(2**15), 4: np.uint32(2**31),
+                                  8: np.uint64(2**63)}
+
+                        def make_signed(dt):
+                            return '{0}{1}'.format(dt.kind.replace('u', 'i'),
+                                                   dt.itemsize)
+
+                        new_dtype = [(k, make_signed(data.dtype[k]))
+                                     for k in data.dtype.names]
+                        new_data = np.zeros(data.shape, dtype=new_dtype)
+
                         for k in data.dtype.fields:
                             if data.dtype[k].kind == 'u':
                                 new_data[k] = data[k] - bzeros[data.dtype[k].itemsize]
@@ -194,7 +201,7 @@ class _TableBaseHDU(ExtensionHDU, _TableLikeHDU):
                     else:
                         self.data = data.view(self._data_type)
                     for k in update_coldefs:
-                        self.data._coldefs.change_attrib(k,'bzero',update_coldefs[k])
+                        self.data._coldefs.change_attrib(k, 'bzero', update_coldefs[k])
 
                 self._header['NAXIS1'] = self.data.itemsize
                 self._header['NAXIS2'] = self.data.shape[0]
@@ -252,6 +259,7 @@ class _TableBaseHDU(ExtensionHDU, _TableLikeHDU):
         data = self._get_tbdata()
         data._coldefs = self.columns
         data.formats = self.columns.formats
+        data._uint = self._uint
         # Columns should now just return a reference to the data._coldefs
         del self.columns
         return data

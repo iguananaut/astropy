@@ -182,6 +182,7 @@ class FITS_rec(np.recarray):
         self._file = None
         self._buffer = None
         self._coldefs = None
+        self._uint = False
         self._gap = 0
         self.names = list(self.dtype.names)
         self.formats = None
@@ -199,6 +200,7 @@ class FITS_rec(np.recarray):
             self._buffer = obj._buffer
             self._coldefs = obj._coldefs
             self._nfields = obj._nfields
+            self._uint = obj._uint
             self._gap = obj._gap
             self.names = obj.names
             self.formats = obj.formats
@@ -215,6 +217,7 @@ class FITS_rec(np.recarray):
 
             self._coldefs = None
             self._gap = 0
+            self._uint = False
 
             # Bypass setattr-based assignment to fields; see #86
             self.names = list(obj.dtype.names)
@@ -471,16 +474,18 @@ class FITS_rec(np.recarray):
             # further conversion for both ASCII and binary tables
             if _number and (_scale or _zero):
 
+                new_dtype = np.float64
+
                 # only do the scaling the first time and store it in _convert
-                if bzero == 2**15 and 'I' in self._coldefs.formats[indx]:
-                    self._convert[indx] = np.array(dummy, dtype=np.uint16)
-                elif bzero == 2**31 and 'J' in self._coldefs.formats[indx]:
-                    self._convert[indx] = np.array(dummy, dtype=np.uint32)
-                elif bzero == 2**63 and 'K' in self._coldefs.formats[indx]:
-                    self._convert[indx] = np.array(dummy, dtype=np.uint64)
-                    bzero64 = np.uint64(2**63)
-                else:
-                    self._convert[indx] = np.array(dummy, dtype=np.float64)
+                if self._uint:
+                    if bzero == 2**15 and 'I' in self._coldefs.formats[indx]:
+                        new_dtype = np.uint16
+                    elif bzero == 2**31 and 'J' in self._coldefs.formats[indx]:
+                        new_dtype = np.uint32
+                    elif bzero == 2**63 and 'K' in self._coldefs.formats[indx]:
+                        new_dtype = np.uint64
+
+                self._convert[indx] = np.array(dummy, dtype=new_dtype)
 
                 if _scale:
                     np.multiply(self._convert[indx], bscale,
@@ -488,10 +493,10 @@ class FITS_rec(np.recarray):
 
                 if _zero:
                     if 'K' in self._coldefs.formats[indx]:
-                        #
+
                         # There is a chance of overflow, so be careful
-                        #
                         test_overflow = self._convert[indx].copy()
+                        bzero64 = np.uint64(2**63)
                         try:
                             test_overflow += bzero64
                         except OverflowError:

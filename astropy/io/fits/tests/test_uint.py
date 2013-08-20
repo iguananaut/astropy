@@ -62,6 +62,9 @@ class TestUintFunctions(FitsTestCase):
     def test_uint_columns(self,utype):
         bits = 8 * int(utype[1])
 
+        if bits == 64 and platform.architecture()[0] != '64bit':
+            pytest.skip('Unsupported on 32-bit architecture')
+
         # Construct array
         bzero = self.utype_map[utype](2**(bits-1))
         one = self.utype_map[utype](1)
@@ -87,14 +90,14 @@ class TestUintFunctions(FitsTestCase):
         with fits.open(self.temp('tempfile.fits'), uint=True) as hdulist2:
             hdudata = hdulist2[1].data
             assert (hdudata[utype] == u).all()
-            assert (hdudata[utype].dtype == self.utype_map[utype])
+            assert hdudata[utype].dtype == self.utype_map[utype]
             assert (hdudata.base[utype] == uu).all()
 
-        # Test that opening the file without uint=True still returns signed
-        # ints
+        # Test that opening the file without uint=True still returns scaled
+        # floats rather than converting to uints
         with fits.open(self.temp('tempfile.fits')) as hdulist2:
             hdudata = hdulist2[1].data
-            assert (hdudata[utype].dtype.name == 'int{0:d}'.format(bits))
+            assert hdudata[utype].dtype.name == 'float64'
 
         # Construct recarray then write out that.
         v = u.view(dtype=[(utype,self.utype_map[utype])])
