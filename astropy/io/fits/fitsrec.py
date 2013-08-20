@@ -462,10 +462,10 @@ class FITS_rec(np.recarray):
                         actual_nitems = dummy.shape[1]
                     if nitems != actual_nitems:
                         warnings.warn(
-                        'TDIM%d value %s does not fit with the size of '
-                            'the array items (%d).  TDIM%d will be ignored.'
-                            % (indx + 1, self._coldefs.dims[indx],
-                               actual_nitems, indx + 1))
+                            'TDIM%d value %s does not fit with the size of '
+                            'the array items (%d).  TDIM%d will be ignored.' %
+                            (indx + 1, self._coldefs.dims[indx],
+                             actual_nitems, indx + 1))
                         dim = None
 
             # further conversion for both ASCII and binary tables
@@ -481,9 +481,11 @@ class FITS_rec(np.recarray):
                     bzero64 = np.uint64(2**63)
                 else:
                     self._convert[indx] = np.array(dummy, dtype=np.float64)
+
                 if _scale:
                     np.multiply(self._convert[indx], bscale,
                                 self._convert[indx])
+
                 if _zero:
                     if 'K' in self._coldefs.formats[indx]:
                         #
@@ -493,7 +495,10 @@ class FITS_rec(np.recarray):
                         try:
                             test_overflow += bzero64
                         except OverflowError:
-                            warnings.warn("Overflow detected while applying TZERO{0:d}.  Returning unscaled data.".format(indx))
+                            warnings.warn(
+                                "Overflow detected while applying "
+                                "TZERO{0:d}. Returning unscaled "
+                                "data.".format(indx))
                             self._convert[indx] = dummy
                         else:
                             self._convert[indx] = test_overflow
