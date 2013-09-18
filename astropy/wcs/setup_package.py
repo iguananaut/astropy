@@ -279,6 +279,12 @@ def get_extensions():
         cfg['define_macros'].append(('NDEBUG', None))
         cfg['undef_macros'].append('DEBUG')
 
+        if setup_helpers.get_compiler_option() == 'gcc':
+            cfg['extra_compile_args'].extend([
+                '-Wno-unused-function', '-Wno-unused-value',
+                '-Wno-uninitialized', '-Wno-implicit-function-declaration',
+                '-Wno-unused-but-set-variable'])
+
     if sys.platform == 'win32':
         # These are written into wcsconfig.h, but that file is not
         # used by all parts of wcslib.

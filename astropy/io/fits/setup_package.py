@@ -30,7 +30,8 @@ def get_extensions():
             cfg['extra_compile_args'].extend([
                 '-Wno-unused-variable', '-Wno-parentheses',
                 '-Wno-uninitialized', '-Wno-format', '-Wno-strict-prototypes',
-                '-Wno-unused', '-Wno-comments', '-Wno-switch'])
+                '-Wno-unused', '-Wno-comments', '-Wno-switch',
+                '-Wno-address', '-Wno-attributes'])
 
         cfitsio_path = os.path.join('cextern', 'cfitsio')
         cfitsio_files = glob(os.path.join(cfitsio_path, '*.c'))
