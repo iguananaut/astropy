@@ -17,6 +17,7 @@ from ..core import Model, FittableModel, ModelDefinitionError
 from ..parameters import Parameter, InputParameterError
 from ...utils.data import get_pkg_data_filename
 from ...tests.helper import pytest
+np.seterr(all='raise')
 
 
 class TestParModel(Model):

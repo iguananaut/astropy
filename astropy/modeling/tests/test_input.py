@@ -16,6 +16,8 @@ from ..core import Model, Fittable1DModel
 from ..parameters import Parameter
 from ...tests.helper import pytest
 
+np.seterr(all='raise')
+
 try:
     from scipy import optimize  # pylint: disable=W0611
     HAS_SCIPY = True

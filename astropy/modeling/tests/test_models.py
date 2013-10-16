@@ -28,6 +28,7 @@ from ...tests.helper import pytest
 
 from ...extern import six
 from ...extern.six.moves import copyreg as copy_reg
+np.seterr(all='raise')
 
 try:
     from scipy import optimize  # pylint: disable=W0611

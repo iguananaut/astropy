@@ -21,6 +21,7 @@ from ...utils import NumpyRNGContext
 from ...utils.data import get_pkg_data_filename
 from ...tests.helper import pytest
 from .utils import ignore_non_integer_warning
+np.seterr(all='raise')
 
 try:
     from scipy import optimize

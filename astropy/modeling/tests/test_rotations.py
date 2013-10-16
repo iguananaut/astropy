@@ -6,6 +6,7 @@ from __future__ import (absolute_import, unicode_literals, division,
 from .. import models
 from numpy.testing import utils
 from ...tests.helper import pytest
+np.seterr(all='raise')
 
 
 def test_RotateNative2Celestial():

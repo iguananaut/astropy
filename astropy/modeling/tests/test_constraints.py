@@ -14,6 +14,7 @@ from numpy.testing import utils
 from numpy.random import RandomState
 from ...tests.helper import pytest
 from .utils import ignore_non_integer_warning
+np.seterr(all='raise')
 
 try:
     from scipy import optimize
