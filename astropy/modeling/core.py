@@ -312,11 +312,11 @@ class ParametricModel(Model):
         may be used.
     eqcons: list
         A list of functions of length n such that
-        eqcons[j](x0, *args) == 0.0 in a successfully optimized
+        ``eqcons[j](x0, *args) == 0.0`` in a successfully optimized
         problem.
     ineqcons : list
         A list of functions of length n such that
-        ieqcons[j](x0, *args) >= 0.0 is a successfully optimized
+        ``ieqcons[j](x0, *args) >= 0.0`` is a successfully optimized
         problem.
 
     Examples
