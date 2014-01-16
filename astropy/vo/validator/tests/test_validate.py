@@ -114,7 +114,7 @@ class TestConeSearchResults(object):
         assert self.r.catkeys['exception'] == []
         assert self.r.catkeys['error'] == []
 
-    def gen_cmp(self, func, oname, *args, **kwargs):
+    def gen_cmp(self, func, oname, do_return, *args, **kwargs):
         dat_file = get_pkg_data_filename(os.path.join(self.datadir, oname))
         out_file = os.path.join(self.out_dir, oname)
         with open(out_file, 'w') as fout:
@@ -122,19 +122,25 @@ class TestConeSearchResults(object):
 
         with open(dat_file) as f1:
             with open(out_file) as f2:
-                assert f1.read() == f2.read()
+                if do_return:
+                    return f1.read(), f2.read()
+                else:
+                    assert f1.read() == f2.read()
 
     def test_tally(self):
-        self.gen_cmp(self.r.tally, 'tally.out')
+        self.gen_cmp(self.r.tally, 'tally.out', False)
 
     def test_listcats(self):
-        self.gen_cmp(self.r.list_cats, 'listcats1.out', 'good')
-        self.gen_cmp(self.r.list_cats, 'listcats2.out', 'good',
+        self.gen_cmp(self.r.list_cats, 'listcats1.out', False, 'good')
+        self.gen_cmp(self.r.list_cats, 'listcats2.out', False, 'good',
                      ignore_noncrit=True)
 
     def test_printcat(self):
-        self.gen_cmp(self.r.print_cat, 'printcat.out',
-                     'The USNO-A2.0 Catalogue (Monet+ 1998) 1')
+        a, b = self.gen_cmp(self.r.print_cat, 'printcat.out', True,
+                            'The USNO-A2.0 Catalogue (Monet+ 1998) 1')
+        a = json.loads(a[:a.rfind('}')+1])
+        b = json.loads(b[:b.rfind('}')+1])
+        assert a == b
 
     def teardown_class(self):
         BASEURL.set(BASEURL.defaultvalue)
