@@ -20,6 +20,7 @@ import os
 import subprocess
 import shutil
 import tempfile
+import types
 import warnings
 
 try:
@@ -474,7 +475,8 @@ def treat_deprecations_as_exceptions():
     """
     # First, totally reset the warning state
     for module in list(six.itervalues(sys.modules)):
-        if hasattr(module, '__warningregistry__'):
+        if (isinstance(module, types.ModuleType) and
+            hasattr(module, '__warningregistry__')):
             del module.__warningregistry__
 
     warnings.resetwarnings()
