@@ -30,15 +30,15 @@ def itersubclasses(cls, _seen=None):
     >>> class D(B,C): pass
     >>> class E(D): pass
     >>>
-    >>> for cls in itersubclasses(A):  # doctest: +SKIP
+    >>> for cls in itersubclasses(A):
     ...     print(cls.__name__)
     B
     D
     E
     C
     >>> # get ALL (new-style) classes currently defined
-    >>> [cls.__name__ for cls in itersubclasses(object)]  # doctest: +SKIP
-    ['type', ...'tuple', ...]
+    >>> [cls.__name__ for cls in itersubclasses(object)]
+    [...'tuple', ...'type', ...]
 
     From http://code.activestate.com/recipes/576949/
     """
@@ -52,7 +52,7 @@ def itersubclasses(cls, _seen=None):
         subs = cls.__subclasses__()
     except TypeError:  # fails only when cls is type
         subs = cls.__subclasses__(cls)
-    for sub in subs:
+    for sub in sorted(subs, key=lambda s: s.__name__):
         if sub not in _seen:
             _seen.add(sub)
             yield sub
