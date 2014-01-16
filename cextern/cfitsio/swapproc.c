@@ -75,13 +75,15 @@ void ffswap2(short *svalues,  /* IO - pointer to shorts to be swapped    */
   swap the bytes in the input short integers: ( 0 1 -> 1 0 )
 */
 {
+    long ii;
+    size_t peel;
+
     if ((long)svalues % 2 != 0) { /* should not happen */
         ffswap2_slow(svalues, nvals);
         return;
     }
 
-    long ii;
-    size_t peel = get_peel((void*)&svalues[0], sizeof(svalues[0]), nvals, 16);
+    peel = get_peel((void*)&svalues[0], sizeof(svalues[0]), nvals, 16);
 
     ffswap2_slow(svalues, peel);
     for (ii = peel; ii < (nvals - peel - (nvals - peel) % 8); ii+=8) {
