@@ -842,6 +842,11 @@ def print_code_line(line, col=None, file=None, tabwidth=8, width=70):
 
     write = file.write
 
+    if UNICODE_OUTPUT():
+        ellipses = '…'
+    else:
+        ellipses = '...'
+
     if col is not None:
         assert col < len(line)
         ntabs = line[:col].count('\t')
@@ -854,14 +859,13 @@ def print_code_line(line, col=None, file=None, tabwidth=8, width=70):
         new_col = min(width // 2, len(line) - col)
         offset = col - new_col
         line = line[offset + 1:]
-        new_col = col
-        col -= offset
-        width = width - 3
-        color_print('…', 'darkgrey', file=file, end='')
+        col = new_col + len(ellipses) - 1
+        width = width - len(ellipses)
+        color_print(ellipses, 'darkgrey', file=file, end='')
 
     if len(line) > width:
-        write(line[:width - 1])
-        color_print('…', 'darkgrey', file=file)
+        write(line[:width - len(ellipses)])
+        color_print(ellipses, 'darkgrey', file=file)
     else:
         write(line)
         write('\n')
