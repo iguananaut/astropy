@@ -45,10 +45,11 @@ from distutils.debug import DEBUG
 from setuptools import Distribution
 
 # TODO: Maybe enable checking for a specific version of astropy_helpers?
+DIST_NAME = 'astropy-helpers'
+PACKAGE_NAME = 'astropy_helpers'
 
 
-def use_astropy_helpers(path='astropy_helpers', download_if_needed=True,
-                        index_url=None):
+def use_astropy_helpers(path=None, download_if_needed=True, index_url=None):
     """
     Ensure that the `astropy_helpers` module is available and is importable.
     This supports automatic submodule initialization if astropy_helpers is
@@ -83,6 +84,9 @@ def use_astropy_helpers(path='astropy_helpers', download_if_needed=True,
         If provided, use a different URL for the Python package index than the
         main PyPI server.
     """
+
+    if path is None:
+        path = PACKAGE_NAME
 
     if not isinstance(path, _str_types):
         if path is not None:
@@ -164,14 +168,16 @@ def _do_download(find_links=None, index_url=None):
                         opts['allow_hosts'] = ('setup script', allow_hosts)
                 return opts
 
-        attrs = {'setup_requires': ['astropy-helpers']}
-
+        attrs = {'setup_requires': [DIST_NAME]}
         if DEBUG:
             dist = _Distribution(attrs=attrs)
         else:
             with _silence():
                 dist = _Distribution(attrs=attrs)
     except Exception as e:
+        if DEBUG:
+            raise
+
         msg = 'Error retrieving astropy helpers from {0}:\n{1}'
         if find_links:
             source = find_links[0]
@@ -180,7 +186,7 @@ def _do_download(find_links=None, index_url=None):
         else:
             source = 'PyPI'
 
-        raise Exception(msg.format(source, str(e)))
+        raise Exception(msg.format(source, repr(e)))
 
 
 def _directory_import(path, download_if_needed, is_submodule=None):
@@ -257,16 +263,16 @@ def _check_submodule(path):
 
 
 def _update_submodule(submodule, status):
-    if status == ' ':
+    if status == b' ':
         # The submodule is up to date; no action necessary
         return
-    elif status == '-':
+    elif status == b'-':
         cmd = ['update', '--init']
         log.info('Initializing submodule {0!r}'.format(submodule))
-    elif status == '+':
+    elif status == b'+':
         cmd = ['update']
         log.info('Updating submodule {0!r}'.format(submodule))
-    elif status == 'U':
+    elif status == b'U':
         raise _AHBoostrapSystemExit(
             'Error: Submodule {0} contains unresolved merge conflicts.  '
             'Please complete or abandon any changes in the submodule so that '
@@ -298,6 +304,8 @@ def _update_submodule(submodule, status):
 
 class _DummyFile(object):
     """A noop writeable object."""
+
+    errors = ''  # Required for Python 3.x
 
     def write(self, s):
         pass
