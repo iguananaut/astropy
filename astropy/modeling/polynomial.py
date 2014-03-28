@@ -1194,9 +1194,6 @@ class SIP(Model):
         self._bp_order = bp_order
         self._ap_coeff = ap_coeff
         self._bp_coeff = bp_coeff
-        # define the 0th term in order to use Polynomial1D
-        self._ap_coeff['AP_0_0'] = ap_coeff.get('AP_0_0', 0) 
-        self._bp_coeff['BP_0_0'] = bp_coeff.get('BP_0_0', 0) 
         self.shift_a = Shift(-crpix[0])
         self.shift_b = Shift(-crpix[1])
         self.sip1d_a = _SIP1D(a_order, coeff_prefix='A',
