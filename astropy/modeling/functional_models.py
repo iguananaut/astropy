@@ -11,8 +11,8 @@ from textwrap import dedent
 
 import numpy as np
 
-from .core import (Fittable1DModel, Fittable2DModel,
-                   Model, format_input, ModelDefinitionError)
+from .core import (FittableModel, Fittable1DModel, Fittable2DModel,
+                   Model, ModelDefinitionError)
 from .parameters import Parameter, InputParameterError
 from ..utils import find_current_module
 from ..extern import six
@@ -104,7 +104,7 @@ class Gaussian1D(Fittable1DModel):
                                          stddev=stddev, **constraints)
 
     @staticmethod
-    def eval(x, amplitude, mean, stddev):
+    def evaluate(x, amplitude, mean, stddev):
         """
         Gaussian1D model function.
         """
@@ -290,7 +290,7 @@ class Gaussian2D(Fittable2DModel):
             x_stddev=x_stddev, y_stddev=y_stddev, theta=theta, **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_mean, y_mean, x_stddev, y_stddev, theta):
+    def evaluate(x, y, amplitude, x_mean, y_mean, x_stddev, y_stddev, theta):
         """Two dimensional Gaussian function"""
 
         cost2 = np.cos(theta) ** 2
@@ -382,18 +382,9 @@ class Shift(Model):
         else:
             return Shift(offsets=[off * (-1) for off in self.offsets])
 
-    @format_input
-    def __call__(self, x):
-        """
-        Transforms data using this model.
-
-        Parameters
-        ----------
-        x : array like or a number
-            input
-        """
-
-        return self.offsets + x
+    @staticmethod
+    def evaluate(x, offsets):
+        return x + offsets
 
 
 class Scale(Model):
@@ -422,18 +413,9 @@ class Scale(Model):
         else:
             return Scale(factors=[1 / factor for factor in self.factors])
 
-    @format_input
-    def __call__(self, x):
-        """
-        Transforms data using this model.
-
-        Parameters
-        ----------
-        x : array like or a number
-            input
-        """
-
-        return self.factors * x
+    @staticmethod
+    def evaluate(x, factors):
+        return factors * x
 
 
 class Redshift(Fittable1DModel):
@@ -512,7 +494,7 @@ class Sine1D(Fittable1DModel):
                                      **constraints)
 
     @staticmethod
-    def eval(x, amplitude, frequency):
+    def evaluate(x, amplitude, frequency):
         """One dimensional Sine model function"""
 
         return amplitude * np.sin(2 * np.pi * frequency * x)
@@ -559,7 +541,7 @@ class Linear1D(Fittable1DModel):
                                        **constraints)
 
     @staticmethod
-    def eval(x, slope, intercept):
+    def evaluate(x, slope, intercept):
         """One dimensional Line model function"""
 
         return slope * x + intercept
@@ -608,7 +590,7 @@ class Lorentz1D(Fittable1DModel):
                                         fwhm=fwhm, **constraints)
 
     @staticmethod
-    def eval(x, amplitude, x_0, fwhm):
+    def evaluate(x, amplitude, x_0, fwhm):
         """One dimensional Lorentzian model function"""
 
         return (amplitude * ((fwhm / 2.) ** 2) / ((x - x_0) ** 2 +
@@ -651,7 +633,7 @@ class Const1D(Fittable1DModel):
         super(Const1D, self).__init__(amplitude=amplitude, **constraints)
 
     @staticmethod
-    def eval(x, amplitude):
+    def evaluate(x, amplitude):
         """One dimensional Constant model function"""
 
         return amplitude * np.ones_like(x)
@@ -690,7 +672,7 @@ class Const2D(Fittable2DModel):
         super(Const2D, self).__init__(amplitude=amplitude, **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude):
+    def evaluate(x, y, amplitude):
         """Two dimensional Constant model function"""
 
         return amplitude * np.ones_like(x)
@@ -739,7 +721,7 @@ class Disk2D(Fittable2DModel):
                                      y_0=y_0, R_0=R_0, **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_0, y_0, R_0):
+    def evaluate(x, y, amplitude, x_0, y_0, R_0):
         """Two dimensional Disk model function"""
 
         rr = (x - x_0) ** 2 + (y - y_0) ** 2
@@ -804,7 +786,7 @@ class Ring2D(Fittable2DModel):
                                      **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_0, y_0, r_in, width):
+    def evaluate(x, y, amplitude, x_0, y_0, r_in, width):
         """Two dimensional Ring model function."""
 
         rr = (x - x_0) ** 2 + (y - y_0) ** 2
@@ -866,7 +848,7 @@ class Box1D(Fittable1DModel):
                                     width=width, **constraints)
 
     @staticmethod
-    def eval(x, amplitude, x_0, width):
+    def evaluate(x, amplitude, x_0, width):
         """One dimensional Box model function"""
 
         return np.select([np.logical_and(x >= x_0 - width / 2.,
@@ -877,7 +859,7 @@ class Box1D(Fittable1DModel):
     def fit_deriv(cls, x, amplitude, x_0, width):
         """One dimensional Box model derivative with respect to parameters"""
 
-        d_amplitude = cls.eval(x, 1, x_0, width)
+        d_amplitude = cls.evaluate(x, 1, x_0, width)
         d_x_0 = np.zeros_like(x)
         d_width = np.zeros_like(x)
         return [d_amplitude, d_x_0, d_width]
@@ -932,8 +914,9 @@ class Box2D(Fittable2DModel):
                                     y_width=y_width, **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_0, y_0, x_width, y_width):
+    def evaluate(x, y, amplitude, x_0, y_0, x_width, y_width):
         """Two dimensional Box model function"""
+
         x_range = np.logical_and(x >= x_0 - x_width / 2.,
                                  x <= x_0 + x_width / 2.)
         y_range = np.logical_and(y >= y_0 - y_width / 2.,
@@ -972,8 +955,9 @@ class Trapezoid1D(Fittable1DModel):
                                           **constraints)
 
     @staticmethod
-    def eval(x, amplitude, x_0, width, slope):
+    def evaluate(x, amplitude, x_0, width, slope):
         """One dimensional Trapezoid model function"""
+
         # Compute the four points where the trapezoid changes slope
         # x1 <= x2 <= x3 <= x4
         x2 = x_0 - width / 2.
@@ -1025,7 +1009,7 @@ class TrapezoidDisk2D(Fittable2DModel):
                                               slope=slope, **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_0, y_0, R_0, slope):
+    def evaluate(x, y, amplitude, x_0, y_0, R_0, slope):
         """Two dimensional Trapezoid Disk model function"""
 
         r = np.sqrt((x - x_0) ** 2 + (y - y_0) ** 2)
@@ -1074,7 +1058,7 @@ class MexicanHat1D(Fittable1DModel):
                                            **constraints)
 
     @staticmethod
-    def eval(x, amplitude, x_0, sigma):
+    def evaluate(x, amplitude, x_0, sigma):
         """One dimensional Mexican Hat model function"""
 
         xx_ww = (x - x_0) ** 2 / (2 * sigma ** 2)
@@ -1123,7 +1107,7 @@ class MexicanHat2D(Fittable2DModel):
                                            **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_0, y_0, sigma):
+    def evaluate(x, y, amplitude, x_0, y_0, sigma):
         """Two dimensional Mexican Hat model function"""
 
         rr_ww = ((x - x_0) ** 2 + (y - y_0) ** 2) / (2 * sigma ** 2)
@@ -1193,6 +1177,9 @@ class AiryDisk2D(Fittable2DModel):
                                          y_0=y_0, radius=radius,
                                          **constraints)
 
+    # TODO: Why does this particular model have its own special __deepcopy__
+    # and __copy__?  If it has anything to do with the use of the j_1 function
+    # that should be reworked.
     def __deepcopy__(self, memo):
         new_model = self.__class__(self.amplitude.value, self.x_0.value,
                                    self.y_0.value, self.radius.value)
@@ -1204,7 +1191,7 @@ class AiryDisk2D(Fittable2DModel):
         return new_model
 
     @classmethod
-    def eval(cls, x, y, amplitude, x_0, y_0, radius):
+    def evaluate(cls, x, y, amplitude, x_0, y_0, radius):
         """Two dimensional Airy model function"""
 
         r = np.sqrt((x - x_0) ** 2 + (y - y_0) ** 2) / (radius / cls._rz)
@@ -1256,7 +1243,7 @@ class Beta1D(Fittable1DModel):
                                      **constraints)
 
     @staticmethod
-    def eval(x, amplitude, x_0, gamma, alpha):
+    def evaluate(x, amplitude, x_0, gamma, alpha):
         """One dimensional Beta model function"""
 
         return amplitude * (1 + ((x - x_0) / gamma) ** 2) ** (-alpha)
@@ -1317,7 +1304,7 @@ class Beta2D(Fittable2DModel):
                                      **constraints)
 
     @staticmethod
-    def eval(x, y, amplitude, x_0, y_0, gamma, alpha):
+    def evaluate(x, y, amplitude, x_0, y_0, gamma, alpha):
         """Two dimensional Beta model function"""
 
         rr_gg = ((x - x_0) ** 2 + (y - y_0) ** 2) / gamma ** 2
@@ -1428,7 +1415,7 @@ def custom_model_1d(func, func_fit_deriv=None):
         filename = '<string>'
         modname = '__main__'
 
-    members = {'eval': staticmethod(func)}
+    members = {'evaluate': staticmethod(func)}
 
     eval_globals = {}
 

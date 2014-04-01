@@ -29,7 +29,14 @@ class TestParModel(Model):
         super(TestParModel, self).__init__(
                 coeff=coeff, e=e, param_dim=param_dim)
 
-    def __call__(self):
+    @staticmethod
+    def evaluate(coeff, e):
+        pass
+
+
+class MockModel(ParametricModel):
+    @staticmethod
+    def evaluate():
         pass
 
 

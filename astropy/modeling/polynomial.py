@@ -11,7 +11,7 @@ import collections
 
 import numpy as np
 
-from .core import FittableModel, Model, SerialCompositeModel, format_input
+from .core import FittableModel, Model, SerialCompositeModel
 from .functional_models import Shift
 from .parameters import Parameter
 from .utils import poly_map_domain, comb
@@ -367,7 +367,12 @@ class OrthoPolynomialBase(PolynomialBase):
 
         raise NotImplementedError("Subclasses should implement this")
 
-    @format_input
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def __call__(self, x, y):
         """
         Transforms data using this model.
@@ -378,6 +383,10 @@ class OrthoPolynomialBase(PolynomialBase):
         y : scalar, lis or array
         """
 
+        inputs, transposed, scalar = self._prepare_inputs(x, y)
+
+        x, y = inputs
+
         if x.shape != y.shape:
             raise ValueError("Expected input arrays to have the same shape")
         if self.x_domain is not None:
@@ -386,7 +395,17 @@ class OrthoPolynomialBase(PolynomialBase):
             y = poly_map_domain(y, self.y_domain, self.y_window)
         invcoeff = self.invlex_coeff()
 
-        return self.imhorner(x, y, invcoeff)
+        result =  self.imhorner(x, y, invcoeff)
+
+        if transposed:
+            return result.T
+        elif scalar:
+            try:
+                return result[0]
+            except IndexError:
+                return result
+
+        return result
 
 
 class Chebyshev1D(PolynomialModel):
@@ -464,7 +483,12 @@ class Chebyshev1D(PolynomialModel):
             v[i] = v[i - 1] * x2 - v[i - 2]
         return np.rollaxis(v, 0, v.ndim)
 
-    @format_input
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def __call__(self, x):
         """
         Transforms data using this model.
@@ -526,6 +550,12 @@ class Legendre1D(PolynomialModel):
                 c1 = tmp + (c1 * x * (2 * nd - 1)) / nd
         return c0 + c1 * x
 
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def fit_deriv(self, x, *params):
         """
         Computes the Vandermonde matrix.
@@ -551,7 +581,6 @@ class Legendre1D(PolynomialModel):
             v[i] = (v[i - 1] * x * (2 * i - 1) - v[i - 2] * (i - 1)) / i
         return np.rollaxis(v, 0, v.ndim)
 
-    @format_input
     def __call__(self, x):
         """
         Transforms data using this model.
@@ -623,7 +652,12 @@ class Polynomial1D(PolynomialModel):
             c0 = coef[-i] + c0 * x
         return c0
 
-    @format_input
+    @staticmethod
+    def evaluate(x, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def __call__(self, x):
         """
         Transforms data using this model.
@@ -634,7 +668,19 @@ class Polynomial1D(PolynomialModel):
             input
         """
 
-        return self.horner(x, self.param_sets)
+        inputs, transposed, scalar = self._prepare_inputs(x)
+
+        result = self.horner(inputs[0], self.param_sets)
+
+        if transposed:
+            return result.T
+        elif scalar:
+            try:
+                return result[0]
+            except IndexError:
+                return result
+
+        return result
 
 
 class Polynomial2D(PolynomialModel):
@@ -700,6 +746,12 @@ class Polynomial2D(PolynomialModel):
             r0 = coeff[n + 1]
         return r0 + r1 + r2
 
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def fit_deriv(self, x, y, *params):
         """
         Computes the Vandermonde matrix.
@@ -751,7 +803,6 @@ class Polynomial2D(PolynomialModel):
                     coeff.append(getattr(self, name))
         return np.array(coeff[::-1])
 
-    @format_input
     def __call__(self, x, y):
         """
         Transforms data using this model.
@@ -764,11 +815,25 @@ class Polynomial2D(PolynomialModel):
             input
         """
 
+        inputs, transposed, scalar = self._prepare_inputs(x, y)
+
+        x, y = inputs
+
         invcoeff = self.invlex_coeff()
         if x.shape != y.shape:
             raise ValueError("Expected input arrays to have the same shape")
 
-        return self.mhorner(x, y, invcoeff)
+        result = self.mhorner(x, y, invcoeff)
+
+        if transposed:
+            return result.T
+        elif scalar:
+            try:
+                return result[0]
+            except IndexError:
+                return result
+
+        return result
 
 
 class Chebyshev2D(OrthoPolynomialBase):
@@ -828,6 +893,12 @@ class Chebyshev2D(OrthoPolynomialBase):
         for n in range(x_terms + 2, x_terms + y_terms):
             kfunc[n] = 2 * y * kfunc[n - 1] - kfunc[n - 2]
         return kfunc
+
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
 
     def fit_deriv(self, x, y, *params):
         """
@@ -943,6 +1014,12 @@ class Legendre2D(OrthoPolynomialBase):
             kfunc[n + x_terms] = ((2 * (n - 1) + 1) * y * kfunc[n + x_terms - 1] -
                                   (n - 1) * kfunc[n + x_terms - 2]) / (n)
         return kfunc
+
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
 
     def fit_deriv(self, x, y, *params):
         """
@@ -1105,6 +1182,12 @@ class _SIP1D(PolynomialBase):
                     result = result + coef[i, j] * x ** i * y ** j
         return result
 
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def __call__(self, x, y):
         mcoef = self._coef_matrix(self.coeff_prefix)
         return self._eval_sip(x, y, mcoef)
@@ -1181,6 +1264,12 @@ class SIP(Model):
             parts.append('')
 
         return '\n'.join(parts)
+
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
 
     def inverse(self):
         if (self._ap_order is not None and self._ap_coeff is not None and
