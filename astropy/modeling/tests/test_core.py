@@ -25,7 +25,8 @@ class NonFittableModel(Model):
 
         super(NonFittableModel, self).__init__(a, param_dim=param_dim)
 
-    def __call__(self):
+    @staticmethod
+    def evaluate():
         pass
 
 

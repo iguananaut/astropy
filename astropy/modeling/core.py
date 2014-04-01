@@ -47,7 +47,7 @@ from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
 import abc
-import functools
+import itertools
 import copy
 
 import numpy as np
@@ -63,75 +63,11 @@ from .parameters import Parameter, InputParameterError
 
 __all__ = ['Model', 'FittableModel', 'SummedCompositeModel',
            'SerialCompositeModel', 'LabeledInput', 'Fittable1DModel',
-           'Fittable2DModel', 'ModelDefinitionError', 'format_input']
+           'Fittable2DModel', 'ModelDefinitionError']
 
 
 class ModelDefinitionError(Exception):
     """Used for incorrect models definitions"""
-
-
-def format_input(func):
-    """
-    Wraps a model's ``__call__`` method so that the input arrays are converted
-    into the appropriate shape given the model's parameter dimensions.
-
-    Wraps the result to match the shape of the last input array.
-    """
-
-    @functools.wraps(func)
-    def wrapped_call(self, *args):
-        converted = []
-
-        for arg in args:
-            # Reset these flags; their value only matters for the last
-            # argument
-            transposed = False
-            scalar = False
-
-            arg = np.asarray(arg) + 0.
-            if self.param_dim == 1:
-                if arg.ndim == 0:
-                    scalar = True
-                converted.append(arg)
-                continue
-
-            if arg.ndim < 2:
-                converted.append(np.array([arg]).T)
-            elif arg.ndim == 2:
-                if arg.shape[-1] != self.param_dim:
-                    raise ValueError("Cannot broadcast with shape ({0}, {1})".
-                                     format(arg.shape[0], arg.shape[1]))
-                converted.append(arg)
-            elif arg.ndim > 2:
-                if arg.shape[0] != self.param_dim:
-                    raise ValueError("Cannot broadcast with shape ({0}, {1}, "
-                                     "{2})".format(arg.shape[0],
-                                                   arg.shape[1], arg.shape[2]))
-                transposed = True
-                converted.append(arg.T)
-
-        result = func(self, *converted)
-
-        if transposed:
-            if self.n_outputs > 1:
-                result = [r.T for r in result]
-            else:
-                return result.T
-        elif scalar:
-            if self.n_outputs > 1:
-                try:
-                    result = [np.asscalar(r) for r in result]
-                except TypeError:
-                    pass
-                return tuple(result)
-            else:
-                try:
-                    result = result[0]
-                except (IndexError, TypeError):
-                    pass
-        return result
-
-    return wrapped_call
 
 
 class _ModelMeta(abc.ABCMeta):
@@ -436,6 +372,61 @@ class Model(object):
         """
 
         return copy.deepcopy(self)
+
+    def __call__(self, *inputs):
+        inputs, transposed, scalar = self._prepare_inputs(*inputs)
+
+        result = self.evaluate(*itertools.chain(inputs, self.param_sets))
+
+        if transposed:
+            return result.T
+        elif scalar:
+            if self.n_outputs == 1:
+                return result[0].item()
+
+            return tuple(result[idx].item() for idx in range(self.n_outputs))
+
+        return result
+
+    def _prepare_inputs(self, *inputs):
+        """
+        This method is used in `Model.__call__` to ensure that all the inputs
+        to the model can be broadcast into compatible shapes (if one or both of
+        them are input as arrays), particularly if there are more than one
+        parameter sets.
+        """
+
+        converted = []
+        transposed = False
+        scalar = False
+
+        for _input in inputs:
+            # Reset these flags; their value only matters for the last
+            # argument
+            transposed = False
+            scalar = False
+
+            _input = np.asarray(_input) + 0.
+            if self.param_dim == 1:
+                if _input.ndim == 0:
+                    scalar = True
+                converted.append(_input)
+                continue
+
+            if _input.ndim < 2:
+                converted.append(np.array([_input]).T)
+            elif _input.ndim == 2:
+                assert _input.shape[-1] == self.param_dim, \
+                    ("Cannot broadcast with shape {0!r}".format(_input.shape))
+                converted.append(_input)
+            elif _input.ndim > 2:
+                assert _input.shape[0] == self.param_dim, \
+                    ("Cannot broadcast with shape {0!r}".format(_input.shape))
+
+                transposed = True
+                converted.append(_input.T)
+
+        return converted, transposed, scalar
 
     def _initialize_constraints(self, kwargs):
         """
@@ -802,6 +793,12 @@ class _CompositeModel(Model):
     def invert(self):
         raise NotImplementedError("Subclasses should implement this")
 
+    @staticmethod
+    def evaluate(x, y, *coeffs):
+        # TODO: Refactor how these are evaluated so that they can work like
+        # other models
+        raise NotImplementedError("Needs refactoring")
+
     def __call__(self):
         # implemented by subclasses
         raise NotImplementedError("Subclasses should implement this")
@@ -1039,18 +1036,16 @@ class Fittable1DModel(FittableModel):
         {'parameter_name': 'parameter_value'}
     """
 
-    @format_input
     def __call__(self, x):
         """
         Transforms data using this model.
 
         Parameters
         ----------
-        x : array like or a number
-            input
+        x : numeric array-like or scalar
         """
 
-        return self.eval(x, *self.param_sets)
+        return super(Parametric1DModel, self).__call__(x)
 
 
 class Fittable2DModel(FittableModel):
@@ -1070,15 +1065,14 @@ class Fittable2DModel(FittableModel):
     n_inputs = 2
     n_outputs = 1
 
-    @format_input
     def __call__(self, x, y):
         """
         Transforms data using this model.
 
         Parameters
         ----------
-        x : array like or a number
-            input
+        x : numeric array-like or scalar
+        y : numeric array-like or scalar
         """
 
-        return self.eval(x, y, *self.param_sets)
+        return super(Parametric2DModel, self).__call__(x, y)
