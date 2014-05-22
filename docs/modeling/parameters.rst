@@ -56,18 +56,7 @@ Parameter examples
     >>> ch2 = models.Chebyshev2D(x_degree=2, y_degree=3, **coeff)
     INFO: Inferred 2 dimensions when creating a Chebyshev2D model. Resetting param_dim to 2 [astropy.modeling.polynomial] 
     >>> ch2.param_sets
-    array([[  0.,  10.],
-           [  1.,  11.],
-           [  2.,  12.],
-           [  3.,  13.],
-           [  4.,  14.],
-           [  5.,  15.],
-           [  6.,  16.],
-           [  7.,  17.],
-           [  8.,  18.],
-           [  9.,  19.],
-           [ 10.,  20.],
-           [ 11.,  21.]])
+    [array([  0.,  10.]), ..., array([ 11.,  21.])]
 
 - or directly, using keyword arguments::
 

@@ -230,9 +230,20 @@ class Model(object):
     def __str__(self):
         return self._format_str()
 
-    @abc.abstractmethod
-    def __call__(self, *args, **kwargs):
-        """Evaluate the model on some input variables."""
+    def __call__(self, *inputs):
+        inputs, orig_inputs, transposed = self.prepare_inputs(*inputs)
+
+        result = self.evaluate(*itertools.chain(inputs, self.param_sets))
+
+        if self.n_outputs == 1:
+            result = (result,)
+
+        outputs = self.prepare_outputs(orig_inputs, result, transposed)
+
+        if self.n_outputs == 1:
+            return outputs[0]
+        else:
+            return outputs
 
     @property
     def param_dim(self):
@@ -245,23 +256,15 @@ class Model(object):
         """
         Return parameters as a pset.
 
-        This is an array where each column represents one parameter set.
+        This is a list with one item per parameter set, which is an array of
+        that parameter's values across all parameter sets, with the last axis
+        associated with the parameter set.
         """
 
-        parameters = [getattr(self, attr) for attr in self.param_names]
-        values = [par.value for par in parameters]
-        shapes = [par.shape for par in parameters]
-        n_dims = np.asarray([len(p.shape) for p in parameters])
-
-        if (n_dims > 1).any():
-            if () in shapes:
-                psets = np.asarray(values, dtype=np.object)
-            else:
-                psets = np.asarray(values)
-        else:
-            psets = np.asarray(values)
-            psets.shape = (len(self.param_names), self.param_dim)
-        return psets
+        values = (np.asarray(getattr(self, attr).value)
+                  for attr in self.param_names)
+        return [value if value.shape else np.array([value])
+                for value in values]
 
     @property
     def parameters(self):
@@ -337,6 +340,86 @@ class Model(object):
 
         raise NotImplementedError("Subclasses should implement this")
 
+    def evaluate(self, *args, **kwargs):
+        """Evaluate the model on some input variables."""
+
+        raise NotImplementedError("Subclasses should implement this")
+
+    def prepare_inputs(self, *inputs):
+        """
+        This method is used in `Model.__call__` to ensure that all the inputs
+        to the model can be broadcast into compatible shapes (if one or both of
+        them are input as arrays), particularly if there are more than one
+        parameter sets.
+        """
+
+        reshaped_inputs = []
+        orig_inputs = []
+        transposed = []  # TODO: Hopefully the need for this can be eliminated
+
+        for _input in inputs:
+            _input = np.array(_input, dtype=np.float)
+            orig_inputs.append(_input)
+
+            if not _input.shape:
+                # The input is a scalar; it is not actually reshaped in this
+                # case
+                reshaped_inputs.append(_input)
+                transposed.append(False)
+                continue
+
+            transpose = False
+            if self.param_dim > 1:
+                if _input.ndim == 1:
+                    _input = _input[:, np.newaxis]
+                elif _input.ndim == 2:
+                    if _input.shape[-1] != self.param_dim:
+                        raise ValueError("Cannot broadcast with shape "
+                                         "{0!r}".format(_input.shape))
+                elif _input.ndim >= 2:
+                    if _input.shape[0] != self.param_dim:
+                        raise ValueError("Cannot broadcast with shape "
+                                         "{0!r}".format(_input.shape))
+                    _input = _input.T
+                    transpose = True
+
+            transposed.append(transpose)
+            reshaped_inputs.append(_input)
+
+        return tuple(reshaped_inputs), tuple(orig_inputs), tuple(transposed)
+
+    def prepare_outputs(self, inputs, outputs, transposed):
+        """
+        This method is used at the ned of `Model.__call__` to ensure that all
+        outputs have dimensions and shapes matching the original shapes of
+        their corresponding inputs.
+
+        Each argument to this function should be a tuple of the original inputs
+        (after conversion to arrays) and their corresponding result arrays.
+        """
+
+        reshaped_outputs = []
+
+        for _input, _output, transposed in zip(inputs, outputs, transposed):
+            if self.param_dim == 1:
+                # Some evals just return a plain float
+                if isinstance(_output, np.ndarray):
+                    _output = _output.reshape(_input.shape)
+                    if not _input.shape:
+                        # Return a scalar
+                        _output = _output.item()
+            else:
+                if not _input.shape:
+                    # The original input was a scalar--return a 1-D array with
+                    # one result per parameter-set:
+                    _output = _output.reshape((_output.size,))
+                elif transposed:
+                    _output = _output.T
+
+            reshaped_outputs.append(_output)
+
+        return tuple(reshaped_outputs)
+
     def add_model(self, model, mode):
         """
         Create a CompositeModel by chaining the current model with the new one
@@ -372,61 +455,6 @@ class Model(object):
         """
 
         return copy.deepcopy(self)
-
-    def __call__(self, *inputs):
-        inputs, transposed, scalar = self._prepare_inputs(*inputs)
-
-        result = self.evaluate(*itertools.chain(inputs, self.param_sets))
-
-        if transposed:
-            return result.T
-        elif scalar:
-            if self.n_outputs == 1:
-                return result[0].item()
-
-            return tuple(result[idx].item() for idx in range(self.n_outputs))
-
-        return result
-
-    def _prepare_inputs(self, *inputs):
-        """
-        This method is used in `Model.__call__` to ensure that all the inputs
-        to the model can be broadcast into compatible shapes (if one or both of
-        them are input as arrays), particularly if there are more than one
-        parameter sets.
-        """
-
-        converted = []
-        transposed = False
-        scalar = False
-
-        for _input in inputs:
-            # Reset these flags; their value only matters for the last
-            # argument
-            transposed = False
-            scalar = False
-
-            _input = np.asarray(_input) + 0.
-            if self.param_dim == 1:
-                if _input.ndim == 0:
-                    scalar = True
-                converted.append(_input)
-                continue
-
-            if _input.ndim < 2:
-                converted.append(np.array([_input]).T)
-            elif _input.ndim == 2:
-                assert _input.shape[-1] == self.param_dim, \
-                    ("Cannot broadcast with shape {0!r}".format(_input.shape))
-                converted.append(_input)
-            elif _input.ndim > 2:
-                assert _input.shape[0] == self.param_dim, \
-                    ("Cannot broadcast with shape {0!r}".format(_input.shape))
-
-                transposed = True
-                converted.append(_input.T)
-
-        return converted, transposed, scalar
 
     def _initialize_constraints(self, kwargs):
         """
@@ -1049,7 +1077,7 @@ class Fittable1DModel(FittableModel):
         x : numeric array-like or scalar
         """
 
-        return super(Parametric1DModel, self).__call__(x)
+        return super(FittableModel, self).__call__(x)
 
 
 class Fittable2DModel(FittableModel):
@@ -1079,4 +1107,4 @@ class Fittable2DModel(FittableModel):
         y : numeric array-like or scalar
         """
 
-        return super(Parametric2DModel, self).__call__(x, y)
+        return super(FittableModel, self).__call__(x, y)

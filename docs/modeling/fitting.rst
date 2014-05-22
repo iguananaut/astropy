@@ -65,9 +65,7 @@ Fitters support constrained fitting.
       >>> p1 = models.Polynomial1D(2, param_dim=2)
       >>> p1.parameters = [1, 1, 2, 2, 3, 3]
       >>> p1.param_sets
-      array([[ 1.,  1.],
-             [ 2.,  2.],
-             [ 3.,  3.]])
+      [array([ 1.,  1.]), array([ 2.,  2.]), array([ 3.,  3.])]
       >>> y = p1(x)
       >>> p1.c0.fixed = True
       >>> pfit = fitting.LinearLSQFitter()
