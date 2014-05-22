@@ -58,9 +58,7 @@ The examples here assume this import statement was executed::
     >>> g1 = models.Gaussian1D(amplitude=[10, 9], mean=[2, 3],
     ...                        stddev=[0.15, .1])
     >>> g1.param_sets
-    array([[ 10.  ,   9.  ],
-           [  2.  ,   3.  ],
-           [  0.15,   0.1 ]])
+    [array([ 10.,   9.]), array([ 2.,  3.]), array([ 0.15,  0.1 ])]
 
   Evaluate the model on one data set::
 
