@@ -27,16 +27,18 @@ from __future__ import (absolute_import, unicode_literals, division,
 import abc
 import warnings
 import inspect
+import itertools
+
 from functools import reduce
 
 import numpy as np
 
-from .utils import poly_map_domain
 from ..utils.exceptions import AstropyUserWarning
 from .core import _CompositeModel
 from ..extern import six
-from .optimizers import (SLSQP, Simplex)
-from .statistic import (leastsquare)
+from .optimizers import (SLSQP, Simplex, DEFAULT_MAXITER, DEFAULT_EPS,
+                         DEFAULT_ACC)
+from .statistic import leastsquare
 
 
 __all__ = ['LinearLSQFitter', 'LevMarLSQFitter', 'SLSQPLSQFitter',
@@ -44,13 +46,11 @@ __all__ = ['LinearLSQFitter', 'LevMarLSQFitter', 'SLSQPLSQFitter',
 
 
 
-# Statistic functions implemented in `astropy.modeling.statistic.py
+# Statistic functions implemented in astropy.modeling.statistic
 STATISTICS = [leastsquare]
 
-# Optimizers implemented in `astropy.modeling.optimizers.py
+# Optimizers implemented in astropy.modeling.optimizers
 OPTIMIZERS = [Simplex, SLSQP]
-
-from .optimizers import (DEFAULT_MAXITER, DEFAULT_EPS, DEFAULT_ACC)
 
 
 class ModelsError(Exception):
@@ -153,20 +153,25 @@ class LinearLSQFitter(object):
                          }
 
     @staticmethod
-    def _deriv_with_constraints(model, param_indices, x=None, y=None):
-        if y is None:
-            d = np.array(model.fit_deriv(x, *model.parameters))
-        else:
-            d = np.array(model.fit_deriv(x, y, *model.parameters))
+    def _deriv_with_constraints(model, param_indices, *inputs):
+        deriv = np.array(model.fit_deriv(*itertools.chain(inputs,
+                                                          model.param_sets)))
+
+        if len(param_indices) == len(model.param_names):
+            # No parameters are excluded
+            if model.col_fit_deriv:
+                return deriv.T
+            else:
+                return deriv
 
         if model.col_fit_deriv:
-            return d[param_indices]
+            return deriv[param_indices].T
         else:
-            return d[:, param_indices]
+            return deriv[:, param_indices]
 
-    def _map_domain_window(self, model, x, y=None):
+    def _set_domain_window(self, model, x, y=None):
         """
-        Maps domain into window for a polynomial model which has these
+        Set domain and window for a polynomial model which has these
         attributes.
         """
 
@@ -175,7 +180,6 @@ class LinearLSQFitter(object):
                 model.domain = [x.min(), x.max()]
             if hasattr(model, 'window') and model.window is None:
                 model.window = [-1, 1]
-            return poly_map_domain(x, model.domain, model.window)
         else:
             if hasattr(model, 'x_domain') and model.x_domain is None:
                 model.x_domain = [x.min(), x.max()]
@@ -185,10 +189,6 @@ class LinearLSQFitter(object):
                 model.x_window = [-1., 1.]
             if hasattr(model, 'y_window') and model.y_window is None:
                 model.y_window = [-1., 1.]
-
-            xnew = poly_map_domain(x, model.x_domain, model.x_window)
-            ynew = poly_map_domain(y, model.y_domain, model.y_window)
-            return xnew, ynew
 
     def __call__(self, model, x, y, z=None, weights=None, rcond=None):
         """
@@ -233,52 +233,46 @@ class LinearLSQFitter(object):
             raise ValueError("Expected x, y and z for a 2 dimensional model.")
 
         farg = _convert_input(x, y, z)
+        inputs = farg[:model_copy.n_inputs]
+        outputs = farg[model_copy.n_inputs:]
+        self._set_domain_window(model_copy, *inputs)
+        inputs = model_copy.prepare_inputs(*inputs)[0]
 
-        if len(farg) == 2:
-            x, y = farg
+        if len(inputs) == 1:
+            x, = inputs
+            y, = outputs
             if y.ndim == 2:
                 if y.shape[1] != model_copy.param_dim:
                     raise ValueError("Number of data sets (Y array is expected"
                                      " to equal the number of parameter sets")
-            # map domain into window
-            if hasattr(model_copy, 'domain'):
-                x = self._map_domain_window(model_copy, x)
-            if any(model_copy.fixed.values()):
-                lhs = self._deriv_with_constraints(model_copy,
-                                                   fitparam_indices,
-                                                   x=x)
-            else:
-                lhs = model_copy.fit_deriv(x, *model_copy.parameters)
             if len(y.shape) == 2:
                 rhs = y
                 multiple = y.shape[1]
             else:
                 rhs = y
         else:
-            x, y, z = farg
+            # TODO: Support output handling more generically
+            x, y = inputs
+            z, = outputs
+
             if x.shape[-1] != z.shape[-1]:
                 raise ValueError("x and z should have equal last dimensions")
 
-            # map domain into window
-            if hasattr(model_copy, 'x_domain'):
-                x, y = self._map_domain_window(model_copy, x, y)
-
-            if any(model_copy.fixed.values()):
-                lhs = self._deriv_with_constraints(model_copy,
-                                                   fitparam_indices, x=x, y=y)
-            else:
-                lhs = model_copy.fit_deriv(x, y, *model_copy.parameters)
             if len(z.shape) == 3:
                 rhs = np.array([i.flatten() for i in z]).T
                 multiple = z.shape[0]
             else:
                 rhs = z.flatten()
+
+        lhs = self._deriv_with_constraints(model_copy, fitparam_indices,
+                                           *inputs)
+
         # If the derivative is defined along rows (as with non-linear models)
-        if model_copy.col_fit_deriv:
-            lhs = np.asarray(lhs).T
         if weights is not None:
             weights = np.asarray(weights, dtype=np.float)
             if len(x) != len(weights):
+                # TODO: This should also be handled earlier in a general input
+                # sanity check function
                 raise ValueError("x and weights should have the same length")
             if rhs.ndim == 2:
                 lhs *= weights[:, np.newaxis]

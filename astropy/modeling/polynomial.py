@@ -633,6 +633,7 @@ class Polynomial1D(PolynomialModel):
             The Vandermonde matrix
         """
 
+        x = x.flatten()
         v = np.empty((self.degree + 1,) + x.shape, dtype=np.float)
         v[0] = x * 0 + 1
         v[1] = x
