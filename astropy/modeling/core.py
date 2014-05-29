@@ -66,7 +66,11 @@ __all__ = ['Model', 'FittableModel', 'SummedCompositeModel',
            'Fittable2DModel', 'ModelDefinitionError']
 
 
-class ModelDefinitionError(Exception):
+class ModelError(Exception):
+    """Base class for all modeling-related exceptions."""
+
+
+class ModelDefinitionError(ModelError):
     """Used for incorrect models definitions"""
 
 
@@ -256,7 +260,7 @@ class Model(object):
         """
         Return parameters as a pset.
 
-        This is a list with one item per parameter set, which is an array of
+        This is a list with one item per parameter, which is an array of
         that parameter's values across all parameter sets, with the last axis
         associated with the parameter set.
         """

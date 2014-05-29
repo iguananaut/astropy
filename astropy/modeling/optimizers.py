@@ -11,6 +11,7 @@ import abc
 import numpy as np
 from ..extern import six
 from ..utils.exceptions import AstropyUserWarning
+from .core import ModelError
 
 __all__ = ["SLSQP", "Simplex"]
 
@@ -22,6 +23,50 @@ DEFAULT_EPS = np.sqrt(np.finfo(float).eps)
 
 #Default requested accuracy
 DEFAULT_ACC = 1e-07
+
+
+class UnsupportedConstraintError(ModelError, ValueError):
+    """Raised when an optimizer does not support a type of constraint."""
+
+
+@six.add_metaclass(abc.ABCMeta)
+class Optimizer(object):
+    options = abc.abstractproperty()
+    supported_constraints = ()
+
+    @abc.abstractmethod
+    def __call__(self, objective_function, model):
+        self._validate_constraints(model)
+
+    @classmethod
+    def _validate_constraints(cls, model):
+        msg = '{0} does not support {{0}} constraints.'.format(cls.__name__)
+
+    if ('fixed' not in cls.supported_constraints and
+            any(model.fixed.values())):
+        raise UnsupportedConstraintError(msg.format('fixed parameter'))
+    elif ('tied' not in cls.supported_constraints and
+          any(model.fixed.values())):
+        raise UnsupportedConstraintError(msg.format('tied parameter'))
+    elif ('bounds' not in cls.supported_constraints and
+          any([tuple(b) != (None, None) for b in model.bounds.values()])):
+        raise UnsupportedConstraintError(msg.format('bound parameter'))
+    elif 'eqcons' not in cls.supported_constraints and model.eqcons:
+        raise UnsupportedConstraintError(message.format('equality'))
+    elif 'ineqcons' not in cls.supported_constraints and model.ineqcons:
+        raise UnsupportedConstraintError(message.format('inequality'))
+
+
+class ScipyOptimizer(Optimizer):
+    algorithm = abc.abstractproperty()
+    algorithm_options = abc.abstractproperty()
+    algorithm_constraints = abc.abstractproperty()
+    algorithm_returns = abc.abstractproperty()
+
+    def __call__(self, objective_function, model):
+        super(ScipyOptimizer, self).__call__(objective_function, model)
+
+
 
 
 @six.add_metaclass(abc.ABCMeta)

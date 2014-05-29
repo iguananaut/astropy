@@ -34,7 +34,7 @@ from functools import reduce
 import numpy as np
 
 from ..utils.exceptions import AstropyUserWarning
-from .core import _CompositeModel
+from .core import _CompositeModel, ModelError
 from ..extern import six
 from .optimizers import (SLSQP, Simplex, DEFAULT_MAXITER, DEFAULT_EPS,
                          DEFAULT_ACC)
@@ -45,93 +45,63 @@ __all__ = ['LinearLSQFitter', 'LevMarLSQFitter', 'SLSQPLSQFitter',
            'SimplexLSQFitter', 'JointFitter', 'Fitter']
 
 
-
-# Statistic functions implemented in astropy.modeling.statistic
-STATISTICS = [leastsquare]
-
-# Optimizers implemented in astropy.modeling.optimizers
-OPTIMIZERS = [Simplex, SLSQP]
-
-
-class ModelsError(Exception):
-    """Base class for model exceptions"""
-
-
-class ModelLinearityError(ModelsError):
+class ModelLinearityError(ModelError):
     """ Raised when a non-linear model is passed to a linear fitter."""
-
-
-class UnsupportedConstraintError(ModelsError, ValueError):
-    """
-    Raised when a fitter does not support a type of constraint.
-    """
 
 
 @six.add_metaclass(abc.ABCMeta)
 class Fitter(object):
     """
     Base class for all fitters.
-
-    Parameters
-    ----------
-    optimizer : callable
-        A callble implementing an optimization algorithm
-    statistic : callable
-        Statistic function
     """
 
-    def __init__(self, optimizer, statistic):
-        if optimizer is None:
-            raise ValueError("Expected an optimizer.")
-        if statistic is None:
-            raise ValueError("Expected a statistic function.")
-        if inspect.isclass(optimizer):
-            # a callable class
-            self._opt_method = optimizer()
-        elif inspect.isfunction(optimizer):
-            self._opt_method = optimizer
-        else:
-            raise ValueError("Expected optimizer to be a callable class or a function.")
-        if inspect.isclass(statistic):
-            self._stat_method = statistic()
-        else:
-            self._stat_method = statistic
+    optimizer = abc.abstractproperty()
+    """The optimizer algorithm used to perform the fit."""
 
-    def objective_function(self, fps, *args):
-        """
-        Function to minimize
+    statistic = None
+    """
+    The statistic function to use for fitting.
 
-        Parameters
-        ----------
-        fps : list
-            parameters returned by the fitter
-        args : list
-            [model, [other_args], [input coordinates]]
-            other_args may include weights or any other quantities specific for a statistic
+    May be `None` in cases where the optimizer uses its own built-in
+    statistic.
+    """
 
-        Notes
-        -----
-        The list of arguments (args) is set in the `__call__` method.
-        Fitters may overwrite this method, e.g. when statistic functions
-        require other aguments.
-
-        """
-        model = args[0]
-        meas = args[-1]
-        _fitter_to_model_params(model, fps)
-        res = self._stat_method(meas, model, *args[1:-1])
-        return res
-
-    @abc.abstractmethod
-    def __call__(self):
+    def __call__(self, model, *variables, **kwargs):
         """
         This method performs the actual fitting and modifies the parameter list
         of a model.
-
-        Fitter subclasses should implement this method.
         """
 
-        raise NotImplementedError("Subclasses should implement this method.")
+        optimizer_opts = {}
+        for opt in self.optimizer.options:
+            optimizer_opts[opt] = kwargs.pop(opt, None)
+        # Remaining kwargs are options for the statistic function; optimizer
+        # options and statistic function arguments should not overlap
+
+        if self.statistic is None:
+            def objective_function(fitted_parameters):
+                return model.evaluate(*itertools.chain(inputs,
+                                                       fitted_parameters))
+        else:
+            def objective_function(fitted_parameters):
+                approx = model.evaluate(*itertools.chain(inputs,
+                                                         fitted_parameters))
+                return cls.statistic(measured_values, approx,
+                                     **statistic_args)
+
+        optimizer = self.optimizer(**optimizer_opts)
+        fit_params, fit_info = optimizer(objective_function, model)
+
+        # Make a copy of the original model and set the new fitted parameter
+        # values on it
+        new_model = model.copy()
+        for param_name, value in zip(new_model.param_names, fit_params):
+            setattr(new_model, param_name, value)
+
+        # TODO: ? Right now the fitter returns the new model along with the fit
+        # info as separate values. But maybe instead it would make sense if a
+        # fitted model stores the fit info on itself for future reference?
+        return new_model, fit_info
 
 
 class LinearLSQFitter(object):
