@@ -35,19 +35,15 @@ class TestParModel(Model):
 
 
 class MockModel(FittableModel):
+    alpha = Parameter(name='alpha', default=42)
+
     @staticmethod
-    def evaluate(x):
+    def evaluate(*args):
         pass
 
 
 def test_parameter_properties():
     """Test if getting / setting of Parameter properties works."""
-
-    class MockModel(Model):
-        alpha = Parameter(name='alpha', default=42)
-
-        def __call__(self):
-            pass
 
     m = MockModel()
     p = m.alpha
@@ -84,15 +80,9 @@ def test_parameter_operators():
     """Test if the parameter arithmetic operators works,
     i.e. whether parameters behave like numbers."""
 
-    class MockModel(Model):
-        alpha = Parameter(name='alpha', default=5)
-
-        def __call__(self):
-            pass
-
     m = MockModel()
     par = m.alpha
-    num = 5.
+    num = 42.
     val = 3
 
     assert par - val == num - val
@@ -101,8 +91,8 @@ def test_parameter_operators():
     assert val / par == val / num
     assert par ** val == num ** val
     assert val ** par == val ** num
-    assert par < 6
-    assert par > 3
+    assert par < 45
+    assert par > 41
     assert par <= par
     assert par >= par
     assert par == par
