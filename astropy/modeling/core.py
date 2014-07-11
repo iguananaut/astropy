@@ -115,6 +115,11 @@ class _ModelMeta(abc.ABCMeta):
     Parameter descriptors declared at the class-level of Model subclasses.
     """
 
+    registry = set()
+    """
+    A registry of all known concrete (non-abstract) Model subclasses.
+    """
+
     def __new__(mcls, name, bases, members):
         param_names = members.get('param_names', [])
         parameters = {}
@@ -138,10 +143,17 @@ class _ModelMeta(abc.ABCMeta):
         # If no parameters were defined get out early--this is especially
         # important for PolynomialModels which take a different approach to
         # parameters, since they can have a variable number of them
-        if not parameters:
-            return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+        if parameters:
+            mcls._check_parameters(members, param_names, parameters)
 
-        # If param_names was declared explicitly we use only the parameters
+        cls = super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+
+        if not inspect.isabstract(cls) and not name.startswith('_'):
+            mcls.registry.add(cls)
+        return cls
+
+    @classmethod
+    def _check_parameters(mcls, members, param_names, parameters):
         # listed manually in param_names, but still check that all listed
         # parameters were declared
         if param_names and isiterable(param_names):
@@ -157,8 +169,6 @@ class _ModelMeta(abc.ABCMeta):
             members['param_names'] = param_names
             members['_param_orders'] = \
                     dict((name, idx) for idx, name in enumerate(param_names))
-
-        return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
 
 
 @six.add_metaclass(_ModelMeta)
