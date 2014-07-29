@@ -1,0 +1,504 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Reading tables &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+    <link rel="up" title="ASCII Tables (astropy.io.ascii)" href="index.html" />
+    <link rel="next" title="Writing tables" href="write.html" />
+    <link rel="prev" title="ASCII Tables (astropy.io.ascii)" href="index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="write.html" title="Writing tables">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="index.html" title="ASCII Tables (astropy.io.ascii)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">ASCII Tables (<tt class="docutils literal"><span class="pre">astropy.io.ascii</span></tt>)</a> &raquo;</li>
+      
+      <li>Reading tables</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="reading-tables">
+<span id="astropy-io-ascii-read"></span><h1>Reading tables<a class="headerlink" href="#reading-tables" title="Permalink to this headline">¶</a></h1>
+<p>The majority of commonly encountered ASCII tables can be easily read with the <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a>
+function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">ascii</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">table</span></tt> is the name of a file, a string representation of a table, or a
+list of table lines.  By default <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> will try to <a class="reference external" href="#guess-table-format">guess the table format</a>
+by trying all the supported formats.  If this does not work (for unusually
+formatted tables) then one needs give <a class="reference internal" href="index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.ascii</span></tt></a> additional hints about the
+format, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;t/nls1_stackinfo.dbout&#39;</span><span class="p">,</span> <span class="n">data_start</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;|&#39;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;t/simple.txt&#39;</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s">&quot;&#39;&quot;</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;t/simple4.txt&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;no_header&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;|&#39;</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>The <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> function accepts a number of parameters that specify the detailed
+table format.  Different formats can define different defaults, so the
+descriptions below sometimes mention &#8220;typical&#8221; default values.  This refers to
+the <a class="reference internal" href="../../api/astropy.io.ascii.Basic.html#astropy.io.ascii.Basic" title="astropy.io.ascii.Basic"><tt class="xref py py-class docutils literal"><span class="pre">Basic</span></tt></a> format reader and other similar character-separated formats.</p>
+<div class="section" id="parameters-for-read">
+<span id="io-ascii-read-parameters"></span><h2>Parameters for <tt class="docutils literal"><span class="pre">read()</span></tt><a class="headerlink" href="#parameters-for-read" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>table</strong> <span class="classifier-delimiter">:</span> <span class="classifier">input table</span></dt>
+<dd><p class="first">There are four ways to specify the table to be read:</p>
+<ul class="simple">
+<li>Name of a file (string)</li>
+<li>Single string containing all table lines separated by newlines</li>
+<li>File-like object with a callable read() method</li>
+<li>List of strings where each list element is a table line</li>
+</ul>
+<p class="last">The first two options are distinguished by the presence of a newline in the string.
+This assumes that valid file names will not normally contain a newline.</p>
+</dd>
+<dt><strong>format</strong> <span class="classifier-delimiter">:</span> <span class="classifier">file format (default=&#8217;basic&#8217;)</span></dt>
+<dd>This specifies the top-level format of the ASCII table, for example
+if it is a basic character delimited table, fixed format table, or
+a CDS-compatible table, etc.  The value of this parameter must
+be one of the <a class="reference internal" href="index.html#supported-formats"><em>Supported formats</em></a>.</dd>
+<dt><strong>guess</strong>: try to guess table format (default=True)</dt>
+<dd>If set to True then <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> will try to guess the table format by cycling
+through a number of possible table format permutations and attempting to read
+the table in each case.  See the <a class="reference internal" href="#guess-table-format">Guess table format</a> section for further details.</dd>
+<dt><strong>delimiter</strong> <span class="classifier-delimiter">:</span> <span class="classifier">column delimiter string</span></dt>
+<dd>A one-character string used to separate fields which typically defaults to
+the space character.  Other common values might be &#8220;\s&#8221; (whitespace), &#8221;,&#8221; or
+&#8220;|&#8221; or &#8220;\t&#8221; (tab).  A value of &#8220;\s&#8221; allows any combination of the tab and
+space characters to delimit columns.</dd>
+<dt><strong>comment</strong> <span class="classifier-delimiter">:</span> <span class="classifier">regular expression defining a comment line in table</span></dt>
+<dd>If the <tt class="docutils literal"><span class="pre">comment</span></tt> regular expression matches the beginning of a table line then that line
+will be discarded from header or data processing.  For the <tt class="docutils literal"><span class="pre">basic</span></tt> format this
+defaults to &#8220;\s*#&#8221; (any whitespace followed by #).</dd>
+<dt><strong>quotechar</strong> <span class="classifier-delimiter">:</span> <span class="classifier">one-character string to quote fields containing special characters</span></dt>
+<dd>This specifies the quote character and will typically be either the single or double
+quote character.  This is can be useful for reading text fields with spaces in a space-delimited
+table.  The default is typically the double quote.</dd>
+<dt><strong>header_start</strong> <span class="classifier-delimiter">:</span> <span class="classifier">line index for the header line not counting comment lines</span></dt>
+<dd>This specifies in the line index where the header line will be found.  Comment lines are
+not included in this count and the counting starts from 0 (first non-comment line has index=0).
+If set to None this indicates that there is no header line and the column names
+will be auto-generated.  The default is dependent on the format.</dd>
+<dt><strong>data_start</strong>: line index for the start of data not counting comment lines</dt>
+<dd>This specifies in the line index where the data lines begin where the counting starts
+from 0 and does not include comment lines.  The default is dependent on the format.</dd>
+<dt><strong>data_end</strong>: line index for the end of data (can be negative to count from end)</dt>
+<dd>If this is not None then it allows for excluding lines at the end that are not
+valid data lines.  A negative value means to count from the end, so -1 would
+exclude the last line, -2 the last two lines, and so on.</dd>
+<dt><strong>converters</strong>: dict of data type converters</dt>
+<dd>See the <a class="reference internal" href="#converters">Converters</a> section for more information.</dd>
+<dt><strong>names</strong>: list of names corresponding to each data column</dt>
+<dd>Define the complete list of names for each data column.  This will override
+names found in the header (if it exists).  If not supplied then
+use names from the header or auto-generated names if there is no header.</dd>
+<dt><strong>include_names</strong>: list of names to include in output</dt>
+<dd>From the list of column names found from the header or the <tt class="docutils literal"><span class="pre">names</span></tt>
+parameter, select for output only columns within this list.  If not supplied
+then include all names.</dd>
+<dt><strong>exclude_names</strong>: list of names to exclude from output</dt>
+<dd>Exclude these names from the list of output columns.  This is applied <em>after</em>
+the <tt class="docutils literal"><span class="pre">include_names</span></tt> filtering.  If not specified then no columns are excluded.</dd>
+<dt><strong>fill_values</strong>: fill value specifier of lists</dt>
+<dd>This can be used to fill missing values in the table or replace strings with special meaning.
+See the <a class="reference internal" href="#bad-or-missing-values">Bad or missing values</a> section for more information and examples.
+The default is that any blank table values are treated as missing.</dd>
+<dt><strong>fill_include_names</strong>: list of column names, which are affected by <tt class="docutils literal"><span class="pre">fill_values</span></tt>.</dt>
+<dd>If not supplied, then <tt class="docutils literal"><span class="pre">fill_values</span></tt> can affect all columns.</dd>
+<dt><strong>fill_exclude_names</strong>: list of column names, which are not affected by <tt class="docutils literal"><span class="pre">fill_values</span></tt>.</dt>
+<dd>If not supplied, then <tt class="docutils literal"><span class="pre">fill_values</span></tt> can affect all columns.</dd>
+<dt><strong>Outputter</strong>: Outputter class</dt>
+<dd>This converts the raw data tables value into the
+output object that gets returned by <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a>.  The default is
+<a class="reference internal" href="../../api/astropy.io.ascii.TableOutputter.html#astropy.io.ascii.TableOutputter" title="astropy.io.ascii.TableOutputter"><tt class="xref py py-class docutils literal"><span class="pre">TableOutputter</span></tt></a>, which returns a
+<a class="reference internal" href="../../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> object.</dd>
+<dt><strong>Inputter</strong>: Inputter class</dt>
+<dd>This is generally not specified.</dd>
+</dl>
+<p><strong>data_Splitter</strong>: Splitter class to split data columns</p>
+<p><strong>header_Splitter</strong>: Splitter class to split header columns</p>
+<dl class="docutils">
+<dt><strong>Reader</strong> <span class="classifier-delimiter">:</span> <span class="classifier">Reader class (<em>deprecated</em> in favor of <tt class="docutils literal"><span class="pre">format</span></tt>)</span></dt>
+<dd>This specifies the top-level format of the ASCII table, for example
+if it is a basic character delimited table, fixed format table, or
+a CDS-compatible table, etc.  The value of this parameter must
+be a Reader class.  For basic usage this means one of the
+built-in <a class="reference internal" href="extension_classes.html#extension-reader-classes"><em>Extension Reader classes</em></a>.</dd>
+</dl>
+</div>
+<div class="section" id="bad-or-missing-values">
+<span id="replace-bad-or-missing-values"></span><h2>Bad or missing values<a class="headerlink" href="#bad-or-missing-values" title="Permalink to this headline">¶</a></h2>
+<p>ASCII data tables can contain bad or missing values.  A common case is when a table
+contains blank entries with no available data, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre>day,precip,type
+Mon,1.5,rain
+Tues,,       # &lt;-- Weather station down
+Wed,1.1,snow
+</pre></div>
+</div>
+<p>By default <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> will interpret blank entries as being bad/missing and output a masked
+Table with those entries masked out by setting the corresponding mask value set to
+<tt class="docutils literal"><span class="pre">True</span></tt>.  If you have read the above table into a variable <tt class="docutils literal"><span class="pre">dat</span></tt>, you would see the
+output below, where the <tt class="docutils literal"><span class="pre">--</span></tt> values indicate missing data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">dat</span>  
+<span class="go">day  precip type</span>
+<span class="go">---- ------ ----</span>
+<span class="go"> Mon    1.5 rain</span>
+<span class="go">Tues     --   --</span>
+<span class="go"> Wed    1.1 snow</span>
+</pre></div>
+</div>
+<p>If you want to replace the masked (missing) values with particular values, set the masked
+column <tt class="docutils literal"><span class="pre">fill_value</span></tt> attribute and then get the &#8220;filled&#8221; version of the table.  This
+looks like the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span><span class="p">[</span><span class="s">&#39;precip&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.9</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">fill_value</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">dat</span><span class="o">.</span><span class="n">filled</span><span class="p">()</span>  
+<span class="go">day  precip type</span>
+<span class="go">---- ------ ----</span>
+<span class="go"> Mon    1.5 rain</span>
+<span class="go">Tues  -99.9</span>
+<span class="go"> Wed    1.1 snow</span>
+</pre></div>
+</div>
+<p>ASCII tables may also have other indicators of bad or missing data.  For
+example a table may contain string values that are not a valid representation
+of a number, e.g. <tt class="docutils literal"><span class="pre">&quot;...&quot;</span></tt>, or a table may have special values like <tt class="docutils literal"><span class="pre">-999</span></tt>
+that are chosen to indicate missing data.  The <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> function has a flexible
+system to accommodate these cases by replacing string values in the input data
+before they are converted.  This is done with the <tt class="docutils literal"><span class="pre">fill_values</span></tt> argument
+which replaces <tt class="docutils literal"><span class="pre">&lt;old&gt;</span></tt> with <tt class="docutils literal"><span class="pre">&lt;new&gt;</span></tt> before the type conversion is done. The
+exact value of <tt class="docutils literal"><span class="pre">&lt;new&gt;</span></tt> does not matter, because all fields in the table with
+replacements will be masked anyway in the end,
+but for integer columns <tt class="docutils literal"><span class="pre">&lt;new&gt;</span></tt> must be chosen
+in such a way that it can be converted to an integer, for float columns to a float etc.
+The default for most ascii formats is to replace missing values with <tt class="docutils literal"><span class="pre">&quot;0&quot;</span></tt> which can be
+converted to any numerical type or string. Any fill value you specify will overwrite
+this default. If you, e.g. want to replace missing values with <tt class="docutils literal"><span class="pre">&quot;0&quot;</span></tt> <em>and</em> replace
+<tt class="docutils literal"><span class="pre">&quot;--&quot;</span></tt> with -99, you need to specify <tt class="docutils literal"><span class="pre">fill_values=[(&quot;&quot;,&quot;0&quot;),</span> <span class="pre">(&quot;--&quot;,</span> <span class="pre">&quot;-99&quot;)]</span></tt>. If
+you do not want to apply any fill_values (not even the default of the format), set
+<tt class="docutils literal"><span class="pre">fill_values=[]</span></tt>.
+The exact defintion for the fill values is:</p>
+<div class="highlight-python"><div class="highlight"><pre>fill_values = &lt;fill_spec&gt; | [&lt;fill_spec1&gt;, &lt;fill_spec2&gt;, ...]
+&lt;fill_spec&gt; = (&lt;old&gt;, &lt;new&gt;, &lt;optional col name 1&gt;, &lt;optional col name 2&gt;, ...)
+</pre></div>
+</div>
+<p>Within the <tt class="docutils literal"><span class="pre">&lt;fill_spec&gt;</span></tt> tuple the <tt class="docutils literal"><span class="pre">&lt;old&gt;</span></tt> and <tt class="docutils literal"><span class="pre">&lt;new&gt;</span></tt> values must be
+strings.  These two values are then followed by zero or more column names.  If
+column names are included the replacement is limited to those columns listed.
+For any replacement, <tt class="docutils literal"><span class="pre">&lt;old&gt;</span></tt> has to be an exact match as can be seen in the example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;day  rain     snow&#39;</span><span class="p">,</span>    <span class="c"># column names</span>
+<span class="gp">... </span>         <span class="s">&#39;Mon  A        1.1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>         <span class="s">&#39;Tue  AA       1.8&#39;</span><span class="p">,</span>
+<span class="gp">... </span>         <span class="s">&#39;Wed  AAA      2.5&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="p">[(</span><span class="s">&#39;AA&#39;</span><span class="p">,</span> <span class="s">&#39;0.0&#39;</span><span class="p">)]))</span>
+<span class="go">day rain snow</span>
+<span class="go">--- ---- ----</span>
+<span class="go">Mon    A  1.1</span>
+<span class="go">Tue   --  1.8</span>
+<span class="go">Wed  AAA  2.5</span>
+</pre></div>
+</div>
+<p>If no columns are specified then the replacement is done in every column,
+subject to filtering by <tt class="docutils literal"><span class="pre">fill_include_names</span></tt> and <tt class="docutils literal"><span class="pre">fill_exclude_names</span></tt> (see
+below).</p>
+<p>The <tt class="docutils literal"><span class="pre">fill_values</span></tt> parameter in <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> takes a single <tt class="docutils literal"><span class="pre">&lt;fill_spec&gt;</span></tt> or a
+list of <tt class="docutils literal"><span class="pre">&lt;fill_spec&gt;</span></tt> tuples.  If several <tt class="docutils literal"><span class="pre">&lt;fill_spec&gt;</span></tt> apply to a single
+occurrence of <tt class="docutils literal"><span class="pre">&lt;old&gt;</span></tt> then the first one determines the <tt class="docutils literal"><span class="pre">&lt;new&gt;</span></tt> value.  For
+instance the following will replace an empty data value in the <tt class="docutils literal"><span class="pre">x</span></tt> or <tt class="docutils literal"><span class="pre">y</span></tt>
+columns with &#8220;1e38&#8221; while empty values in any other column will get &#8220;-999&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="p">[(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;1e38&#39;</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;-999&#39;</span><span class="p">)])</span>  
+</pre></div>
+</div>
+<p>The following shows an example where string information needs to be exchanged before the
+conversion to float values happens. Here <tt class="docutils literal"><span class="pre">no_rain</span></tt> and <tt class="docutils literal"><span class="pre">no_snow</span></tt> is replaced by
+<tt class="docutils literal"><span class="pre">0.0</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">table</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;day  rain     snow&#39;</span><span class="p">,</span>    <span class="c"># column names</span>
+<span class="gp">... </span>         <span class="c">#---  -------  --------</span>
+<span class="gp">... </span>         <span class="s">&#39;Mon  3.2      no_snow&#39;</span><span class="p">,</span>
+<span class="gp">... </span>         <span class="s">&#39;Tue  no_rain  1.1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>         <span class="s">&#39;Wed  0.3      no_snow&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">fill_values</span><span class="o">=</span><span class="p">[(</span><span class="s">&#39;no_rain&#39;</span><span class="p">,</span> <span class="s">&#39;0.0&#39;</span><span class="p">),</span> <span class="p">(</span><span class="s">&#39;no_snow&#39;</span><span class="p">,</span> <span class="s">&#39;0.0&#39;</span><span class="p">)]))</span>
+<span class="go">day rain snow</span>
+<span class="go">--- ---- ----</span>
+<span class="go">Mon  3.2   --</span>
+<span class="go">Tue   --  1.1</span>
+<span class="go">Wed  0.3   --</span>
+</pre></div>
+</div>
+<p>Sometimes these rules apply only to specific columns in the table. Columns can be selected with
+<tt class="docutils literal"><span class="pre">fill_include_names</span></tt> or excluded with <tt class="docutils literal"><span class="pre">fill_exclude_names</span></tt>. Also, column names can be
+given directly with fill_values:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">asciidata</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;text,no1,no2&#39;</span><span class="p">,</span> <span class="s">&#39;text1,1,1.&#39;</span><span class="p">,</span><span class="s">&#39;,2,&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">asciidata</span><span class="p">,</span> <span class="n">fill_values</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;nan&#39;</span><span class="p">,</span><span class="s">&#39;no1&#39;</span><span class="p">,</span><span class="s">&#39;no2&#39;</span><span class="p">),</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s">&#39;,&#39;</span><span class="p">)</span>
+<span class="go"> text no1 no2</span>
+<span class="go">----- --- ---</span>
+<span class="go">text1   1 1.0</span>
+<span class="go">        2  --</span>
+</pre></div>
+</div>
+<p>Here, the empty value <tt class="docutils literal"><span class="pre">''</span></tt> in column <tt class="docutils literal"><span class="pre">no2</span></tt> is replaced by <tt class="docutils literal"><span class="pre">nan</span></tt>, but the <tt class="docutils literal"><span class="pre">text</span></tt>
+column remains unaltered.</p>
+<p>If any table elements match the fill specification then <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> returns a masked
+<a class="reference internal" href="../../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> object with the corresponding elements masked out.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The default in <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> is <tt class="docutils literal"><span class="pre">fill_values=('','0')</span></tt>.  This marks blank entries as being
+missing for any data type (int, float, or string).  If <tt class="docutils literal"><span class="pre">fill_values</span></tt> is explicitly
+set in the call to <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> then the default behavior of marking blank entries as missing
+no longer applies.  For instance setting <tt class="docutils literal"><span class="pre">fill_values=None</span></tt> will disable this
+auto-masking without setting any other fill values.  This can be useful for a string
+column where one of values happens to be <tt class="docutils literal"><span class="pre">&quot;&quot;</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="guess-table-format">
+<h2>Guess table format<a class="headerlink" href="#guess-table-format" title="Permalink to this headline">¶</a></h2>
+<p>If the <tt class="docutils literal"><span class="pre">guess</span></tt> parameter in <a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> is set to True (which is the default) then
+<a class="reference internal" href="../../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> will try to guess the table format by cycling through a number of
+possible table format permutations and attempting to read the table in each case.
+The first format which succeeds and will be used to read the table. To succeed
+the table must be successfully parsed by the Reader and satisfy the following
+column requirements:</p>
+<blockquote>
+<div><ul class="simple">
+<li>At least two table columns</li>
+<li>No column names are a float or int number</li>
+<li>No column names begin or end with space, comma, tab, single quote, double quote, or
+a vertical bar (|).</li>
+</ul>
+</div></blockquote>
+<p>These requirements reduce the chance for a false positive where a table is
+successfully parsed with the wrong format.  A common situation is a table
+with numeric columns but no header row, and in this case <tt class="docutils literal"><span class="pre">astropy.io.ascii</span></tt> will
+auto-assign column names because of the restriction on column names that
+look like a number.</p>
+<p>The order of guessing is shown by this Python code, where <tt class="docutils literal"><span class="pre">Reader</span></tt> is the
+class which actually implements reading the different file formats:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">for</span> <span class="n">Reader</span> <span class="ow">in</span> <span class="p">(</span><span class="n">Rdb</span><span class="p">,</span> <span class="n">Tab</span><span class="p">,</span> <span class="n">Cds</span><span class="p">,</span> <span class="n">Daophot</span><span class="p">,</span> <span class="n">SExtractor</span><span class="p">,</span> <span class="n">Ipac</span><span class="p">,</span> <span class="n">Latex</span><span class="p">,</span> <span class="n">AASTex</span><span class="p">,</span> <span class="n">HTML</span><span class="p">):</span>
+    <span class="n">read</span><span class="p">(</span><span class="n">Reader</span><span class="o">=</span><span class="n">Reader</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">Reader</span> <span class="ow">in</span> <span class="p">(</span><span class="n">CommentedHeader</span><span class="p">,</span> <span class="n">Basic</span><span class="p">,</span> <span class="n">NoHeader</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">delimiter</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&quot;|&quot;</span><span class="p">,</span> <span class="s">&quot;,&quot;</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\\</span><span class="s">s&quot;</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">quotechar</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;&quot;&#39;</span><span class="p">,</span> <span class="s">&quot;&#39;&quot;</span><span class="p">):</span>
+            <span class="n">read</span><span class="p">(</span><span class="n">Reader</span><span class="o">=</span><span class="n">Reader</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="n">delimiter</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="n">quotechar</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the <a class="reference internal" href="../../api/astropy.io.ascii.FixedWidth.html#astropy.io.ascii.FixedWidth" title="astropy.io.ascii.FixedWidth"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidth</span></tt></a> derived-readers are not included
+in the default guess sequence (this causes problems), so to read such tables
+one must explicitly specify the format with the <tt class="docutils literal"><span class="pre">format</span></tt> keyword.</p>
+<p>If none of the guesses succeed in reading the table (subject to the column
+requirements) a final try is made using just the user-supplied parameters but
+without checking the column requirements.  In this way a table with only one
+column or column names that look like a number can still be successfully read.</p>
+<p>The guessing process respects any values of the Reader, delimiter, and
+quotechar parameters that were supplied to the read() function.  Any guesses
+that would conflict are skipped.  For example the call:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">Reader</span><span class="o">=</span><span class="n">ascii</span><span class="o">.</span><span class="n">NoHeader</span><span class="p">,</span> <span class="n">quotechar</span><span class="o">=</span><span class="s">&quot;&#39;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>would only try the four delimiter possibilities, skipping all the conflicting
+Reader and quotechar combinations.</p>
+<p>Guessing can be disabled in two ways:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">astropy.io.ascii</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>               <span class="c"># guessing enabled by default</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>  <span class="c"># disable for this call</span>
+<span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">set_guess</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>                 <span class="c"># set default to False globally</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>               <span class="c"># guessing disabled</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="converters">
+<h2>Converters<a class="headerlink" href="#converters" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-mod docutils literal"><span class="pre">astropy.io.ascii</span></tt></a> converts the raw string values from the table into
+numeric data types by using converter functions such as the Python <tt class="docutils literal"><span class="pre">int</span></tt> and
+<tt class="docutils literal"><span class="pre">float</span></tt> functions.  For example <tt class="docutils literal"><span class="pre">int(&quot;5.0&quot;)</span></tt> will fail while float(&#8220;5.0&#8221;)
+will succeed and return 5.0 as a Python float.</p>
+<p>The default converters are:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">default_converters</span> <span class="o">=</span> <span class="p">[</span><span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">convert_numpy</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">int</span><span class="p">),</span>
+                      <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">convert_numpy</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">),</span>
+                      <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">convert_numpy</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">str</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>These take advantage of the <a class="reference internal" href="../../api/astropy.io.ascii.convert_numpy.html#astropy.io.ascii.convert_numpy" title="astropy.io.ascii.convert_numpy"><tt class="xref py py-func docutils literal"><span class="pre">convert_numpy()</span></tt></a>
+function which returns a 2-element tuple <tt class="docutils literal"><span class="pre">(converter_func,</span> <span class="pre">converter_type)</span></tt>
+as described in the previous section.  The type provided to
+<a class="reference internal" href="../../api/astropy.io.ascii.convert_numpy.html#astropy.io.ascii.convert_numpy" title="astropy.io.ascii.convert_numpy"><tt class="xref py py-func docutils literal"><span class="pre">convert_numpy()</span></tt></a> must be a valid <a class="reference external" href="http://docs.scipy.org/doc/numpy/user/basics.types.html">numpy type</a>, for example
+<tt class="docutils literal"><span class="pre">numpy.int</span></tt>, <tt class="docutils literal"><span class="pre">numpy.uint</span></tt>, <tt class="docutils literal"><span class="pre">numpy.int8</span></tt>, <tt class="docutils literal"><span class="pre">numpy.int64</span></tt>,
+<tt class="docutils literal"><span class="pre">numpy.float</span></tt>, <tt class="docutils literal"><span class="pre">numpy.float64</span></tt>, <tt class="docutils literal"><span class="pre">numpy.str</span></tt>.</p>
+<p>The default converters for each column can be overridden with the
+<tt class="docutils literal"><span class="pre">converters</span></tt> keyword:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">converters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;col1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">ascii</span><span class="o">.</span><span class="n">convert_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint</span><span class="p">)],</span>
+<span class="gp">... </span>              <span class="s">&#39;col2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">ascii</span><span class="o">.</span><span class="n">convert_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)]}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;file.dat&#39;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="n">converters</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-customization">
+<h2>Advanced customization<a class="headerlink" href="#advanced-customization" title="Permalink to this headline">¶</a></h2>
+<p>Here we provide a few examples that demonstrate how to extend the base
+functionality to handle special cases.  To go beyond these simple examples the
+best reference is to read the code for the existing
+<a class="reference internal" href="extension_classes.html#extension-reader-classes"><em>Extension Reader classes</em></a>.</p>
+<p><strong>Define a custom reader functionally</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">read_rdb_table</span><span class="p">(</span><span class="n">table</span><span class="p">):</span>
+    <span class="n">reader</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">Basic</span><span class="p">()</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">delimiter</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\t</span><span class="s">&#39;</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">header</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">process_line</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">process_line</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">reader</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">start_line</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">reader</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Define custom readers by class inheritance</strong></p>
+<div class="highlight-python"><div class="highlight"><pre># Note: Tab, Csv, and Rdb are included in astropy.io.ascii for convenience.
+class Tab(astropy.io.ascii.Basic):
+    def __init__(self):
+        astropy.io.ascii.Basic.__init__(self)
+        self.header.splitter.delimiter = &#39;\t&#39;
+        self.data.splitter.delimiter = &#39;\t&#39;
+        # Don&#39;t strip line whitespace since that includes tabs
+        self.header.splitter.process_line = None
+        self.data.splitter.process_line = None
+        # Don&#39;t strip data value spaces since that is significant in TSV tables
+        self.data.splitter.process_val = None
+        self.data.splitter.skipinitialspace = False
+
+class Rdb(astropy.io.ascii.Tab):
+    def __init__(self):
+        astropy.io.ascii.Tab.__init__(self)
+        self.data.start_line = 2
+
+ class Csv(astropy.io.ascii.Basic):
+     def __init(self):
+         astropy.io.ascii.Basic.__init__(self)
+         self.data.splitter.delimiter = &#39;,&#39;
+         self.header.splitter.delimiter = &#39;,&#39;
+         self.header.start_line = 0
+         self.data.start_line = 1
+</pre></div>
+</div>
+<p><strong>Create a custom splitter.process_val function</strong></p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># The default process_val() normally just strips whitespace.</span>
+<span class="c"># In addition have it replace empty fields with -999.</span>
+<span class="k">def</span> <span class="nf">process_val</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Custom splitter process_val function: Remove whitespace at the beginning</span>
+<span class="sd">    or end of value and substitute -999 for any blank entries.&quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="s">&#39;-999&#39;</span>
+    <span class="k">return</span> <span class="n">x</span>
+
+<span class="c"># Create an RDB reader and override the splitter.process_val function</span>
+<span class="n">rdb_reader</span> <span class="o">=</span> <span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">get_reader</span><span class="p">(</span><span class="n">Reader</span><span class="o">=</span><span class="n">astropy</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">ascii</span><span class="o">.</span><span class="n">Rdb</span><span class="p">)</span>
+<span class="n">rdb_reader</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">splitter</span><span class="o">.</span><span class="n">process_val</span> <span class="o">=</span> <span class="n">process_val</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Reading tables</a><ul>
+<li><a class="reference internal" href="#parameters-for-read">Parameters for <tt class="docutils literal"><span class="pre">read()</span></tt></a></li>
+<li><a class="reference internal" href="#bad-or-missing-values">Bad or missing values</a></li>
+<li><a class="reference internal" href="#guess-table-format">Guess table format</a></li>
+<li><a class="reference internal" href="#converters">Converters</a></li>
+<li><a class="reference internal" href="#advanced-customization">Advanced customization</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/ascii/read.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/io/ascii/read.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

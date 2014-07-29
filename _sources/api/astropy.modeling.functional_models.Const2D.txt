@@ -1,0 +1,65 @@
+
+
+Const2D
+==========================================
+
+.. currentmodule:: astropy.modeling.functional_models
+
+.. autoclass:: Const2D
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Const2D.amplitude
+      ~Const2D.input_names
+      ~Const2D.linear
+      ~Const2D.param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Const2D.evaluate
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: amplitude
+   .. autoattribute:: input_names
+   .. autoattribute:: linear
+   .. autoattribute:: param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+
+   
+   

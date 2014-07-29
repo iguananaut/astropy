@@ -1,0 +1,69 @@
+
+
+GaussianAbsorption1D
+=======================================================
+
+.. currentmodule:: astropy.modeling.functional_models
+
+.. autoclass:: GaussianAbsorption1D
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~GaussianAbsorption1D.amplitude
+      ~GaussianAbsorption1D.input_names
+      ~GaussianAbsorption1D.mean
+      ~GaussianAbsorption1D.param_names
+      ~GaussianAbsorption1D.stddev
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~GaussianAbsorption1D.evaluate
+      ~GaussianAbsorption1D.fit_deriv
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: amplitude
+   .. autoattribute:: input_names
+   .. autoattribute:: mean
+   .. autoattribute:: param_names
+   .. autoattribute:: stddev
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+   .. automethod:: fit_deriv
+
+   
+   

@@ -1,0 +1,8 @@
+
+
+custom_model_1d
+==================================================
+
+.. currentmodule:: astropy.modeling.functional_models
+
+.. autofunction:: custom_model_1d

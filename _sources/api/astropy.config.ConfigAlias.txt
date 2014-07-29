@@ -1,0 +1,8 @@
+
+
+config.ConfigAlias
+==========================
+
+.. currentmodule:: astropy
+
+.. autoattribute:: config.ConfigAlias

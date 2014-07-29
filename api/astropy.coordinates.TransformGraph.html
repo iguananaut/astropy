@@ -1,0 +1,514 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TransformGraph &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="../coordinates/index.html" />
+    <link rel="next" title="UnitSphericalRepresentation" href="astropy.coordinates.UnitSphericalRepresentation.html" />
+    <link rel="prev" title="TimeFrameAttribute" href="astropy.coordinates.TimeFrameAttribute.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.coordinates.UnitSphericalRepresentation.html" title="UnitSphericalRepresentation">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.coordinates.TimeFrameAttribute.html" title="TimeFrameAttribute">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../coordinates/index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>TransformGraph</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="transformgraph">
+<h1>TransformGraph<a class="headerlink" href="#transformgraph" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.coordinates.TransformGraph">
+<em class="property">class </em><tt class="descclassname">astropy.coordinates.</tt><tt class="descname">TransformGraph</tt><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L37" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A graph representing the paths between coordinate frames.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.frame_set" title="astropy.coordinates.TransformGraph.frame_set"><tt class="xref py py-obj docutils literal"><span class="pre">frame_set</span></tt></a></td>
+<td>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">set</span></tt></a> of all the frame classes present in this <a class="reference internal" href="#astropy.coordinates.TransformGraph" title="astropy.coordinates.TransformGraph"><tt class="xref py py-obj docutils literal"><span class="pre">TransformGraph</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.add_transform" title="astropy.coordinates.TransformGraph.add_transform"><tt class="xref py py-obj docutils literal"><span class="pre">add_transform</span></tt></a>(fromsys,&nbsp;tosys,&nbsp;transform)</td>
+<td>Add a new coordinate transformation to the graph.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.find_shortest_path" title="astropy.coordinates.TransformGraph.find_shortest_path"><tt class="xref py py-obj docutils literal"><span class="pre">find_shortest_path</span></tt></a>(fromsys,&nbsp;tosys)</td>
+<td>Computes the shortest distance along the transform graph from one system to another.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.get_names" title="astropy.coordinates.TransformGraph.get_names"><tt class="xref py py-obj docutils literal"><span class="pre">get_names</span></tt></a>()</td>
+<td>Returns all available transform names.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.get_transform" title="astropy.coordinates.TransformGraph.get_transform"><tt class="xref py py-obj docutils literal"><span class="pre">get_transform</span></tt></a>(fromsys,&nbsp;tosys)</td>
+<td>Generates and returns the <a class="reference internal" href="astropy.coordinates.CompositeTransform.html#astropy.coordinates.CompositeTransform" title="astropy.coordinates.CompositeTransform"><tt class="xref py py-obj docutils literal"><span class="pre">CompositeTransform</span></tt></a> for a transformation between two coordinate systems.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.invalidate_cache" title="astropy.coordinates.TransformGraph.invalidate_cache"><tt class="xref py py-obj docutils literal"><span class="pre">invalidate_cache</span></tt></a>()</td>
+<td>Invalidates the cache that stores optimizations for traversing the transform graph.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.lookup_name" title="astropy.coordinates.TransformGraph.lookup_name"><tt class="xref py py-obj docutils literal"><span class="pre">lookup_name</span></tt></a>(name)</td>
+<td>Tries to locate the coordinate class with the provided alias.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.remove_transform" title="astropy.coordinates.TransformGraph.remove_transform"><tt class="xref py py-obj docutils literal"><span class="pre">remove_transform</span></tt></a>(fromsys,&nbsp;tosys,&nbsp;transform)</td>
+<td>Removes a coordinate transform from the graph.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.to_dot_graph" title="astropy.coordinates.TransformGraph.to_dot_graph"><tt class="xref py py-obj docutils literal"><span class="pre">to_dot_graph</span></tt></a>([priorities,&nbsp;addnodes,&nbsp;savefn,&nbsp;...])</td>
+<td>Converts this transform graph to the <a class="reference external" href="http://www.graphviz.org/">graphviz</a> DOT format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.to_networkx_graph" title="astropy.coordinates.TransformGraph.to_networkx_graph"><tt class="xref py py-obj docutils literal"><span class="pre">to_networkx_graph</span></tt></a>()</td>
+<td>Converts this transform graph into a networkx graph.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.TransformGraph.transform" title="astropy.coordinates.TransformGraph.transform"><tt class="xref py py-obj docutils literal"><span class="pre">transform</span></tt></a>(transcls,&nbsp;fromsys,&nbsp;tosys[,&nbsp;priority])</td>
+<td>A function decorator for defining transformations.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.coordinates.TransformGraph.frame_set">
+<tt class="descname">frame_set</tt><a class="headerlink" href="#astropy.coordinates.TransformGraph.frame_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#set" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">set</span></tt></a> of all the frame classes present in this <a class="reference internal" href="#astropy.coordinates.TransformGraph" title="astropy.coordinates.TransformGraph"><tt class="xref py py-obj docutils literal"><span class="pre">TransformGraph</span></tt></a>.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.add_transform">
+<tt class="descname">add_transform</tt><big>(</big><em>fromsys</em>, <em>tosys</em>, <em>transform</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.add_transform"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L83" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.add_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new coordinate transformation to the graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fromsys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to start from.</p>
+</div></blockquote>
+<p><strong>tosys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to transform into.</p>
+</div></blockquote>
+<p><strong>transform</strong> : CoordinateTransform or similar callable</p>
+<blockquote>
+<div><p>The transformation object. Typically a <a class="reference internal" href="astropy.coordinates.CoordinateTransform.html#astropy.coordinates.CoordinateTransform" title="astropy.coordinates.CoordinateTransform"><tt class="xref py py-obj docutils literal"><span class="pre">CoordinateTransform</span></tt></a> object,
+although it may be some other callable that is called with the same
+signature.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>TypeError</strong></p>
+<blockquote class="last">
+<div><p>If <tt class="docutils literal"><span class="pre">fromsys</span></tt> or <tt class="docutils literal"><span class="pre">tosys</span></tt> are not classes or <tt class="docutils literal"><span class="pre">transform</span></tt> is
+not callable.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.find_shortest_path">
+<tt class="descname">find_shortest_path</tt><big>(</big><em>fromsys</em>, <em>tosys</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.find_shortest_path"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L163" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.find_shortest_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the shortest distance along the transform graph from
+one system to another.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fromsys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to start from.</p>
+</div></blockquote>
+<p><strong>tosys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to transform into.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>path</strong> : list of classes or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>The path from <tt class="docutils literal"><span class="pre">fromsys</span></tt> to <tt class="docutils literal"><span class="pre">tosys</span></tt> as an in-order sequence
+of classes.  This list includes <em>both</em> <tt class="docutils literal"><span class="pre">fromsys</span></tt> and
+<tt class="docutils literal"><span class="pre">tosys</span></tt>. Is <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> if there is no possible path.</p>
+</div></blockquote>
+<p><strong>distance</strong> : number</p>
+<blockquote class="last">
+<div><p>The total distance/priority from <tt class="docutils literal"><span class="pre">fromsys</span></tt> to <tt class="docutils literal"><span class="pre">tosys</span></tt>.  If
+priorities are not set this is the number of transforms
+needed. Is <tt class="docutils literal"><span class="pre">inf</span></tt> if there is no possible path.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.get_names">
+<tt class="descname">get_names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.get_names"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L350" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.get_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all available transform names. They will all be
+valid arguments to <a class="reference internal" href="#astropy.coordinates.TransformGraph.lookup_name" title="astropy.coordinates.TransformGraph.lookup_name"><tt class="xref py py-obj docutils literal"><span class="pre">lookup_name</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>nms</strong> : list</p>
+<blockquote class="last">
+<div><p>The aliases for coordinate systems.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.get_transform">
+<tt class="descname">get_transform</tt><big>(</big><em>fromsys</em>, <em>tosys</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.get_transform"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L281" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.get_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates and returns the <a class="reference internal" href="astropy.coordinates.CompositeTransform.html#astropy.coordinates.CompositeTransform" title="astropy.coordinates.CompositeTransform"><tt class="xref py py-obj docutils literal"><span class="pre">CompositeTransform</span></tt></a> for a transformation
+between two coordinate systems.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fromsys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to start from.</p>
+</div></blockquote>
+<p><strong>tosys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to transform into.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>trans</strong> : <a class="reference internal" href="astropy.coordinates.CompositeTransform.html#astropy.coordinates.CompositeTransform" title="astropy.coordinates.CompositeTransform"><tt class="xref py py-obj docutils literal"><span class="pre">CompositeTransform</span></tt></a> or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote class="last">
+<div><p>If there is a path from <tt class="docutils literal"><span class="pre">fromsys</span></tt> to <tt class="docutils literal"><span class="pre">tosys</span></tt>, this is a
+transform object for that path.   If no path could be found, this is
+<a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This function always returns a <a class="reference internal" href="astropy.coordinates.CompositeTransform.html#astropy.coordinates.CompositeTransform" title="astropy.coordinates.CompositeTransform"><tt class="xref py py-obj docutils literal"><span class="pre">CompositeTransform</span></tt></a>, because
+<a class="reference internal" href="astropy.coordinates.CompositeTransform.html#astropy.coordinates.CompositeTransform" title="astropy.coordinates.CompositeTransform"><tt class="xref py py-obj docutils literal"><span class="pre">CompositeTransform</span></tt></a> is slightly more adaptable in the way it can be
+called than other transform classes. Specifically, it takes care of
+inetermediate steps of transformations in a way that is consistent with
+1-hop transformations.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.invalidate_cache">
+<tt class="descname">invalidate_cache</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.invalidate_cache"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L71" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.invalidate_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invalidates the cache that stores optimizations for traversing the
+transform graph.  This is called automatically when transforms
+are added or removed, but will need to be called manually if
+weights on transforms are modified inplace.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.lookup_name">
+<tt class="descname">lookup_name</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.lookup_name"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L332" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.lookup_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to locate the coordinate class with the provided alias.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>The alias to look up.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">coordcls</p>
+<blockquote class="last">
+<div><p>The coordinate class corresponding to the <tt class="docutils literal"><span class="pre">name</span></tt> or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> if
+no such class exists.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.remove_transform">
+<tt class="descname">remove_transform</tt><big>(</big><em>fromsys</em>, <em>tosys</em>, <em>transform</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.remove_transform"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L115" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.remove_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes a coordinate transform from the graph.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fromsys</strong> : class or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>The coordinate frame <em>class</em> to start from. If <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>,
+<tt class="docutils literal"><span class="pre">transform</span></tt> will be searched for and removed (<tt class="docutils literal"><span class="pre">tosys</span></tt> must
+also be <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>).</p>
+</div></blockquote>
+<p><strong>tosys</strong> : class or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>The coordinate frame <em>class</em> to transform into. If <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>,
+<tt class="docutils literal"><span class="pre">transform</span></tt> will be searched for and removed (<tt class="docutils literal"><span class="pre">fromsys</span></tt> must
+also be <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>).</p>
+</div></blockquote>
+<p><strong>transform</strong> : callable or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote class="last">
+<div><p>The transformation object to be removed or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.  If <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>
+and <tt class="docutils literal"><span class="pre">tosys</span></tt> and <tt class="docutils literal"><span class="pre">fromsys</span></tt> are supplied, there will be no
+check to ensure the correct object is removed.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.to_dot_graph">
+<tt class="descname">to_dot_graph</tt><big>(</big><em>priorities=True</em>, <em>addnodes=</em>, <span class="optional">[</span><span class="optional">]</span><em>savefn=None</em>, <em>savelayout=u'plain'</em>, <em>saveformat=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.to_dot_graph"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L362" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.to_dot_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts this transform graph to the <a class="reference external" href="http://www.graphviz.org/">graphviz</a> DOT format.</p>
+<p>Optionally saves it (requires <a class="reference external" href="http://www.graphviz.org/">graphviz</a> be installed and on your path).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>priorities</strong> : bool</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, show the priority values for each transform.  Otherwise,
+the will not be included in the graph.</p>
+</div></blockquote>
+<p><strong>addnodes</strong> : sequence of str</p>
+<blockquote>
+<div><p>Additional coordinate systems to add (this can include systems
+already in the transform graph, but they will only appear once).</p>
+</div></blockquote>
+<p><strong>savefn</strong> : <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> or str</p>
+<blockquote>
+<div><p>The file name to save this graph to or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> to not save
+to a file.</p>
+</div></blockquote>
+<p><strong>savelayout</strong> : str</p>
+<blockquote>
+<div><p>The graphviz program to use to layout the graph (see
+<a class="reference external" href="http://www.graphviz.org/">graphviz</a> for details) or &#8216;plain&#8217; to just save the DOT graph
+content. Ignored if <tt class="docutils literal"><span class="pre">savefn</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>saveformat</strong> : str</p>
+<blockquote>
+<div><p>The graphviz output format. (e.g. the <tt class="docutils literal"><span class="pre">-Txxx</span></tt> option for
+the command line program - see graphviz docs for details).
+Ignored if <tt class="docutils literal"><span class="pre">savefn</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dotgraph</strong> : str</p>
+<blockquote class="last">
+<div><p>A string with the DOT format graph.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.to_networkx_graph">
+<tt class="descname">to_networkx_graph</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.to_networkx_graph"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L455" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.to_networkx_graph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts this transform graph into a networkx graph.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You must have the <a class="reference external" href="http://networkx.lanl.gov/">networkx</a>
+package installed for this to work.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>nxgraph</strong> : <a class="reference external" href="http://networkx.lanl.gov/reference/classes.graph.html">networkx.Graph</a></p>
+<blockquote class="last">
+<div><p>This <a class="reference internal" href="#astropy.coordinates.TransformGraph" title="astropy.coordinates.TransformGraph"><tt class="xref py py-obj docutils literal"><span class="pre">TransformGraph</span></tt></a> as a <a class="reference external" href="http://networkx.lanl.gov/reference/classes.graph.html">networkx.Graph</a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.TransformGraph.transform">
+<tt class="descname">transform</tt><big>(</big><em>transcls</em>, <em>fromsys</em>, <em>tosys</em>, <em>priority=1</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/transformations.html#TransformGraph.transform"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/transformations.py#L489" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.TransformGraph.transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>A function decorator for defining transformations.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If decorating a static method of a class, <tt class="docutils literal"><span class="pre">&#64;staticmethod</span></tt>
+should be  added <em>above</em> this decorator.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>transcls</strong> : class</p>
+<blockquote>
+<div><p>The class of the transformation object to create.</p>
+</div></blockquote>
+<p><strong>fromsys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to start from.</p>
+</div></blockquote>
+<p><strong>tosys</strong> : class</p>
+<blockquote>
+<div><p>The coordinate frame class to transform into.</p>
+</div></blockquote>
+<p><strong>priority</strong> : number</p>
+<blockquote>
+<div><p>The priority if this transform when finding the shortest
+coordinate tranform path - large numbers are lower priorities.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>deco</strong> : function</p>
+<blockquote class="last">
+<div><p>A function that can be called on another function as a decorator
+(see example).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This decorator assumes the first argument of the <tt class="docutils literal"><span class="pre">transcls</span></tt>
+initializer accepts a callable, and that the second and third
+are <tt class="docutils literal"><span class="pre">fromsys</span></tt> and <tt class="docutils literal"><span class="pre">tosys</span></tt>. If this is not true, you should just
+initialize the class manually and use <a class="reference internal" href="#astropy.coordinates.TransformGraph.add_transform" title="astropy.coordinates.TransformGraph.add_transform"><tt class="xref py py-obj docutils literal"><span class="pre">add_transform</span></tt></a> instead of
+using this decorator.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">graph</span> <span class="o">=</span> <span class="n">TransformGraph</span><span class="p">()</span>
+
+<span class="k">class</span> <span class="nc">Frame1</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+   <span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">Frame2</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="o">...</span>
+
+<span class="nd">@graph.transform</span><span class="p">(</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">Frame1</span><span class="p">,</span> <span class="n">Frame2</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">f1_to_f2</span><span class="p">(</span><span class="n">f1_obj</span><span class="p">):</span>
+    <span class="o">...</span> <span class="n">do</span> <span class="n">something</span> <span class="k">with</span> <span class="n">f1_obj</span> <span class="o">...</span>
+    <span class="k">return</span> <span class="n">f2_obj</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">TransformGraph</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.coordinates.TransformGraph.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.coordinates.TransformGraph.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

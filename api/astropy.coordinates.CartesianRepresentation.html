@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CartesianRepresentation &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="../coordinates/index.html" />
+    <link rel="next" title="CompositeTransform" href="astropy.coordinates.CompositeTransform.html" />
+    <link rel="prev" title="CartesianPoints" href="astropy.coordinates.CartesianPoints.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.coordinates.CompositeTransform.html" title="CompositeTransform">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.coordinates.CartesianPoints.html" title="CartesianPoints">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../coordinates/index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>CartesianRepresentation</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cartesianrepresentation">
+<h1>CartesianRepresentation<a class="headerlink" href="#cartesianrepresentation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.coordinates.CartesianRepresentation">
+<em class="property">class </em><tt class="descclassname">astropy.coordinates.</tt><tt class="descname">CartesianRepresentation</tt><big>(</big><em>x</em>, <em>y=None</em>, <em>z=None</em>, <em>copy=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/representation.html#CartesianRepresentation"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/representation.py#L191" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation" title="astropy.coordinates.representation.BaseRepresentation"><tt class="docutils literal"><span class="pre">astropy.coordinates.BaseRepresentation</span></tt></a></p>
+<p>Representation of points in 3D cartesian coordinates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x, y, z</strong> : <a class="reference internal" href="astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></p>
+<blockquote>
+<div><p>The x, y, and z coordinates of the point(s). If <tt class="docutils literal"><span class="pre">x</span></tt>, <tt class="docutils literal"><span class="pre">y</span></tt>, and
+<tt class="docutils literal"><span class="pre">z</span></tt> have different shapes, they should be broadcastable.</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If True arrays will be copied rather than referenced.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.attr_classes" title="astropy.coordinates.CartesianRepresentation.attr_classes"><tt class="xref py py-obj docutils literal"><span class="pre">attr_classes</span></tt></a></td>
+<td>Dictionary that remembers insertion order</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.x" title="astropy.coordinates.CartesianRepresentation.x"><tt class="xref py py-obj docutils literal"><span class="pre">x</span></tt></a></td>
+<td>The x component of the point(s).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.xyz" title="astropy.coordinates.CartesianRepresentation.xyz"><tt class="xref py py-obj docutils literal"><span class="pre">xyz</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.y" title="astropy.coordinates.CartesianRepresentation.y"><tt class="xref py py-obj docutils literal"><span class="pre">y</span></tt></a></td>
+<td>The y component of the point(s).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.z" title="astropy.coordinates.CartesianRepresentation.z"><tt class="xref py py-obj docutils literal"><span class="pre">z</span></tt></a></td>
+<td>The z component of the point(s).</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.from_cartesian" title="astropy.coordinates.CartesianRepresentation.from_cartesian"><tt class="xref py py-obj docutils literal"><span class="pre">from_cartesian</span></tt></a>(other)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.coordinates.CartesianRepresentation.to_cartesian" title="astropy.coordinates.CartesianRepresentation.to_cartesian"><tt class="xref py py-obj docutils literal"><span class="pre">to_cartesian</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.coordinates.CartesianRepresentation.attr_classes">
+<tt class="descname">attr_classes</tt><em class="property"> = OrderedDict([(u'x', &lt;class 'astropy.units.quantity.Quantity'&gt;), (u'y', &lt;class 'astropy.units.quantity.Quantity'&gt;), (u'z', &lt;class 'astropy.units.quantity.Quantity'&gt;)])</em><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.attr_classes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.coordinates.CartesianRepresentation.x">
+<tt class="descname">x</tt><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>The x component of the point(s).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.coordinates.CartesianRepresentation.xyz">
+<tt class="descname">xyz</tt><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.xyz" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.coordinates.CartesianRepresentation.y">
+<tt class="descname">y</tt><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>The y component of the point(s).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.coordinates.CartesianRepresentation.z">
+<tt class="descname">z</tt><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>The z component of the point(s).</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="classmethod">
+<dt id="astropy.coordinates.CartesianRepresentation.from_cartesian">
+<em class="property">classmethod </em><tt class="descname">from_cartesian</tt><big>(</big><em>other</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/representation.html#CartesianRepresentation.from_cartesian"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/representation.py#L266" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.from_cartesian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.coordinates.CartesianRepresentation.to_cartesian">
+<tt class="descname">to_cartesian</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/representation.html#CartesianRepresentation.to_cartesian"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/representation.py#L270" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.CartesianRepresentation.to_cartesian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">CartesianRepresentation</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.coordinates.CartesianRepresentation.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.coordinates.CartesianRepresentation.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

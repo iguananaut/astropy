@@ -1,0 +1,12 @@
+<map id="inheritance4e9cbd1ff0" name="inheritance4e9cbd1ff0">
+<area shape="rect" id="node1" href="../api/astropy.units.format.Base.html#astropy.units.format.Base" title="The abstract base class of all unit formats." alt="" coords="5,81,77,109"/>
+<area shape="rect" id="node2" href="../api/astropy.units.format.CDS.html#astropy.units.format.CDS" title="Support the `Centre de Données astronomiques de Strasbourg" alt="" coords="127,5,199,33"/>
+<area shape="rect" id="node4" href="../api/astropy.units.format.Console.html#astropy.units.format.Console" title="Output&#45;only format for to display pretty formatting at the" alt="" coords="125,55,200,83"/>
+<area shape="rect" id="node7" href="../api/astropy.units.format.Generic.html#astropy.units.format.Generic" title="A &quot;generic&quot; format." alt="" coords="125,106,200,134"/>
+<area shape="rect" id="node10" href="../api/astropy.units.format.Latex.html#astropy.units.format.Latex" title="Output LaTeX to display the unit based on IAU style guidelines." alt="" coords="127,157,199,185"/>
+<area shape="rect" id="node14" href="../api/astropy.units.format.Unicode.html#astropy.units.format.Unicode" title="Output&#45;only format to display pretty formatting at the console" alt="" coords="252,5,327,33"/>
+<area shape="rect" id="node6" href="../api/astropy.units.format.Fits.html#astropy.units.format.Fits" title="The FITS standard unit format." alt="" coords="253,55,325,83"/>
+<area shape="rect" id="node12" href="../api/astropy.units.format.OGIP.html#astropy.units.format.OGIP" title="Support the units in `Office of Guest Investigator Programs (OGIP)" alt="" coords="253,106,325,134"/>
+<area shape="rect" id="node16" href="../api/astropy.units.format.Unscaled.html#astropy.units.format.Unscaled" title="A format that doesn&#39;t display the scale part of the unit, other" alt="" coords="248,157,331,185"/>
+<area shape="rect" id="node18" href="../api/astropy.units.format.VOUnit.html#astropy.units.format.VOUnit" title="The proposed IVOA standard for units used by the VO." alt="" coords="253,207,325,235"/>
+</map>

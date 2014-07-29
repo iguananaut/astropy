@@ -1,0 +1,10 @@
+
+.. include:: ../time/references.txt
+
+
+ScaleValueError
+============================
+
+.. currentmodule:: astropy.time
+
+.. autoexception:: ScaleValueError

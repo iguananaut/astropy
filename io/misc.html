@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Miscellaneous Input/Output (astropy.io.misc) &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="fnpickle" href="../api/astropy.io.misc.fnpickle.html" />
+    <link rel="prev" title="validate_schema" href="../api/astropy.io.votable.xmlutil.validate_schema.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astropy.io.misc.fnpickle.html" title="fnpickle">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astropy.io.votable.xmlutil.validate_schema.html" title="validate_schema">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Miscellaneous Input/Output (<tt class="docutils literal"><span class="pre">astropy.io.misc</span></tt>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="miscellaneous-input-output-astropy-io-misc">
+<h1>Miscellaneous Input/Output (<a class="reference internal" href="#module-astropy.io.misc" title="astropy.io.misc"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.misc</span></tt></a>)<a class="headerlink" href="#miscellaneous-input-output-astropy-io-misc" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-astropy.io.misc" title="astropy.io.misc"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.misc</span></tt></a> module contains miscellaneous input/output routines that
+do not fit elsewhere, and are often used by other Astropy sub-packages. For
+example, <a class="reference internal" href="#module-astropy.io.misc.hdf5" title="astropy.io.misc.hdf5"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.misc.hdf5</span></tt></a> contains functions to read/write
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> objects from/to HDF5 files, but these
+should not be imported directly by users. Instead, users can access this
+functionality via the <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> class itself (see
+<a class="reference internal" href="unified.html#table-io"><em>Unified file read/write interface</em></a>). Routines that are intended to be used directly by users are
+listed in the <a class="reference internal" href="#module-astropy.io.misc" title="astropy.io.misc"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.misc</span></tt></a> section.</p>
+<div class="section" id="module-astropy.io.misc">
+<span id="astropy-io-misc-module"></span><h2>astropy.io.misc Module<a class="headerlink" href="#module-astropy.io.misc" title="Permalink to this headline">¶</a></h2>
+<p>This package contains miscellaneous utility functions for data
+input/output with astropy.</p>
+<div class="section" id="functions">
+<h3>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.misc.fnpickle.html#astropy.io.misc.fnpickle" title="astropy.io.misc.fnpickle"><tt class="xref py py-obj docutils literal"><span class="pre">fnpickle</span></tt></a>(object,&nbsp;fileorname[,&nbsp;usecPickle,&nbsp;...])</td>
+<td>Pickle an object to a specified file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.io.misc.fnunpickle.html#astropy.io.misc.fnunpickle" title="astropy.io.misc.fnunpickle"><tt class="xref py py-obj docutils literal"><span class="pre">fnunpickle</span></tt></a>(fileorname[,&nbsp;number,&nbsp;usecPickle])</td>
+<td>Unpickle pickled objects from a specified file and return the contents.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="module-astropy.io.misc.hdf5">
+<span id="astropy-io-misc-hdf5-module"></span><h2>astropy.io.misc.hdf5 Module<a class="headerlink" href="#module-astropy.io.misc.hdf5" title="Permalink to this headline">¶</a></h2>
+<p>This package contains functions for reading and writing HDF5 tables that are
+not meant to be used directly, but instead are available as readers/writers in
+<a class="reference internal" href="../table/index.html#module-astropy.table" title="astropy.table"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.table</span></tt></a>. See <a class="reference internal" href="unified.html#table-io"><em>Unified file read/write interface</em></a> for more details.</p>
+<div class="section" id="id1">
+<h3>Functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.misc.hdf5.read_table_hdf5.html#astropy.io.misc.hdf5.read_table_hdf5" title="astropy.io.misc.hdf5.read_table_hdf5"><tt class="xref py py-obj docutils literal"><span class="pre">read_table_hdf5</span></tt></a>(input[,&nbsp;path])</td>
+<td>Read a Table object from an HDF5 file  This requires <a class="reference external" href="http://alfven.org/wp/hdf5-for-python/">h5py</a> to be installed.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.io.misc.hdf5.write_table_hdf5.html#astropy.io.misc.hdf5.write_table_hdf5" title="astropy.io.misc.hdf5.write_table_hdf5"><tt class="xref py py-obj docutils literal"><span class="pre">write_table_hdf5</span></tt></a>(table,&nbsp;output[,&nbsp;path,&nbsp;...])</td>
+<td>Write a Table object to an HDF5 file  This requires <a class="reference external" href="http://alfven.org/wp/hdf5-for-python/">h5py</a> to be installed.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Miscellaneous Input/Output (<tt class="docutils literal"><span class="pre">astropy.io.misc</span></tt>)</a><ul>
+<li><a class="reference internal" href="#module-astropy.io.misc">astropy.io.misc Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy.io.misc.hdf5">astropy.io.misc.hdf5 Module</a><ul>
+<li><a class="reference internal" href="#id1">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/misc.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/io/misc.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

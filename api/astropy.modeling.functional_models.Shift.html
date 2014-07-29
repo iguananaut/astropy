@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Shift &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="Sine1D" href="astropy.modeling.functional_models.Sine1D.html" />
+    <link rel="prev" title="Scale" href="astropy.modeling.functional_models.Scale.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.Sine1D.html" title="Sine1D">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.Scale.html" title="Scale">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Shift</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="shift">
+<h1>Shift<a class="headerlink" href="#shift" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.functional_models.Shift">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.functional_models.</tt><tt class="descname">Shift</tt><big>(</big><em>offsets</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Shift"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L348" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Shift" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.modeling.Model.html#astropy.modeling.Model" title="astropy.modeling.core.Model"><tt class="docutils literal"><span class="pre">astropy.modeling.Model</span></tt></a></p>
+<p>Shift a coordinate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>offsets</strong> : float or a list of floats</p>
+<blockquote class="last">
+<div><p>offsets to be applied to a coordinate
+if a list - each value in the list is an offset to be applied to a
+column in the input coordinate array</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Shift.input_names" title="astropy.modeling.functional_models.Shift.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Shift.offsets" title="astropy.modeling.functional_models.Shift.offsets"><tt class="xref py py-obj docutils literal"><span class="pre">offsets</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Shift.param_names" title="astropy.modeling.functional_models.Shift.param_names"><tt class="xref py py-obj docutils literal"><span class="pre">param_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Shift.evaluate" title="astropy.modeling.functional_models.Shift.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;offsets)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Shift.inverse" title="astropy.modeling.functional_models.Shift.inverse"><tt class="xref py py-obj docutils literal"><span class="pre">inverse</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Shift.input_names">
+<tt class="descname">input_names</tt><em class="property"> = []</em><a class="headerlink" href="#astropy.modeling.functional_models.Shift.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Shift.offsets">
+<tt class="descname">offsets</tt><a class="headerlink" href="#astropy.modeling.functional_models.Shift.offsets" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Shift.param_names">
+<tt class="descname">param_names</tt><em class="property"> = ['offsets']</em><a class="headerlink" href="#astropy.modeling.functional_models.Shift.param_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="staticmethod">
+<dt id="astropy.modeling.functional_models.Shift.evaluate">
+<em class="property">static </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>offsets</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Shift.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L373" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Shift.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.functional_models.Shift.inverse">
+<tt class="descname">inverse</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Shift.inverse"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L368" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Shift.inverse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Shift</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.functional_models.Shift.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.functional_models.Shift.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+
+.. include:: ../vo/samp/references.txt
+
+
+Conf
+====================
+
+.. currentmodule:: astropy.vo.samp
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Conf.use_internet
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: use_internet
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>I/O Registry (astropy.io.registry) &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="register_reader" href="../api/astropy.io.registry.register_reader.html" />
+    <link rel="prev" title="InvalidConfigurationItemWarning" href="../api/astropy.config.InvalidConfigurationItemWarning.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astropy.io.registry.register_reader.html" title="register_reader">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astropy.config.InvalidConfigurationItemWarning.html" title="InvalidConfigurationItemWarning">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>I/O Registry (<tt class="docutils literal"><span class="pre">astropy.io.registry</span></tt>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="i-o-registry-astropy-io-registry">
+<span id="io-registry"></span><h1>I/O Registry (<a class="reference internal" href="#module-astropy.io.registry" title="astropy.io.registry"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.registry</span></tt></a>)<a class="headerlink" href="#i-o-registry-astropy-io-registry" title="Permalink to this headline">¶</a></h1>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The I/O registry is only meant to be used directly by users who want
+to define their own custom readers/writers. Users who want to find
+out more about what built-in formats are supported by
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> by default should see
+<a class="reference internal" href="unified.html#table-io"><em>Unified file read/write interface</em></a>. No built-in formats are currently defined for
+<a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-class docutils literal"><span class="pre">NDData</span></tt></a>, but this will be added in
+future).</p>
+</div>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The I/O registry is a sub-module used to define the readers/writers available
+for the <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> and
+<a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-class docutils literal"><span class="pre">NDData</span></tt></a> classes.</p>
+</div>
+<div class="section" id="using-astropy-io-registry">
+<h2>Using <a class="reference internal" href="#module-astropy.io.registry" title="astropy.io.registry"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.registry</span></tt></a><a class="headerlink" href="#using-astropy-io-registry" title="Permalink to this headline">¶</a></h2>
+<p>The following example demonstrates how to create a reader for the
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> class. First, we can create a highly
+simplistic FITS reader which just reads the data as a structured array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+
+<span class="k">def</span> <span class="nf">fits_table_reader</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">hdu</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">)[</span><span class="n">hdu</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and then register it:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="n">registry</span><span class="o">.</span><span class="n">register_reader</span><span class="p">(</span><span class="s">&#39;fits&#39;</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">fits_table_reader</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Reader functions can take any arguments except <tt class="docutils literal"><span class="pre">format</span></tt> (since this
+is reserved for <a class="reference internal" href="../api/astropy.io.registry.read.html#astropy.io.registry.read" title="astropy.io.registry.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a>) and should return an instance of the class specified as the second argument of <tt class="docutils literal"><span class="pre">register_reader</span></tt> (<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> in the above case.)</p>
+<p>We can then read in a FITS table with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;catalog.fits&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In practice, it would be nice to have the <tt class="docutils literal"><span class="pre">read</span></tt> method automatically
+identify that this file was a FITS file, so we can construct a function that
+can recognize FITS files, which we refer to here as an <em>identifier</em> function.
+An identifier function should take a first argument that should be a string
+which indicates whether the identifier is being called from <tt class="docutils literal"><span class="pre">read</span></tt> or
+<tt class="docutils literal"><span class="pre">write</span></tt>, and should then accept arbitrary number of positional and keyword
+arguments via <tt class="docutils literal"><span class="pre">*args</span></tt> and <tt class="docutils literal"><span class="pre">**kwargs</span></tt>, which are the arguments passed to
+<tt class="docutils literal"><span class="pre">Table.read</span></tt>. We can write a simplistic function that only looks at
+filenames (but in practice, this function could even look at the first few
+bytes of the file for example). The only requirement is that it return a
+boolean indicating whether the input matches that expected for the format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">fits_identify</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">basestring</span><span class="p">)</span> <span class="ow">and</span> \
+           <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;fits&#39;</span><span class="p">,</span> <span class="s">&#39;fit&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Identifier functions should be prepared for arbitrary input - in
+particular, the first argument may not be a filename or file
+object, so it should not assume that this is the case.</p>
+</div>
+<p>We then register this identifier function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">registry</span><span class="o">.</span><span class="n">register_identifier</span><span class="p">(</span><span class="s">&#39;fits&#39;</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">fits_identify</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And we can then do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;catalog.fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If multiple formats match the current input, then an exception is
+raised, and similarly if no format matches the current input. In that
+case, the format should be explicitly given with the <tt class="docutils literal"><span class="pre">format=</span></tt>
+keyword argument.</p>
+<p>Similarly, it is possible to create custom writers. To go with our simplistic FITS reader above, we can write a simplistic FITS writer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">fits_table_writer</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+    <span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table</span><span class="p">),</span> <span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We then register the writer:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">io_registry</span><span class="o">.</span><span class="n">register_writer</span><span class="p">(</span><span class="s">&#39;fits&#39;</span><span class="p">,</span> <span class="n">Table</span><span class="p">,</span> <span class="n">fits_table_writer</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And we can then write the file out to a FITS file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;catalog_new.fits&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If we have registered the identifier as above, we can simply do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;catalog_new.fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-astropy.io.registry">
+<span id="astropy-io-registry-module"></span><h3>astropy.io.registry Module<a class="headerlink" href="#module-astropy.io.registry" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="functions">
+<h4>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.registry.register_reader.html#astropy.io.registry.register_reader" title="astropy.io.registry.register_reader"><tt class="xref py py-obj docutils literal"><span class="pre">register_reader</span></tt></a>(data_format,&nbsp;data_class,&nbsp;...)</td>
+<td>Register a reader function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.io.registry.register_writer.html#astropy.io.registry.register_writer" title="astropy.io.registry.register_writer"><tt class="xref py py-obj docutils literal"><span class="pre">register_writer</span></tt></a>(data_format,&nbsp;data_class,&nbsp;...)</td>
+<td>Register a table writer function.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.registry.register_identifier.html#astropy.io.registry.register_identifier" title="astropy.io.registry.register_identifier"><tt class="xref py py-obj docutils literal"><span class="pre">register_identifier</span></tt></a>(data_format,&nbsp;data_class,&nbsp;...)</td>
+<td>Associate an identifier function with a specific data type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.io.registry.identify_format.html#astropy.io.registry.identify_format" title="astropy.io.registry.identify_format"><tt class="xref py py-obj docutils literal"><span class="pre">identify_format</span></tt></a>(origin,&nbsp;data_class_required,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.registry.get_reader.html#astropy.io.registry.get_reader" title="astropy.io.registry.get_reader"><tt class="xref py py-obj docutils literal"><span class="pre">get_reader</span></tt></a>(data_format,&nbsp;data_class)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.io.registry.get_writer.html#astropy.io.registry.get_writer" title="astropy.io.registry.get_writer"><tt class="xref py py-obj docutils literal"><span class="pre">get_writer</span></tt></a>(data_format,&nbsp;data_class)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.registry.read.html#astropy.io.registry.read" title="astropy.io.registry.read"><tt class="xref py py-obj docutils literal"><span class="pre">read</span></tt></a>(cls,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Read in data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.io.registry.write.html#astropy.io.registry.write" title="astropy.io.registry.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>(data,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Write out data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.io.registry.get_formats.html#astropy.io.registry.get_formats" title="astropy.io.registry.get_formats"><tt class="xref py py-obj docutils literal"><span class="pre">get_formats</span></tt></a>([data_class])</td>
+<td>Get the list of registered I/O formats as a Table.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">I/O Registry (<tt class="docutils literal"><span class="pre">astropy.io.registry</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#using-astropy-io-registry">Using <tt class="docutils literal"><span class="pre">astropy.io.registry</span></tt></a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astropy.io.registry">astropy.io.registry Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/registry.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/io/registry.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

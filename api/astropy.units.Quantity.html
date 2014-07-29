@@ -1,0 +1,1029 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quantity &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Units and Quantities (astropy.units)" href="../units/index.html" />
+    <link rel="next" title="Unit" href="astropy.units.Unit.html" />
+    <link rel="prev" title="PrefixUnit" href="astropy.units.PrefixUnit.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.units.Unit.html" title="Unit">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.units.PrefixUnit.html" title="PrefixUnit">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../units/index.html" accesskey="U">Units and Quantities (<tt class="docutils literal"><span class="pre">astropy.units</span></tt>)</a> &raquo;</li>
+      
+      <li>Quantity</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="quantity">
+<h1>Quantity<a class="headerlink" href="#quantity" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.units.Quantity">
+<em class="property">class </em><tt class="descclassname">astropy.units.</tt><tt class="descname">Quantity</tt><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L109" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-class docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+<p>A <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> represents a number with some associated unit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> : number, <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a>, <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> object, or sequence of <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> objects.</p>
+<blockquote>
+<div><p>The numerical value of this quantity in the units given by unit.  If a
+<a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> or sequence of them (or any other valid object with a
+<tt class="docutils literal"><span class="pre">unit</span></tt> attribute), creates a new <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> object, converting to
+<a class="reference internal" href="#astropy.units.Quantity.unit" title="astropy.units.Quantity.unit"><tt class="xref py py-obj docutils literal"><span class="pre">unit</span></tt></a> units as needed.</p>
+</div></blockquote>
+<p><strong>unit</strong> : <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> instance, str</p>
+<blockquote>
+<div><p>An object that represents the unit associated with the input value.
+Must be an <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> object or a string parseable by
+the <a class="reference internal" href="../units/index.html#module-astropy.units" title="astropy.units"><tt class="xref py py-mod docutils literal"><span class="pre">units</span></tt></a> package.</p>
+</div></blockquote>
+<p><strong>dtype</strong> : ~numpy.dtype, optional</p>
+<blockquote>
+<div><p>The dtype of the resulting Numpy array or scalar that will
+hold the value.  If not provided, it is determined from the input,
+except that any input that cannot represent float (integer and bool)
+is converted to float.</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> (default), then the value is copied.  Otherwise, a copy will
+only be made if <tt class="docutils literal"><span class="pre">__array__</span></tt> returns a copy, if value is a nested
+sequence, or if a copy is needed to satisfy an explicitly given
+<tt class="docutils literal"><span class="pre">dtype</span></tt>.  (The <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> option is intended mostly for internal use,
+to speed up initialization where a copy is known to have been made.
+Use with care.)</p>
+</div></blockquote>
+<p><strong>order</strong> : {&#8216;C&#8217;, &#8216;F&#8217;, &#8216;A&#8217;}, optional</p>
+<blockquote>
+<div><p>Specify the order of the array.  As in <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">array</span></tt></a>.  This parameter
+is ignored if the input is a <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> and <tt class="docutils literal"><span class="pre">copy=False</span></tt>.</p>
+</div></blockquote>
+<p><strong>subok</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> (default), the returned array will be forced to be a
+<a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a>.  Otherwise, <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> subclasses will be passed through.</p>
+</div></blockquote>
+<p><strong>ndmin</strong> : int, optional</p>
+<blockquote>
+<div><p>Specifies the minimum number of dimensions that the resulting array
+should have.  Ones will be pre-pended to the shape as needed to meet
+this requirement.  This parameter is ignored if the input is a
+<a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> and <tt class="docutils literal"><span class="pre">copy=False</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>TypeError</strong></p>
+<blockquote>
+<div><p>If the value provided is not a Python numeric type.</p>
+</div></blockquote>
+<p><strong>TypeError</strong></p>
+<blockquote class="last">
+<div><p>If the unit provided is not either a <a class="reference internal" href="astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><tt class="xref py py-class docutils literal"><span class="pre">Unit</span></tt></a>
+object or a parseable string unit.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.cgs" title="astropy.units.Quantity.cgs"><tt class="xref py py-obj docutils literal"><span class="pre">cgs</span></tt></a></td>
+<td>Returns a copy of the current <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> instance with CGS units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.equivalencies" title="astropy.units.Quantity.equivalencies"><tt class="xref py py-obj docutils literal"><span class="pre">equivalencies</span></tt></a></td>
+<td>A list of equivalencies that will be applied by default during unit conversions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.flat" title="astropy.units.Quantity.flat"><tt class="xref py py-obj docutils literal"><span class="pre">flat</span></tt></a></td>
+<td>A 1-D iterator over the Quantity array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.isscalar" title="astropy.units.Quantity.isscalar"><tt class="xref py py-obj docutils literal"><span class="pre">isscalar</span></tt></a></td>
+<td>True if the <a class="reference internal" href="#astropy.units.Quantity.value" title="astropy.units.Quantity.value"><tt class="xref py py-obj docutils literal"><span class="pre">value</span></tt></a> of this quantity is a scalar, or False if it is an array-like object.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.si" title="astropy.units.Quantity.si"><tt class="xref py py-obj docutils literal"><span class="pre">si</span></tt></a></td>
+<td>Returns a copy of the current <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> instance with SI units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.unit" title="astropy.units.Quantity.unit"><tt class="xref py py-obj docutils literal"><span class="pre">unit</span></tt></a></td>
+<td>A <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> object representing the unit of this quantity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.value" title="astropy.units.Quantity.value"><tt class="xref py py-obj docutils literal"><span class="pre">value</span></tt></a></td>
+<td>The numerical value of this quantity.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.all" title="astropy.units.Quantity.all"><tt class="xref py py-obj docutils literal"><span class="pre">all</span></tt></a>([axis,&nbsp;out])</td>
+<td>Returns True if all elements evaluate to True.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.any" title="astropy.units.Quantity.any"><tt class="xref py py-obj docutils literal"><span class="pre">any</span></tt></a>([axis,&nbsp;out])</td>
+<td>Returns True if any of the elements of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt> evaluate to True.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.argmax" title="astropy.units.Quantity.argmax"><tt class="xref py py-obj docutils literal"><span class="pre">argmax</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return indices of the maximum values along the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.argmin" title="astropy.units.Quantity.argmin"><tt class="xref py py-obj docutils literal"><span class="pre">argmin</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return indices of the minimum values along the given axis of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.argsort" title="astropy.units.Quantity.argsort"><tt class="xref py py-obj docutils literal"><span class="pre">argsort</span></tt></a>([axis,&nbsp;kind,&nbsp;order])</td>
+<td>Returns the indices that would sort this array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.choose" title="astropy.units.Quantity.choose"><tt class="xref py py-obj docutils literal"><span class="pre">choose</span></tt></a>(choices[,&nbsp;out,&nbsp;mode])</td>
+<td>Use an index array to construct a new array from a set of choices.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.clip" title="astropy.units.Quantity.clip"><tt class="xref py py-obj docutils literal"><span class="pre">clip</span></tt></a>(a_min,&nbsp;a_max[,&nbsp;out])</td>
+<td>Return an array whose values are limited to <tt class="docutils literal"><span class="pre">[a_min,</span> <span class="pre">a_max]</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.cumprod" title="astropy.units.Quantity.cumprod"><tt class="xref py py-obj docutils literal"><span class="pre">cumprod</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the cumulative product of the elements along the given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.cumsum" title="astropy.units.Quantity.cumsum"><tt class="xref py py-obj docutils literal"><span class="pre">cumsum</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the cumulative sum of the elements along the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.decompose" title="astropy.units.Quantity.decompose"><tt class="xref py py-obj docutils literal"><span class="pre">decompose</span></tt></a>([bases])</td>
+<td>Generates a new <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> with the units decomposed.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.diff" title="astropy.units.Quantity.diff"><tt class="xref py py-obj docutils literal"><span class="pre">diff</span></tt></a>([n,&nbsp;axis])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.dot" title="astropy.units.Quantity.dot"><tt class="xref py py-obj docutils literal"><span class="pre">dot</span></tt></a>(b[,&nbsp;out])</td>
+<td>Dot product of two arrays.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.dump" title="astropy.units.Quantity.dump"><tt class="xref py py-obj docutils literal"><span class="pre">dump</span></tt></a>(file)</td>
+<td>Dump a pickle of the array to the specified file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.dumps" title="astropy.units.Quantity.dumps"><tt class="xref py py-obj docutils literal"><span class="pre">dumps</span></tt></a>()</td>
+<td>Returns the pickle of the array as a string.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.ediff1d" title="astropy.units.Quantity.ediff1d"><tt class="xref py py-obj docutils literal"><span class="pre">ediff1d</span></tt></a>([to_end,&nbsp;to_begin])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.fill" title="astropy.units.Quantity.fill"><tt class="xref py py-obj docutils literal"><span class="pre">fill</span></tt></a>(value)</td>
+<td>Fill the array with a scalar value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.item" title="astropy.units.Quantity.item"><tt class="xref py py-obj docutils literal"><span class="pre">item</span></tt></a>(*args)</td>
+<td>Copy an element of an array to a standard Python scalar and return it.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.itemset" title="astropy.units.Quantity.itemset"><tt class="xref py py-obj docutils literal"><span class="pre">itemset</span></tt></a>(*args)</td>
+<td>Insert scalar into an array (scalar is cast to array&#8217;s dtype, if possible)  There must be at least 1 argument, and define the last argument as <em>item</em>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.list" title="astropy.units.Quantity.list"><tt class="xref py py-obj docutils literal"><span class="pre">list</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.max" title="astropy.units.Quantity.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return the maximum along a given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.mean" title="astropy.units.Quantity.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Returns the average of the array elements along given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.min" title="astropy.units.Quantity.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a>([axis,&nbsp;out])</td>
+<td>Return the minimum along a given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.nansum" title="astropy.units.Quantity.nansum"><tt class="xref py py-obj docutils literal"><span class="pre">nansum</span></tt></a>([axis])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.prod" title="astropy.units.Quantity.prod"><tt class="xref py py-obj docutils literal"><span class="pre">prod</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the product of the array elements over the given axis  Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.prod.html#numpy.prod" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.prod</span></tt></a> for full documentation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.ptp" title="astropy.units.Quantity.ptp"><tt class="xref py py-obj docutils literal"><span class="pre">ptp</span></tt></a>([axis,&nbsp;out])</td>
+<td>Peak to peak (maximum - minimum) value along a given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.put" title="astropy.units.Quantity.put"><tt class="xref py py-obj docutils literal"><span class="pre">put</span></tt></a>(indices,&nbsp;values[,&nbsp;mode])</td>
+<td>Set <tt class="docutils literal"><span class="pre">a.flat[n]</span> <span class="pre">=</span> <span class="pre">values[n]</span></tt> for all <tt class="xref py py-obj docutils literal"><span class="pre">n</span></tt> in indices.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.searchsorted" title="astropy.units.Quantity.searchsorted"><tt class="xref py py-obj docutils literal"><span class="pre">searchsorted</span></tt></a>(v[,&nbsp;side,&nbsp;sorter])</td>
+<td>Find indices where elements of v should be inserted in a to maintain order.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.std" title="astropy.units.Quantity.std"><tt class="xref py py-obj docutils literal"><span class="pre">std</span></tt></a>([axis,&nbsp;dtype,&nbsp;out,&nbsp;ddof])</td>
+<td>Returns the standard deviation of the array elements along given axis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.sum" title="astropy.units.Quantity.sum"><tt class="xref py py-obj docutils literal"><span class="pre">sum</span></tt></a>([axis,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the sum of the array elements over the given axis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.to" title="astropy.units.Quantity.to"><tt class="xref py py-obj docutils literal"><span class="pre">to</span></tt></a>(unit[,&nbsp;equivalencies])</td>
+<td>Returns a new <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> object with the specified units.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.tofile" title="astropy.units.Quantity.tofile"><tt class="xref py py-obj docutils literal"><span class="pre">tofile</span></tt></a>(fid[,&nbsp;sep,&nbsp;format])</td>
+<td>Write array to a file as text or binary (default).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.tostring" title="astropy.units.Quantity.tostring"><tt class="xref py py-obj docutils literal"><span class="pre">tostring</span></tt></a>([order])</td>
+<td>Construct a Python string containing the raw data bytes in the array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.Quantity.trace" title="astropy.units.Quantity.trace"><tt class="xref py py-obj docutils literal"><span class="pre">trace</span></tt></a>([offset,&nbsp;axis1,&nbsp;axis2,&nbsp;dtype,&nbsp;out])</td>
+<td>Return the sum along diagonals of the array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.Quantity.var" title="astropy.units.Quantity.var"><tt class="xref py py-obj docutils literal"><span class="pre">var</span></tt></a>([axis,&nbsp;dtype,&nbsp;out,&nbsp;ddof])</td>
+<td>Returns the variance of the array elements, along given axis.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.units.Quantity.cgs">
+<tt class="descname">cgs</tt><a class="headerlink" href="#astropy.units.Quantity.cgs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the current <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> instance with CGS units. The
+value of the resulting object will be scaled.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.Quantity.equivalencies">
+<tt class="descname">equivalencies</tt><a class="headerlink" href="#astropy.units.Quantity.equivalencies" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of equivalencies that will be applied by default during
+unit conversions.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.Quantity.flat">
+<tt class="descname">flat</tt><a class="headerlink" href="#astropy.units.Quantity.flat" title="Permalink to this definition">¶</a></dt>
+<dd><p>A 1-D iterator over the Quantity array.</p>
+<p>This returns a <tt class="docutils literal"><span class="pre">QuantityIterator</span></tt> instance, which behaves the same
+as the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.flatiter.html#numpy.flatiter" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">flatiter</span></tt></a> instance returned by <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.flat.html#numpy.ndarray.flat" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">flat</span></tt></a>,
+and is similar to, but not a subclass of, Python&#8217;s built-in iterator
+object.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.Quantity.isscalar">
+<tt class="descname">isscalar</tt><a class="headerlink" href="#astropy.units.Quantity.isscalar" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the <a class="reference internal" href="#astropy.units.Quantity.value" title="astropy.units.Quantity.value"><tt class="xref py py-obj docutils literal"><span class="pre">value</span></tt></a> of this quantity is a scalar, or False if it
+is an array-like object.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This is subtly different from <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.isscalar.html#numpy.isscalar" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.isscalar</span></tt></a> in that
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.isscalar.html#numpy.isscalar" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.isscalar</span></tt></a> returns False for a zero-dimensional array
+(e.g. <tt class="docutils literal"><span class="pre">np.array(1)</span></tt>), while this is True for quantities,
+since quantities cannot represent true numpy scalars.</p>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.Quantity.si">
+<tt class="descname">si</tt><a class="headerlink" href="#astropy.units.Quantity.si" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a copy of the current <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> instance with SI units. The
+value of the resulting object will be scaled.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.Quantity.unit">
+<tt class="descname">unit</tt><a class="headerlink" href="#astropy.units.Quantity.unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> object representing the unit of this
+quantity.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.Quantity.value">
+<tt class="descname">value</tt><a class="headerlink" href="#astropy.units.Quantity.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numerical value of this quantity.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.units.Quantity.all">
+<tt class="descname">all</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1228" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if all elements evaluate to True.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.all.html#numpy.all" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.all</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.all.html#numpy.all" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.all</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.any">
+<tt class="descname">any</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.any"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1232" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns True if any of the elements of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt> evaluate to True.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.any.html#numpy.any" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.any</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.any.html#numpy.any" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.any</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.argmax">
+<tt class="descname">argmax</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.argmax"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1099" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.argmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return indices of the maximum values along the given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argmax.html#numpy.argmax" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argmax</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argmax.html#numpy.argmax" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argmax</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.argmin">
+<tt class="descname">argmin</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.argmin"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1102" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.argmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return indices of the minimum values along the given axis of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt>.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argmin.html#numpy.argmin" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argmin</span></tt></a> for detailed documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argmin.html#numpy.argmin" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argmin</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.argsort">
+<tt class="descname">argsort</tt><big>(</big><em>axis=-1</em>, <em>kind='quicksort'</em>, <em>order=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.argsort"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1086" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.argsort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the indices that would sort this array.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html#numpy.argsort" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argsort</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html#numpy.argsort" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argsort</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.choose">
+<tt class="descname">choose</tt><big>(</big><em>choices</em>, <em>out=None</em>, <em>mode='raise'</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.choose"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1081" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.choose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use an index array to construct a new array from a set of choices.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.choose.html#numpy.choose" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.choose</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.choose.html#numpy.choose" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.choose</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.clip">
+<tt class="descname">clip</tt><big>(</big><em>a_min</em>, <em>a_max</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.clip"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1120" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.clip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an array whose values are limited to <tt class="docutils literal"><span class="pre">[a_min,</span> <span class="pre">a_max]</span></tt>.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html#numpy.clip" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.clip</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.clip.html#numpy.clip" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.clip</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.cumprod">
+<tt class="descname">cumprod</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.cumprod"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1219" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.cumprod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cumulative product of the elements along the given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.cumprod.html#numpy.cumprod" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.cumprod</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.cumprod.html#numpy.cumprod" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.cumprod</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.cumsum">
+<tt class="descname">cumsum</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.cumsum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1200" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.cumsum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the cumulative sum of the elements along the given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.cumsum.html#numpy.cumsum" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.cumsum</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.cumsum.html#numpy.cumsum" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.cumsum</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.decompose">
+<tt class="descname">decompose</tt><big>(</big><em>bases=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.decompose"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L931" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.decompose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a new <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> with the units
+decomposed. Decomposed units have only irreducible units in
+them (see <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase.decompose" title="astropy.units.UnitBase.decompose"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units.UnitBase.decompose</span></tt></a>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bases</strong> : sequence of UnitBase, optional</p>
+<blockquote>
+<div><p>The bases to decompose into.  When not provided,
+decomposes down to any irreducible units.  When provided,
+the decomposed result will only contain the given units.
+This will raises a <a class="reference internal" href="astropy.units.UnitsError.html#astropy.units.UnitsError" title="astropy.units.UnitsError"><tt class="xref py py-obj docutils literal"><span class="pre">UnitsError</span></tt></a> if it&#8217;s not possible
+to do so.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>newq</strong> : <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></p>
+<blockquote class="last">
+<div><p>A new object equal to this quantity with units decomposed.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.diff">
+<tt class="descname">diff</tt><big>(</big><em>n=1</em>, <em>axis=-1</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.diff"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1178" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.diff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.dot">
+<tt class="descname">dot</tt><big>(</big><em>b</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.dot"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1169" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.dot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dot product of two arrays.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.dot.html#numpy.dot" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.dot</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.dot.html#numpy.dot" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.dot</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="go">array([[ 2.,  2.],</span>
+<span class="go">       [ 2.,  2.]])</span>
+</pre></div>
+</div>
+<p>This array method can be conveniently chained:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="go">array([[ 8.,  8.],</span>
+<span class="go">       [ 8.,  8.]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.dump">
+<tt class="descname">dump</tt><big>(</big><em>file</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.dump"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1043" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dump a pickle of the array to the specified file.
+The array can be read back with pickle.load or numpy.load.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>file</strong> : str</p>
+<blockquote class="last">
+<div><p>A string naming the dump file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.dumps">
+<tt class="descname">dumps</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.dumps"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1047" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.dumps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the pickle of the array as a string.
+pickle.loads or numpy.loads will convert the string back to an array.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>None</strong></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.ediff1d">
+<tt class="descname">ediff1d</tt><big>(</big><em>to_end=None</em>, <em>to_begin=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.ediff1d"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1182" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.ediff1d" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.fill">
+<tt class="descname">fill</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.fill"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1053" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill the array with a scalar value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> : scalar</p>
+<blockquote class="last">
+<div><p>All elements of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt> will be assigned this value.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([0, 0])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
+<span class="go">array([ 1.,  1.])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.item">
+<tt class="descname">item</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.item"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L995" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.item" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy an element of an array to a standard Python scalar and return it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>*args</strong> : Arguments (variable number and type)</p>
+<blockquote>
+<div><ul class="simple">
+<li>none: in this case, the method only works for arrays
+with one element (<tt class="xref py py-obj docutils literal"><span class="pre">a.size</span> <span class="pre">==</span> <span class="pre">1</span></tt>), which element is
+copied into a standard Python scalar object and returned.</li>
+<li>int_type: this argument is interpreted as a flat index into
+the array, specifying which element to copy and return.</li>
+<li>tuple of int_types: functions as does a single int_type argument,
+except that the argument is interpreted as an nd-index into the
+array.</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>z</strong> : Standard Python scalar object</p>
+<blockquote class="last">
+<div><p>A copy of the specified element of the array as a suitable
+Python scalar</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>When the data type of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt> is longdouble or clongdouble, item() returns
+a scalar array object because there is no available Python scalar that
+would not lose information. Void arrays return a buffer object for item(),
+unless fields are defined, in which case a tuple is returned.</p>
+<p><a class="reference internal" href="#astropy.units.Quantity.item" title="astropy.units.Quantity.item"><tt class="xref py py-obj docutils literal"><span class="pre">item</span></tt></a> is very similar to a[args], except, instead of an array scalar,
+a standard Python scalar is returned. This can be useful for speeding up
+access to elements of the array and doing arithmetic on elements of the
+array using Python&#8217;s optimized math.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[3, 1, 7],</span>
+<span class="go">       [2, 8, 3],</span>
+<span class="go">       [8, 5, 3]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="go">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">item</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.itemset">
+<tt class="descname">itemset</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.itemset"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1028" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.itemset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert scalar into an array (scalar is cast to array&#8217;s dtype, if possible)</p>
+<p>There must be at least 1 argument, and define the last argument
+as <em>item</em>.  Then, <tt class="docutils literal"><span class="pre">a.itemset(*args)</span></tt> is equivalent to but faster
+than <tt class="docutils literal"><span class="pre">a[args]</span> <span class="pre">=</span> <span class="pre">item</span></tt>.  The item should be a scalar value and <tt class="xref py py-obj docutils literal"><span class="pre">args</span></tt>
+must select a single item in the array <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>*args</strong> : Arguments</p>
+<blockquote class="last">
+<div><p>If one argument: a scalar, only used in case <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt> is of size 1.
+If two arguments: the last argument is the value to be set
+and must be a scalar, the first argument specifies a single array
+element location. It is either an int or a tuple.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Compared to indexing syntax, <a class="reference internal" href="#astropy.units.Quantity.itemset" title="astropy.units.Quantity.itemset"><tt class="xref py py-obj docutils literal"><span class="pre">itemset</span></tt></a> provides some speed increase
+for placing a scalar into a particular location in an <tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt>,
+if you must do this.  However, generally this is discouraged:
+among other problems, it complicates the appearance of the code.
+Also, when using <a class="reference internal" href="#astropy.units.Quantity.itemset" title="astropy.units.Quantity.itemset"><tt class="xref py py-obj docutils literal"><span class="pre">itemset</span></tt></a> (and <a class="reference internal" href="#astropy.units.Quantity.item" title="astropy.units.Quantity.item"><tt class="xref py py-obj docutils literal"><span class="pre">item</span></tt></a>) inside a loop, be sure
+to assign the methods to a local variable to avoid the attribute
+look-up at each loop iteration.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[3, 1, 7],</span>
+<span class="go">       [2, 8, 3],</span>
+<span class="go">       [8, 5, 3]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">itemset</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">itemset</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">9</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span>
+<span class="go">array([[3, 1, 7],</span>
+<span class="go">       [2, 0, 3],</span>
+<span class="go">       [8, 5, 9]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.list">
+<tt class="descname">list</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.list"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L999" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.list" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.max">
+<tt class="descname">max</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.max"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1153" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the maximum along a given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.amax.html#numpy.amax" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.amax</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.amax.html#numpy.amax" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.amax</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.mean">
+<tt class="descname">mean</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.mean"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1143" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average of the array elements along given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html#numpy.mean" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.mean</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.mean.html#numpy.mean" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.mean</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.min">
+<tt class="descname">min</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.min"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1161" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.min" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the minimum along a given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.amin.html#numpy.amin" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.amin</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.amin.html#numpy.amin" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.amin</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.nansum">
+<tt class="descname">nansum</tt><big>(</big><em>axis=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.nansum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1186" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.nansum" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.prod">
+<tt class="descname">prod</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.prod"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1205" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.prod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the product of the array elements over the given axis</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.prod.html#numpy.prod" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.prod</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.prod.html#numpy.prod" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.prod</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.ptp">
+<tt class="descname">ptp</tt><big>(</big><em>axis=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.ptp"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1148" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.ptp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Peak to peak (maximum - minimum) value along a given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ptp.html#numpy.ptp" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ptp</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ptp.html#numpy.ptp" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ptp</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.put">
+<tt class="descname">put</tt><big>(</big><em>indices</em>, <em>values</em>, <em>mode='raise'</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.put"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1078" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.put" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set <tt class="docutils literal"><span class="pre">a.flat[n]</span> <span class="pre">=</span> <span class="pre">values[n]</span></tt> for all <tt class="xref py py-obj docutils literal"><span class="pre">n</span></tt> in indices.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.put.html#numpy.put" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.put</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.put.html#numpy.put" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.put</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.searchsorted">
+<tt class="descname">searchsorted</tt><big>(</big><em>v</em>, <em>side='left'</em>, <em>sorter=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.searchsorted"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1089" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.searchsorted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find indices where elements of v should be inserted in a to maintain order.</p>
+<p>For full documentation, see <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.searchsorted</span></tt></a></p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.searchsorted.html#numpy.searchsorted" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.searchsorted</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.std">
+<tt class="descname">std</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>ddof=0</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.std"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1138" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.std" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the standard deviation of the array elements along given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.std.html#numpy.std" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.std</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.std.html#numpy.std" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.std</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.sum">
+<tt class="descname">sum</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.sum"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1190" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.sum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the sum of the array elements over the given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.sum.html#numpy.sum" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.sum</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.sum.html#numpy.sum" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.sum</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.to">
+<tt class="descname">to</tt><big>(</big><em>unit</em>, <em>equivalencies=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.to"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L544" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> object with the specified
+units.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>unit</strong> : <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> instance, str</p>
+<blockquote>
+<div><p>An object that represents the unit to convert to. Must be
+an <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> object or a string parseable
+by the <a class="reference internal" href="../units/index.html#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">units</span></tt></a> package.</p>
+</div></blockquote>
+<p><strong>equivalencies</strong> : list of equivalence pairs, optional</p>
+<blockquote class="last">
+<div><p>A list of equivalence pairs to try if the units are not
+directly convertible.  See <a class="reference internal" href="../units/equivalencies.html#unit-equivalencies"><em>Equivalencies</em></a>.
+If not provided or <tt class="docutils literal"><span class="pre">[]</span></tt>, class default equivalencies will be used
+(none for <a class="reference internal" href="#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a>, but may be set for subclasses)
+If <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>, no equivalencies will be applied at all, not even any
+set globally or within a context.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.tofile">
+<tt class="descname">tofile</tt><big>(</big><em>fid</em>, <em>sep=&quot;&quot;</em>, <em>format=&quot;%s&quot;</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.tofile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1039" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.tofile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write array to a file as text or binary (default).</p>
+<p>Data is always written in &#8216;C&#8217; order, independent of the order of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt>.
+The data produced by this method can be recovered using the function
+fromfile().</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fid</strong> : file or str</p>
+<blockquote>
+<div><p>An open file object, or a string containing a filename.</p>
+</div></blockquote>
+<p><strong>sep</strong> : str</p>
+<blockquote>
+<div><p>Separator between array items for text output.
+If &#8220;&#8221; (empty), a binary file is written, equivalent to
+<tt class="docutils literal"><span class="pre">file.write(a.tostring())</span></tt>.</p>
+</div></blockquote>
+<p><strong>format</strong> : str</p>
+<blockquote class="last">
+<div><p>Format string for text file output.
+Each entry in the array is formatted to text by first converting
+it to the closest Python type, and then using &#8220;format&#8221; % item.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This is a convenience function for quick storage of array data.
+Information on endianness and precision is lost, so this method is not a
+good choice for files intended to archive data or transport data between
+machines with different endianness. Some of these problems can be overcome
+by outputting the data as text files, at the expense of speed and file
+size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.tostring">
+<tt class="descname">tostring</tt><big>(</big><em>order='C'</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.tostring"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1035" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.tostring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a Python string containing the raw data bytes in the array.</p>
+<p>Constructs a Python string showing a copy of the raw contents of
+data memory. The string can be produced in either &#8216;C&#8217; or &#8216;Fortran&#8217;,
+or &#8216;Any&#8217; order (the default is &#8216;C&#8217;-order). &#8216;Any&#8217; order means C-order
+unless the F_CONTIGUOUS flag in the array is set, in which case it
+means &#8216;Fortran&#8217; order.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>order</strong> : {&#8216;C&#8217;, &#8216;F&#8217;, None}, optional</p>
+<blockquote>
+<div><p>Order of the data for multidimensional arrays:
+C, Fortran, or the same as for the original array.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s</strong> : str</p>
+<blockquote class="last">
+<div><p>A Python string exhibiting a copy of <tt class="xref py py-obj docutils literal"><span class="pre">a</span></tt>&#8216;s raw data.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+<span class="go">&#39;\x00\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x03\x00\x00\x00&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="s">&#39;C&#39;</span><span class="p">)</span> <span class="o">==</span> <span class="n">x</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span><span class="s">&#39;F&#39;</span><span class="p">)</span>
+<span class="go">&#39;\x00\x00\x00\x00\x02\x00\x00\x00\x01\x00\x00\x00\x03\x00\x00\x00&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.trace">
+<tt class="descname">trace</tt><big>(</big><em>offset=0</em>, <em>axis1=0</em>, <em>axis2=1</em>, <em>dtype=None</em>, <em>out=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.trace"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1126" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the sum along diagonals of the array.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.trace.html#numpy.trace" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.trace</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.trace.html#numpy.trace" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.trace</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.Quantity.var">
+<tt class="descname">var</tt><big>(</big><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>ddof=0</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/quantity.html#Quantity.var"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/quantity.py#L1132" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.Quantity.var" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the variance of the array elements, along given axis.</p>
+<p>Refer to <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.var.html#numpy.var" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.var</span></tt></a> for full documentation.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.var.html#numpy.var" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.var</span></tt></a></dt>
+<dd>equivalent function</dd>
+</dl>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Quantity</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.units.Quantity.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.units.Quantity.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

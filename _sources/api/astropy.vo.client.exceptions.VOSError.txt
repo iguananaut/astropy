@@ -1,0 +1,8 @@
+
+
+VOSError
+=====================================
+
+.. currentmodule:: astropy.vo.client.exceptions
+
+.. autoexception:: VOSError

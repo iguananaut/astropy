@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tabprm &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="World Coordinate System (astropy.wcs)" href="../wcs/index.html" />
+    <link rel="next" title="WCS" href="astropy.wcs.WCS.html" />
+    <link rel="prev" title="Sip" href="astropy.wcs.Sip.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.wcs.WCS.html" title="WCS">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.wcs.Sip.html" title="Sip">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../wcs/index.html" accesskey="U">World Coordinate System (<tt class="docutils literal"><span class="pre">astropy.wcs</span></tt>)</a> &raquo;</li>
+      
+      <li>Tabprm</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="tabprm">
+<h1>Tabprm<a class="headerlink" href="#tabprm" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.wcs.Tabprm">
+<em class="property">class </em><tt class="descclassname">astropy.wcs.</tt><tt class="descname">Tabprm</tt><a class="headerlink" href="#astropy.wcs.Tabprm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A class to store the information related to tabular coordinates,
+i.e., coordinates that are defined via a lookup table.</p>
+<p>This class can not be constructed directly from Python, but instead is
+returned from <a class="reference internal" href="astropy.wcs.Wcsprm.html#astropy.wcs.Wcsprm.tab" title="astropy.wcs.Wcsprm.tab"><tt class="xref py py-obj docutils literal"><span class="pre">tab</span></tt></a>.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.Tabprm.K" title="astropy.wcs.Tabprm.K"><tt class="xref py py-obj docutils literal"><span class="pre">K</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> (read-only) The lengths of the axes of the coordinate</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt> (read-only) Number of tabular coordinate axes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.Tabprm.coord" title="astropy.wcs.Tabprm.coord"><tt class="xref py py-obj docutils literal"><span class="pre">coord</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[K_M]...[K_2][K_1][M]</span></tt> The tabular coordinate array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.Tabprm.crval" title="astropy.wcs.Tabprm.crval"><tt class="xref py py-obj docutils literal"><span class="pre">crval</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[M]</span></tt> Index values for the reference pixel for each of</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.Tabprm.delta" title="astropy.wcs.Tabprm.delta"><tt class="xref py py-obj docutils literal"><span class="pre">delta</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[M]</span></tt> (read-only) Interpolated indices into the coord</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.Tabprm.extrema" title="astropy.wcs.Tabprm.extrema"><tt class="xref py py-obj docutils literal"><span class="pre">extrema</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[K_M]...[K_2][2][M]</span></tt> (read-only)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.Tabprm.map" title="astropy.wcs.Tabprm.map"><tt class="xref py py-obj docutils literal"><span class="pre">map</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> Association between axes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.Tabprm.nc" title="astropy.wcs.Tabprm.nc"><tt class="xref py py-obj docutils literal"><span class="pre">nc</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">int</span></tt> (read-only) Total number of coord vectors in the coord array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.Tabprm.p0" title="astropy.wcs.Tabprm.p0"><tt class="xref py py-obj docutils literal"><span class="pre">p0</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> Interpolated indices into the coordinate array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.Tabprm.sense" title="astropy.wcs.Tabprm.sense"><tt class="xref py py-obj docutils literal"><span class="pre">sense</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> +1 if monotonically increasing, -1 if decreasing.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.Tabprm.print_contents" title="astropy.wcs.Tabprm.print_contents"><tt class="xref py py-obj docutils literal"><span class="pre">print_contents</span></tt></a>()</td>
+<td>Print the contents of the <a class="reference internal" href="#astropy.wcs.Tabprm" title="astropy.wcs.Tabprm"><tt class="xref py py-obj docutils literal"><span class="pre">Tabprm</span></tt></a> object to stdout.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.Tabprm.set" title="astropy.wcs.Tabprm.set"><tt class="xref py py-obj docutils literal"><span class="pre">set</span></tt></a>()</td>
+<td>Allocates memory for work arrays.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.K">
+<tt class="descname">K</tt><a class="headerlink" href="#astropy.wcs.Tabprm.K" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> (read-only) The lengths of the axes of the coordinate
+array.</p>
+<p>An array of length <a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a> whose elements record the lengths of the axes of
+the coordinate array and of each indexing vector.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.M">
+<tt class="descname">M</tt><a class="headerlink" href="#astropy.wcs.Tabprm.M" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">int</span></tt> (read-only) Number of tabular coordinate axes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.coord">
+<tt class="descname">coord</tt><a class="headerlink" href="#astropy.wcs.Tabprm.coord" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[K_M]...[K_2][K_1][M]</span></tt> The tabular coordinate array.</p>
+<p>Has the dimensions:</p>
+<div class="highlight-python"><div class="highlight"><pre>(K_M, ... K_2, K_1, M)
+</pre></div>
+</div>
+<p>(see <a class="reference internal" href="#astropy.wcs.Tabprm.K" title="astropy.wcs.Tabprm.K"><tt class="xref py py-obj docutils literal"><span class="pre">K</span></tt></a>) i.e. with the <a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a> dimension
+varying fastest so that the <a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a> elements of a coordinate vector are
+stored contiguously in memory.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.crval">
+<tt class="descname">crval</tt><a class="headerlink" href="#astropy.wcs.Tabprm.crval" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[M]</span></tt> Index values for the reference pixel for each of
+the tabular coord axes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.delta">
+<tt class="descname">delta</tt><a class="headerlink" href="#astropy.wcs.Tabprm.delta" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[M]</span></tt> (read-only) Interpolated indices into the coord
+array.</p>
+<p>Array of interpolated indices into the coordinate array such that
+Upsilon_m, as defined in Paper III, is equal to
+(<a class="reference internal" href="#astropy.wcs.Tabprm.p0" title="astropy.wcs.Tabprm.p0"><tt class="xref py py-obj docutils literal"><span class="pre">p0</span></tt></a> [m] + 1) + delta[m].</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.extrema">
+<tt class="descname">extrema</tt><a class="headerlink" href="#astropy.wcs.Tabprm.extrema" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[K_M]...[K_2][2][M]</span></tt> (read-only)</p>
+<p>An array recording the minimum and maximum value of each element of
+the coordinate vector in each row of the coordinate array, with the
+dimensions:</p>
+<div class="highlight-python"><div class="highlight"><pre>(K_M, ... K_2, 2, M)
+</pre></div>
+</div>
+<p>(see <a class="reference internal" href="#astropy.wcs.Tabprm.K" title="astropy.wcs.Tabprm.K"><tt class="xref py py-obj docutils literal"><span class="pre">K</span></tt></a>).  The minimum is recorded
+in the first element of the compressed K_1 dimension, then the
+maximum.  This array is used by the inverse table lookup function to
+speed up table searches.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.map">
+<tt class="descname">map</tt><a class="headerlink" href="#astropy.wcs.Tabprm.map" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> Association between axes.</p>
+<p>A vector of length <a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a> that defines
+the association between axis <em>m</em> in the <em>M</em>-dimensional coordinate
+array (1 &lt;= <em>m</em> &lt;= <em>M</em>) and the indices of the intermediate world
+coordinate and world coordinate arrays.</p>
+<p>When the intermediate and world coordinate arrays contain the full
+complement of coordinate elements in image-order, as will usually be
+the case, then <tt class="docutils literal"><span class="pre">map[m-1]</span> <span class="pre">==</span> <span class="pre">i-1</span></tt> for axis <em>i</em> in the <em>N</em>-dimensional
+image (1 &lt;= <em>i</em> &lt;= <em>N</em>).  In terms of the FITS keywords:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nb">map</span><span class="p">[</span><span class="n">PVi_3a</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">i</span> <span class="o">-</span> <span class="mf">1.</span>
+</pre></div>
+</div>
+<p>However, a different association may result if the intermediate
+coordinates, for example, only contains a (relevant) subset of
+intermediate world coordinate elements.  For example, if <em>M</em> == 1 for
+an image with <em>N</em> &gt; 1, it is possible to fill the intermediate
+coordinates with the relevant coordinate element with <tt class="docutils literal"><span class="pre">nelem</span></tt> set to
+1.  In this case <tt class="docutils literal"><span class="pre">map[0]</span> <span class="pre">=</span> <span class="pre">0</span></tt> regardless of the value of <em>i</em>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.nc">
+<tt class="descname">nc</tt><a class="headerlink" href="#astropy.wcs.Tabprm.nc" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">int</span></tt> (read-only) Total number of coord vectors in the coord array.</p>
+<p>Total number of coordinate vectors in the coordinate array being the
+product K_1 * K_2 * ... * K_M.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.p0">
+<tt class="descname">p0</tt><a class="headerlink" href="#astropy.wcs.Tabprm.p0" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> Interpolated indices into the coordinate array.</p>
+<p>Vector of length <a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a> of interpolated
+indices into the coordinate array such that Upsilon_m, as defined in
+Paper III, is equal to <tt class="docutils literal"><span class="pre">(p0[m]</span> <span class="pre">+</span> <span class="pre">1)</span> <span class="pre">+</span> <span class="pre">delta[m]</span></tt>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.Tabprm.sense">
+<tt class="descname">sense</tt><a class="headerlink" href="#astropy.wcs.Tabprm.sense" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">int</span> <span class="pre">array[M]</span></tt> +1 if monotonically increasing, -1 if decreasing.</p>
+<p>A vector of length <a class="reference internal" href="#astropy.wcs.Tabprm.M" title="astropy.wcs.Tabprm.M"><tt class="xref py py-obj docutils literal"><span class="pre">M</span></tt></a> whose elements
+indicate whether the corresponding indexing vector is monotonically
+increasing (+1), or decreasing (-1).</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.wcs.Tabprm.print_contents">
+<tt class="descname">print_contents</tt><big>(</big><big>)</big><a class="headerlink" href="#astropy.wcs.Tabprm.print_contents" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the contents of the <a class="reference internal" href="#astropy.wcs.Tabprm" title="astropy.wcs.Tabprm"><tt class="xref py py-obj docutils literal"><span class="pre">Tabprm</span></tt></a> object to
+stdout.  Probably only useful for debugging purposes, and may be
+removed in the future.</p>
+<p>To get a string of the contents, use <a class="reference external" href="http://docs.python.org/library/repr.html#module-repr" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">repr</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.wcs.Tabprm.set">
+<tt class="descname">set</tt><big>(</big><big>)</big><a class="headerlink" href="#astropy.wcs.Tabprm.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allocates memory for work arrays.</p>
+<p>Also sets up the class according to information supplied within it.</p>
+<p>Note that this routine need not be called directly; it will be invoked
+by functions that need it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>MemoryError</strong></p>
+<blockquote>
+<div><p>Memory allocation failed.</p>
+</div></blockquote>
+<p><strong>InvalidTabularParameters</strong></p>
+<blockquote class="last">
+<div><p>Invalid tabular parameters.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Tabprm</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.wcs.Tabprm.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.wcs.Tabprm.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

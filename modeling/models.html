@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Instantiating and Evaluating Models &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="index.html" />
+    <link rel="next" title="Fitting Models to Data" href="fitting.html" />
+    <link rel="prev" title="Parameters" href="parameters.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="fitting.html" title="Fitting Models to Data">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="parameters.html" title="Parameters">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Instantiating and Evaluating Models</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="instantiating-and-evaluating-models">
+<h1>Instantiating and Evaluating Models<a class="headerlink" href="#instantiating-and-evaluating-models" title="Permalink to this headline">¶</a></h1>
+<p>The base class of all models is <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="astropy.modeling.Model"><tt class="xref py py-obj docutils literal"><span class="pre">Model</span></tt></a>, however
+fittable models should subclass <a class="reference internal" href="../api/astropy.modeling.FittableModel.html#astropy.modeling.FittableModel" title="astropy.modeling.FittableModel"><tt class="xref py py-obj docutils literal"><span class="pre">FittableModel</span></tt></a>.
+Fittable models can be linear or nonlinear in a regression analysis sense.</p>
+<p>In general models are instantiated by providing the parameter values that
+define that instance of the model to the constructor, as demonstrated in
+the section on <a class="reference internal" href="parameters.html#modeling-parameters"><em>Parameters</em></a>.</p>
+<p>Additionally, a <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="astropy.modeling.Model"><tt class="xref py py-obj docutils literal"><span class="pre">Model</span></tt></a> instance may represent a single model
+with one set of parameters, or a model <em>set</em> consisting of a set of parameters
+each representing a different parameterization of the same parametric model.
+For example one may instantiate a single Gaussian model with one mean, standard
+deviation, and amplitude.  Or one may create a set of N Gaussians, each one of
+which would be fitted to, for example, a different plane in an image cube.</p>
+<p>Regardless of whether using a single model, or a model set, parameter values
+may be scalar values, or arrays of any size and shape, so long as they are
+compatible according to the standard <a class="reference external" href="http://docs.scipy.org/doc/numpy/user/basics.broadcasting.html">Numpy broadcasting rules</a>.  For example,
+a model may be instantiated with all scalar parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling.models</span> <span class="kn">import</span> <span class="n">Gaussian1D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;Gaussian1D(amplitude=1.0, mean=0.0, stddev=1.0)&gt;</span>
+</pre></div>
+</div>
+<p>Or it may use all array parameters.  For example if all parameters are 2x2
+arrays the model is computed element-wise using all elements in the arrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">mean</span><span class="o">=</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]],</span>
+<span class="gp">... </span>               <span class="n">stddev</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;Gaussian1D(amplitude=[[ 1., 2.], [ 3., 4.]], mean=[[ 0., 1.], [ 1., 0.]],</span>
+<span class="go">stddev=[[ 0.1, 0.2], [ 0.3, 0.4]])&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([[  1.00000000e+00,   7.45330634e-06],</span>
+<span class="go">       [  1.15977604e-02,   4.00000000e+00]])</span>
+</pre></div>
+</div>
+<p>Or it may even use a mix of scalar values and arrays of different sizes and
+dimensions so long as they are compatible:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([[ 0.60653066,  1.76499381],</span>
+<span class="go">       [ 1.81959198,  3.52998761]])</span>
+</pre></div>
+</div>
+<p>In this case, four values are computed&#8211;one using each element of the amplitude
+array.  Each model uses a mean of 0.1, and a standard deviation of 0.1 is
+used with the amplitudes of 1 and 3, and 0.2 is used with amplitudes 2 and 4.</p>
+<p>If any of the parameters have incompatible values this will result in an
+error:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">InputParameterError</span>: <span class="n">Parameter &#39;mean&#39; of shape (2,) cannot be broadcast</span>
+<span class="go">with parameter &#39;stddev&#39; of shape (3,).  All parameter arrays must have</span>
+<span class="go">shapes that are mutually compatible according to the broadcasting rules.</span>
+</pre></div>
+</div>
+<div class="section" id="model-sets">
+<h2>Model Sets<a class="headerlink" href="#model-sets" title="Permalink to this headline">¶</a></h2>
+<p>By default, <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="astropy.modeling.Model"><tt class="xref py py-obj docutils literal"><span class="pre">Model</span></tt></a> instances represent a single model.
+There are two ways, when instantiating a <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="astropy.modeling.Model"><tt class="xref py py-obj docutils literal"><span class="pre">Model</span></tt></a> instance, to
+create a model set instead.  The first is to specify the <tt class="docutils literal"><span class="pre">n_models</span></tt> argument
+when instantiating the model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="n">n_models</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g</span>
+<span class="go">&lt;Gaussian1D(amplitude=[ 1., 2.], mean=[ 0., 0.], stddev=[ 0.1, 0.2],</span>
+<span class="go">n_models=2)&gt;</span>
+</pre></div>
+</div>
+<p>When specifying some <tt class="docutils literal"><span class="pre">n_models=N</span></tt> this requires that the parameter values be
+arrays of some kind, the first <em>axis</em> of which has as length of <tt class="docutils literal"><span class="pre">N</span></tt>.  This
+axis is referred to as the <tt class="docutils literal"><span class="pre">model_set_axis</span></tt>, and by default is is the <tt class="docutils literal"><span class="pre">0th</span></tt>
+axis of parameter arrays.  In this case the parameters were given as 1-D arrays
+of length 2.  The values <tt class="docutils literal"><span class="pre">amplitude=1,</span> <span class="pre">mean=0,</span> <span class="pre">stddev=0.1</span></tt> are the parameters
+for the first model in the set.  The values <tt class="docutils literal"><span class="pre">amplitude=2,</span> <span class="pre">mean=0,</span> <span class="pre">stddev=0.2</span></tt>
+are the parameters defining the second model in the set.</p>
+<p>This has different semantics from simply using array values for the parameters,
+in that ensures that parameter values and input values are matched up according
+to the model_set_axis before any other array broadcasting rules are applied.</p>
+<p>For example, in the previous section we created a model with array values
+like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>If instead we treat the rows as values for two different model sets, this
+particular instantiation will fail, since only one value is given for mean:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">mean</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="n">n_models</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">InputParameterError</span>: <span class="n">All parameter values must be arrays of dimension at</span>
+<span class="go">least 1 for model_set_axis=0 (the value given for &#39;mean&#39; is only</span>
+<span class="go">0-dimensional)</span>
+</pre></div>
+</div>
+<p>To get around this for now, provide two values for mean:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">... </span>               <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="n">n_models</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is different from the case without <tt class="docutils literal"><span class="pre">n_models=2</span></tt>.  It does not mean that
+the value of amplitude is a 2x2 array.  Rather, it means there are <em>two</em> values
+for amplitude (one for each model in the set), each of which is 1-D array of
+length 2.  The value for the first model is <tt class="docutils literal"><span class="pre">[1,</span> <span class="pre">2]</span></tt>, and the value for the
+second model is <tt class="docutils literal"><span class="pre">[3,</span> <span class="pre">4]</span></tt>.  Likewise, scalar values are given for the mean and
+standard deviation of each model in the set.</p>
+<p>When evaluating this model on a single input we get a different result from the
+single-model case:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">array([[ 0.60653066,  1.21306132],</span>
+<span class="go">       [ 2.64749071,  3.52998761]])</span>
+</pre></div>
+</div>
+<p>Each row in this output is the output for each model in the set.  The first is
+the value of the Gaussian with <tt class="docutils literal"><span class="pre">amplitude=[1,</span> <span class="pre">2],</span> <span class="pre">mean=0.1,</span> <span class="pre">stddev=0.1</span></tt>, and
+the second is the value of the Gaussian with <tt class="docutils literal"><span class="pre">amplitude=[3,</span> <span class="pre">4],</span> <span class="pre">mean=0.1,</span>
+<span class="pre">stddev=0.2</span></tt>.</p>
+<p>We can also pass a different input to each model in a model set by passing in
+an array input:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([[  6.06530660e-01,   1.21306132e+00],</span>
+<span class="go">       [  1.20195892e-04,   1.60261190e-04]])</span>
+</pre></div>
+</div>
+<p>By default this uses the same concept of a <tt class="docutils literal"><span class="pre">model_set_axis</span></tt>.  The first
+dimension of the input array is used to map inputs to corresponding models in
+the model set.  We can use this, for example, to evaluate the model on 1-D
+array inputs with a different input to each model set:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="go">array([[  6.06530660e-01,   5.15351422e-18],</span>
+<span class="go">       [  7.57849134e-20,   8.84815213e-46]])</span>
+</pre></div>
+</div>
+<p>In this case the first model is evaluated on <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></tt>, and the second model
+is evaluated on <tt class="docutils literal"><span class="pre">[2,</span> <span class="pre">3]</span></tt>.  If the input has length greater than the number of
+models in the set then this is in error:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gt">Traceback (most recent call last):</span>
+<span class="c">...</span>
+<span class="gr">ValueError</span>: <span class="n">Input argument &#39;x&#39; does not have the correct dimensions in</span>
+<span class="go">model_set_axis=0 for a model set with n_models=2.</span>
+</pre></div>
+</div>
+<p>And input like <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1,</span> <span class="pre">2]</span></tt> wouldn&#8217;t work anyways because it is not compatible
+with the array dimensions of the parameter values.  However, what if we wanted
+to evaluate all models in the set on the input <tt class="docutils literal"><span class="pre">[0,</span> <span class="pre">1]</span></tt>?  We could do this
+by simply repeating:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="go">array([[  6.06530660e-01,   5.15351422e-18],</span>
+<span class="go">       [  2.64749071e+00,   1.60261190e-04]])</span>
+</pre></div>
+</div>
+<p>But there is a workaround for this use case that does not necessitate
+duplication.  This is to include the argument <tt class="docutils literal"><span class="pre">model_set_axis=False</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">model_set_axis</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">array([[  6.06530660e-01,   5.15351422e-18],</span>
+<span class="go">       [  2.64749071e+00,   1.60261190e-04]])</span>
+</pre></div>
+</div>
+<p>What <tt class="docutils literal"><span class="pre">model_set_axis=False</span></tt> implies is that an array-like input should not be
+treated as though any of its dimensions map to models in a model set.  And
+rather, the given input should be used to evaluate all the models in the model
+set.  For scalar inputs like <tt class="docutils literal"><span class="pre">g(0)</span></tt>, <tt class="docutils literal"><span class="pre">model_set_axis=False</span></tt> is implied
+automatically.  But for array inputs it is necessary to avoid ambiguity.</p>
+</div>
+<div class="section" id="inputs-and-outputs">
+<h2>Inputs and Outputs<a class="headerlink" href="#inputs-and-outputs" title="Permalink to this headline">¶</a></h2>
+<p>Models have an <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model.n_inputs" title="astropy.modeling.Model.n_inputs"><tt class="xref py py-obj docutils literal"><span class="pre">n_inputs</span></tt></a> attribute, which shows how
+many coordinates the model expects as an input. All models expect coordinates
+as separate arguments.  For example a 2-D model expects x and y coordinate
+values to be passed separately, i.e. as two scalars or array-like values.</p>
+<p>Models also have an attribute <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model.n_outputs" title="astropy.modeling.Model.n_outputs"><tt class="xref py py-obj docutils literal"><span class="pre">n_outputs</span></tt></a>, which shows
+the number of output coordinates. The <a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model.n_inputs" title="astropy.modeling.Model.n_inputs"><tt class="xref py py-obj docutils literal"><span class="pre">n_inputs</span></tt></a> and
+<a class="reference internal" href="../api/astropy.modeling.Model.html#astropy.modeling.Model.n_outputs" title="astropy.modeling.Model.n_outputs"><tt class="xref py py-obj docutils literal"><span class="pre">n_outputs</span></tt></a> attributes can be used when chaining
+transforms by adding models in <a class="reference internal" href="../api/astropy.modeling.SerialCompositeModel.html#astropy.modeling.SerialCompositeModel" title="astropy.modeling.SerialCompositeModel"><tt class="xref py py-class docutils literal"><span class="pre">series</span></tt></a> or in <a class="reference internal" href="../api/astropy.modeling.SummedCompositeModel.html#astropy.modeling.SummedCompositeModel" title="astropy.modeling.SummedCompositeModel"><tt class="xref py py-class docutils literal"><span class="pre">parallel</span></tt></a>. Because composite models can be
+nested within other composite models, creating theoretically infinitely complex
+models, a mechanism to map input data to models is needed. In this case the
+input may be wrapped in a <a class="reference internal" href="../api/astropy.modeling.LabeledInput.html#astropy.modeling.LabeledInput" title="astropy.modeling.LabeledInput"><tt class="xref py py-obj docutils literal"><span class="pre">LabeledInput</span></tt></a> object&#8211; a dict-like
+object whose items are <tt class="docutils literal"><span class="pre">{label:</span> <span class="pre">data}</span></tt> pairs.</p>
+</div>
+<div class="section" id="further-examples">
+<h2>Further examples<a class="headerlink" href="#further-examples" title="Permalink to this headline">¶</a></h2>
+<p>The examples here assume this import statement was executed:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling.models</span> <span class="kn">import</span> <span class="n">Gaussian1D</span><span class="p">,</span> <span class="n">Polynomial1D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<ul>
+<li><p class="first">Create a model set of two 1-D Gaussians:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">],</span> <span class="n">mean</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">... </span>                <span class="n">stddev</span><span class="o">=</span><span class="p">[</span><span class="mf">0.15</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_models</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">g1</span>
+<span class="go">Model: Gaussian1D</span>
+<span class="go">Inputs: 1</span>
+<span class="go">Outputs: 1</span>
+<span class="go">Model set size: 2</span>
+<span class="go">Parameters:</span>
+<span class="go">    amplitude mean stddev</span>
+<span class="go">    --------- ---- ------</span>
+<span class="go">         10.0  2.0   0.15</span>
+<span class="go">          9.0  3.0    0.1</span>
+</pre></div>
+</div>
+<p>Evaluate all models in the set on one set of input coordinates:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">g1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model_set_axis</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>  <span class="c"># broadcast the array to all models</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(2, 90)</span>
+</pre></div>
+</div>
+<p>or different inputs for each model in the set:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">g1</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(2, 90)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>(<a class="reference external" href="../modeling/models-1.py">Source code</a>, <a class="reference external" href="../modeling/models-1.png">png</a>, <a class="reference external" href="../modeling/models-1.hires.png">hires.png</a>, <a class="reference external" href="../modeling/models-1.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/models-1.png" src="../_images/models-1.png" />
+</div>
+<p>(<a class="reference external" href="../modeling/models-2.py">Source code</a>, <a class="reference external" href="../modeling/models-2.png">png</a>, <a class="reference external" href="../modeling/models-2.hires.png">hires.png</a>, <a class="reference external" href="../modeling/models-2.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/models-2.png" src="../_images/models-2.png" />
+</div>
+<ul>
+<li><p class="first">Evaluating a set of multiple polynomial models with one input data set
+creates multiple output data sets:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span> <span class="o">=</span> <span class="n">Polynomial1D</span><span class="p">(</span><span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_models</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span><span class="o">.</span><span class="n">c1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">p1</span>
+<span class="go">Model: Polynomial1D</span>
+<span class="go">Inputs: 1</span>
+<span class="go">Outputs: 1</span>
+<span class="go">Model set size: 5</span>
+<span class="go">Degree: 1</span>
+<span class="go">Parameters:</span>
+<span class="go">     c0  c1</span>
+<span class="go">    --- ---</span>
+<span class="go">    0.0 0.0</span>
+<span class="go">    0.0 1.0</span>
+<span class="go">    0.0 2.0</span>
+<span class="go">    0.0 3.0</span>
+<span class="go">    0.0 4.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model_set_axis</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>(<a class="reference external" href="../modeling/models-3.py">Source code</a>, <a class="reference external" href="../modeling/models-3.png">png</a>, <a class="reference external" href="../modeling/models-3.hires.png">hires.png</a>, <a class="reference external" href="../modeling/models-3.pdf">pdf</a>)</p>
+<div class="figure">
+<img alt="../_images/models-3.png" src="../_images/models-3.png" />
+</div>
+<ul>
+<li><p class="first">When passed a 2-D array, the same polynomial will map each row of the array
+to one model in the set, one for one:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span>
+<span class="go">array([[   0.,    0.,    0.,    0.,    0.,    0.],</span>
+<span class="go">       [   6.,    7.,    8.,    9.,   10.,   11.],</span>
+<span class="go">       [  24.,   26.,   28.,   30.,   32.,   34.],</span>
+<span class="go">       [  54.,   57.,   60.,   63.,   66.,   69.],</span>
+<span class="go">       [  96.,  100.,  104.,  108.,  112.,  116.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="go">(5, 6)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<div class="section" id="composite-model-examples">
+<h3>Composite model examples<a class="headerlink" href="#composite-model-examples" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Composite models in Astropy are currently in the process of being reworked,
+but in the meantime the existing implementation is still useful.</p>
+</div>
+<p>Create and evaluate a parallel composite model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">SummedCompositeModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling.models</span> <span class="kn">import</span> <span class="n">Polynomial1D</span><span class="p">,</span> <span class="n">Gaussian1D</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span> <span class="o">=</span> <span class="n">Polynomial1D</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mf">4.2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sum_of_models</span> <span class="o">=</span> <span class="n">SummedCompositeModel</span><span class="p">([</span><span class="n">g1</span><span class="p">,</span> <span class="n">p1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">sum_of_models</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This is equivalent to applying the two models in parallel:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">g1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In more complex cases the input and output may be mapped to transformations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">SerialCompositeModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling.models</span> <span class="kn">import</span> <span class="n">Polynomial2D</span><span class="p">,</span> <span class="n">Shift</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">off</span> <span class="o">=</span> <span class="n">Shift</span><span class="p">(</span><span class="o">-</span><span class="mf">3.2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">poly2</span> <span class="o">=</span> <span class="n">Polynomial2D</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serial_composite_model</span> <span class="o">=</span> <span class="n">SerialCompositeModel</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="n">off</span><span class="p">,</span> <span class="n">poly2</span><span class="p">],</span> <span class="n">inmap</span><span class="o">=</span><span class="p">[[</span><span class="s">&#39;x&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">]],</span> <span class="n">outmap</span><span class="o">=</span><span class="p">[[</span><span class="s">&#39;x&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">]])</span>
+</pre></div>
+</div>
+<p>The above composite transform will apply an inplace shift to x, followed by a
+2-D polynomial and will save the result in an array, labeled &#8216;z&#8217;.  To evaluate
+this model use a <a class="reference internal" href="../api/astropy.modeling.LabeledInput.html#astropy.modeling.LabeledInput" title="astropy.modeling.LabeledInput"><tt class="xref py py-obj docutils literal"><span class="pre">LabeledInput</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">LabeledInput</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labeled_data</span> <span class="o">=</span> <span class="n">LabeledInput</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">serial_composite_model</span><span class="p">(</span><span class="n">labeled_data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The output is also a <a class="reference internal" href="../api/astropy.modeling.LabeledInput.html#astropy.modeling.LabeledInput" title="astropy.modeling.LabeledInput"><tt class="xref py py-obj docutils literal"><span class="pre">LabeledInput</span></tt></a> object and the
+result is stored in label &#8216;z&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>  
+<span class="go">{&#39;x&#39;: array([[-3.2, -2.2, -1.2, -0.2,  0.8],</span>
+<span class="go">       [-3.2, -2.2, -1.2, -0.2,  0.8],</span>
+<span class="go">       [-3.2, -2.2, -1.2, -0.2,  0.8],</span>
+<span class="go">       [-3.2, -2.2, -1.2, -0.2,  0.8],</span>
+<span class="go">       [-3.2, -2.2, -1.2, -0.2,  0.8]]),</span>
+<span class="go"> &#39;y&#39;:  array([[0, 0, 0, 0, 0],</span>
+<span class="go">       [1, 1, 1, 1, 1],</span>
+<span class="go">       [2, 2, 2, 2, 2],</span>
+<span class="go">       [3, 3, 3, 3, 3],</span>
+<span class="go">       [4, 4, 4, 4, 4]]),</span>
+<span class="go"> &#39;z&#39;: array([[ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.],</span>
+<span class="go">       [ 0.,  0.,  0.,  0.,  0.]])}</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Instantiating and Evaluating Models</a><ul>
+<li><a class="reference internal" href="#model-sets">Model Sets</a></li>
+<li><a class="reference internal" href="#inputs-and-outputs">Inputs and Outputs</a></li>
+<li><a class="reference internal" href="#further-examples">Further examples</a><ul>
+<li><a class="reference internal" href="#composite-model-examples">Composite model examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/modeling/models.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/modeling/models.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

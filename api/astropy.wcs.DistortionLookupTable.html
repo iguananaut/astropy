@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>DistortionLookupTable &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="World Coordinate System (astropy.wcs)" href="../wcs/index.html" />
+    <link rel="next" title="FITSFixedWarning" href="astropy.wcs.FITSFixedWarning.html" />
+    <link rel="prev" title="validate" href="astropy.wcs.validate.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.wcs.FITSFixedWarning.html" title="FITSFixedWarning">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.wcs.validate.html" title="validate">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../wcs/index.html" accesskey="U">World Coordinate System (<tt class="docutils literal"><span class="pre">astropy.wcs</span></tt>)</a> &raquo;</li>
+      
+      <li>DistortionLookupTable</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="distortionlookuptable">
+<h1>DistortionLookupTable<a class="headerlink" href="#distortionlookuptable" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.wcs.DistortionLookupTable">
+<em class="property">class </em><tt class="descclassname">astropy.wcs.</tt><tt class="descname">DistortionLookupTable</tt><a class="headerlink" href="#astropy.wcs.DistortionLookupTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Represents a single lookup table for a <a class="reference external" href="http://www.atnf.csiro.au/people/mcalabre/WCS/index.html">Paper IV</a> distortion
+transformation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>table</strong> : 2-dimensional array</p>
+<blockquote>
+<div><p>The distortion lookup table.</p>
+</div></blockquote>
+<p><strong>crpix</strong> : 2-tuple</p>
+<blockquote>
+<div><p>The distortion array reference pixel</p>
+</div></blockquote>
+<p><strong>crval</strong> : 2-tuple</p>
+<blockquote>
+<div><p>The image array pixel coordinate</p>
+</div></blockquote>
+<p><strong>cdelt</strong> : 2-tuple</p>
+<blockquote class="last">
+<div><p>The grid step size</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.DistortionLookupTable.cdelt" title="astropy.wcs.DistortionLookupTable.cdelt"><tt class="xref py py-obj docutils literal"><span class="pre">cdelt</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[naxis]</span></tt> Coordinate increments (<tt class="docutils literal"><span class="pre">CDELTia</span></tt>) for each</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.DistortionLookupTable.crpix" title="astropy.wcs.DistortionLookupTable.crpix"><tt class="xref py py-obj docutils literal"><span class="pre">crpix</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[naxis]</span></tt> Coordinate reference pixels (<tt class="docutils literal"><span class="pre">CRPIXja</span></tt>) for</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.DistortionLookupTable.crval" title="astropy.wcs.DistortionLookupTable.crval"><tt class="xref py py-obj docutils literal"><span class="pre">crval</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[naxis]</span></tt> Coordinate reference values (<tt class="docutils literal"><span class="pre">CRVALia</span></tt>) for</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.wcs.DistortionLookupTable.data" title="astropy.wcs.DistortionLookupTable.data"><tt class="xref py py-obj docutils literal"><span class="pre">data</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">float</span> <span class="pre">array</span></tt> The array data for the</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.wcs.DistortionLookupTable.get_offset" title="astropy.wcs.DistortionLookupTable.get_offset"><tt class="xref py py-obj docutils literal"><span class="pre">get_offset</span></tt></a>(x,&nbsp;y)&nbsp;-&gt;&nbsp;(x,&nbsp;y)</td>
+<td>Returns the offset as defined in the distortion lookup table.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.wcs.DistortionLookupTable.cdelt">
+<tt class="descname">cdelt</tt><a class="headerlink" href="#astropy.wcs.DistortionLookupTable.cdelt" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[naxis]</span></tt> Coordinate increments (<tt class="docutils literal"><span class="pre">CDELTia</span></tt>) for each
+coord axis.</p>
+<p>If a <tt class="docutils literal"><span class="pre">CDi_ja</span></tt> linear transformation matrix is present, a warning is
+raised and <a class="reference internal" href="astropy.wcs.Wcsprm.html#astropy.wcs.Wcsprm.cdelt" title="astropy.wcs.Wcsprm.cdelt"><tt class="xref py py-obj docutils literal"><span class="pre">cdelt</span></tt></a> is ignored.  The <tt class="docutils literal"><span class="pre">CDi_ja</span></tt>
+matrix may be deleted by:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">del</span> <span class="n">wcs</span><span class="o">.</span><span class="n">wcs</span><span class="o">.</span><span class="n">cd</span>
+</pre></div>
+</div>
+<p>An undefined value is represented by NaN.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.DistortionLookupTable.crpix">
+<tt class="descname">crpix</tt><a class="headerlink" href="#astropy.wcs.DistortionLookupTable.crpix" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[naxis]</span></tt> Coordinate reference pixels (<tt class="docutils literal"><span class="pre">CRPIXja</span></tt>) for
+each pixel axis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.DistortionLookupTable.crval">
+<tt class="descname">crval</tt><a class="headerlink" href="#astropy.wcs.DistortionLookupTable.crval" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">double</span> <span class="pre">array[naxis]</span></tt> Coordinate reference values (<tt class="docutils literal"><span class="pre">CRVALia</span></tt>) for
+each coordinate axis.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.wcs.DistortionLookupTable.data">
+<tt class="descname">data</tt><a class="headerlink" href="#astropy.wcs.DistortionLookupTable.data" title="Permalink to this definition">¶</a></dt>
+<dd><p><tt class="docutils literal"><span class="pre">float</span> <span class="pre">array</span></tt> The array data for the
+<a class="reference internal" href="#astropy.wcs.DistortionLookupTable" title="astropy.wcs.DistortionLookupTable"><tt class="xref py py-obj docutils literal"><span class="pre">DistortionLookupTable</span></tt></a>.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.wcs.DistortionLookupTable.get_offset">
+<tt class="descname">get_offset</tt><big>(</big><em>x</em>, <em>y) -&gt; (x</em>, <em>y</em><big>)</big><a class="headerlink" href="#astropy.wcs.DistortionLookupTable.get_offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the offset as defined in the distortion lookup table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>coordinate</strong> : coordinate pair</p>
+<blockquote class="last">
+<div><p>The offset from the distortion table for pixel point (<em>x</em>, <em>y</em>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">DistortionLookupTable</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.wcs.DistortionLookupTable.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.wcs.DistortionLookupTable.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

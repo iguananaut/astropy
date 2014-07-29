@@ -1,0 +1,10 @@
+
+.. include:: ../wcs/references.txt
+
+
+InvalidTransformError
+=================================
+
+.. currentmodule:: astropy.wcs
+
+.. autoexception:: InvalidTransformError

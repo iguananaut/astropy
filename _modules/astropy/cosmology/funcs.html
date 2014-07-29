@@ -1,0 +1,515 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.cosmology.funcs &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.cosmology.funcs</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Convenience functions for `astropy.cosmology`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">default_cosmology</span> <span class="k">as</span> <span class="n">_default_cosmology</span>
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">CosmologyError</span>
+<span class="kn">from</span> <span class="nn">..units</span> <span class="kn">import</span> <span class="n">Quantity</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">deprecated</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;H&#39;</span><span class="p">,</span> <span class="s">&#39;angular_diameter_distance&#39;</span><span class="p">,</span> <span class="s">&#39;arcsec_per_kpc_comoving&#39;</span><span class="p">,</span>
+           <span class="s">&#39;arcsec_per_kpc_proper&#39;</span><span class="p">,</span> <span class="s">&#39;comoving_distance&#39;</span><span class="p">,</span> <span class="s">&#39;critical_density&#39;</span><span class="p">,</span>
+           <span class="s">&#39;distmod&#39;</span><span class="p">,</span> <span class="s">&#39;kpc_comoving_per_arcmin&#39;</span><span class="p">,</span> <span class="s">&#39;kpc_proper_per_arcmin&#39;</span><span class="p">,</span>
+           <span class="s">&#39;lookback_time&#39;</span><span class="p">,</span> <span class="s">&#39;luminosity_distance&#39;</span><span class="p">,</span> <span class="s">&#39;scale_factor&#39;</span><span class="p">,</span>
+           <span class="s">&#39;z_at_value&#39;</span><span class="p">]</span>
+
+<span class="n">__doctest_requires__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;*&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;scipy.integrate&#39;</span><span class="p">]}</span>
+
+
+<div class="viewcode-block" id="z_at_value"><a class="viewcode-back" href="../../../api/astropy.cosmology.z_at_value.html#astropy.cosmology.z_at_value">[docs]</a><span class="k">def</span> <span class="nf">z_at_value</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">fval</span><span class="p">,</span> <span class="n">zmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">ztol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Find the redshift ``z`` at which ``func(z) = fval``.</span>
+
+<span class="sd">    This finds the redshift at which one of the cosmology functions or</span>
+<span class="sd">    methods (for example Planck13.distmod) is equal to a known value.</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">      Make sure you understand the behaviour of the function that you</span>
+<span class="sd">      are trying to invert! Depending on the cosmology, there may not</span>
+<span class="sd">      be a unique solution. For example, in the standard Lambda CDM</span>
+<span class="sd">      cosmology, there are two redshifts which give an angular</span>
+<span class="sd">      diameter distance of 1500 Mpc, z ~ 0.7 and z ~ 3.8. To force</span>
+<span class="sd">      ``z_at_value`` to find the solution you are interested in, use the</span>
+<span class="sd">      ``zmin`` and ``zmax`` keywords to limit the search range (see the</span>
+<span class="sd">      example below).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : function or method</span>
+<span class="sd">       A function that takes a redshift as input.</span>
+<span class="sd">    fval : astropy.Quantity instance</span>
+<span class="sd">       The value of ``func(z)``.</span>
+<span class="sd">    zmin : float, optional</span>
+<span class="sd">       The lower search limit for ``z`` (default 0).</span>
+<span class="sd">    zmax : float, optional</span>
+<span class="sd">       The upper search limit for ``z`` (default 1000).</span>
+<span class="sd">    ztol : float, optional</span>
+<span class="sd">       The relative error in ``z`` acceptable for convergence.</span>
+<span class="sd">    maxfun : int, optional</span>
+<span class="sd">       The maximum number of function evaluations allowed in the</span>
+<span class="sd">       optimization routine (default 500).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    z : float</span>
+<span class="sd">      The redshift ``z`` satisfying ``zmin &lt; z &lt; zmax`` and ``func(z) =</span>
+<span class="sd">      fval`` within ``ztol``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This works for any arbitrary input cosmology, but is inefficient</span>
+<span class="sd">    if you want to invert a large number of values for the same</span>
+<span class="sd">    cosmology. In this case, it is faster to instead generate an array</span>
+<span class="sd">    of values at many closely-spaced redshifts that cover the relevant</span>
+<span class="sd">    redshift range, and then use interpolation to find the redshift at</span>
+<span class="sd">    each value you&#39;re interested in. For example, to efficiently find</span>
+<span class="sd">    the redshifts corresponding to 10^6 values of the distance modulus</span>
+<span class="sd">    in a Planck13 cosmology, you could do the following:</span>
+
+<span class="sd">    &gt;&gt;&gt; import astropy.units as u</span>
+<span class="sd">    &gt;&gt;&gt; from astropy.cosmology import Planck13, z_at_value</span>
+
+<span class="sd">    Generate 10^6 distance moduli between 23 and 43 for which we</span>
+<span class="sd">    want to find the corresponding redshifts:</span>
+
+<span class="sd">    &gt;&gt;&gt; Dvals = (23 + np.random.rand(1e6) * 20) * u.mag</span>
+
+<span class="sd">    Make a grid of distance moduli covering the redshift range we</span>
+<span class="sd">    need using 50 equally log-spaced values between zmin and</span>
+<span class="sd">    zmax. We use log spacing to adequately sample the steep part of</span>
+<span class="sd">    the curve at low distance moduli:</span>
+
+<span class="sd">    &gt;&gt;&gt; zmin = z_at_value(Planck13.distmod, Dvals.min())</span>
+<span class="sd">    &gt;&gt;&gt; zmax = z_at_value(Planck13.distmod, Dvals.max())</span>
+<span class="sd">    &gt;&gt;&gt; zgrid = np.logspace(zmin, zmax)</span>
+<span class="sd">    &gt;&gt;&gt; Dgrid = Planck13.distmod(zgrid)</span>
+
+<span class="sd">    Finally interpolate to find the redshift at each distance modulus:</span>
+
+<span class="sd">    &gt;&gt;&gt; zvals = np.interp(Dvals.value, zgrid, Dgrid.value)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import astropy.units as u</span>
+<span class="sd">    &gt;&gt;&gt; from astropy.cosmology import Planck13, z_at_value</span>
+
+<span class="sd">    The age and lookback time are monotonic with redshift, and so a</span>
+<span class="sd">    unique solution can be found:</span>
+
+<span class="sd">    &gt;&gt;&gt; z_at_value(Planck13.age, 2 * u.Gyr)</span>
+<span class="sd">    3.1981191749374629</span>
+
+<span class="sd">    The angular diameter is not monotonic however, and there are two</span>
+<span class="sd">    redshifts that give a value of 1500 Mpc. Use the zmin and zmax keywords</span>
+<span class="sd">    to find the one you&#39;re interested in:</span>
+
+<span class="sd">    &gt;&gt;&gt; z_at_value(Planck13.angular_diameter_distance, 1500 * u.Mpc, zmax=1.5)</span>
+<span class="sd">    0.68127769625288614</span>
+<span class="sd">    &gt;&gt;&gt; z_at_value(Planck13.angular_diameter_distance, 1500 * u.Mpc, zmin=2.5)</span>
+<span class="sd">    3.7914918534022011</span>
+
+<span class="sd">    Also note that the luminosity distance and distance modulus (two</span>
+<span class="sd">    other commonly inverted quantities) are monotonic in flat and open</span>
+<span class="sd">    universes, but not in closed universes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">fminbound</span>
+
+    <span class="n">fval_zmin</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">zmin</span><span class="p">)</span>
+    <span class="n">fval_zmax</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">zmax</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">fval</span> <span class="o">-</span> <span class="n">fval_zmin</span><span class="p">)</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">fval_zmax</span> <span class="o">-</span> <span class="n">fval</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">fval is not bracketed by func(zmin) and func(zmax). This means either</span>
+<span class="s">there is no solution, or that there is more than one solution between</span>
+<span class="s">zmin and zmax satisfying fval = func(z).&quot;&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fval_zmin</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">fval_zmin</span><span class="o">.</span><span class="n">unit</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">fval</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">val</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">:</span> <span class="nb">abs</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="n">fval</span><span class="p">)</span>
+
+    <span class="n">zbest</span><span class="p">,</span> <span class="n">resval</span><span class="p">,</span> <span class="n">ierr</span><span class="p">,</span> <span class="n">ncall</span> <span class="o">=</span> <span class="n">fminbound</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">,</span> <span class="n">maxfun</span><span class="o">=</span><span class="n">maxfun</span><span class="p">,</span>
+                                           <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ierr</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&#39;Maximum number of function calls ({}) reached&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">ncall</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">zbest</span><span class="p">,</span> <span class="n">zmax</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">CosmologyError</span><span class="p">(</span><span class="s">&quot;Best guess z is very close the upper z limit.</span><span class="se">\n</span><span class="s">&quot;</span>
+                             <span class="s">&quot;Try re-running with a different zmax.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">zbest</span><span class="p">,</span> <span class="n">zmin</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">CosmologyError</span><span class="p">(</span><span class="s">&quot;Best guess z is very close the lower z limit.</span><span class="se">\n</span><span class="s">&quot;</span>
+                             <span class="s">&quot;Try re-running with a different zmin.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">zbest</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.kpc_comoving_per_arcmin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="kpc_comoving_per_arcmin"><a class="viewcode-back" href="../../../api/astropy.cosmology.kpc_comoving_per_arcmin.html#astropy.cosmology.kpc_comoving_per_arcmin">[docs]</a><span class="k">def</span> <span class="nf">kpc_comoving_per_arcmin</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Separation in transverse comoving kpc corresponding to an</span>
+<span class="sd">    arcminute at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : `~astropy.units.Quantity`</span>
+<span class="sd">      The distance in comoving kpc corresponding to an arcmin at each</span>
+<span class="sd">      input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">kpc_comoving_per_arcmin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.kpc_proper_per_arcmin&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="kpc_proper_per_arcmin"><a class="viewcode-back" href="../../../api/astropy.cosmology.kpc_proper_per_arcmin.html#astropy.cosmology.kpc_proper_per_arcmin">[docs]</a><span class="k">def</span> <span class="nf">kpc_proper_per_arcmin</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Separation in transverse proper kpc corresponding to an</span>
+<span class="sd">    arcminute at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    d : `~astropy.units.Quantity`</span>
+<span class="sd">      The distance in proper kpc corresponding to an arcmin at each</span>
+<span class="sd">      input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">kpc_proper_per_arcmin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.arcsec_per_kpc_comoving&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="arcsec_per_kpc_comoving"><a class="viewcode-back" href="../../../api/astropy.cosmology.arcsec_per_kpc_comoving.html#astropy.cosmology.arcsec_per_kpc_comoving">[docs]</a><span class="k">def</span> <span class="nf">arcsec_per_kpc_comoving</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Angular separation in arcsec corresponding to a comoving kpc</span>
+<span class="sd">    at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    theta : `~astropy.units.Quantity`</span>
+<span class="sd">      The angular separation in arcsec corresponding to a comoving kpc</span>
+<span class="sd">      at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">arcsec_per_kpc_comoving</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.arcsec_per_kpc_proper&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="arcsec_per_kpc_proper"><a class="viewcode-back" href="../../../api/astropy.cosmology.arcsec_per_kpc_proper.html#astropy.cosmology.arcsec_per_kpc_proper">[docs]</a><span class="k">def</span> <span class="nf">arcsec_per_kpc_proper</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Angular separation in arcsec corresponding to a proper kpc at</span>
+<span class="sd">    redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    theta : `~astropy.units.Quantity`</span>
+<span class="sd">      The angular separation in arcsec corresponding to a proper kpc</span>
+<span class="sd">      at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">arcsec_per_kpc_proper</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.distmod&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="distmod"><a class="viewcode-back" href="../../../api/astropy.cosmology.distmod.html#astropy.cosmology.distmod">[docs]</a><span class="k">def</span> <span class="nf">distmod</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Distance modulus at redshift ``z``.</span>
+
+<span class="sd">    The distance modulus is defined as the (apparent magnitude -</span>
+<span class="sd">    absolute magnitude) for an object at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    distmod : `~astropy.units.Quantity`</span>
+<span class="sd">      Distance modulus at each input redshift.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    z_at_value : Find the redshift corresponding to a distance modulus.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.H&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="H"><a class="viewcode-back" href="../../../api/astropy.cosmology.H.html#astropy.cosmology.H">[docs]</a><span class="k">def</span> <span class="nf">H</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Hubble parameter (km/s/Mpc) at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    H : `~astropy.units.Quantity`</span>
+<span class="sd">      Hubble parameter at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">H</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.scale_factor&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="scale_factor"><a class="viewcode-back" href="../../../api/astropy.cosmology.scale_factor.html#astropy.cosmology.scale_factor">[docs]</a><span class="k">def</span> <span class="nf">scale_factor</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Scale factor at redshift ``z``.</span>
+
+<span class="sd">    The scale factor is defined as ``a = 1 / (1 + z)``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    scalefac : ndarray, or float if input scalar</span>
+<span class="sd">      Scale factor at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.critical_density&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="critical_density"><a class="viewcode-back" href="../../../api/astropy.cosmology.critical_density.html#astropy.cosmology.critical_density">[docs]</a><span class="k">def</span> <span class="nf">critical_density</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Critical density in grams per cubic cm at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    critdens : `~astropy.units.Quantity`</span>
+<span class="sd">      Critical density at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">critical_density</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.lookback_time&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="lookback_time"><a class="viewcode-back" href="../../../api/astropy.cosmology.lookback_time.html#astropy.cosmology.lookback_time">[docs]</a><span class="k">def</span> <span class="nf">lookback_time</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Lookback time in Gyr to redshift ``z``.</span>
+
+<span class="sd">    The lookback time is the difference between the age of the</span>
+<span class="sd">    Universe now and the age at redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    t : `~astropy.units.Quantity`</span>
+<span class="sd">      Lookback time at each input redshift.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    z_at_value : Find the redshift corresponding to a lookback time.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">lookback_time</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.comoving_distance&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="comoving_distance"><a class="viewcode-back" href="../../../api/astropy.cosmology.comoving_distance.html#astropy.cosmology.comoving_distance">[docs]</a><span class="k">def</span> <span class="nf">comoving_distance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Comoving distance in Mpc at redshift ``z``.</span>
+
+<span class="sd">    The comoving distance along the line-of-sight between two objects</span>
+<span class="sd">    remains constant with time for objects in the Hubble flow.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    codist : `~astropy.units.Quantity`</span>
+<span class="sd">      Comoving distance at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">comoving_distance</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.angular_diameter_distance&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="angular_diameter_distance"><a class="viewcode-back" href="../../../api/astropy.cosmology.angular_diameter_distance.html#astropy.cosmology.angular_diameter_distance">[docs]</a><span class="k">def</span> <span class="nf">angular_diameter_distance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Angular diameter distance in Mpc at a given redshift.</span>
+
+<span class="sd">    This gives the proper (sometimes called &#39;physical&#39;) transverse</span>
+<span class="sd">    distance corresponding to an angle of 1 radian for an object at</span>
+<span class="sd">    redshift ``z``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    angdist : `~astropy.units.Quantity`</span>
+<span class="sd">      Angular diameter distance at each input redshift.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">angular_diameter_distance</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+</div>
+<span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="o">=</span><span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&lt;Cosmology object&gt;.luminosity_distance&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="luminosity_distance"><a class="viewcode-back" href="../../../api/astropy.cosmology.luminosity_distance.html#astropy.cosmology.luminosity_distance">[docs]</a><span class="k">def</span> <span class="nf">luminosity_distance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Luminosity distance in Mpc at redshift ``z``.</span>
+
+<span class="sd">    This is the distance to use when converting between the bolometric</span>
+<span class="sd">    flux from an object at redshift ``z`` and its bolometric luminosity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : array_like</span>
+<span class="sd">      Input redshifts.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lumdist : `~astropy.units.Quantity`</span>
+<span class="sd">      Luminosity distance at each input redshift.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    z_at_value : Find the redshift corresponding to a luminosity distance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">cosmo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cosmo</span> <span class="o">=</span> <span class="n">_default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">luminosity_distance</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

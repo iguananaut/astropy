@@ -1,0 +1,69 @@
+
+
+Sky2Pix_CYP
+========================================
+
+.. currentmodule:: astropy.modeling.projections
+
+.. autoclass:: Sky2Pix_CYP
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Sky2Pix_CYP.input_names
+      ~Sky2Pix_CYP.lam
+      ~Sky2Pix_CYP.mu
+      ~Sky2Pix_CYP.param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Sky2Pix_CYP.__call__
+      ~Sky2Pix_CYP.evaluate
+      ~Sky2Pix_CYP.inverse
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+   .. autoattribute:: lam
+   .. autoattribute:: mu
+   .. autoattribute:: param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __call__
+   .. automethod:: evaluate
+   .. automethod:: inverse
+
+   
+   

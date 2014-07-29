@@ -1,0 +1,8 @@
+
+
+register_identifier
+=======================================
+
+.. currentmodule:: astropy.io.registry
+
+.. autofunction:: register_identifier

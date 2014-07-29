@@ -1,0 +1,484 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>HDU Lists &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="FITS File handling (astropy.io.fits)" href="../index.html" />
+    <link rel="next" title="Header Data Units" href="hdus.html" />
+    <link rel="prev" title="File Handling and Convenience Functions" href="files.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="hdus.html" title="Header Data Units">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="files.html" title="File Handling and Convenience Functions">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" accesskey="U">FITS File handling (<tt class="docutils literal"><span class="pre">astropy.io.fits</span></tt>)</a> &raquo;</li>
+      
+      <li>HDU Lists</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="hdu-lists">
+<h1>HDU Lists<a class="headerlink" href="#hdu-lists" title="Permalink to this headline">¶</a></h1>
+<p class="graphviz">
+<img src="../../../_images/inheritance-9fce213b389c6dd9c63c601b97bb611fe0b21004.png" alt="Inheritance diagram of HDUList" usemap="#inheritance58b299a3cf" class="inheritance"/>
+<map id="inheritance58b299a3cf" name="inheritance58b299a3cf">
+<area shape="rect" id="node1" href="#astropy.io.fits.HDUList" title="HDU list class. &#160;This is the top&#45;level FITS object. &#160;When a FITS" alt="" coords="7,5,252,33"/>
+</map>
+</p>
+<div class="section" id="hdulist">
+<h2><a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-class docutils literal"><span class="pre">HDUList</span></tt></a><a class="headerlink" href="#hdulist" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="astropy.io.fits.HDUList">
+<em class="property">class </em><tt class="descclassname">astropy.io.fits.</tt><tt class="descname">HDUList</tt><big>(</big><em>hdus=</em>, <span class="optional">[</span><span class="optional">]</span><em>file=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L122" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">list</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.fits.verify._Verify</span></tt></p>
+<p>HDU list class.  This is the top-level FITS object.  When a FITS
+file is opened, a <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> object is returned.</p>
+<p>Construct a <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>hdus</strong> : sequence of HDU objects or single HDU, optional</p>
+<blockquote>
+<div><p>The HDU object(s) to comprise the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.  Should be
+instances of HDU classes like <a class="reference internal" href="images.html#astropy.io.fits.ImageHDU" title="astropy.io.fits.ImageHDU"><tt class="xref py py-obj docutils literal"><span class="pre">ImageHDU</span></tt></a> or <a class="reference internal" href="tables.html#astropy.io.fits.BinTableHDU" title="astropy.io.fits.BinTableHDU"><tt class="xref py py-obj docutils literal"><span class="pre">BinTableHDU</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>file</strong> : file object, optional</p>
+<blockquote class="last">
+<div><p>The opened physical file associated with the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.append">
+<tt class="descname">append</tt><big>(</big><em>hdu</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.append"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L416" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a new HDU to the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>hdu</strong> : HDU object</p>
+<blockquote class="last">
+<div><p>HDU to add to the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.close">
+<tt class="descname">close</tt><big>(</big><em>output_verify='exception'</em>, <em>verbose=False</em>, <em>closed=True</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.close"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L668" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the associated FITS file and memmap object, if any.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>output_verify</strong> : str</p>
+<blockquote>
+<div><p>Output verification option.  Must be one of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt>,
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;warn&quot;</span></tt>, or
+<tt class="docutils literal"><span class="pre">&quot;exception&quot;</span></tt>.  May also be any combination of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt> or
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt> with <tt class="docutils literal"><span class="pre">&quot;+ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">+warn</span></tt>, or <tt class="docutils literal"><span class="pre">+exception&quot;</span>
+<span class="pre">(e.g.</span> <span class="pre">``&quot;fix+warn&quot;</span></tt>).  See <a class="reference internal" href="verification.html#verify"><em>Verification options</em></a> for more info.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, print out verbose messages.</p>
+</div></blockquote>
+<p><strong>closed</strong> : bool</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, close the underlying file object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.fileinfo">
+<tt class="descname">fileinfo</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.fileinfo"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L284" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.fileinfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary detailing information about the locations
+of the indexed HDU within any associated file.  The values are
+only valid after a read or write of the associated file with
+no intervening changes to the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote>
+<div><p>Index of HDU for which info is to be returned.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fileinfo</strong> : dict or None</p>
+<blockquote class="last">
+<div><p>The dictionary details information about the locations of
+the indexed HDU within an associated file.  Returns <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>
+when the HDU is not associated with a file.</p>
+<p>Dictionary contents:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="15%" />
+<col width="85%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Key</th>
+<th class="head">Value</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>file</td>
+<td>File object associated with the HDU</td>
+</tr>
+<tr class="row-odd"><td>filename</td>
+<td>Name of associated file object</td>
+</tr>
+<tr class="row-even"><td>filemode</td>
+<td>Mode in which the file was opened (readonly,
+update, append, denywrite, ostream)</td>
+</tr>
+<tr class="row-odd"><td>resized</td>
+<td>Flag that when <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> indicates that the data has been
+resized since the last read/write so the returned values
+may not be valid.</td>
+</tr>
+<tr class="row-even"><td>hdrLoc</td>
+<td>Starting byte location of header in file</td>
+</tr>
+<tr class="row-odd"><td>datLoc</td>
+<td>Starting byte location of data block in file</td>
+</tr>
+<tr class="row-even"><td>datSpan</td>
+<td>Data size including padding</td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.filename">
+<tt class="descname">filename</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.filename"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L740" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the file name associated with the HDUList object if one exists.
+Otherwise returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>filename</strong> : a string containing the file name associated with the</p>
+<blockquote class="last">
+<div><p>HDUList object if an association exists.  Otherwise returns
+None.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.flush">
+<tt class="descname">flush</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.flush"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L104" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.flush" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force a write of the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> back to the file (for append and
+update modes only).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>output_verify</strong> : str</p>
+<blockquote>
+<div><p>Output verification option.  Must be one of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt>,
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;warn&quot;</span></tt>, or
+<tt class="docutils literal"><span class="pre">&quot;exception&quot;</span></tt>.  May also be any combination of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt> or
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt> with <tt class="docutils literal"><span class="pre">&quot;+ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">+warn</span></tt>, or <tt class="docutils literal"><span class="pre">+exception&quot;</span>
+<span class="pre">(e.g.</span> <span class="pre">``&quot;fix+warn&quot;</span></tt>).  See <a class="reference internal" href="verification.html#verify"><em>Verification options</em></a> for more info.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, print verbose messages</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.HDUList.fromfile">
+<em class="property">classmethod </em><tt class="descname">fromfile</tt><big>(</big><em>fileobj</em>, <em>mode=None</em>, <em>memmap=False</em>, <em>save_backup=False</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.fromfile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L239" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.fromfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> instance from a file-like object.</p>
+<p>The actual implementation of <tt class="docutils literal"><span class="pre">fitsopen()</span></tt>, and generally shouldn&#8217;t
+be used directly.  Use <a class="reference internal" href="files.html#astropy.io.fits.open" title="astropy.io.fits.open"><tt class="xref py py-func docutils literal"><span class="pre">open()</span></tt></a> instead (and see its
+documentation for details of the parameters accepted by this method).</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.HDUList.fromstring">
+<em class="property">classmethod </em><tt class="descname">fromstring</tt><big>(</big><em>data</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.fromstring"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L253" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.fromstring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> instance from a string or other in-memory data
+buffer containing an entire FITS file.  Similar to
+<a class="reference internal" href="#astropy.io.fits.HDUList.fromfile" title="astropy.io.fits.HDUList.fromfile"><tt class="xref py py-meth docutils literal"><span class="pre">HDUList.fromfile()</span></tt></a>, but does not accept the mode or memmap
+arguments, as they are only relevant to reading from a file on disk.</p>
+<p>This is useful for interfacing with other libraries such as CFITSIO,
+and may also be useful for streaming applications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : str, buffer, memoryview, etc.</p>
+<blockquote>
+<div><p>A string or other memory buffer containing an entire FITS file.  It
+should be noted that if that memory is read-only (such as a Python
+string) the returned <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-class docutils literal"><span class="pre">HDUList</span></tt></a>&#8216;s data portions will also be
+read-only.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Optional keyword arguments.  See
+<a class="reference internal" href="files.html#astropy.io.fits.open" title="astropy.io.fits.open"><tt class="xref py py-func docutils literal"><span class="pre">astropy.io.fits.open()</span></tt></a> for details.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>hdul</strong> : HDUList</p>
+<blockquote class="last">
+<div><p>An <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-class docutils literal"><span class="pre">HDUList</span></tt></a> object representing the in-memory FITS file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.index_of">
+<tt class="descname">index_of</tt><big>(</big><em>key</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.index_of"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L463" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.index_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the index of an HDU from the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : int, str or tuple of (string, int)</p>
+<blockquote>
+<div><p>The key identifying the HDU.  If <tt class="docutils literal"><span class="pre">key</span></tt> is a tuple, it is of the
+form <tt class="docutils literal"><span class="pre">(key,</span> <span class="pre">ver)</span></tt> where <tt class="docutils literal"><span class="pre">ver</span></tt> is an <tt class="docutils literal"><span class="pre">EXTVER</span></tt> value that must
+match the HDU being searched for.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote class="last">
+<div><p>The index of the HDU in the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.info">
+<tt class="descname">info</tt><big>(</big><em>output=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.info"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L695" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summarize the info of the HDUs in this <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a>.</p>
+<p>Note that this function prints its results to the console&#8212;it
+does not return a value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>output</strong> : file, bool, optional</p>
+<blockquote class="last">
+<div><p>A file-like object to write the output to.  If <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, does not
+output to a file and instead returns a list of tuples representing
+the HDU info.  Writes to <tt class="docutils literal"><span class="pre">sys.stdout</span></tt> by default.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.insert">
+<tt class="descname">insert</tt><big>(</big><em>index</em>, <em>hdu</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.insert"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L351" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert an HDU into the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> at the given <tt class="docutils literal"><span class="pre">index</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote>
+<div><p>Index before which to insert the new HDU.</p>
+</div></blockquote>
+<p><strong>hdu</strong> : HDU object</p>
+<blockquote class="last">
+<div><p>The HDU object to insert</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.readall">
+<tt class="descname">readall</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.readall"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L512" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.readall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read data of all HDUs into memory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.update_extend">
+<tt class="descname">update_extend</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.update_extend"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L586" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.update_extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make sure that if the primary header needs the keyword <tt class="docutils literal"><span class="pre">EXTEND</span></tt> that
+it has it and it is correct.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.HDUList.writeto">
+<tt class="descname">writeto</tt><big>(</big><em>fileobj</em>, <em>output_verify='exception'</em>, <em>clobber=False</em>, <em>checksum=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/hdu/hdulist.html#HDUList.writeto"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/hdu/hdulist.py#L612" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.HDUList.writeto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the <a class="reference internal" href="#astropy.io.fits.HDUList" title="astropy.io.fits.HDUList"><tt class="xref py py-obj docutils literal"><span class="pre">HDUList</span></tt></a> to a new file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fileobj</strong> : file path, file object or file-like object</p>
+<blockquote>
+<div><p>File to write to.  If a file object, must be opened in a
+writeable mode.</p>
+</div></blockquote>
+<p><strong>output_verify</strong> : str</p>
+<blockquote>
+<div><p>Output verification option.  Must be one of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt>,
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;warn&quot;</span></tt>, or
+<tt class="docutils literal"><span class="pre">&quot;exception&quot;</span></tt>.  May also be any combination of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt> or
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt> with <tt class="docutils literal"><span class="pre">&quot;+ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">+warn</span></tt>, or <tt class="docutils literal"><span class="pre">+exception&quot;</span>
+<span class="pre">(e.g.</span> <span class="pre">``&quot;fix+warn&quot;</span></tt>).  See <a class="reference internal" href="verification.html#verify"><em>Verification options</em></a> for more info.</p>
+</div></blockquote>
+<p><strong>clobber</strong> : bool</p>
+<blockquote>
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, overwrite the output file if exists.</p>
+</div></blockquote>
+<p><strong>checksum</strong> : bool</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> adds both <tt class="docutils literal"><span class="pre">DATASUM</span></tt> and <tt class="docutils literal"><span class="pre">CHECKSUM</span></tt> cards
+to the headers of all HDU&#8217;s written to the file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">HDU Lists</a><ul>
+<li><a class="reference internal" href="#hdulist"><tt class="docutils literal"><span class="pre">HDUList</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/fits/api/hdulists.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../../_sources/io/fits/api/hdulists.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

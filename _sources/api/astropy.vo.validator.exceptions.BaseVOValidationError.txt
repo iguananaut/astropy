@@ -1,0 +1,8 @@
+
+
+BaseVOValidationError
+=====================================================
+
+.. currentmodule:: astropy.vo.validator.exceptions
+
+.. autoexception:: BaseVOValidationError

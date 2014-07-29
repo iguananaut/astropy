@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TimeDelta &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Time and Dates (astropy.time)" href="../time/index.html" />
+    <link rel="next" title="TimeDeltaFormat" href="astropy.time.TimeDeltaFormat.html" />
+    <link rel="prev" title="TimeDatetime" href="astropy.time.TimeDatetime.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.time.TimeDeltaFormat.html" title="TimeDeltaFormat">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.time.TimeDatetime.html" title="TimeDatetime">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../time/index.html" accesskey="U">Time and Dates (<tt class="docutils literal"><span class="pre">astropy.time</span></tt>)</a> &raquo;</li>
+      
+      <li>TimeDelta</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="timedelta">
+<h1>TimeDelta<a class="headerlink" href="#timedelta" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.time.TimeDelta">
+<em class="property">class </em><tt class="descclassname">astropy.time.</tt><tt class="descname">TimeDelta</tt><big>(</big><em>val</em>, <em>val2=None</em>, <em>format=None</em>, <em>scale=None</em>, <em>copy=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/time/core.html#TimeDelta"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/time/core.py#L1095" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.time.TimeDelta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.time.Time.html#astropy.time.Time" title="astropy.time.core.Time"><tt class="docutils literal"><span class="pre">astropy.time.Time</span></tt></a></p>
+<p>Represent the time difference between two times.</p>
+<p>A TimeDelta object is initialized with one or more times in the <tt class="docutils literal"><span class="pre">val</span></tt>
+argument.  The input times in <tt class="docutils literal"><span class="pre">val</span></tt> must conform to the specified
+<tt class="docutils literal"><span class="pre">format</span></tt>.  The optional <tt class="docutils literal"><span class="pre">val2</span></tt> time input should be supplied only for
+numeric input formats (e.g. JD) where very high precision (better than
+64-bit precision) is required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>val</strong> : numpy ndarray, list, str, number, or <a class="reference internal" href="#astropy.time.TimeDelta" title="astropy.time.TimeDelta"><tt class="xref py py-obj docutils literal"><span class="pre">TimeDelta</span></tt></a> object</p>
+<blockquote>
+<div><p>Data to initialize table.</p>
+</div></blockquote>
+<p><strong>val2</strong> : numpy ndarray, list, str, or number; optional</p>
+<blockquote>
+<div><p>Data to initialize table.</p>
+</div></blockquote>
+<p><strong>format</strong> : str, optional</p>
+<blockquote>
+<div><p>Format of input value(s)</p>
+</div></blockquote>
+<p><strong>scale</strong> : str, optional</p>
+<blockquote>
+<div><p>Time scale of input value(s)</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>Make a copy of the input values</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.time.TimeDelta.FORMATS" title="astropy.time.TimeDelta.FORMATS"><tt class="xref py py-obj docutils literal"><span class="pre">FORMATS</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.time.TimeDelta.SCALES" title="astropy.time.TimeDelta.SCALES"><tt class="xref py py-obj docutils literal"><span class="pre">SCALES</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.time.TimeDelta.replicate" title="astropy.time.TimeDelta.replicate"><tt class="xref py py-obj docutils literal"><span class="pre">replicate</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.time.TimeDelta.to" title="astropy.time.TimeDelta.to"><tt class="xref py py-obj docutils literal"><span class="pre">to</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.time.TimeDelta.FORMATS">
+<tt class="descname">FORMATS</tt><em class="property"> = {u'jd': &lt;class 'astropy.time.core.TimeDeltaJD'&gt;, u'sec': &lt;class 'astropy.time.core.TimeDeltaSec'&gt;}</em><a class="headerlink" href="#astropy.time.TimeDelta.FORMATS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict of time delta formats.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.time.TimeDelta.SCALES">
+<tt class="descname">SCALES</tt><em class="property"> = [u'tdb', u'tt', u'ut1', u'tcg', u'tcb', u'tai']</em><a class="headerlink" href="#astropy.time.TimeDelta.SCALES" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of time delta scales.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.time.TimeDelta.replicate">
+<tt class="descname">replicate</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/time/core.html#TimeDelta.replicate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/time/core.py#L1145" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.time.TimeDelta.replicate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.time.TimeDelta.to">
+<tt class="descname">to</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/time/core.html#TimeDelta.to"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/time/core.py#L1320" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.time.TimeDelta.to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">TimeDelta</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.time.TimeDelta.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.time.TimeDelta.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.coordinates.distances &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.coordinates.distances</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the classes and utility functions for distance and</span>
+<span class="sd">cartesian coordinates.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;Distance&#39;</span><span class="p">,</span> <span class="s">&#39;CartesianPoints&#39;</span><span class="p">,</span> <span class="s">&#39;cartesian_to_spherical&#39;</span><span class="p">,</span>
+           <span class="s">&#39;spherical_to_cartesian&#39;</span><span class="p">]</span>
+
+
+<span class="n">__doctest_requires__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;*&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;scipy.integrate&#39;</span><span class="p">]}</span>
+
+
+<div class="viewcode-block" id="Distance"><a class="viewcode-back" href="../../../api/astropy.coordinates.Distance.html#astropy.coordinates.Distance">[docs]</a><span class="k">class</span> <span class="nc">Distance</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A one-dimensional distance.</span>
+
+<span class="sd">    This can be initialized in one of four ways:</span>
+
+<span class="sd">    * A distance ``value`` (array or float) and a ``unit``</span>
+<span class="sd">    * A `~astropy.units.Quantity` object</span>
+<span class="sd">    * A redshift and (optionally) a cosmology.</span>
+<span class="sd">    * Providing a distance modulus</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    value : scalar or `~astropy.units.Quantity`.</span>
+<span class="sd">        The value of this distance.</span>
+<span class="sd">    unit : `~astropy.units.UnitBase`</span>
+<span class="sd">        The units for this distance, *if* ``value`` is not a</span>
+<span class="sd">        `~astropy.units.Quantity`. Must have dimensions of distance.</span>
+<span class="sd">    z : float</span>
+<span class="sd">        A redshift for this distance.  It will be converted to a distance</span>
+<span class="sd">        by computing the luminosity distance for this redshift given the</span>
+<span class="sd">        cosmology specified by ``cosmology``. Must be given as a keyword</span>
+<span class="sd">        argument.</span>
+<span class="sd">    cosmology : ``Cosmology`` or `None`</span>
+<span class="sd">        A cosmology that will be used to compute the distance from ``z``.</span>
+<span class="sd">        If `None`, the current cosmology will be used (see</span>
+<span class="sd">        `astropy.cosmology` for details).</span>
+<span class="sd">    distmod : float or `~astropy.units.Quantity`</span>
+<span class="sd">        The distance modulus for this distance.</span>
+<span class="sd">    dtype : `~numpy.dtype`, optional</span>
+<span class="sd">        See `~astropy.units.Quantity`. Must be given as a keyword argument.</span>
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        See `~astropy.units.Quantity`. Must be given as a keyword argument.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    `~astropy.units.UnitsError`</span>
+<span class="sd">        If the ``unit`` is not a distance.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If value specified is less than 0 and ``allow_negative=False``.</span>
+
+<span class="sd">        If ``z`` is provided with a ``unit`` or ``cosmology`` is provided</span>
+<span class="sd">        when ``z`` is *not* given, or ``value`` is given as well as ``z``.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from astropy import units as u</span>
+<span class="sd">    &gt;&gt;&gt; from astropy import cosmology</span>
+<span class="sd">    &gt;&gt;&gt; from astropy.cosmology import WMAP5, WMAP7</span>
+<span class="sd">    &gt;&gt;&gt; cosmology.set_current(WMAP7)</span>
+<span class="sd">    &gt;&gt;&gt; d1 = Distance(10, u.Mpc)</span>
+<span class="sd">    &gt;&gt;&gt; d2 = Distance(40, unit=u.au)</span>
+<span class="sd">    &gt;&gt;&gt; d3 = Distance(value=5, unit=u.kpc)</span>
+<span class="sd">    &gt;&gt;&gt; d4 = Distance(z=0.23)</span>
+<span class="sd">    &gt;&gt;&gt; d5 = Distance(z=0.23, cosmology=WMAP5)</span>
+<span class="sd">    &gt;&gt;&gt; d6 = Distance(distmod=24.47)</span>
+<span class="sd">    &gt;&gt;&gt; d7 = Distance(Distance(10 * u.Mpc))</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_include_easy_conversion_members</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cosmology</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                <span class="n">distmod</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">allow_negative</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">..cosmology</span> <span class="kn">import</span> <span class="n">default_cosmology</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="c"># This includes Distances as well</span>
+            <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">distmod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;`value` was given along with `z` or `distmod`&#39;</span>
+                                 <span class="s">&#39; in Quantity constructor.&#39;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">unit</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">distmod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Both `z` and `distmod` given in Distance &#39;</span>
+                                     <span class="s">&#39;constructor&#39;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">cosmology</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">cosmology</span> <span class="o">=</span> <span class="n">default_cosmology</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+                <span class="n">ld</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">luminosity_distance</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">ld</span> <span class="o">=</span> <span class="n">ld</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">ld</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">ld</span><span class="o">.</span><span class="n">unit</span>
+
+            <span class="k">elif</span> <span class="n">distmod</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_distmod_to_pc</span><span class="p">(</span><span class="n">distmod</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="c"># choose unit based on most reasonable of Mpc, kpc, or pc</span>
+                    <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">1e6</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="mf">1e6</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">megaparsec</span>
+                    <span class="k">elif</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mf">1e3</span><span class="p">:</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">value</span> <span class="o">/</span> <span class="mf">1e3</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">kiloparsec</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">parsec</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">parsec</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;None of `value`, `z`, or `distmod` were given&#39;</span>
+                                 <span class="s">&#39; to Distance constructor&#39;</span><span class="p">)</span>
+
+                <span class="n">value</span> <span class="o">=</span> <span class="n">ld</span><span class="o">.</span><span class="n">value</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">ld</span><span class="o">.</span><span class="n">unit</span>
+        <span class="k">elif</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>  <span class="c"># and value is not None based on above</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Both `z` and a `value` were provided in Distance &#39;</span>
+                             <span class="s">&#39;constructor&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cosmology</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;A `cosmology` was given but `z` was not provided &#39;</span>
+                             <span class="s">&#39;in Distance constructor&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span><span class="s">&#39;No unit was provided for Distance&#39;</span><span class="p">)</span>
+        <span class="c">#&quot;else&quot; the baseline ``value`` + ``unit`` case</span>
+
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">_convert_to_and_validate_length_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">&#39;iuf&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Unsupported dtype &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">allow_negative</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Distance must be &gt;= 0. Set the kwarg &quot;</span>
+                            <span class="s">&quot;&#39;allow_negative=True&#39; to allow negative values.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Distance</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                            <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__quantity_subclass__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">Distance</span><span class="p">,</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">Distance</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__quantity_subclass__</span><span class="p">(</span><span class="n">unit</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Short for ``self.compute_z()``&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_z</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Distance.compute_z"><a class="viewcode-back" href="../../../api/astropy.coordinates.Distance.html#astropy.coordinates.Distance.compute_z">[docs]</a>    <span class="k">def</span> <span class="nf">compute_z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cosmology</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The redshift for this distance assuming its physical distance is</span>
+<span class="sd">        a luminosity distance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cosmology : ``Cosmology`` or `None`</span>
+<span class="sd">            The cosmology to assume for this calculation, or `None` to use the</span>
+<span class="sd">            current cosmology (see `astropy.cosmology` for details).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        z : float</span>
+<span class="sd">            The redshift of this distance given the provided ``cosmology``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">..cosmology</span> <span class="kn">import</span> <span class="n">luminosity_distance</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">optimize</span>
+
+        <span class="c"># FIXME: array: need to make this calculation more vector-friendly</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">z</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">cos</span><span class="p">:</span> <span class="p">(</span><span class="n">luminosity_distance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">cos</span><span class="p">)</span><span class="o">.</span><span class="n">value</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">optimize</span><span class="o">.</span><span class="n">brent</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Mpc</span><span class="p">,</span> <span class="n">cosmology</span><span class="p">))</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">distmod</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;  The distance modulus of this distance as a `~astropy.units.Quantity` &quot;&quot;&quot;</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="mf">5.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">)</span> <span class="o">-</span> <span class="mf">5.</span>
+        <span class="k">return</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">mag</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_distmod_to_pc</span><span class="p">(</span><span class="n">dm</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">((</span><span class="n">dm</span> <span class="o">+</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="mf">5.</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CartesianPoints"><a class="viewcode-back" href="../../../api/astropy.coordinates.CartesianPoints.html#astropy.coordinates.CartesianPoints">[docs]</a><span class="k">class</span> <span class="nc">CartesianPoints</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A cartesian representation of a point in three-dimensional space.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : `~astropy.units.Quantity` or array-like</span>
+<span class="sd">        The first cartesian coordinate or a single array or</span>
+<span class="sd">        `~astropy.units.Quantity` where the first dimension is length-3.</span>
+<span class="sd">    y : `~astropy.units.Quantity` or array-like, optional</span>
+<span class="sd">        The second cartesian coordinate.</span>
+<span class="sd">    z : `~astropy.units.Quantity` or array-like, optional</span>
+<span class="sd">        The third cartesian coordinate.</span>
+<span class="sd">    unit : `~astropy.units.UnitBase` object or `None`</span>
+<span class="sd">        The physical unit of the coordinate values. If ``x``, ``y``, or ``z``</span>
+<span class="sd">        are quantities, they will be converted to this unit.</span>
+<span class="sd">    dtype : `~numpy.dtype`, optional</span>
+<span class="sd">        See `~astropy.units.Quantity`. Must be given as a keyword argument.</span>
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        See `~astropy.units.Quantity`. Must be given as a keyword argument.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    UnitsError</span>
+<span class="sd">        If the units on ``x``, ``y``, and ``z`` do not match or an invalid</span>
+<span class="sd">        unit is given.</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``y`` and ``z`` don&#39;t match ``x``&#39;s shape or ``x`` is not length-3</span>
+<span class="sd">    TypeError</span>
+<span class="sd">        If incompatible array types are passed into ``x``, ``y``, or ``z``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c">#this ensures that __array_wrap__ gets called for ufuncs even when</span>
+    <span class="c">#where a quantity is first, like ``3*u.m + c``</span>
+    <span class="n">__array_priority__</span> <span class="o">=</span> <span class="mi">10001</span>
+
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input to CartesianPoints is not length 3&#39;</span><span class="p">)</span>
+
+            <span class="n">qarr</span> <span class="o">=</span> <span class="n">x</span>
+            <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">qarr</span><span class="p">,</span> <span class="s">&#39;unit&#39;</span><span class="p">):</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">qarr</span><span class="o">.</span><span class="n">unit</span>  <span class="c"># for when a Quantity is given</span>
+        <span class="k">elif</span> <span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="c">#they must all match units or this fails</span>
+                <span class="k">for</span> <span class="n">coo</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">coo</span><span class="p">,</span> <span class="s">&#39;unit&#39;</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">coo</span><span class="o">.</span><span class="n">unit</span> <span class="o">!=</span> <span class="n">unit</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span><span class="s">&#39;Units for `x`, `y`, and `z` do &#39;</span>
+                                               <span class="s">&#39;not match in CartesianPoints   &#39;</span><span class="p">)</span>
+                        <span class="n">unit</span> <span class="o">=</span> <span class="n">coo</span><span class="o">.</span><span class="n">unit</span>
+                <span class="c">#if `unit`  is still None at this point, it means none were</span>
+                <span class="c">#Quantties, which is fine, because it means the user wanted</span>
+                <span class="c">#the unit to be None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c">#convert any that are like a Quantity to the given unit</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">):</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">):</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="s">&#39;to&#39;</span><span class="p">):</span>
+                    <span class="n">z</span> <span class="o">=</span> <span class="n">z</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+
+            <span class="n">qarr</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">coo</span><span class="p">)</span> <span class="k">for</span> <span class="n">coo</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">qarr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">qarr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">qarr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Shapes for `x`, `y`, and `z` don&#39;t match in &quot;</span>
+                                 <span class="s">&quot;CartesianPoints&quot;</span><span class="p">)</span>
+                <span class="c">#let the unit be whatever it is</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Must give all of `x`, `y`, and `z` or just array in &#39;</span>
+                            <span class="s">&#39;CartesianPoints&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">unit</span> <span class="o">=</span> <span class="n">_convert_to_and_validate_length_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">qarr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">qarr</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">qarr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="s">&#39;iuf&#39;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Unsupported dtype &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">qarr</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CartesianPoints</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">qarr</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">,</span>
+                                            <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__quantity_subclass__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">unit</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">CartesianPoints</span><span class="p">,</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">CartesianPoints</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__quantity_subclass__</span><span class="p">(</span><span class="n">unit</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">__array_wrap__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c">#always convert to CartesianPoints because all operations that would</span>
+        <span class="c">#screw up the units are killed by _convert_to_and_validate_length_unit</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CartesianPoints</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__array_wrap__</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span>
+
+        <span class="c">#always prefer self&#39;s unit, if possible</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The second cartesian coordinate as a `~astropy.units.Quantity`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The second cartesian coordinate as a `~astropy.units.Quantity`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The third cartesian coordinate as a `~astropy.units.Quantity`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CartesianPoints.to_spherical"><a class="viewcode-back" href="../../../api/astropy.coordinates.CartesianPoints.html#astropy.coordinates.CartesianPoints.to_spherical">[docs]</a>    <span class="k">def</span> <span class="nf">to_spherical</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts to the spherical representation of this point.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        r : `~astropy.units.Quantity`</span>
+<span class="sd">            The radial coordinate (in the same units as this `CartesianPoints`).</span>
+<span class="sd">        lat : `~astropy.units.Quantity`</span>
+<span class="sd">            The spherical coordinates latitude.</span>
+<span class="sd">        lon : `~astropy.units.Quantity`</span>
+<span class="sd">            The spherical coordinates longitude.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">Latitude</span><span class="p">,</span> <span class="n">Longitude</span>
+
+        <span class="n">rarr</span><span class="p">,</span> <span class="n">latarr</span><span class="p">,</span> <span class="n">lonarr</span> <span class="o">=</span> <span class="n">cartesian_to_spherical</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">Distance</span><span class="p">(</span><span class="n">rarr</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">Latitude</span><span class="p">(</span><span class="n">latarr</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">Longitude</span><span class="p">(</span><span class="n">lonarr</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span>
+
+</div></div>
+<span class="k">def</span> <span class="nf">_convert_to_and_validate_length_unit</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="n">allow_dimensionless</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    raises UnitsError if not a length unit</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">unit</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">kpc</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="n">allow_dimensionless</span> <span class="ow">and</span> <span class="n">unit</span> <span class="o">==</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span><span class="s">&#39;Unit &quot;{0}&quot; is not a length type&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">unit</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">unit</span>
+
+<span class="c">#&lt;------------transformation-related utility functions-----------------&gt;</span>
+
+
+<div class="viewcode-block" id="cartesian_to_spherical"><a class="viewcode-back" href="../../../api/astropy.coordinates.cartesian_to_spherical.html#astropy.coordinates.cartesian_to_spherical">[docs]</a><span class="k">def</span> <span class="nf">cartesian_to_spherical</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts 3D rectangular cartesian coordinates to spherical polar</span>
+<span class="sd">    coordinates.</span>
+
+<span class="sd">    Note that the resulting angles are latitude/longitude or</span>
+<span class="sd">    elevation/azimuthal form.  I.e., the origin is along the equator</span>
+<span class="sd">    rather than at the north pole.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This is a low-level function used internally in</span>
+<span class="sd">        `astropy.coordinates`.  It is provided for users if they really</span>
+<span class="sd">        want to use it, but it is recommended that you use the</span>
+<span class="sd">        `astropy.coordinates` coordinate systems.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : scalar or array-like</span>
+<span class="sd">        The first cartesian coordinate.</span>
+<span class="sd">    y : scalar or array-like</span>
+<span class="sd">        The second cartesian coordinate.</span>
+<span class="sd">    z : scalar or array-like</span>
+<span class="sd">        The third cartesian coordinate.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    r : float or array</span>
+<span class="sd">        The radial coordinate (in the same units as the inputs).</span>
+<span class="sd">    lat : float or array</span>
+<span class="sd">        The latitude in radians</span>
+<span class="sd">    lon : float or array</span>
+<span class="sd">        The longitude in radians</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">xsq</span> <span class="o">=</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">ysq</span> <span class="o">=</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">zsq</span> <span class="o">=</span> <span class="n">z</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">xsq</span> <span class="o">+</span> <span class="n">ysq</span> <span class="o">+</span> <span class="n">zsq</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="n">xsq</span> <span class="o">+</span> <span class="n">ysq</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">z</span><span class="p">):</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">r</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span>
+
+</div>
+<div class="viewcode-block" id="spherical_to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.spherical_to_cartesian.html#astropy.coordinates.spherical_to_cartesian">[docs]</a><span class="k">def</span> <span class="nf">spherical_to_cartesian</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts spherical polar coordinates to rectangular cartesian</span>
+<span class="sd">    coordinates.</span>
+
+<span class="sd">    Note that the input angles should be in latitude/longitude or</span>
+<span class="sd">    elevation/azimuthal form.  I.e., the origin is along the equator</span>
+<span class="sd">    rather than at the north pole.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This is a low-level function used internally in</span>
+<span class="sd">        `astropy.coordinates`.  It is provided for users if they really</span>
+<span class="sd">        want to use it, but it is recommended that you use the</span>
+<span class="sd">        `astropy.coordinates` coordinate systems.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    r : scalar or array-like</span>
+<span class="sd">        The radial coordinate (in the same units as the inputs).</span>
+<span class="sd">    lat : scalar or array-like</span>
+<span class="sd">        The latitude in radians</span>
+<span class="sd">    lon : scalar or array-like</span>
+<span class="sd">        The longitude in radians</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : float or array</span>
+<span class="sd">        The first cartesian coordinate.</span>
+<span class="sd">    y : float or array</span>
+<span class="sd">        The second cartesian coordinate.</span>
+<span class="sd">    z : float or array</span>
+<span class="sd">        The third cartesian coordinate.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">lon</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

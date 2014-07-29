@@ -1,0 +1,471 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Configuration transition &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Configuration system (astropy.config)" href="index.html" />
+    <link rel="next" title="get_cache_dir" href="../api/astropy.config.get_cache_dir.html" />
+    <link rel="prev" title="Configuration system (astropy.config)" href="index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astropy.config.get_cache_dir.html" title="get_cache_dir">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="index.html" title="Configuration system (astropy.config)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Configuration system (<tt class="docutils literal"><span class="pre">astropy.config</span></tt>)</a> &raquo;</li>
+      
+      <li>Configuration transition</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="configuration-transition">
+<span id="config-0-4-transition"></span><h1>Configuration transition<a class="headerlink" href="#configuration-transition" title="Permalink to this headline">¶</a></h1>
+<p>This document describes the changes in the configuration system in
+astropy 0.4 and how to update code to use it.</p>
+<div class="section" id="for-users">
+<h2>For users<a class="headerlink" href="#for-users" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="the-config-file">
+<h3>The config file<a class="headerlink" href="#the-config-file" title="Permalink to this headline">¶</a></h3>
+<p>If you never edited the configuration file in
+<tt class="docutils literal"><span class="pre">~/.astropy/config/astropy.cfg</span></tt>, there is nothing for you to do.
+The first time you import astropy 0.4, it will automatically be
+replaced with the configuration file template for astropy 0.4.</p>
+<p>If you did edit the configuration file, it will be left untouched.
+However, the template for astropy 0.4 will be installed as
+<tt class="docutils literal"><span class="pre">~/.astropy/config/astropy.0.4.cfg</span></tt>.  You can manually compare your
+changes to this file to determine what customizations should be
+brought over.</p>
+</div>
+<div class="section" id="saving">
+<h3>Saving<a class="headerlink" href="#saving" title="Permalink to this headline">¶</a></h3>
+<p>Saving configuration items from Python has been completely removed.
+Instead, the configuration file must be edited directly.</p>
+</div>
+<div class="section" id="renames">
+<h3>Renames<a class="headerlink" href="#renames" title="Permalink to this headline">¶</a></h3>
+<p>The location of the configuration parameters have been simplified, so
+they always appear in a high-level subpackage of astropy, rather than
+low-level file names (which were really an implementation detail that
+shouldn&#8217;t have been exposed to the user).  On the Python side,
+configuration items always are referenced through a <tt class="docutils literal"><span class="pre">conf</span></tt> object at
+the root of a subpackage.</p>
+<p>Some configuration items that affect the results of science
+calculations have been removed as configuration parameters altogether
+and converted to science state objects that must be changed from
+Python code.</p>
+<p>The following table lists all of the moves (in alphabetical order by
+original configuration file location).  The old names will continue to
+work both from Python and the configuration file for the astropy 0.4
+release cycle, and will be removed altogether in astropy 0.5.</p>
+<table border="1" class="docutils">
+<caption>Renamed configuration parameters</caption>
+<colgroup>
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+<col width="25%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Old config file location</th>
+<th class="head">Old Python location</th>
+<th class="head">New config file location</th>
+<th class="head">New Python location</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[]</span> <span class="pre">unicode_output</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">UNICODE_OUTPUT</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">conf.unicode_output</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[coordinates.name_resolve]</span> <span class="pre">name_resolve_timeout</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">coordinates.name_resolve.NAME_RESOLVE_TIMEOUT</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[astropy.utils.data]</span> <span class="pre">remote_timeout</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.remote_timeout</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[coordinates.name_resolve]</span> <span class="pre">sesame_url</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">coordinates.name_resolve.SESAME_URL</span></tt></td>
+<td><em>removed</em></td>
+<td><tt class="docutils literal"><span class="pre">coordinates.name_resolve.sesame_url.get/set</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[coordinates.name_resolve]</span> <span class="pre">sesame_database</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">coordinates.name_resolve.SESAME_DATABASE</span></tt></td>
+<td><em>removed</em></td>
+<td><tt class="docutils literal"><span class="pre">coordinates.name_resolve.sesame_database.get/set</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[cosmology.core]</span> <span class="pre">default_cosmology</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">cosmology.core.DEFAULT_COSMOLOGY</span></tt></td>
+<td><em>removed</em></td>
+<td><tt class="docutils literal"><span class="pre">cosmology.default_cosmology.get/set</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[io.fits]</span> <span class="pre">enable_record_valued_keyword_cards</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.ENABLE_RECORD_VALUED_KEYWORD_CARDS</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.conf.enable_record_valued_keyword_cards</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[io.fits]</span> <span class="pre">extension_name_case_sensitive</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.EXTENSION_NAME_CASE_SENSITIVE</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.conf.extension_name_case_sensitive</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[io.fits]</span> <span class="pre">strip_header_whitespace</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.STRIP_HEADER_WHITESPACE</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.conf.strip_header_whitespace</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[io.fits]</span> <span class="pre">use_memmap</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.USE_MEMMAP</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">io.fits.conf.use_memmap</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[io.votable.table]</span> <span class="pre">pedantic</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">io.votable.table.PEDANTIC</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[io.votable]</span> <span class="pre">pedantic</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">io.votable.conf.pedantic</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_exceptions</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_EXCEPTIONS</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_exceptions</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_file_format</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_FILE_FORMAT</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_file_format</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_file_level</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_FILE_LEVEL</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_file_level</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_file_path</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_FILE_PATH</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_file_path</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_level</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_LEVEL</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_level</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_to_file</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_TO_FILE</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_to_file</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">log_warnings</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.LOG_WARNINGS</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">logger.conf.log_warnings</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[logger]</span> <span class="pre">use_color</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">logger.USE_COLOR</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[]</span> <span class="pre">use_color</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">conf.use_color</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[nddata.nddata]</span> <span class="pre">warn_unsupported_correlated</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">nddata.nddata.WARN_UNSUPPORTED_CORRELATED</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[nddata]</span> <span class="pre">warn_unsupported_correlated</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">nddata.conf.warn_unsupported_correlated</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[table.column]</span> <span class="pre">auto_colname</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">table.column.AUTO_COLNAME</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[table]</span> <span class="pre">auto_colname</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">table.conf.auto_colname</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[table.pprint]</span> <span class="pre">max_lines</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">table.pprint.MAX_LINES</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[]</span> <span class="pre">max_lines</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">conf.max_lines</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[table.pprint]</span> <span class="pre">max_width</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">table.pprint.MAX_WIDTH</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[]</span> <span class="pre">max_width</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">conf.max_width</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[utils.console]</span> <span class="pre">use_color</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">utils.console.USE_COLOR</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[]</span> <span class="pre">use_color</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">conf.use_color</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[utils.data]</span> <span class="pre">compute_hash_block_size</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.COMPUTE_HASH_BLOCK_SIZE</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.compute_hash_block_size</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[utils.data]</span> <span class="pre">dataurl</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.DATAURL</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.dataurl</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[utils.data]</span> <span class="pre">delete_temporary_downloads_at_exit</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.DELETE_TEMPORARY_DOWNLOADS_AT_EXIT</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.delete_temporary_downloads_at_exit</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[utils.data]</span> <span class="pre">download_cache_block_size</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.DOWNLOAD_CACHE_BLOCK_SIZE</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.download_cache_block_size</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[utils.data]</span> <span class="pre">download_cache_lock_attempts</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.download_cache_lock_attempts</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.download_cache_lock_attempts</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[utils.data]</span> <span class="pre">remote_timeout</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.REMOTE_TIMEOUT</span></tt></td>
+<td><em>unchanged</em></td>
+<td><tt class="docutils literal"><span class="pre">astropy.utils.data.conf.remote_timeout</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[vo.client.conesearch]</span> <span class="pre">conesearch_dbname</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.client.conesearch.CONESEARCH_DBNAME</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[vo]</span> <span class="pre">conesearch_dbname</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.conf.conesearch_dbname</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[vo.client.vos_catalog]</span> <span class="pre">vos_baseurl</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.client.vos_catalog.BASEURL</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[vo]</span> <span class="pre">vos_baseurl</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.conf.vos_baseurl</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[vo.samp.utils]</span> <span class="pre">use_internet</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.samp.utils.ALLOW_INTERNET</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[vo.samp]</span> <span class="pre">use_internet</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.samp.conf.use_internet</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[vo.validator.validate]</span> <span class="pre">cs_mstr_list</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.validator.validate.CS_MSTR_LIST</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[vo.validator]</span> <span class="pre">conesearch_master_list</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.validator.conf.conesearch_master_list</span></tt></td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">[vo.validator.validate]</span> <span class="pre">cs_urls</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.validator.validate.CS_URLS</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[vo.validator]</span> <span class="pre">conesearch_urls</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.validator.conf.conesearch_urls</span></tt></td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">[vo.validator.validate]</span> <span class="pre">noncrit_warnings</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.validator.validate.noncrit_warnings</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">[vo.validator]</span> <span class="pre">noncritical_warnings</span></tt></td>
+<td><tt class="docutils literal"><span class="pre">vo.validator.conf.noncritical_warnings</span></tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="for-affiliated-package-authors">
+<h2>For affiliated package authors<a class="headerlink" href="#for-affiliated-package-authors" title="Permalink to this headline">¶</a></h2>
+<p>For an affiliated package to support both astropy 0.3 and 0.4,
+following the astropy 0.3 config instructions should continue to work.
+Note that saving of configuration items has been removed entirely from
+astropy 0.4 without a deprecation cycle, so if saving configuration
+programmatically is important to your package, you may want to
+consider another method to save that state.</p>
+<p>However, by the release of astropy 0.5, the astropy 0.3 config API
+will no longer work.  The following describes how to transition an
+affiliated package written for astropy 0.3 to support astropy 0.4 and
+later.  It will not be possible to support astropy 0.3, 0.4 and 0.5
+simultaneously.  Below <tt class="docutils literal"><span class="pre">pkgname</span></tt> is the name of your affiliated
+package.</p>
+<p>The automatic generation of configuration files from the
+<tt class="docutils literal"><span class="pre">ConfigurationItem</span></tt> objects that it finds has been removed.
+Instead, the project should include a hard-coded &#8220;template&#8221;
+configuration file in <tt class="docutils literal"><span class="pre">pkgname/pkgname.cfg</span></tt>.  By convention, and to
+ease upgrades for end users, all of the values should be commented
+out.  For example:</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[nddata]</span>
+
+<span class="c1">## Whether to issue a warning if NDData arithmetic is performed with</span>
+<span class="c1">## uncertainties and the uncertainties do not support the propagation of</span>
+<span class="c1">## correlated uncertainties.</span>
+<span class="c1"># warn_unsupported_correlated = True</span>
+</pre></div>
+</div>
+<p>Affiliated packages should transition to using
+<a class="reference internal" href="../api/astropy.config.ConfigItem.html#astropy.config.ConfigItem" title="astropy.config.ConfigItem"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.config.ConfigItem</span></tt></a> objects as members of
+<a class="reference internal" href="../api/astropy.config.ConfigNamespace.html#astropy.config.ConfigNamespace" title="astropy.config.ConfigNamespace"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.config.ConfigNamespace</span></tt></a> subclasses.</p>
+<p>For example, the following is an example of the astropy 0.3 and
+earlier method to define configuration items:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">astropy.config</span> <span class="kn">import</span> <span class="n">ConfigurationItem</span>
+
+<span class="n">ENABLE_RECORD_VALUED_KEYWORD_CARDS</span> <span class="o">=</span> <span class="n">ConfigurationItem</span><span class="p">(</span>
+    <span class="s">&#39;enabled_record_valued_keyword_cards&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span>
+    <span class="s">&#39;If True, enable support for record-valued keywords as described by &#39;</span>
+    <span class="s">&#39;FITS WCS Paper IV. Otherwise they are treated as normal keywords.&#39;</span><span class="p">)</span>
+
+<span class="n">EXTENSION_NAME_CASE_SENSITIVE</span> <span class="o">=</span> <span class="n">ConfigurationItem</span><span class="p">(</span>
+    <span class="s">&#39;extension_name_case_sensitive&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="s">&#39;If True, extension names (i.e. the EXTNAME keyword) should be &#39;</span>
+   <span class="s">&#39;treated as case-sensitive.&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The above, converted to the new method, looks like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">config</span> <span class="k">as</span> <span class="n">_config</span>
+
+<span class="k">class</span> <span class="nc">Conf</span><span class="p">(</span><span class="n">_config</span><span class="o">.</span><span class="n">ConfigNamespace</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Configuration parameters for `astropy.io.fits`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">enable_record_valued_keyword_cards</span> <span class="o">=</span> <span class="n">_config</span><span class="o">.</span><span class="n">ConfigItem</span><span class="p">(</span>
+        <span class="bp">True</span><span class="p">,</span>
+        <span class="s">&#39;If True, enable support for record-valued keywords as described by &#39;</span>
+        <span class="s">&#39;FITS WCS Paper IV. Otherwise they are treated as normal keywords.&#39;</span><span class="p">,</span>
+        <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;astropy.io.fits.enabled_record_valued_keyword_cards&#39;</span><span class="p">])</span>
+
+    <span class="n">extension_name_case_sensitive</span> <span class="o">=</span> <span class="n">_config</span><span class="o">.</span><span class="n">ConfigItem</span><span class="p">(</span>
+        <span class="bp">False</span><span class="p">,</span>
+        <span class="s">&#39;If True, extension names (i.e. the ``EXTNAME`` keyword) should be &#39;</span>
+        <span class="s">&#39;treated as case-sensitive.&#39;</span><span class="p">)</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="n">Conf</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="moving-renaming-configuration-items-in-python">
+<h3>Moving/renaming configuration items in Python<a class="headerlink" href="#moving-renaming-configuration-items-in-python" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">ConfigAlias</span></tt> objects can be used when a configuration item has been
+moved from an astropy 0.3-style <tt class="docutils literal"><span class="pre">ConfigurationItem</span></tt> to an astropy
+0.4-style <tt class="docutils literal"><span class="pre">ConfigItem</span></tt> inside of a <tt class="docutils literal"><span class="pre">ConfigNamespace</span></tt>.</p>
+<p>In the above example, the following adds backward-compatible hooks so
+the old Python locations of the configuration items will continue to
+work from user code:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ENABLE_RECORD_VALUED_KEYWORD_CARDS</span> <span class="o">=</span> <span class="n">_config</span><span class="o">.</span><span class="n">ConfigAlias</span><span class="p">(</span>
+    <span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="s">&#39;ENABLE_RECORD_VALUED_KEYWORD_CARDS&#39;</span><span class="p">,</span>
+    <span class="s">&#39;enable_record_valued_keyword_cards&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="moving-renaming-configuration-items-in-the-config-file">
+<h3>Moving/renaming configuration items in the config file<a class="headerlink" href="#moving-renaming-configuration-items-in-the-config-file" title="Permalink to this headline">¶</a></h3>
+<p>If a configuration item is moved or renamed within the configuration
+file, the <tt class="docutils literal"><span class="pre">aliases</span></tt> kwarg to <tt class="docutils literal"><span class="pre">ConfigItem</span></tt> can be used so that the
+old location will continue to be used as a fallback.  For example, if
+the old location of an item was:</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[coordinates.name_resolve]</span>
+<span class="na">sesame_url</span> <span class="o">=</span> <span class="s">http://somewhere.com</span>
+</pre></div>
+</div>
+<p>One might want to drop the fact that that is implemented in the module
+<tt class="docutils literal"><span class="pre">name_resolve</span></tt> and just store the configuration in <tt class="docutils literal"><span class="pre">coordinates</span></tt>:</p>
+<div class="highlight-ini"><div class="highlight"><pre><span class="k">[coordinates]</span>
+<span class="na">sesame_url</span> <span class="o">=</span> <span class="s">http://somewhere.com</span>
+</pre></div>
+</div>
+<p>When defining the <tt class="docutils literal"><span class="pre">ConfigItem</span></tt> for this entry, the <tt class="docutils literal"><span class="pre">aliases</span></tt> kwarg
+can list the old location(s) of the configuration item:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">sesame_url</span> <span class="o">=</span> <span class="n">_config</span><span class="o">.</span><span class="n">ConfigItem</span><span class="p">(</span>
+    <span class="p">[</span><span class="s">&quot;http://somewhere.com&quot;</span><span class="p">],</span>
+    <span class="sd">&quot;&quot;&quot;Docstring&quot;&quot;&quot;</span><span class="p">,</span>
+    <span class="n">aliases</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;astropy.coordinates.name_resolve.sesame_url&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Configuration transition</a><ul>
+<li><a class="reference internal" href="#for-users">For users</a><ul>
+<li><a class="reference internal" href="#the-config-file">The config file</a></li>
+<li><a class="reference internal" href="#saving">Saving</a></li>
+<li><a class="reference internal" href="#renames">Renames</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#for-affiliated-package-authors">For affiliated package authors</a><ul>
+<li><a class="reference internal" href="#moving-renaming-configuration-items-in-python">Moving/renaming configuration items in Python</a></li>
+<li><a class="reference internal" href="#moving-renaming-configuration-items-in-the-config-file">Moving/renaming configuration items in the config file</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/config/config_0_4_transition.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/config/config_0_4_transition.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

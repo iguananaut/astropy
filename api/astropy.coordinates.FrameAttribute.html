@@ -1,0 +1,222 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FrameAttribute &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="../coordinates/index.html" />
+    <link rel="next" title="FunctionTransform" href="astropy.coordinates.FunctionTransform.html" />
+    <link rel="prev" title="FK5" href="astropy.coordinates.FK5.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.coordinates.FunctionTransform.html" title="FunctionTransform">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.coordinates.FK5.html" title="FK5">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../coordinates/index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>FrameAttribute</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="frameattribute">
+<h1>FrameAttribute<a class="headerlink" href="#frameattribute" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.coordinates.FrameAttribute">
+<em class="property">class </em><tt class="descclassname">astropy.coordinates.</tt><tt class="descname">FrameAttribute</tt><big>(</big><em>default=None</em>, <em>secondary_attribute=u''</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/baseframe.html#FrameAttribute"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/baseframe.py#L108" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.FrameAttribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A non-mutable data descriptor to hold a frame attribute.</p>
+<p>This class must be used to define frame attributes (e.g. <tt class="docutils literal"><span class="pre">equinox</span></tt> or
+<tt class="docutils literal"><span class="pre">obstime</span></tt>) that are included in a frame class definition.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>default</strong> : object</p>
+<blockquote>
+<div><p>Default value for the attribute if not provided</p>
+</div></blockquote>
+<p><strong>secondary_attribute</strong> : str</p>
+<blockquote>
+<div><p>Name of a secondary instance attribute which supplies the value
+if <tt class="docutils literal"><span class="pre">default</span> <span class="pre">is</span> <span class="pre">None</span></tt> and no value was supplied during initialization.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>frame_attr</strong> : descriptor</p>
+<blockquote class="last">
+<div><p>A new data descriptor to hold a frame attribute</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>The <a class="reference internal" href="astropy.coordinates.FK4.html#astropy.coordinates.FK4" title="astropy.coordinates.FK4"><tt class="xref py py-obj docutils literal"><span class="pre">FK4</span></tt></a> class uses the following class attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">FK4</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="n">equinox</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">_EQUINOX_B1950</span><span class="p">)</span>
+    <span class="n">obstime</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">secondary_attribute</span><span class="o">=</span><span class="s">&#39;equinox&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This means that <tt class="docutils literal"><span class="pre">equinox</span></tt> and <tt class="docutils literal"><span class="pre">obstime</span></tt> are available to be set as
+keyword arguments when creating an <tt class="docutils literal"><span class="pre">FK4</span></tt> class instance and are then
+accessible as instance attributes.  The instance value for the attribute
+must be stored in <tt class="docutils literal"><span class="pre">'_'</span> <span class="pre">+</span> <span class="pre">&lt;attribute_name&gt;</span></tt> by the frame <tt class="docutils literal"><span class="pre">__init__</span></tt>
+method.</p>
+<p>Note in this example that <tt class="docutils literal"><span class="pre">equinox</span></tt> and <tt class="docutils literal"><span class="pre">obstime</span></tt> are time attributes
+and use the <tt class="docutils literal"><span class="pre">TimeAttributeFrame</span></tt> class.  This subclass overrides the
+<tt class="docutils literal"><span class="pre">convert_input</span></tt> method to validate and convert inputs into a <tt class="docutils literal"><span class="pre">Time</span></tt>
+object.</p>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.FrameAttribute.convert_input" title="astropy.coordinates.FrameAttribute.convert_input"><tt class="xref py py-obj docutils literal"><span class="pre">convert_input</span></tt></a>(value)</td>
+<td>Validate the input <tt class="docutils literal"><span class="pre">value</span></tt> and convert to expected attribute class.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.coordinates.FrameAttribute.convert_input">
+<tt class="descname">convert_input</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../_modules/astropy/coordinates/baseframe.html#FrameAttribute.convert_input"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/baseframe.py#L151" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.FrameAttribute.convert_input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the input <tt class="docutils literal"><span class="pre">value</span></tt> and convert to expected attribute class.</p>
+<p>The base method here does nothing, but subclasses can implement this
+as needed.  The method should catch any internal exceptions and raise
+ValueError with an informative message.</p>
+<p>The method returns the validated input along with a boolean that indicates
+whether the input value was actually converted.  If the input value was
+already the correct type then the <tt class="docutils literal"><span class="pre">converted</span></tt> return value should be
+<tt class="docutils literal"><span class="pre">False</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> : object</p>
+<blockquote>
+<div><p>Input value to be converted.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">output_value</p>
+<blockquote>
+<div><p>The <tt class="docutils literal"><span class="pre">value</span></tt> converted to the correct type (or just <tt class="docutils literal"><span class="pre">value</span></tt> if
+<tt class="docutils literal"><span class="pre">converted</span></tt> is False)</p>
+</div></blockquote>
+<p><strong>converted</strong> : bool</p>
+<blockquote>
+<div><p>True if the conversion was actually performed, False otherwise.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>If the input is not valid for this attribute.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">FrameAttribute</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.coordinates.FrameAttribute.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.coordinates.FrameAttribute.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

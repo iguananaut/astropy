@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fittable1DModel &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="Fittable2DModel" href="astropy.modeling.Fittable2DModel.html" />
+    <link rel="prev" title="Rotation2D" href="astropy.modeling.rotations.Rotation2D.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.Fittable2DModel.html" title="Fittable2DModel">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.rotations.Rotation2D.html" title="Rotation2D">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Fittable1DModel</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fittable1dmodel">
+<h1>Fittable1DModel<a class="headerlink" href="#fittable1dmodel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.Fittable1DModel">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.</tt><tt class="descname">Fittable1DModel</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Fittable1DModel"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L1179" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Fittable1DModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.modeling.FittableModel.html#astropy.modeling.FittableModel" title="astropy.modeling.core.FittableModel"><tt class="docutils literal"><span class="pre">astropy.modeling.FittableModel</span></tt></a></p>
+<p>Base class for one-dimensional fittable models.</p>
+<p>This class provides an easier interface to defining new models.
+Examples can be found in <a class="reference internal" href="../modeling/index.html#module-astropy.modeling.functional_models" title="astropy.modeling.functional_models"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.modeling.functional_models</span></tt></a>.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Fittable1DModel.input_names" title="astropy.modeling.Fittable1DModel.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Fittable1DModel.__call__" title="astropy.modeling.Fittable1DModel.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(x[,&nbsp;model_set_axis])</td>
+<td>Transforms data using this model.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.Fittable1DModel.input_names">
+<tt class="descname">input_names</tt><em class="property"> = ['x']</em><a class="headerlink" href="#astropy.modeling.Fittable1DModel.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.modeling.Fittable1DModel.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>x</em>, <em>model_set_axis=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Fittable1DModel.__call__"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L1187" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Fittable1DModel.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms data using this model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like or numeric value</p>
+<blockquote>
+<div><p>Input coordinate values.</p>
+</div></blockquote>
+<p><strong>model_set_axis</strong> : <a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">int</span></tt></a> or <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, optional</p>
+<blockquote class="last">
+<div><p>For <a class="reference internal" href="astropy.modeling.Model.html#astropy.modeling.Model" title="astropy.modeling.Model"><tt class="xref py py-obj docutils literal"><span class="pre">Model</span></tt></a> instances representing a multiple-model set, this picks
+out which axis of the input array is used to map inputs to specific
+models in the set.  If <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, this indicates that the input array
+has no such axis, and instead the same input should be broadcast to
+all models in the set.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Fittable1DModel</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.Fittable1DModel.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.Fittable1DModel.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

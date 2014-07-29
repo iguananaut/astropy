@@ -1,0 +1,23 @@
+<map id="inheritance447b6afb60" name="inheritance447b6afb60">
+<area shape="rect" id="node1" href="../api/astropy.modeling.projections.AffineTransformation2D.html#astropy.modeling.projections.AffineTransformation2D" title="Perform an affine transformation in 2 dimensions." alt="" coords="125,334,304,362"/>
+<area shape="rect" id="node2" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="Base class for all models." alt="" coords="5,359,77,387"/>
+<area shape="rect" id="node5" title="Base class for all sky projections." alt="" coords="169,385,260,413"/>
+<area shape="rect" id="node4" title="Base class for Cylindrical projections." alt="" coords="353,207,441,235"/>
+<area shape="rect" id="node10" href="../api/astropy.modeling.projections.Pix2Sky_CAR.html#astropy.modeling.projections.Pix2Sky_CAR" title="CAR: Plate carree projection &#45; pixel to sky." alt="" coords="492,5,601,33"/>
+<area shape="rect" id="node12" href="../api/astropy.modeling.projections.Pix2Sky_CEA.html#astropy.modeling.projections.Pix2Sky_CEA" title="CEA : Cylindrical equal area projection &#45; pixel to sky." alt="" coords="493,55,600,83"/>
+<area shape="rect" id="node14" href="../api/astropy.modeling.projections.Pix2Sky_CYP.html#astropy.modeling.projections.Pix2Sky_CYP" title="CYP : Cylindrical perspective &#45; pixel to sky." alt="" coords="493,106,600,134"/>
+<area shape="rect" id="node16" href="../api/astropy.modeling.projections.Pix2Sky_MER.html#astropy.modeling.projections.Pix2Sky_MER" title="MER: Mercator &#45; pixel to sky." alt="" coords="492,157,601,185"/>
+<area shape="rect" id="node27" href="../api/astropy.modeling.projections.Sky2Pix_CAR.html#astropy.modeling.projections.Sky2Pix_CAR" title="CAR: Plate carree projection &#45; sky to pixel." alt="" coords="492,207,601,235"/>
+<area shape="rect" id="node29" href="../api/astropy.modeling.projections.Sky2Pix_CEA.html#astropy.modeling.projections.Sky2Pix_CEA" title="CEA: Cylindrical equal area projection &#45; sky to pixel." alt="" coords="493,258,600,286"/>
+<area shape="rect" id="node31" href="../api/astropy.modeling.projections.Sky2Pix_CYP.html#astropy.modeling.projections.Sky2Pix_CYP" title="CYP : Cylindrical Perspective &#45; sky to pixel." alt="" coords="493,309,600,337"/>
+<area shape="rect" id="node33" href="../api/astropy.modeling.projections.Sky2Pix_MER.html#astropy.modeling.projections.Sky2Pix_MER" title="MER: Mercator &#45; sky to pixel." alt="" coords="492,359,601,387"/>
+<area shape="rect" id="node8" title="Base class for all Zenithal projections." alt="" coords="359,562,436,590"/>
+<area shape="rect" id="node7" href="../api/astropy.modeling.projections.Pix2Sky_AZP.html#astropy.modeling.projections.Pix2Sky_AZP" title="AZP : Zenital perspective projection &#45; pixel to sky." alt="" coords="493,410,600,438"/>
+<area shape="rect" id="node18" href="../api/astropy.modeling.projections.Pix2Sky_SIN.html#astropy.modeling.projections.Pix2Sky_SIN" title="SIN : Slant orthographic projection &#45; pixel to sky." alt="" coords="496,461,597,489"/>
+<area shape="rect" id="node20" href="../api/astropy.modeling.projections.Pix2Sky_STG.html#astropy.modeling.projections.Pix2Sky_STG" title="STG : Stereographic Projection &#45; pixel to sky." alt="" coords="493,511,600,539"/>
+<area shape="rect" id="node22" href="../api/astropy.modeling.projections.Pix2Sky_TAN.html#astropy.modeling.projections.Pix2Sky_TAN" title="TAN : Gnomonic projection &#45; pixel to sky." alt="" coords="493,562,600,590"/>
+<area shape="rect" id="node25" href="../api/astropy.modeling.projections.Sky2Pix_AZP.html#astropy.modeling.projections.Sky2Pix_AZP" title="AZP : Zenital perspective projection &#45; sky to pixel." alt="" coords="493,613,600,641"/>
+<area shape="rect" id="node35" href="../api/astropy.modeling.projections.Sky2Pix_SIN.html#astropy.modeling.projections.Sky2Pix_SIN" title="SIN : Slant othographic projection &#45; sky to pixel." alt="" coords="496,663,597,691"/>
+<area shape="rect" id="node37" href="../api/astropy.modeling.projections.Sky2Pix_STG.html#astropy.modeling.projections.Sky2Pix_STG" title="STG : Stereographic Projection &#45; sky to pixel." alt="" coords="493,714,600,742"/>
+<area shape="rect" id="node39" href="../api/astropy.modeling.projections.Sky2Pix_TAN.html#astropy.modeling.projections.Sky2Pix_TAN" title="TAN : Gnomonic Projection &#45; sky to pixel." alt="" coords="493,765,600,793"/>
+</map>

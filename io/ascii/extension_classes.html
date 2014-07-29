@@ -1,0 +1,142 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Extension Reader classes &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+    <link rel="up" title="ASCII Tables (astropy.io.ascii)" href="index.html" />
+    <link rel="next" title="convert_numpy" href="../../api/astropy.io.ascii.convert_numpy.html" />
+    <link rel="prev" title="Base class elements" href="base_classes.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../../api/astropy.io.ascii.convert_numpy.html" title="convert_numpy">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="base_classes.html" title="Base class elements">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">ASCII Tables (<tt class="docutils literal"><span class="pre">astropy.io.ascii</span></tt>)</a> &raquo;</li>
+      
+      <li>Extension Reader classes</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="extension-reader-classes">
+<span id="id1"></span><h1>Extension Reader classes<a class="headerlink" href="#extension-reader-classes" title="Permalink to this headline">¶</a></h1>
+<p>The following classes extend the base <a class="reference internal" href="../../api/astropy.io.ascii.BaseReader.html#astropy.io.ascii.BaseReader" title="astropy.io.ascii.BaseReader"><tt class="xref py py-class docutils literal"><span class="pre">BaseReader</span></tt></a> functionality to handle reading and writing
+different table formats.  Some, such as the <a class="reference internal" href="../../api/astropy.io.ascii.Basic.html#astropy.io.ascii.Basic" title="astropy.io.ascii.Basic"><tt class="xref py py-class docutils literal"><span class="pre">Basic</span></tt></a> Reader class
+are fairly general and include a number of configurable attributes.  Others
+such as <a class="reference internal" href="../../api/astropy.io.ascii.Cds.html#astropy.io.ascii.Cds" title="astropy.io.ascii.Cds"><tt class="xref py py-class docutils literal"><span class="pre">Cds</span></tt></a> or <a class="reference internal" href="../../api/astropy.io.ascii.Daophot.html#astropy.io.ascii.Daophot" title="astropy.io.ascii.Daophot"><tt class="xref py py-class docutils literal"><span class="pre">Daophot</span></tt></a> are specialized to read certain
+well-defined but idiosyncratic formats.</p>
+<ul class="simple">
+<li><a class="reference internal" href="../../api/astropy.io.ascii.AASTex.html#astropy.io.ascii.AASTex" title="astropy.io.ascii.AASTex"><tt class="xref py py-class docutils literal"><span class="pre">AASTex</span></tt></a>: AASTeX <a class="reference external" href="http://fits.gsfc.nasa.gov/standard30/deluxetable.sty">deluxetable</a> used for AAS journals</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Basic.html#astropy.io.ascii.Basic" title="astropy.io.ascii.Basic"><tt class="xref py py-class docutils literal"><span class="pre">Basic</span></tt></a>: basic table with customizable delimiters and header configurations</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Cds.html#astropy.io.ascii.Cds" title="astropy.io.ascii.Cds"><tt class="xref py py-class docutils literal"><span class="pre">Cds</span></tt></a>: <a class="reference external" href="http://vizier.u-strasbg.fr/doc/catstd.htx">CDS format table</a> (also Vizier and ApJ machine readable tables)</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.CommentedHeader.html#astropy.io.ascii.CommentedHeader" title="astropy.io.ascii.CommentedHeader"><tt class="xref py py-class docutils literal"><span class="pre">CommentedHeader</span></tt></a>: column names given in a line that begins with the comment character</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Daophot.html#astropy.io.ascii.Daophot" title="astropy.io.ascii.Daophot"><tt class="xref py py-class docutils literal"><span class="pre">Daophot</span></tt></a>: table from the IRAF DAOphot package</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.FixedWidth.html#astropy.io.ascii.FixedWidth" title="astropy.io.ascii.FixedWidth"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidth</span></tt></a>: table with fixed-width columns (see also <a class="reference internal" href="fixed_width_gallery.html#fixed-width-gallery"><em>Fixed-width Gallery</em></a>)</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.FixedWidthNoHeader.html#astropy.io.ascii.FixedWidthNoHeader" title="astropy.io.ascii.FixedWidthNoHeader"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidthNoHeader</span></tt></a>: table with fixed-width columns and no header</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.FixedWidthTwoLine.html#astropy.io.ascii.FixedWidthTwoLine" title="astropy.io.ascii.FixedWidthTwoLine"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidthTwoLine</span></tt></a>: table with fixed-width columns and a two-line header</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.HTML.html#astropy.io.ascii.HTML" title="astropy.io.ascii.HTML"><tt class="xref py py-class docutils literal"><span class="pre">HTML</span></tt></a>: HTML format table contained in a &lt;table&gt; tag</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Ipac.html#astropy.io.ascii.Ipac" title="astropy.io.ascii.Ipac"><tt class="xref py py-class docutils literal"><span class="pre">Ipac</span></tt></a>: <a class="reference external" href="http://irsa.ipac.caltech.edu/applications/DDGEN/Doc/ipac_tbl.html">IPAC format table</a></li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Latex.html#astropy.io.ascii.Latex" title="astropy.io.ascii.Latex"><tt class="xref py py-class docutils literal"><span class="pre">Latex</span></tt></a>: LaTeX table with datavalue in the <tt class="docutils literal"><span class="pre">tabular</span></tt> environment</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.NoHeader.html#astropy.io.ascii.NoHeader" title="astropy.io.ascii.NoHeader"><tt class="xref py py-class docutils literal"><span class="pre">NoHeader</span></tt></a>: basic table with no header where columns are auto-named</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Rdb.html#astropy.io.ascii.Rdb" title="astropy.io.ascii.Rdb"><tt class="xref py py-class docutils literal"><span class="pre">Rdb</span></tt></a>: tab-separated values with an extra line after the column definition line</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.SExtractor.html#astropy.io.ascii.SExtractor" title="astropy.io.ascii.SExtractor"><tt class="xref py py-class docutils literal"><span class="pre">SExtractor</span></tt></a>: <a class="reference external" href="http://www.astromatic.net/software/sextractor">SExtractor format table</a></li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Tab.html#astropy.io.ascii.Tab" title="astropy.io.ascii.Tab"><tt class="xref py py-class docutils literal"><span class="pre">Tab</span></tt></a>: tab-separated values</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Csv.html#astropy.io.ascii.Csv" title="astropy.io.ascii.Csv"><tt class="xref py py-class docutils literal"><span class="pre">Csv</span></tt></a>: comma-separated values</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Extension Reader classes</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/ascii/extension_classes.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/io/ascii/extension_classes.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

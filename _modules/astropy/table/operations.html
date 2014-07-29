@@ -1,0 +1,397 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.table.operations &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="astropy.table" href="../table.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &raquo;</li>
+      <li><a href="../table.html" accesskey="U">astropy.table</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.table.operations</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">High-level table operations:</span>
+
+<span class="sd">- join()</span>
+<span class="sd">- hstack()</span>
+<span class="sd">- vstack()</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">metadata</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">np_utils</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;join&#39;</span><span class="p">,</span> <span class="s">&#39;hstack&#39;</span><span class="p">,</span> <span class="s">&#39;vstack&#39;</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_col_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">col_name_map</span><span class="p">,</span> <span class="n">idx_left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">idx_right</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">metadata_conflicts</span><span class="o">=</span><span class="s">&#39;warn&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Merge column meta data for the ``out`` table.</span>
+
+<span class="sd">    This merges column meta, which includes attributes unit, format,</span>
+<span class="sd">    and description, as well as the actual `meta` atttribute.  It is</span>
+<span class="sd">    assumed that the ``out`` table was created by merging ``tables``.</span>
+<span class="sd">    The ``col_name_map`` provides the mapping from col name in ``out``</span>
+<span class="sd">    back to the original name (which may be different).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Set column meta</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;unit&#39;</span><span class="p">,</span> <span class="s">&#39;format&#39;</span><span class="p">,</span> <span class="s">&#39;description&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">out_col</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">idx_table</span><span class="p">,</span> <span class="n">table</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tables</span><span class="p">):</span>
+            <span class="n">left_col</span> <span class="o">=</span> <span class="n">out_col</span>
+            <span class="n">right_name</span> <span class="o">=</span> <span class="n">col_name_map</span><span class="p">[</span><span class="n">out_col</span><span class="o">.</span><span class="n">name</span><span class="p">][</span><span class="n">idx_table</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">right_name</span><span class="p">:</span>
+                <span class="n">right_col</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">right_name</span><span class="p">]</span>
+                <span class="n">out_col</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">left_col</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">right_col</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attrs</span><span class="p">:</span>
+
+                    <span class="c"># Pick the metadata item that is not None, or they are both</span>
+                    <span class="c"># not None, then if they are equal, there is no conflict,</span>
+                    <span class="c"># and if they are different, there is a conflict and we</span>
+                    <span class="c"># pick the one on the right (or raise an error).</span>
+
+                    <span class="n">left_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">left_col</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                    <span class="n">right_attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">right_col</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">left_attr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="c"># This may not seem necessary since merge_attr gets set</span>
+                        <span class="c"># to right_attr, but not all objects support != which is</span>
+                        <span class="c"># needed for one of the if clauses.</span>
+                        <span class="n">merge_attr</span> <span class="o">=</span> <span class="n">right_attr</span>
+                    <span class="k">elif</span> <span class="n">right_attr</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="n">merge_attr</span> <span class="o">=</span> <span class="n">left_attr</span>
+                    <span class="k">elif</span> <span class="n">left_attr</span> <span class="o">!=</span> <span class="n">right_attr</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">metadata_conflicts</span> <span class="o">==</span> <span class="s">&#39;warn&#39;</span><span class="p">:</span>
+                            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;In merged column &#39;{0}&#39; the &#39;{1}&#39; attribute does not match &quot;</span>
+                                          <span class="s">&quot;({2} != {3}).  Using {3} for merged output&quot;</span>
+                                          <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">left_attr</span><span class="p">,</span> <span class="n">right_attr</span><span class="p">),</span>
+                                          <span class="n">metadata</span><span class="o">.</span><span class="n">MergeConflictWarning</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="n">metadata_conflicts</span> <span class="o">==</span> <span class="s">&#39;error&#39;</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">metadata</span><span class="o">.</span><span class="n">MergeConflictError</span><span class="p">(</span><span class="s">&#39;In merged column {0!r} the {1!r} attribute does not match &#39;</span>
+                                          <span class="s">&#39;({2} != {3})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">out_col</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">left_attr</span><span class="p">,</span> <span class="n">right_attr</span><span class="p">))</span>
+                        <span class="k">elif</span> <span class="n">metadata_conflicts</span> <span class="o">!=</span> <span class="s">&#39;silent&#39;</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;metadata_conflict argument must be one of &quot;silent&quot;, &quot;warn&quot;, or &quot;error&quot;&#39;</span><span class="p">)</span>
+                        <span class="n">merge_attr</span> <span class="o">=</span> <span class="n">right_attr</span>
+                    <span class="k">else</span><span class="p">:</span>  <span class="c"># left_attr == right_attr</span>
+                        <span class="n">merge_attr</span> <span class="o">=</span> <span class="n">right_attr</span>
+
+                    <span class="nb">setattr</span><span class="p">(</span><span class="n">out_col</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">merge_attr</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_merge_table_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="s">&#39;warn&#39;</span><span class="p">):</span>
+    <span class="n">out_meta</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">tables</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">out_meta</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">out_meta</span><span class="p">,</span> <span class="n">table</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">out_meta</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_list_of_tables</span><span class="p">(</span><span class="n">tables</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check that tables is a Table or sequence of Tables.  Returns the</span>
+<span class="sd">    corresponding list of Tables.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.table</span> <span class="kn">import</span> <span class="n">Table</span><span class="p">,</span> <span class="n">Row</span>
+
+    <span class="c"># Make sure we have a list of things</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">):</span>
+        <span class="n">tables</span> <span class="o">=</span> <span class="p">[</span><span class="n">tables</span><span class="p">]</span>
+
+    <span class="c"># Make sure each thing is a Table or Row</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">Table</span><span class="p">,</span> <span class="n">Row</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;`tables` arg must be a Table or sequence of Tables or Rows&#39;</span><span class="p">)</span>
+
+    <span class="c"># Convert any Rows to Tables</span>
+    <span class="n">tables</span> <span class="o">=</span> <span class="p">[(</span><span class="n">x</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Table</span><span class="p">)</span> <span class="k">else</span> <span class="n">Table</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">tables</span>
+
+
+<div class="viewcode-block" id="join"><a class="viewcode-back" href="../../../api/astropy.table.join.html#astropy.table.join">[docs]</a><span class="k">def</span> <span class="nf">join</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">keys</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">join_type</span><span class="o">=</span><span class="s">&#39;inner&#39;</span><span class="p">,</span>
+         <span class="n">uniq_col_name</span><span class="o">=</span><span class="s">&#39;{col_name}_{table_name}&#39;</span><span class="p">,</span>
+         <span class="n">table_names</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;1&#39;</span><span class="p">,</span> <span class="s">&#39;2&#39;</span><span class="p">],</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="s">&#39;warn&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a join of the left table with the right table on specified keys.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    left : Table object or a value that will initialize a Table object</span>
+<span class="sd">        Left side table in the join</span>
+<span class="sd">    right : Table object or a value that will initialize a Table object</span>
+<span class="sd">        Right side table in the join</span>
+<span class="sd">    keys : str or list of str</span>
+<span class="sd">        Name(s) of column(s) used to match rows of left and right tables.</span>
+<span class="sd">        Default is to use all columns which are common to both tables.</span>
+<span class="sd">    join_type : str</span>
+<span class="sd">        Join type (&#39;inner&#39; | &#39;outer&#39; | &#39;left&#39; | &#39;right&#39;), default is &#39;inner&#39;</span>
+<span class="sd">    uniq_col_name : str or None</span>
+<span class="sd">        String generate a unique output column name in case of a conflict.</span>
+<span class="sd">        The default is &#39;{col_name}_{table_name}&#39;.</span>
+<span class="sd">    table_names : list of str or None</span>
+<span class="sd">        Two-element list of table names used when generating unique output</span>
+<span class="sd">        column names.  The default is [&#39;1&#39;, &#39;2&#39;].</span>
+<span class="sd">    metadata_conflicts : str</span>
+<span class="sd">        How to proceed with metadata conflicts. This should be one of:</span>
+<span class="sd">            * ``&#39;silent&#39;``: silently pick the last conflicting meta-data value</span>
+<span class="sd">            * ``&#39;warn&#39;``: pick the last conflicting meta-data value, but emit a warning (default)</span>
+<span class="sd">            * ``&#39;error&#39;``: raise an exception.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.table</span> <span class="kn">import</span> <span class="n">Table</span>
+
+    <span class="c"># Try converting inputs to Table as needed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">left</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">right</span><span class="p">)</span>
+
+    <span class="n">col_name_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="n">out_data</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">left</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">right</span><span class="o">.</span><span class="n">_data</span><span class="p">,</span> <span class="n">keys</span><span class="p">,</span> <span class="n">join_type</span><span class="p">,</span>
+                             <span class="n">uniq_col_name</span><span class="p">,</span> <span class="n">table_names</span><span class="p">,</span> <span class="n">col_name_map</span><span class="p">)</span>
+    <span class="c"># Create the output (Table or subclass of Table)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span>
+
+    <span class="c"># Merge the column and table meta data. Table subclasses might override</span>
+    <span class="c"># these methods for custom merge behavior.</span>
+    <span class="n">_merge_col_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="n">col_name_map</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+    <span class="n">_merge_table_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="p">[</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span>
+
+</div>
+<div class="viewcode-block" id="vstack"><a class="viewcode-back" href="../../../api/astropy.table.vstack.html#astropy.table.vstack">[docs]</a><span class="k">def</span> <span class="nf">vstack</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">join_type</span><span class="o">=</span><span class="s">&#39;outer&#39;</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="s">&#39;warn&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stack tables vertically (along rows)</span>
+
+<span class="sd">    A ``join_type`` of &#39;exact&#39; means that the tables must all</span>
+<span class="sd">    have exactly the same column names (though the order can vary).  If</span>
+<span class="sd">    ``join_type`` is &#39;inner&#39; then the intersection of common columns will</span>
+<span class="sd">    be output.  A value of &#39;outer&#39; (default) means the output will have the union of</span>
+<span class="sd">    all columns, with table values being masked where no common values are</span>
+<span class="sd">    available.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    tables : Table or list of Table objects</span>
+<span class="sd">        Table(s) to stack along rows (vertically) with the current table</span>
+<span class="sd">    join_type : str</span>
+<span class="sd">        Join type (&#39;inner&#39; | &#39;exact&#39; | &#39;outer&#39;), default is &#39;exact&#39;</span>
+<span class="sd">    metadata_conflicts : str</span>
+<span class="sd">        How to proceed with metadata conflicts. This should be one of:</span>
+<span class="sd">            * ``&#39;silent&#39;``: silently pick the last conflicting meta-data value</span>
+<span class="sd">            * ``&#39;warn&#39;``: pick the last conflicting meta-data value, but emit a warning (default)</span>
+<span class="sd">            * ``&#39;error&#39;``: raise an exception.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    To stack two tables along rows do::</span>
+
+<span class="sd">      &gt;&gt;&gt; from astropy.table import vstack, Table</span>
+<span class="sd">      &gt;&gt;&gt; t1 = Table({&#39;a&#39;: [1, 2], &#39;b&#39;: [3, 4]}, names=(&#39;a&#39;, &#39;b&#39;))</span>
+<span class="sd">      &gt;&gt;&gt; t2 = Table({&#39;a&#39;: [5, 6], &#39;b&#39;: [7, 8]}, names=(&#39;a&#39;, &#39;b&#39;))</span>
+<span class="sd">      &gt;&gt;&gt; print(t1)</span>
+<span class="sd">       a   b</span>
+<span class="sd">      --- ---</span>
+<span class="sd">        1   3</span>
+<span class="sd">        2   4</span>
+<span class="sd">      &gt;&gt;&gt; print(t2)</span>
+<span class="sd">       a   b</span>
+<span class="sd">      --- ---</span>
+<span class="sd">        5   7</span>
+<span class="sd">        6   8</span>
+<span class="sd">      &gt;&gt;&gt; print(vstack([t1, t2]))</span>
+<span class="sd">       a   b</span>
+<span class="sd">      --- ---</span>
+<span class="sd">        1   3</span>
+<span class="sd">        2   4</span>
+<span class="sd">        5   7</span>
+<span class="sd">        6   8</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.table</span> <span class="kn">import</span> <span class="n">Table</span>
+
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">_get_list_of_tables</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span>  <span class="c"># validates input</span>
+    <span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">_data</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">]</span>
+    <span class="n">col_name_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">out_data</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">join_type</span><span class="p">,</span> <span class="n">col_name_map</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span>
+
+    <span class="c"># Merge column and table metadata</span>
+    <span class="n">_merge_col_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">col_name_map</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+    <span class="n">_merge_table_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span>
+
+</div>
+<div class="viewcode-block" id="hstack"><a class="viewcode-back" href="../../../api/astropy.table.hstack.html#astropy.table.hstack">[docs]</a><span class="k">def</span> <span class="nf">hstack</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">join_type</span><span class="o">=</span><span class="s">&#39;outer&#39;</span><span class="p">,</span>
+           <span class="n">uniq_col_name</span><span class="o">=</span><span class="s">&#39;{col_name}_{table_name}&#39;</span><span class="p">,</span> <span class="n">table_names</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+           <span class="n">metadata_conflicts</span><span class="o">=</span><span class="s">&#39;warn&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stack tables along columns (horizontally)</span>
+
+<span class="sd">    A ``join_type`` of &#39;exact&#39; means that the tables must all</span>
+<span class="sd">    have exactly the same number of rows.  If ``join_type`` is &#39;inner&#39; then</span>
+<span class="sd">    the intersection of rows will be output.  A value of &#39;outer&#39; (default) means</span>
+<span class="sd">    the output will have the union of all rows, with table values being</span>
+<span class="sd">    masked where no common values are available.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    tables : List of Table objects</span>
+<span class="sd">        Tables to stack along columns (horizontally) with the current table</span>
+<span class="sd">    join_type : str</span>
+<span class="sd">        Join type (&#39;inner&#39; | &#39;exact&#39; | &#39;outer&#39;), default is &#39;outer&#39;</span>
+<span class="sd">    uniq_col_name : str or None</span>
+<span class="sd">        String generate a unique output column name in case of a conflict.</span>
+<span class="sd">        The default is &#39;{col_name}_{table_name}&#39;.</span>
+<span class="sd">    table_names : list of str or None</span>
+<span class="sd">        Two-element list of table names used when generating unique output</span>
+<span class="sd">        column names.  The default is [&#39;1&#39;, &#39;2&#39;, ..].</span>
+<span class="sd">    col_name_map : empty dict or None</span>
+<span class="sd">        If passed as a dict then it will be updated in-place with the</span>
+<span class="sd">        mapping of output to input column names.</span>
+<span class="sd">    metadata_conflicts : str</span>
+<span class="sd">        How to proceed with metadata conflicts. This should be one of:</span>
+<span class="sd">            * ``&#39;silent&#39;``: silently pick the last conflicting meta-data value</span>
+<span class="sd">            * ``&#39;warn&#39;``: pick the last conflicting meta-data value, but emit a warning (default)</span>
+<span class="sd">            * ``&#39;error&#39;``: raise an exception.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    To stack two tables horizontally (along columns) do::</span>
+
+<span class="sd">      &gt;&gt;&gt; from astropy.table import Table, hstack</span>
+<span class="sd">      &gt;&gt;&gt; t1 = Table({&#39;a&#39;: [1, 2], &#39;b&#39;: [3, 4]}, names=(&#39;a&#39;, &#39;b&#39;))</span>
+<span class="sd">      &gt;&gt;&gt; t2 = Table({&#39;c&#39;: [5, 6], &#39;d&#39;: [7, 8]}, names=(&#39;c&#39;, &#39;d&#39;))</span>
+<span class="sd">      &gt;&gt;&gt; print(t1)</span>
+<span class="sd">       a   b</span>
+<span class="sd">      --- ---</span>
+<span class="sd">        1   3</span>
+<span class="sd">        2   4</span>
+<span class="sd">      &gt;&gt;&gt; print(t2)</span>
+<span class="sd">       c   d</span>
+<span class="sd">      --- ---</span>
+<span class="sd">        5   7</span>
+<span class="sd">        6   8</span>
+<span class="sd">      &gt;&gt;&gt; print(hstack([t1, t2]))</span>
+<span class="sd">       a   b   c   d</span>
+<span class="sd">      --- --- --- ---</span>
+<span class="sd">        1   3   5   7</span>
+<span class="sd">        2   4   6   8</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.table</span> <span class="kn">import</span> <span class="n">Table</span>
+
+    <span class="n">tables</span> <span class="o">=</span> <span class="n">_get_list_of_tables</span><span class="p">(</span><span class="n">tables</span><span class="p">)</span>  <span class="c"># validates input</span>
+    <span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">table</span><span class="o">.</span><span class="n">_data</span> <span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">]</span>
+    <span class="n">col_name_map</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">out_data</span> <span class="o">=</span> <span class="n">np_utils</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="n">arrays</span><span class="p">,</span> <span class="n">join_type</span><span class="p">,</span> <span class="n">uniq_col_name</span><span class="p">,</span> <span class="n">table_names</span><span class="p">,</span>
+                               <span class="n">col_name_map</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span>
+
+    <span class="n">_merge_col_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">col_name_map</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+    <span class="n">_merge_table_meta</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">tables</span><span class="p">,</span> <span class="n">metadata_conflicts</span><span class="o">=</span><span class="n">metadata_conflicts</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

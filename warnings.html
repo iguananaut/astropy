@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Python warnings system &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="index.html" />
+    <link rel="next" title="Astropy Core Package Utilities (astropy.utils)" href="utils/index.html" />
+    <link rel="prev" title="LoggingError" href="api/astropy.logger.LoggingError.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="genindex.html">Index</a></li>
+    <li><a title="Module Index" href="py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="utils/index.html" title="Astropy Core Package Utilities (astropy.utils)">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="api/astropy.logger.LoggingError.html" title="LoggingError">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Python warnings system</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="python-warnings-system">
+<h1>Python warnings system<a class="headerlink" href="#python-warnings-system" title="Permalink to this headline">¶</a></h1>
+<p>Astropy uses the Python <a class="reference external" href="http://docs.python.org/library/warnings.html#module-warnings" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">warnings</span></tt></a> module to issue warning messages.  The
+details of using the warnings module are general to Python, and apply to any
+Python software that uses this system.  The user can suppress the warnings
+using the python command line argument <tt class="docutils literal"><span class="pre">-W&quot;ignore&quot;</span></tt> when starting an
+interactive python session.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python -W&quot;ignore&quot;
+</pre></div>
+</div>
+<p>The user may also use the command line argument when running a python script as
+follows:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python -W&quot;ignore&quot; myscript.py
+</pre></div>
+</div>
+<p>It is also possible to suppress warnings from within a python script.  For
+instance, the warnings issued from a single call to the writeto convenience
+function may be suppressed from within a python script as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">UserWarning</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fits</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="nb">file</span><span class="p">,</span> <span class="n">im</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>However, warning filters may also be modified just within a certain context
+using <a class="reference external" href="http://docs.python.org/library/warnings.html#warnings.catch_warnings" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">warnings.catch_warnings</span></tt></a>.</p>
+<p>Astropy also issues warnings when deprecated API features are used.  In Python
+2.7 and up deprecation warnings are ignored by default.  To run Python with
+deprecation warnings enabled, either start Python with the <tt class="docutils literal"><span class="pre">-Wall</span></tt> argument,
+or you can enable deprecation warnings specifically with <tt class="docutils literal"><span class="pre">-Wd</span></tt>.</p>
+<p>In Python versions below 2.7, if you wish to <em>squelch</em> deprecation warnings,
+you can start Python with <tt class="docutils literal"><span class="pre">-Wi::Deprecation</span></tt>.  This sets all deprecation
+warnings to ignored.  See
+<a class="reference external" href="http://docs.python.org/using/cmdline.html#cmdoption-unittest-discover-W">http://docs.python.org/using/cmdline.html#cmdoption-unittest-discover-W</a>
+for more information on the -W argument.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Python warnings system</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/warnings.rst">Edit This Page on Github</a> &nbsp;
+    <a href="_sources/warnings.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+set_guess
+==========================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autofunction:: set_guess

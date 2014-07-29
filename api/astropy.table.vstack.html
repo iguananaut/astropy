@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>vstack &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Data Tables (astropy.table)" href="../table/index.html" />
+    <link rel="next" title="Column" href="astropy.table.Column.html" />
+    <link rel="prev" title="join" href="astropy.table.join.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.table.Column.html" title="Column">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.table.join.html" title="join">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../table/index.html" accesskey="U">Data Tables (<tt class="docutils literal"><span class="pre">astropy.table</span></tt>)</a> &raquo;</li>
+      
+      <li>vstack</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vstack">
+<h1>vstack<a class="headerlink" href="#vstack" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.table.vstack">
+<tt class="descclassname">astropy.table.</tt><tt class="descname">vstack</tt><big>(</big><em>tables</em>, <em>join_type=u'outer'</em>, <em>metadata_conflicts=u'warn'</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/operations.html#vstack"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/operations.py#L161" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.vstack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stack tables vertically (along rows)</p>
+<p>A <tt class="docutils literal"><span class="pre">join_type</span></tt> of &#8216;exact&#8217; means that the tables must all
+have exactly the same column names (though the order can vary).  If
+<tt class="docutils literal"><span class="pre">join_type</span></tt> is &#8216;inner&#8217; then the intersection of common columns will
+be output.  A value of &#8216;outer&#8217; (default) means the output will have the union of
+all columns, with table values being masked where no common values are
+available.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>tables</strong> : Table or list of Table objects</p>
+<blockquote>
+<div><p>Table(s) to stack along rows (vertically) with the current table</p>
+</div></blockquote>
+<p><strong>join_type</strong> : str</p>
+<blockquote>
+<div><p>Join type (&#8216;inner&#8217; | &#8216;exact&#8217; | &#8216;outer&#8217;), default is &#8216;exact&#8217;</p>
+</div></blockquote>
+<p><strong>metadata_conflicts</strong> : str</p>
+<blockquote class="last">
+<div><dl class="docutils">
+<dt>How to proceed with metadata conflicts. This should be one of:</dt>
+<dd><ul class="first last simple">
+<li><tt class="docutils literal"><span class="pre">'silent'</span></tt>: silently pick the last conflicting meta-data value</li>
+<li><tt class="docutils literal"><span class="pre">'warn'</span></tt>: pick the last conflicting meta-data value, but emit a warning (default)</li>
+<li><tt class="docutils literal"><span class="pre">'error'</span></tt>: raise an exception.</li>
+</ul>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>To stack two tables along rows do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">vstack</span><span class="p">,</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t1</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span><span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]},</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t2</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span><span class="s">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">]},</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+<span class="go"> a   b</span>
+<span class="go">--- ---</span>
+<span class="go">  1   3</span>
+<span class="go">  2   4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+<span class="go"> a   b</span>
+<span class="go">--- ---</span>
+<span class="go">  5   7</span>
+<span class="go">  6   8</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">vstack</span><span class="p">([</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">]))</span>
+<span class="go"> a   b</span>
+<span class="go">--- ---</span>
+<span class="go">  1   3</span>
+<span class="go">  2   4</span>
+<span class="go">  5   7</span>
+<span class="go">  6   8</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">vstack</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.table.vstack.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.table.vstack.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

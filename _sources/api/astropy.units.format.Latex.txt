@@ -1,0 +1,44 @@
+
+
+Latex
+==========================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: Latex
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Latex.to_string
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: to_string
+
+   
+   

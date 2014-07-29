@@ -1,0 +1,450 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.nddata.nduncertainty &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="astropy.nddata" href="../nddata.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &raquo;</li>
+      <li><a href="../nddata.html" accesskey="U">astropy.nddata</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.nddata.nduncertainty</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">import</span> <span class="nn">abc</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..utils.compat</span> <span class="kn">import</span> <span class="n">ignored</span>
+<span class="kn">from</span> <span class="nn">..units</span> <span class="kn">import</span> <span class="n">Quantity</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;MissingDataAssociationException&#39;</span><span class="p">,</span>
+           <span class="s">&#39;IncompatibleUncertaintiesException&#39;</span><span class="p">,</span> <span class="s">&#39;NDUncertainty&#39;</span><span class="p">,</span>
+           <span class="s">&#39;StdDevUncertainty&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="IncompatibleUncertaintiesException"><a class="viewcode-back" href="../../../api/astropy.nddata.IncompatibleUncertaintiesException.html#astropy.nddata.IncompatibleUncertaintiesException">[docs]</a><span class="k">class</span> <span class="nc">IncompatibleUncertaintiesException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This exception should be used to indicate cases in which uncertainties</span>
+<span class="sd">    with two different classes can not be propagated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+</div>
+<div class="viewcode-block" id="MissingDataAssociationException"><a class="viewcode-back" href="../../../api/astropy.nddata.MissingDataAssociationException.html#astropy.nddata.MissingDataAssociationException">[docs]</a><span class="k">class</span> <span class="nc">MissingDataAssociationException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This exception should be used to indicate that an uncertainty instance has</span>
+<span class="sd">    not been associated with a parent `~astropy.nddata.NDData` object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+</div>
+<div class="viewcode-block" id="NDUncertainty"><a class="viewcode-back" href="../../../api/astropy.nddata.NDUncertainty.html#astropy.nddata.NDUncertainty">[docs]</a><span class="k">class</span> <span class="nc">NDUncertainty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    This is the base class for uncertainty classes used with NDData. It is</span>
+<span class="sd">    implemented as an abstract class and should never be directly</span>
+<span class="sd">    instantiated.</span>
+
+<span class="sd">    Classes inheriting from NDData should overload the ``propagate_*``</span>
+<span class="sd">    methods, keeping the call signature the same. The propagate methods can</span>
+<span class="sd">    assume that a `parent_nddata` attribute is present which links to the parent_nddata</span>
+<span class="sd">    dataset, and take an `~astropy.nddata.NDData` instance as the positional</span>
+<span class="sd">    argument, *not* an `~astropy.nddata.NDUncertainty` instance, because the</span>
+<span class="sd">    `~astropy.nddata.NDData` instance can be used to access both the data and</span>
+<span class="sd">    the uncertainties (some propagations require the data values).</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">abc</span><span class="o">.</span><span class="n">ABCMeta</span>
+
+    <span class="c"># Indicates whether the class supports the propagation of correlated</span>
+    <span class="c"># uncertainties</span>
+    <span class="n">supports_correlated</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent_nddata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MissingDataAssociationException</span><span class="p">(</span><span class="s">&quot;uncertainty is not associated with an NDData object&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span>
+
+    <span class="nd">@parent_nddata.setter</span>
+    <span class="k">def</span> <span class="nf">parent_nddata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="NDUncertainty.propagate_add"><a class="viewcode-back" href="../../../api/astropy.nddata.NDUncertainty.html#astropy.nddata.NDUncertainty.propagate_add">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for addition.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IncompatibleUncertaintiesException</span>
+<span class="sd">            Raised if the method does not know how to add the uncertainties</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+</div>
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="NDUncertainty.propagate_subtract"><a class="viewcode-back" href="../../../api/astropy.nddata.NDUncertainty.html#astropy.nddata.NDUncertainty.propagate_subtract">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for subtraction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IncompatibleUncertaintiesException</span>
+<span class="sd">            Raised if the method does not know how to add the uncertainties</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+</div>
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="NDUncertainty.propagate_multiply"><a class="viewcode-back" href="../../../api/astropy.nddata.NDUncertainty.html#astropy.nddata.NDUncertainty.propagate_multiply">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for multiplication.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+</div>
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="NDUncertainty.propagate_divide"><a class="viewcode-back" href="../../../api/astropy.nddata.NDUncertainty.html#astropy.nddata.NDUncertainty.propagate_divide">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for division.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+</div></div>
+<div class="viewcode-block" id="StdDevUncertainty"><a class="viewcode-back" href="../../../api/astropy.nddata.StdDevUncertainty.html#astropy.nddata.StdDevUncertainty">[docs]</a><span class="k">class</span> <span class="nc">StdDevUncertainty</span><span class="p">(</span><span class="n">NDUncertainty</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A class for standard deviation uncertainties</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">support_correlated</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">StdDevUncertainty</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="n">array</span><span class="o">.</span><span class="n">unit</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">parent_nddata</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">MissingDataAssociationException</span><span class="p">(</span><span class="s">&quot;Uncertainty is not associated with an NDData object&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">MissingDataAssociationException</span><span class="p">(</span><span class="s">&quot;Uncertainty is not associated with an NDData object&quot;</span><span class="p">)</span>
+
+    <span class="nd">@parent_nddata.setter</span>
+    <span class="k">def</span> <span class="nf">parent_nddata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;parent shape does not match array data shape&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent_nddata</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_array</span>
+
+    <span class="nd">@array.setter</span>
+    <span class="k">def</span> <span class="nf">array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">ignored</span><span class="p">(</span><span class="n">MissingDataAssociationException</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_nddata</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                            <span class="s">&quot;array shape does not match parent data shape&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_array</span> <span class="o">=</span> <span class="n">value</span>
+
+<div class="viewcode-block" id="StdDevUncertainty.propagate_add"><a class="viewcode-back" href="../../../api/astropy.nddata.StdDevUncertainty.html#astropy.nddata.StdDevUncertainty.propagate_add">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for addition.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IncompatibleUncertaintiesException</span>
+<span class="sd">            Raised if the method does not know how to propagate the uncertainties</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">StdDevUncertainty</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">IncompatibleUncertaintiesException</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set in other_nddata&quot;</span><span class="p">)</span>
+
+        <span class="n">result_uncertainty</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">()</span>
+        <span class="n">result_uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_uncertainty</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">            Slice the standard deviation array using standard numpy slicing</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">new_array</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">new_array</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StdDevUncertainty.propagate_subtract"><a class="viewcode-back" href="../../../api/astropy.nddata.StdDevUncertainty.html#astropy.nddata.StdDevUncertainty.propagate_subtract">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for subtraction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IncompatibleUncertaintiesException</span>
+<span class="sd">            Raised if the method does not know how to propagate the uncertainties</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">StdDevUncertainty</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">IncompatibleUncertaintiesException</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set in other_nddata&quot;</span><span class="p">)</span>
+
+        <span class="n">result_uncertainty</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">()</span>
+        <span class="n">result_uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_uncertainty</span>
+</div>
+<div class="viewcode-block" id="StdDevUncertainty.propagate_multiply"><a class="viewcode-back" href="../../../api/astropy.nddata.StdDevUncertainty.html#astropy.nddata.StdDevUncertainty.propagate_multiply">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for mutliplication.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IncompatibleUncertaintiesException</span>
+<span class="sd">            Raised if the method does not know how to propagate the uncertainties</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">StdDevUncertainty</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">IncompatibleUncertaintiesException</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set in other_nddata&quot;</span><span class="p">)</span>
+
+        <span class="n">result_uncertainty</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">()</span>
+        <span class="n">result_uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_nddata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                                            <span class="o">+</span> <span class="p">(</span><span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">/</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                                    <span class="o">*</span> <span class="n">result_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_uncertainty</span>
+</div>
+<div class="viewcode-block" id="StdDevUncertainty.propagate_divide"><a class="viewcode-back" href="../../../api/astropy.nddata.StdDevUncertainty.html#astropy.nddata.StdDevUncertainty.propagate_divide">[docs]</a>    <span class="k">def</span> <span class="nf">propagate_divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_nddata</span><span class="p">,</span> <span class="n">result_data</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Propagate uncertainties for division.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other_nddata : NDData instance</span>
+<span class="sd">            The data for the second other_nddata in a + b</span>
+<span class="sd">        result_data : `~numpy.ndarray` instance</span>
+<span class="sd">            The data array that is the result of the addition</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result_uncertainty : NDUncertainty instance</span>
+<span class="sd">            The resulting uncertainty</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        IncompatibleUncertaintiesException</span>
+<span class="sd">            Raised if the method does not know how to propagate the uncertainties</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">StdDevUncertainty</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">IncompatibleUncertaintiesException</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;standard deviation values are not set in other_nddata&quot;</span><span class="p">)</span>
+
+        <span class="n">result_uncertainty</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">()</span>
+        <span class="n">result_uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">array</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent_nddata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+                                            <span class="o">+</span> <span class="p">(</span><span class="n">other_nddata</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span> <span class="o">/</span> <span class="n">other_nddata</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+                                    <span class="o">*</span> <span class="n">result_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_uncertainty</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,77 @@
+
+.. include:: ../coordinates/references.txt
+
+
+SkyCoord
+============================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: SkyCoord
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~SkyCoord.frame
+      ~SkyCoord.representation
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~SkyCoord.from_name
+      ~SkyCoord.match_to_catalog_3d
+      ~SkyCoord.match_to_catalog_sky
+      ~SkyCoord.position_angle
+      ~SkyCoord.separation
+      ~SkyCoord.separation_3d
+      ~SkyCoord.to_string
+      ~SkyCoord.transform_to
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: frame
+   .. autoattribute:: representation
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: from_name
+   .. automethod:: match_to_catalog_3d
+   .. automethod:: match_to_catalog_sky
+   .. automethod:: position_angle
+   .. automethod:: separation
+   .. automethod:: separation_3d
+   .. automethod:: to_string
+   .. automethod:: transform_to
+
+   
+   

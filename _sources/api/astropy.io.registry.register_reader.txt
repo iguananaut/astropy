@@ -1,0 +1,8 @@
+
+
+register_reader
+===================================
+
+.. currentmodule:: astropy.io.registry
+
+.. autofunction:: register_reader

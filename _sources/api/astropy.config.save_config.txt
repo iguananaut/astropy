@@ -1,0 +1,8 @@
+
+
+save_config
+==========================
+
+.. currentmodule:: astropy.config
+
+.. autofunction:: save_config

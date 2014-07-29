@@ -1,0 +1,506 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Writing Documentation &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="Astropy Docstring Rules" href="docrules.html" />
+    <link rel="prev" title="Emacs setup for following coding guidelines" href="codeguide_emacs.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="docrules.html" title="Astropy Docstring Rules">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="codeguide_emacs.html" title="Emacs setup for following coding guidelines">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Writing Documentation</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="writing-documentation">
+<span id="documentation-guidelines"></span><h1>Writing Documentation<a class="headerlink" href="#writing-documentation" title="Permalink to this headline">¶</a></h1>
+<p>High-quality, consistent documentation for astronomy code is one of
+the major goals of the Astropy project.  Hence, we describe our
+documentation procedures and rules here.  For the astropy core
+project we try to keep to these as closely as possible, while the
+standards for affiliated packages are somewhat looser.
+(These procedures and guidelines are still recommended for affiliated
+packages, as they encourage useful documentation, a characteristic
+often lacking in professional astronomy software.)</p>
+<div class="section" id="building-the-documentation-from-source">
+<h2>Building the Documentation from source<a class="headerlink" href="#building-the-documentation-from-source" title="Permalink to this headline">¶</a></h2>
+<p>For information about building the documentation from source, see
+the <a class="reference internal" href="../install.html#builddocs"><em>Building documentation</em></a> section in the installation instructions.</p>
+</div>
+<div class="section" id="astropy-documentation-rules-and-guidelines">
+<h2>Astropy Documentation Rules and Guidelines<a class="headerlink" href="#astropy-documentation-rules-and-guidelines" title="Permalink to this headline">¶</a></h2>
+<p>This section describes the standards for documentation format affiliated
+packages that must follow for consideration of integration into the core
+module, as well as the standard Astropy docstring format.</p>
+<ul class="simple">
+<li>All documentation should be written use the Sphinx documentation tool.</li>
+<li>The template package will provide a recommended general structure for
+documentation.</li>
+<li>Docstrings must be provided for all public classes, methods, and functions.</li>
+<li>Docstrings will be incorporated into the documentation using a version of
+numpydoc included with Astropy, and should follow the <a class="reference internal" href="docrules.html"><em>Astropy Docstring Rules</em></a>.</li>
+<li>Examples and/or tutorials are strongly encouraged for typical use-cases of a
+particular module or class.</li>
+<li>Any external package dependencies aside from <a class="reference external" href="http://numpy.scipy.org/">NumPy</a>, <a class="reference external" href="http://www.scipy.org">SciPy</a>, or <a class="reference external" href="http://matplotlib.sourceforge.net/">Matplotlib</a>
+must be explicitly mentioned in the documentation.</li>
+<li>Configuration options using the <a class="reference internal" href="../config/index.html#module-astropy.config" title="astropy.config"><tt class="xref py py-mod docutils literal"><span class="pre">astropy.config</span></tt></a> mechanisms must be
+explicitly mentioned in the documentation.</li>
+</ul>
+<p>The details of the docstring format are described on a separate page:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="docrules.html">Astropy Docstring Rules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#docstring-standard">Docstring Standard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#sections">Sections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#documenting-classes">Documenting classes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="docrules.html#class-docstrings">Class docstrings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="docrules.html#method-docstrings">Method docstrings</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#documenting-class-instances">Documenting class instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#documenting-constants">Documenting constants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#documenting-modules">Documenting modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#other-points-to-keep-in-mind">Other points to keep in mind</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#common-rest-concepts">Common reST concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docrules.html#conclusion">Conclusion</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="sphinx-documentation-themes">
+<h2>Sphinx Documentation Themes<a class="headerlink" href="#sphinx-documentation-themes" title="Permalink to this headline">¶</a></h2>
+<p>A custom Sphinx HTML theme is included in the <a class="reference external" href="https://github.com/astropy/astropy-helpers">astropy-helpers</a> package (it is
+also included in Astropy&#8217;s source package, but this will be removed after v0.4
+and subsequently only be available through astropy-helpers). This allows the
+theme to be used by both Astropy and affiliated packages. This is done by
+setting the theme in the global Astropy sphinx configuration, which is imported
+in the sphinx configuration of both Astropy and affiliated packages.</p>
+<div class="section" id="using-a-different-theme-for-astropy-or-affiliated-packages">
+<h3>Using a different theme for <tt class="docutils literal"><span class="pre">astropy</span></tt> or affiliated packages<a class="headerlink" href="#using-a-different-theme-for-astropy-or-affiliated-packages" title="Permalink to this headline">¶</a></h3>
+<p>A different theme can be used by overriding a few sphinx
+configuration variables set in the global configuration.</p>
+<ul class="simple">
+<li>To use a different theme, set <tt class="docutils literal"><span class="pre">'html_theme'</span></tt> to the name of a desired
+builtin Sphinx theme or a custom theme in <tt class="docutils literal"><span class="pre">package-name/docs/conf.py</span></tt>
+(where <tt class="docutils literal"><span class="pre">'package-name'</span></tt> is &#8220;astropy&#8221; or the name of the affiliated
+package).</li>
+<li>To use a custom theme, additionally: place the theme in
+<tt class="docutils literal"><span class="pre">package-name/docs/_themes</span></tt> and add <tt class="docutils literal"><span class="pre">'_themes'</span></tt> to the
+<tt class="docutils literal"><span class="pre">'html_theme_path'</span></tt> variable. See the <a class="reference external" href="http://sphinx.pocoo.org">Sphinx</a> documentation for more
+details on theming.</li>
+</ul>
+</div>
+<div class="section" id="adding-more-custom-themes-to-astropy">
+<h3>Adding more custom themes to astropy<a class="headerlink" href="#adding-more-custom-themes-to-astropy" title="Permalink to this headline">¶</a></h3>
+<p>Additional custom themes can be included in the astropy source tree by
+placing them in the directory <tt class="docutils literal"><span class="pre">astropy/astropy/sphinx/themes</span></tt>, and
+editing <tt class="docutils literal"><span class="pre">astropy/astropy/sphinx/setup_package.py</span></tt> to include the theme
+(so that it is installed).</p>
+</div>
+</div>
+<div class="section" id="sphinx-extensions">
+<h2>Sphinx extensions<a class="headerlink" href="#sphinx-extensions" title="Permalink to this headline">¶</a></h2>
+<p>Astropy-helpers includes a number of sphinx extensions that are used in Astropy
+and its affiliated packages to facilitate easily documenting code in a
+homogeneous and readable way.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">These extensions are also included with Astropy itself in v0.4 and
+below, to facilitate backwards-compatibility for existing affiliated
+packages.  The versions actually in astropy will not receive further
+updates, however, and will likely be removed in a future version. So
+we strongly recommend using the astropy-helper versions instead.</p>
+</div>
+<div class="section" id="module-astropy_helpers.sphinx.ext.automodapi">
+<span id="automodapi-extension"></span><h3>automodapi Extension<a class="headerlink" href="#module-astropy_helpers.sphinx.ext.automodapi" title="Permalink to this headline">¶</a></h3>
+<p>This sphinx extension adds a tools to simplify generating the API
+documentation for Astropy packages and affiliated packages.</p>
+<div class="section" id="automodapi-directive">
+<span id="automodapi"></span><h4>automodapi directive<a class="headerlink" href="#automodapi-directive" title="Permalink to this headline">¶</a></h4>
+<p>This directive takes a single argument that must be a module or package. It
+will produce a block of documentation that includes the docstring for the
+package, an <a class="reference internal" href="#automodsumm"><em>automodsumm directive</em></a> directive, and an <a class="reference internal" href="#automod-diagram"><em>automod-diagram directive</em></a> if
+there are any classes in the module. If only the main docstring of the
+module/package is desired in the documentation, use <a class="reference external" href="http://sphinx-doc.org/latest/ext/autodoc.html?highlight=automodule#directive-automodule">automodule</a> instead of
+<a class="reference internal" href="#automodapi">automodapi</a>.</p>
+<p>It accepts the following options:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:no-inheritance-diagram:</span></tt></dt>
+<dd><p class="first last">If present, the inheritance diagram will not be shown even if
+the module/package has classes.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:skip:</span> <span class="pre">str</span></tt></dt>
+<dd><p class="first last">This option results in the
+specified object being skipped, that is the object will <em>not</em> be
+included in the generated documentation. This option may appear
+any number of times to skip multiple objects.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:no-main-docstr:</span></tt></dt>
+<dd><p class="first last">If present, the docstring for the module/package will not be generated.
+The function and class tables will still be used, however.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:headings:</span> <span class="pre">str</span></tt></dt>
+<dd><p class="first last">Specifies the characters (in one string) used as the heading
+levels used for the generated section. This must have at least 2
+characters (any after 2 will be ignored). This also <em>must</em> match
+the rest of the documentation on this page for sphinx to be
+happy. Defaults to &#8220;-^&#8221;, which matches the convention used for
+Python&#8217;s documentation, assuming the automodapi call is inside a
+top-level section (which usually uses &#8216;=&#8217;).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:no-heading:</span></tt></dt>
+<dd><p class="first last">If specified do not create a top level heading for the section.
+That is, do not create a title heading with text like &#8220;packagename
+Package&#8221;.  The actual docstring for the package/module will still be
+shown, though, unless <tt class="docutils literal"><span class="pre">:no-main-docstr:</span></tt> is given.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:allowed-package-names:</span> <span class="pre">str</span></tt></dt>
+<dd><p class="first last">Specifies the packages that functions/classes documented here are
+allowed to be from, as comma-separated list of package names. If not
+given, only objects that are actually in a subpackage of the package
+currently being documented are included.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>This extension also adds two sphinx configuration options:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">automodapi_toctreedirnm</span></tt></dt>
+<dd><p class="first last">This must be a string that specifies the name of the directory the
+automodsumm generated documentation ends up in. This directory path should
+be relative to the documentation root (e.g., same place as <tt class="docutils literal"><span class="pre">index.rst</span></tt>).
+Defaults to <tt class="docutils literal"><span class="pre">'api'</span></tt>.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">automodapi_writereprocessed</span></tt></dt>
+<dd><p class="first last">Should be a bool, and if <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, will cause <a class="reference internal" href="#automodapi">automodapi</a> to write files
+with any <a class="reference internal" href="#automodapi">automodapi</a> sections replaced with the content Sphinx
+processes after <a class="reference internal" href="#automodapi">automodapi</a> has run.  The output files are not
+actually used by sphinx, so this option is only for figuring out the
+cause of sphinx warnings or other debugging.  Defaults to <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-astropy_helpers.sphinx.ext.automodsumm">
+<span id="automodsumm-extension"></span><h3>automodsumm Extension<a class="headerlink" href="#module-astropy_helpers.sphinx.ext.automodsumm" title="Permalink to this headline">¶</a></h3>
+<p>This sphinx extension adds two directives for summarizing the public
+members of a module or package.</p>
+<p>These directives are primarily for use with the <a class="reference internal" href="#automodapi">automodapi</a> extension,
+but can be used independently.</p>
+<div class="section" id="automodsumm-directive">
+<span id="automodsumm"></span><h4>automodsumm directive<a class="headerlink" href="#automodsumm-directive" title="Permalink to this headline">¶</a></h4>
+<p>This directive will produce an &#8220;autosummary&#8221;-style table for public
+attributes of a specified module. See the <a class="reference external" href="http://sphinx-doc.org/latest/ext/autosummary.html">sphinx.ext.autosummary</a> extension
+for details on this process. The main difference from the <a class="reference external" href="http://sphinx-doc.org/latest/ext/autosummary.html#directive-autosummary">autosummary</a>
+directive is that <a class="reference external" href="http://sphinx-doc.org/latest/ext/autosummary.html#directive-autosummary">autosummary</a> requires manually inputting all attributes
+that appear in the table, while this captures the entries automatically.</p>
+<p>This directive requires a single argument that must be a module or
+package.</p>
+<p>It also accepts any options supported by the <a class="reference external" href="http://sphinx-doc.org/latest/ext/autosummary.html#directive-autosummary">autosummary</a> directive-
+see <a class="reference external" href="http://sphinx-doc.org/latest/ext/autosummary.html">sphinx.ext.autosummary</a> for details. It also accepts two additional
+options:</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:classes-only:</span></tt></dt>
+<dd><p class="first last">If present, the autosummary table will only contain entries for
+classes. This cannot be used at the same time with
+<tt class="docutils literal"><span class="pre">:functions-only:</span></tt> .</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:functions-only:</span></tt></dt>
+<dd><p class="first last">If present, the autosummary table will only contain entries for
+functions. This cannot be used at the same time with
+<tt class="docutils literal"><span class="pre">:classes-only:</span></tt> .</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:skip:</span> <span class="pre">obj1,</span> <span class="pre">[obj2,</span> <span class="pre">obj3,</span> <span class="pre">...]</span></tt></dt>
+<dd><p class="first last">If present, specifies that the listed objects should be skipped
+and not have their documentation generated, nor be includded in
+the summary table.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">:allowed-package-names:</span> <span class="pre">pkgormod1,</span> <span class="pre">[pkgormod2,</span> <span class="pre">pkgormod3,</span> <span class="pre">...]</span></tt></dt>
+<dd><p class="first last">Specifies the packages that functions/classes documented here are
+allowed to be from, as comma-separated list of package names. If not
+given, only objects that are actually in a subpackage of the package
+currently being documented are included.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>This extension also adds one sphinx configuration option:</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">automodsumm_writereprocessed</span></tt></dt>
+<dd><p class="first last">Should be a bool, and if True, will cause <a class="reference internal" href="#automodsumm">automodsumm</a> to write files
+with any <tt class="docutils literal"><span class="pre">automodsumm</span></tt> sections replaced with the content Sphinx
+processes after <tt class="docutils literal"><span class="pre">automodsumm</span></tt> has run.  The output files are not
+actually used by sphinx, so this option is only for figuring out the
+cause of sphinx warnings or other debugging.  Defaults to <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="automod-diagram-directive">
+<span id="automod-diagram"></span><h4>automod-diagram directive<a class="headerlink" href="#automod-diagram-directive" title="Permalink to this headline">¶</a></h4>
+<p>This directive will produce an inheritance diagram like that of the
+<a class="reference external" href="http://sphinx-doc.org/latest/ext/inheritance.html">sphinx.ext.inheritance_diagram</a> extension.</p>
+<p>This directive requires a single argument that must be a module or
+package. It accepts no options.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Like &#8216;inheritance-diagram&#8217;, &#8216;automod-diagram&#8217; requires
+<a class="reference external" href="http://www.graphviz.org/">graphviz</a> to generate the inheritance diagram.</p>
+</div>
+</div>
+</div>
+<div class="section" id="module-astropy_helpers.sphinx.ext.edit_on_github">
+<span id="edit-on-github-extension"></span><h3>edit_on_github Extension<a class="headerlink" href="#module-astropy_helpers.sphinx.ext.edit_on_github" title="Permalink to this headline">¶</a></h3>
+<p>This extension makes it easy to edit documentation on github.</p>
+<p>It adds links associated with each docstring that go to the
+corresponding view source page on Github.  From there, the user can
+push the &#8220;Edit&#8221; button, edit the docstring, and submit a pull request.</p>
+<p>It has the following configuration options (to be set in the project&#8217;s
+<tt class="docutils literal"><span class="pre">conf.py</span></tt>):</p>
+<ul>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_project</span></tt></dt>
+<dd><p class="first last">The name of the github project, in the form
+&#8220;username/projectname&#8221;.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_branch</span></tt></dt>
+<dd><p class="first last">The name of the branch to edit.  If this is a released version,
+this should be a git tag referring to that version.  For a
+dev version, it often makes sense for it to be &#8220;master&#8221;.  It
+may also be a git hash.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_source_root</span></tt></dt>
+<dd><p class="first last">The location within the source tree of the root of the
+Python package.  Defaults to &#8220;lib&#8221;.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_doc_root</span></tt></dt>
+<dd><p class="first last">The location within the source tree of the root of the
+documentation source.  Defaults to &#8220;doc&#8221;, but it may make sense to
+set it to &#8220;doc/source&#8221; if the project uses a separate source
+directory.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_docstring_message</span></tt></dt>
+<dd><p class="first last">The phrase displayed in the links to edit a docstring.  Defaults
+to &#8220;[edit on github]&#8221;.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_page_message</span></tt></dt>
+<dd><p class="first last">The phrase displayed in the links to edit a RST page.  Defaults
+to &#8220;[edit this page on github]&#8221;.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_help_message</span></tt></dt>
+<dd><p class="first last">The phrase displayed as a tooltip on the edit links.  Defaults to
+&#8220;Push the Edit button on the next page&#8221;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">edit_on_github_skip_regex</span></tt></dt>
+<dd><p class="first last">When the path to the .rst file matches this regular expression,
+no &#8220;edit this page on github&#8221; link will be added.  Defaults to
+<tt class="docutils literal"><span class="pre">&quot;_.*&quot;</span></tt>.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="numpydoc-extension">
+<h3>numpydoc Extension<a class="headerlink" href="#numpydoc-extension" title="Permalink to this headline">¶</a></h3>
+<p>This extension (and some related extensions) are a port of the
+<a class="reference external" href="http://pypi.python.org/pypi/numpydoc/0.3.1">numpydoc</a> extension
+written by the <a class="reference external" href="http://numpy.scipy.org/">NumPy</a> and <a class="reference external" href="http://www.scipy.org">SciPy</a>, projects, with some tweaks for
+Astropy.  Its main purposes is to reprocess docstrings from code into
+a form sphinx understands. Generally, there&#8217;s no need to interact with
+it directly, as docstrings following the <a class="reference internal" href="docrules.html"><em>Astropy Docstring Rules</em></a> will be
+processed automatically.</p>
+</div>
+<div class="section" id="other-extensions">
+<h3>Other Extensions<a class="headerlink" href="#other-extensions" title="Permalink to this headline">¶</a></h3>
+<p><tt class="docutils literal"><span class="pre">astropy_helpers.sphinx.ext</span></tt> includes a few other extensions that are
+primarily helpers for the other extensions or workarounds for undesired
+behavior.  Their APIs are not included here because we may change them in the
+future.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Writing Documentation</a><ul>
+<li><a class="reference internal" href="#building-the-documentation-from-source">Building the Documentation from source</a></li>
+<li><a class="reference internal" href="#astropy-documentation-rules-and-guidelines">Astropy Documentation Rules and Guidelines</a></li>
+<li><a class="reference internal" href="#sphinx-documentation-themes">Sphinx Documentation Themes</a><ul>
+<li><a class="reference internal" href="#using-a-different-theme-for-astropy-or-affiliated-packages">Using a different theme for <tt class="docutils literal"><span class="pre">astropy</span></tt> or affiliated packages</a></li>
+<li><a class="reference internal" href="#adding-more-custom-themes-to-astropy">Adding more custom themes to astropy</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sphinx-extensions">Sphinx extensions</a><ul>
+<li><a class="reference internal" href="#module-astropy_helpers.sphinx.ext.automodapi">automodapi Extension</a><ul>
+<li><a class="reference internal" href="#automodapi-directive">automodapi directive</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy_helpers.sphinx.ext.automodsumm">automodsumm Extension</a><ul>
+<li><a class="reference internal" href="#automodsumm-directive">automodsumm directive</a></li>
+<li><a class="reference internal" href="#automod-diagram-directive">automod-diagram directive</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy_helpers.sphinx.ext.edit_on_github">edit_on_github Extension</a></li>
+<li><a class="reference internal" href="#numpydoc-extension">numpydoc Extension</a></li>
+<li><a class="reference internal" href="#other-extensions">Other Extensions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/development/docguide.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/development/docguide.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

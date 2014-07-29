@@ -1,0 +1,1129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.utils.misc &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.utils.misc</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A &quot;grab bag&quot; of relatively small general-purpose utilities that don&#39;t have</span>
+<span class="sd">a clear module/package to live in.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+
+<span class="kn">import</span> <span class="nn">contextlib</span>
+<span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">functools</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">signal</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">textwrap</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">unicodedata</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">AstropyDeprecationWarning</span><span class="p">,</span> <span class="n">AstropyPendingDeprecationWarning</span>
+
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">..extern.six.moves</span> <span class="kn">import</span> <span class="n">urllib</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;find_current_module&#39;</span><span class="p">,</span> <span class="s">&#39;isiterable&#39;</span><span class="p">,</span> <span class="s">&#39;deprecated&#39;</span><span class="p">,</span> <span class="s">&#39;lazyproperty&#39;</span><span class="p">,</span>
+           <span class="s">&#39;deprecated_attribute&#39;</span><span class="p">,</span> <span class="s">&#39;silence&#39;</span><span class="p">,</span> <span class="s">&#39;format_exception&#39;</span><span class="p">,</span>
+           <span class="s">&#39;NumpyRNGContext&#39;</span><span class="p">,</span> <span class="s">&#39;find_api_page&#39;</span><span class="p">,</span> <span class="s">&#39;is_path_hidden&#39;</span><span class="p">,</span>
+           <span class="s">&#39;walk_skip_hidden&#39;</span><span class="p">,</span> <span class="s">&#39;JsonCustomEncoder&#39;</span><span class="p">,</span> <span class="s">&#39;indent&#39;</span><span class="p">,</span>
+           <span class="s">&#39;InheritDocstrings&#39;</span><span class="p">]</span>
+
+<span class="n">__doctest_skip__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;find_current_module&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="find_current_module"><a class="viewcode-back" href="../../../api/astropy.utils.misc.find_current_module.html#astropy.constants.find_current_module">[docs]</a><span class="k">def</span> <span class="nf">find_current_module</span><span class="p">(</span><span class="n">depth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">finddiff</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Determines the module/package from which this function is called.</span>
+
+<span class="sd">    This function has two modes, determined by the ``finddiff`` option. it</span>
+<span class="sd">    will either simply go the requested number of frames up the call</span>
+<span class="sd">    stack (if ``finddiff`` is False), or it will go up the call stack until</span>
+<span class="sd">    it reaches a module that is *not* in a specified set.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    depth : int</span>
+<span class="sd">        Specifies how far back to go in the call stack (0-indexed, so that</span>
+<span class="sd">        passing in 0 gives back `astropy.utils.misc`).</span>
+<span class="sd">    finddiff : bool or list</span>
+<span class="sd">        If False, the returned ``mod`` will just be ``depth`` frames up from</span>
+<span class="sd">        the current frame. Otherwise, the function will start at a frame</span>
+<span class="sd">        ``depth`` up from current, and continue up the call stack to the</span>
+<span class="sd">        first module that is *different* from those in the provided list.</span>
+<span class="sd">        In this case, ``finddiff`` can be a list of modules or modules</span>
+<span class="sd">        names. Alternatively, it can be True, which will use the module</span>
+<span class="sd">        ``depth`` call stack frames up as the module the returned module</span>
+<span class="sd">        most be different from.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mod : module or None</span>
+<span class="sd">        The module object or None if the package cannot be found. The name of</span>
+<span class="sd">        the module is available as the ``__name__`` attribute of the returned</span>
+<span class="sd">        object (if it isn&#39;t None).</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``finddiff`` is a list with an invalid entry.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The examples below assume that there are two modules in a package named</span>
+<span class="sd">    ``pkg``. ``mod1.py``::</span>
+
+<span class="sd">        def find1():</span>
+<span class="sd">            from astropy.utils import find_current_module</span>
+<span class="sd">            print find_current_module(1).__name__</span>
+<span class="sd">        def find2():</span>
+<span class="sd">            from astropy.utils import find_current_module</span>
+<span class="sd">            cmod = find_current_module(2)</span>
+<span class="sd">            if cmod is None:</span>
+<span class="sd">                print &#39;None&#39;</span>
+<span class="sd">            else:</span>
+<span class="sd">                print cmod.__name__</span>
+<span class="sd">        def find_diff():</span>
+<span class="sd">            from astropy.utils import find_current_module</span>
+<span class="sd">            print find_current_module(0,True).__name__</span>
+
+<span class="sd">    ``mod2.py``::</span>
+
+<span class="sd">        def find():</span>
+<span class="sd">            from .mod1 import find2</span>
+<span class="sd">            find2()</span>
+
+<span class="sd">    With these modules in place, the following occurs::</span>
+
+<span class="sd">        &gt;&gt;&gt; from pkg import mod1, mod2</span>
+<span class="sd">        &gt;&gt;&gt; from astropy.utils import find_current_module</span>
+<span class="sd">        &gt;&gt;&gt; mod1.find1()</span>
+<span class="sd">        pkg.mod1</span>
+<span class="sd">        &gt;&gt;&gt; mod1.find2()</span>
+<span class="sd">        None</span>
+<span class="sd">        &gt;&gt;&gt; mod2.find()</span>
+<span class="sd">        pkg.mod2</span>
+<span class="sd">        &gt;&gt;&gt; find_current_module(0)</span>
+<span class="sd">        &lt;module &#39;astropy.utils.misc&#39; from &#39;astropy/utils/misc.py&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; mod1.find_diff()</span>
+<span class="sd">        pkg.mod1</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># using a patched version of getmodule because the py 3.1 and 3.2 stdlib</span>
+    <span class="c"># is broken if the list of modules changes during import</span>
+    <span class="kn">from</span> <span class="nn">.compat</span> <span class="kn">import</span> <span class="n">inspect_getmodule</span>
+
+    <span class="n">frm</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">currentframe</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">depth</span><span class="p">):</span>
+        <span class="n">frm</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">f_back</span>
+        <span class="k">if</span> <span class="n">frm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">finddiff</span><span class="p">:</span>
+        <span class="n">currmod</span> <span class="o">=</span> <span class="n">inspect_getmodule</span><span class="p">(</span><span class="n">frm</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">finddiff</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">diffmods</span> <span class="o">=</span> <span class="p">[</span><span class="n">currmod</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diffmods</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">fd</span> <span class="ow">in</span> <span class="n">finddiff</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismodule</span><span class="p">(</span><span class="n">fd</span><span class="p">):</span>
+                    <span class="n">diffmods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fd</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fd</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                    <span class="n">diffmods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">__import__</span><span class="p">(</span><span class="n">fd</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="n">fd</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+                    <span class="n">diffmods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">currmod</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;invalid entry in finddiff&#39;</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">frm</span><span class="p">:</span>
+            <span class="n">frmb</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">f_back</span>
+            <span class="n">modb</span> <span class="o">=</span> <span class="n">inspect_getmodule</span><span class="p">(</span><span class="n">frmb</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">modb</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">diffmods</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">modb</span>
+            <span class="n">frm</span> <span class="o">=</span> <span class="n">frmb</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">inspect_getmodule</span><span class="p">(</span><span class="n">frm</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">find_mod_objs</span><span class="p">(</span><span class="n">modname</span><span class="p">,</span> <span class="n">onlylocals</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns all the public attributes of a module referenced by name.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        The returned list *not* include subpackages or modules of</span>
+<span class="sd">        ``modname``, nor does it include private attributes (those that</span>
+<span class="sd">        beginwith &#39;_&#39; or are not in `__all__`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    modname : str</span>
+<span class="sd">        The name of the module to search.</span>
+<span class="sd">    onlylocals : bool or list of str</span>
+<span class="sd">        If `True`, only attributes that are either members of ``modname`` OR</span>
+<span class="sd">        one of its modules or subpackages will be included. If it is a list</span>
+<span class="sd">        of strings, those specify the possible packages that will be</span>
+<span class="sd">        considered &quot;local&quot;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    localnames : list of str</span>
+<span class="sd">        A list of the names of the attributes as they are named in the</span>
+<span class="sd">        module ``modname`` .</span>
+<span class="sd">    fqnames : list of str</span>
+<span class="sd">        A list of the full qualified names of the attributes (e.g.,</span>
+<span class="sd">        ``astropy.utils.misc.find_mod_objs``). For attributes that are</span>
+<span class="sd">        simple variables, this is based on the local name, but for</span>
+<span class="sd">        functions or classes it can be different if they are actually</span>
+<span class="sd">        defined elsewhere and just referenced in ``modname``.</span>
+<span class="sd">    objs : list of objects</span>
+<span class="sd">        A list of the actual attributes themselves (in the same order as</span>
+<span class="sd">        the other arguments)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">__import__</span><span class="p">(</span><span class="n">modname</span><span class="p">)</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">modname</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s">&#39;__all__&#39;</span><span class="p">):</span>
+        <span class="n">pkgitems</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">mod</span><span class="o">.</span><span class="n">__all__</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pkgitems</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;_&#39;</span><span class="p">]</span>
+
+    <span class="c"># filter out modules and pull the names and objs out</span>
+    <span class="n">ismodule</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismodule</span>
+    <span class="n">localnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pkgitems</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ismodule</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+    <span class="n">objs</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">pkgitems</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">ismodule</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+
+    <span class="c"># fully qualified names can be determined from the object&#39;s module</span>
+    <span class="n">fqnames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">lnm</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">objs</span><span class="p">,</span> <span class="n">localnames</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__module__&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__name__&#39;</span><span class="p">):</span>
+            <span class="n">fqnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">__module__</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fqnames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">modname</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span> <span class="o">+</span> <span class="n">lnm</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">onlylocals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">onlylocals</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">onlylocals</span> <span class="o">=</span> <span class="p">[</span><span class="n">modname</span><span class="p">]</span>
+        <span class="n">valids</span> <span class="o">=</span> <span class="p">[</span><span class="nb">any</span><span class="p">([</span><span class="n">fqn</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span> <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="n">onlylocals</span><span class="p">])</span> <span class="k">for</span> <span class="n">fqn</span> <span class="ow">in</span> <span class="n">fqnames</span><span class="p">]</span>
+        <span class="n">localnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">localnames</span><span class="p">)</span> <span class="k">if</span> <span class="n">valids</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">fqnames</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">fqnames</span><span class="p">)</span> <span class="k">if</span> <span class="n">valids</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+        <span class="n">objs</span> <span class="o">=</span> <span class="p">[</span><span class="n">e</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">e</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">objs</span><span class="p">)</span> <span class="k">if</span> <span class="n">valids</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+    <span class="k">return</span> <span class="n">localnames</span><span class="p">,</span> <span class="n">fqnames</span><span class="p">,</span> <span class="n">objs</span>
+
+
+<div class="viewcode-block" id="isiterable"><a class="viewcode-back" href="../../../api/astropy.utils.misc.isiterable.html#astropy.constants.isiterable">[docs]</a><span class="k">def</span> <span class="nf">isiterable</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Returns `True` if the given object is iterable.&quot;&quot;&quot;</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">iter</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="indent"><a class="viewcode-back" href="../../../api/astropy.utils.misc.indent.html#astropy.constants.indent">[docs]</a><span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indent a block of text.  The indentation is applied to each line.&quot;&quot;&quot;</span>
+
+    <span class="n">indented</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">width</span> <span class="o">*</span> <span class="n">shift</span><span class="p">)</span> <span class="o">+</span> <span class="n">l</span> <span class="k">if</span> <span class="n">l</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+                         <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">splitlines</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">:</span>
+        <span class="n">indented</span> <span class="o">+=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
+
+    <span class="k">return</span> <span class="n">indented</span>
+
+</div>
+<div class="viewcode-block" id="lazyproperty"><a class="viewcode-back" href="../../../api/astropy.utils.misc.lazyproperty.html#astropy.constants.lazyproperty">[docs]</a><span class="k">class</span> <span class="nc">lazyproperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Works similarly to property(), but computes the value only once.</span>
+
+<span class="sd">    This essentially memoizes the value of the property by storing the result</span>
+<span class="sd">    of its computation in the ``__dict__`` of the object instance.  This is</span>
+<span class="sd">    useful for computing the value of some property that should otherwise be</span>
+<span class="sd">    invariant.  For example::</span>
+
+<span class="sd">        &gt;&gt;&gt; class LazyTest(object):</span>
+<span class="sd">        ...     @lazyproperty</span>
+<span class="sd">        ...     def complicated_property(self):</span>
+<span class="sd">        ...         print(&#39;Computing the value for complicated_property...&#39;)</span>
+<span class="sd">        ...         return 42</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; lt = LazyTest()</span>
+<span class="sd">        &gt;&gt;&gt; lt.complicated_property</span>
+<span class="sd">        Computing the value for complicated_property...</span>
+<span class="sd">        42</span>
+<span class="sd">        &gt;&gt;&gt; lt.complicated_property</span>
+<span class="sd">        42</span>
+
+<span class="sd">    If a setter for this property is defined, it will still be possible to</span>
+<span class="sd">    manually update the value of the property, if that capability is desired.</span>
+
+<span class="sd">    Adapted from the recipe at</span>
+<span class="sd">    http://code.activestate.com/recipes/363602-lazy-property-evaluation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fget</span><span class="p">,</span> <span class="n">fset</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">fdel</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fget</span> <span class="o">=</span> <span class="n">fget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fset</span> <span class="o">=</span> <span class="n">fset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fdel</span> <span class="o">=</span> <span class="n">fdel</span>
+        <span class="k">if</span> <span class="n">doc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">fget</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">doc</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fget</span><span class="o">.</span><span class="n">__name__</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+            <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="n">obj_dict</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fset</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fset</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ret</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">obj_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">)</span> <span class="ow">is</span> <span class="n">ret</span><span class="p">:</span>
+                <span class="c"># By returning the value set the setter signals that it took</span>
+                <span class="c"># over setting the value in obj.__dict__; this mechanism allows</span>
+                <span class="c"># it to override the input value</span>
+                <span class="k">return</span>
+        <span class="n">obj_dict</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fdel</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_fdel</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_key</span> <span class="ow">in</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="lazyproperty.getter"><a class="viewcode-back" href="../../../api/astropy.utils.misc.lazyproperty.html#astropy.constants.lazyproperty.getter">[docs]</a>    <span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fget</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ter</span><span class="p">(</span><span class="n">fget</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="lazyproperty.setter"><a class="viewcode-back" href="../../../api/astropy.utils.misc.lazyproperty.html#astropy.constants.lazyproperty.setter">[docs]</a>    <span class="k">def</span> <span class="nf">setter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fset</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ter</span><span class="p">(</span><span class="n">fset</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="lazyproperty.deleter"><a class="viewcode-back" href="../../../api/astropy.utils.misc.lazyproperty.html#astropy.constants.lazyproperty.deleter">[docs]</a>    <span class="k">def</span> <span class="nf">deleter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fdel</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__ter</span><span class="p">(</span><span class="n">fdel</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__ter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_fget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fdel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span><span class="p">]</span>
+        <span class="n">args</span><span class="p">[</span><span class="n">arg</span><span class="p">]</span> <span class="o">=</span> <span class="n">f</span>
+        <span class="n">cls_ns</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">f_locals</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">cls_ns</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="n">property_name</span> <span class="o">=</span> <span class="n">k</span>
+                <span class="k">break</span>
+
+        <span class="n">cls_ns</span><span class="p">[</span><span class="n">property_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">lazyproperty</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cls_ns</span><span class="p">[</span><span class="n">property_name</span><span class="p">]</span>
+
+</div>
+<div class="viewcode-block" id="deprecated"><a class="viewcode-back" href="../../../api/astropy.utils.misc.deprecated.html#astropy.constants.deprecated">[docs]</a><span class="k">def</span> <span class="nf">deprecated</span><span class="p">(</span><span class="n">since</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">pending</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+               <span class="n">obj_type</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Used to mark a function or class as deprecated.</span>
+
+<span class="sd">    To mark an attribute as deprecated, use `deprecated_attribute`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ------------</span>
+<span class="sd">    since : str</span>
+<span class="sd">        The release at which this API became deprecated.  This is</span>
+<span class="sd">        required.</span>
+
+<span class="sd">    message : str, optional</span>
+<span class="sd">        Override the default deprecation message.  The format</span>
+<span class="sd">        specifier ``func`` may be used for the name of the function,</span>
+<span class="sd">        and ``alternative`` may be used in the deprecation message</span>
+<span class="sd">        to insert the name of an alternative to the deprecated</span>
+<span class="sd">        function. ``obj_type`` may be used to insert a friendly name</span>
+<span class="sd">        for the type of object being deprecated.</span>
+
+<span class="sd">    name : str, optional</span>
+<span class="sd">        The name of the deprecated function or class; if not provided</span>
+<span class="sd">        the name is automatically determined from the passed in</span>
+<span class="sd">        function or class, though this is useful in the case of</span>
+<span class="sd">        renamed functions, where the new function is just assigned to</span>
+<span class="sd">        the name of the deprecated function.  For example::</span>
+
+<span class="sd">            def new_function():</span>
+<span class="sd">                ...</span>
+<span class="sd">            oldFunction = new_function</span>
+
+<span class="sd">    alternative : str, optional</span>
+<span class="sd">        An alternative function or class name that the user may use in</span>
+<span class="sd">        place of the deprecated object.  The deprecation warning will</span>
+<span class="sd">        tell the user about this alternative if provided.</span>
+
+<span class="sd">    pending : bool, optional</span>
+<span class="sd">        If True, uses a AstropyPendingDeprecationWarning instead of a</span>
+<span class="sd">        AstropyDeprecationWarning.</span>
+
+<span class="sd">    obj_type : str, optional</span>
+<span class="sd">        The type of this object, if the automatically determined one</span>
+<span class="sd">        needs to be overridden.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">deprecate_doc</span><span class="p">(</span><span class="n">old_doc</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a given docstring with a deprecation message prepended</span>
+<span class="sd">        to it.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">old_doc</span><span class="p">:</span>
+            <span class="n">old_doc</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="n">old_doc</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">old_doc</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="n">new_doc</span> <span class="o">=</span> <span class="p">((</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">.. deprecated:: </span><span class="si">%(since)s</span><span class="s">&#39;</span>
+                    <span class="s">&#39;</span><span class="se">\n</span><span class="s">    </span><span class="si">%(message)s</span><span class="se">\n\n</span><span class="s">&#39;</span> <span class="o">%</span>
+                    <span class="p">{</span><span class="s">&#39;since&#39;</span><span class="p">:</span> <span class="n">since</span><span class="p">,</span> <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="n">message</span><span class="o">.</span><span class="n">strip</span><span class="p">()})</span> <span class="o">+</span> <span class="n">old_doc</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">old_doc</span><span class="p">:</span>
+            <span class="c"># This is to prevent a spurious &#39;unexected unindent&#39; warning from</span>
+            <span class="c"># docutils when the original docstring was blank.</span>
+            <span class="n">new_doc</span> <span class="o">+=</span> <span class="s">r&#39;\ &#39;</span>
+        <span class="k">return</span> <span class="n">new_doc</span>
+
+    <span class="k">def</span> <span class="nf">get_function</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a function or classmethod, get the function object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">func</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__func__</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="c"># classmethods in Python2.6 and below lack the __func__</span>
+                <span class="c"># attribute so we need to hack around to get it</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__get__</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="nb">object</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s">&#39;__func__&#39;</span><span class="p">):</span>
+                    <span class="n">func</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">__func__</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="s">&#39;im_func&#39;</span><span class="p">):</span>
+                    <span class="n">func</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">im_func</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c"># Nothing we can do really...  just return the original</span>
+                    <span class="c"># classmethod</span>
+                    <span class="k">return</span> <span class="n">func</span>
+        <span class="k">return</span> <span class="n">func</span>
+
+    <span class="k">def</span> <span class="nf">deprecate_function</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a wrapped function that displays an</span>
+<span class="sd">        ``AstropyDeprecationWarning`` when it is called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">is_classmethod</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">classmethod</span><span class="p">)</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="n">get_function</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">deprecated_func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pending</span><span class="p">:</span>
+                <span class="n">category</span> <span class="o">=</span> <span class="n">AstropyPendingDeprecationWarning</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">category</span> <span class="o">=</span> <span class="n">AstropyDeprecationWarning</span>
+
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c"># If this is an extension function, we can&#39;t call</span>
+        <span class="c"># functools.wraps on it, but we normally don&#39;t care.</span>
+        <span class="c"># This crazy way to get the type of a wrapper descriptor is</span>
+        <span class="c"># straight out of the Python 3.3 inspect module docs.</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">func</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">type</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="s">&#39;__add__&#39;</span><span class="p">]):</span>
+            <span class="n">deprecated_func</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">wraps</span><span class="p">(</span><span class="n">func</span><span class="p">)(</span><span class="n">deprecated_func</span><span class="p">)</span>
+
+        <span class="n">deprecated_func</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">deprecate_doc</span><span class="p">(</span>
+            <span class="n">deprecated_func</span><span class="o">.</span><span class="n">__doc__</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_classmethod</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">deprecated_func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">deprecated_func</span>
+
+    <span class="k">def</span> <span class="nf">deprecate_class</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a wrapper class with the docstrings updated and an</span>
+<span class="sd">        __init__ function that will raise an</span>
+<span class="sd">        ``AstropyDeprectationWarning`` warning when called.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Creates a new class with the same name and bases as the</span>
+        <span class="c"># original class, but updates the dictionary with a new</span>
+        <span class="c"># docstring and a wrapped __init__ method.  __module__ needs</span>
+        <span class="c"># to be manually copied over, since otherwise it will be set</span>
+        <span class="c"># to *this* module (astropy.utils.misc).</span>
+
+        <span class="c"># This approach seems to make Sphinx happy (the new class</span>
+        <span class="c"># looks enough like the original class), and works with</span>
+        <span class="c"># extension classes (which functools.wraps does not, since</span>
+        <span class="c"># it tries to modify the original class).</span>
+
+        <span class="c"># We need to add a custom pickler or you&#39;ll get</span>
+        <span class="c">#     Can&#39;t pickle &lt;class ..&gt;: it&#39;s not found as ...</span>
+        <span class="c"># errors. Picklability is required for any class that is</span>
+        <span class="c"># documented by Sphinx.</span>
+
+        <span class="k">def</span> <span class="nf">__getstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__getstate__</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;__doc__&#39;</span><span class="p">:</span> <span class="n">deprecate_doc</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__doc__</span><span class="p">,</span> <span class="n">message</span><span class="p">),</span>
+            <span class="s">&#39;__init__&#39;</span><span class="p">:</span> <span class="n">deprecate_function</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__init__</span><span class="p">,</span> <span class="n">message</span><span class="p">),</span>
+            <span class="s">&#39;__module__&#39;</span><span class="p">:</span> <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+            <span class="s">&#39;__getstate__&#39;</span><span class="p">:</span> <span class="n">__getstate__</span><span class="p">,</span>
+            <span class="s">&#39;__setstate__&#39;</span><span class="p">:</span> <span class="n">__setstate__</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="p">(</span><span class="n">cls</span><span class="p">,),</span> <span class="n">d</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">deprecate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="n">alternative</span><span class="p">,</span>
+                  <span class="n">pending</span><span class="o">=</span><span class="n">pending</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj_type</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+                <span class="n">obj_type_name</span> <span class="o">=</span> <span class="s">&#39;class&#39;</span>
+            <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+                <span class="n">obj_type_name</span> <span class="o">=</span> <span class="s">&#39;function&#39;</span>
+            <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismethod</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+                <span class="n">obj_type_name</span> <span class="o">=</span> <span class="s">&#39;method&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">obj_type_name</span> <span class="o">=</span> <span class="s">&#39;object&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">obj_type_name</span> <span class="o">=</span> <span class="n">obj_type</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">get_function</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="n">altmessage</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span> <span class="ow">or</span> <span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">deprecate</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">pending</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The </span><span class="si">%(func)s</span><span class="s"> </span><span class="si">%(obj_type)s</span><span class="s"> will be deprecated in a &#39;</span>
+                           <span class="s">&#39;future version.&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The </span><span class="si">%(func)s</span><span class="s"> </span><span class="si">%(obj_type)s</span><span class="s"> is deprecated and may &#39;</span>
+                           <span class="s">&#39;be removed in a future version.&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">alternative</span><span class="p">:</span>
+                <span class="n">altmessage</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">        Use </span><span class="si">%s</span><span class="s"> instead.&#39;</span> <span class="o">%</span> <span class="n">alternative</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="p">((</span><span class="n">message</span> <span class="o">%</span> <span class="p">{</span>
+            <span class="s">&#39;func&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s">&#39;alternative&#39;</span><span class="p">:</span> <span class="n">alternative</span><span class="p">,</span>
+            <span class="s">&#39;obj_type&#39;</span><span class="p">:</span> <span class="n">obj_type_name</span><span class="p">})</span> <span class="o">+</span>
+            <span class="n">altmessage</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">altmessage</span><span class="p">:</span>
+            <span class="n">altmessage</span> <span class="o">=</span> <span class="n">message</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">deprecate_class</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">altmessage</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">deprecate_function</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">altmessage</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">message</span><span class="p">)</span> <span class="o">==</span> <span class="nb">type</span><span class="p">(</span><span class="n">deprecate</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">deprecate</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">deprecate</span>
+
+</div>
+<div class="viewcode-block" id="deprecated_attribute"><a class="viewcode-back" href="../../../api/astropy.utils.misc.deprecated_attribute.html#astropy.constants.deprecated_attribute">[docs]</a><span class="k">def</span> <span class="nf">deprecated_attribute</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                         <span class="n">pending</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Used to mark a public attribute as deprecated.  This creates a</span>
+<span class="sd">    property that will warn when the given attribute name is accessed.</span>
+<span class="sd">    To prevent the warning (i.e. for internal code), use the private</span>
+<span class="sd">    name for the attribute by prepending an underscore</span>
+<span class="sd">    (i.e. ``self._name``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the deprecated attribute.</span>
+
+<span class="sd">    since : str</span>
+<span class="sd">        The release at which this API became deprecated.  This is</span>
+<span class="sd">        required.</span>
+
+<span class="sd">    message : str, optional</span>
+<span class="sd">        Override the default deprecation message.  The format</span>
+<span class="sd">        specifier ``name`` may be used for the name of the attribute,</span>
+<span class="sd">        and ``alternative`` may be used in the deprecation message</span>
+<span class="sd">        to insert the name of an alternative to the deprecated</span>
+<span class="sd">        function.</span>
+
+<span class="sd">    alternative : str, optional</span>
+<span class="sd">        An alternative attribute that the user may use in place of the</span>
+<span class="sd">        deprecated attribute.  The deprecation warning will tell the</span>
+<span class="sd">        user about this alternative if provided.</span>
+
+<span class="sd">    pending : bool, optional</span>
+<span class="sd">        If True, uses a AstropyPendingDeprecationWarning instead of a</span>
+<span class="sd">        AstropyDeprecationWarning.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        class MyClass:</span>
+<span class="sd">            # Mark the old_name as deprecated</span>
+<span class="sd">            old_name = misc.deprecated_attribute(&#39;old_name&#39;, &#39;0.1&#39;)</span>
+
+<span class="sd">            def method(self):</span>
+<span class="sd">                self._old_name = 42</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">private_name</span> <span class="o">=</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span>
+
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">obj_type</span><span class="o">=</span><span class="s">&#39;attribute&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_name</span><span class="p">)</span>
+
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">obj_type</span><span class="o">=</span><span class="s">&#39;attribute&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+    <span class="nd">@deprecated</span><span class="p">(</span><span class="n">since</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">obj_type</span><span class="o">=</span><span class="s">&#39;attribute&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">delattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">private_name</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">get</span><span class="p">,</span> <span class="nb">set</span><span class="p">,</span> <span class="n">delete</span><span class="p">)</span>
+
+</div>
+<span class="k">class</span> <span class="nc">_DummyFile</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A noop writeable object.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+
+<span class="nd">@contextlib.contextmanager</span>
+<div class="viewcode-block" id="silence"><a class="viewcode-back" href="../../../api/astropy.utils.misc.silence.html#astropy.constants.silence">[docs]</a><span class="k">def</span> <span class="nf">silence</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;A context manager that silences sys.stdout and sys.stderr.&quot;&quot;&quot;</span>
+
+    <span class="n">old_stdout</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="n">old_stderr</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">_DummyFile</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">_DummyFile</span><span class="p">()</span>
+    <span class="k">yield</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span> <span class="o">=</span> <span class="n">old_stdout</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="n">old_stderr</span>
+
+</div>
+<div class="viewcode-block" id="format_exception"><a class="viewcode-back" href="../../../api/astropy.utils.misc.format_exception.html#astropy.constants.format_exception">[docs]</a><span class="k">def</span> <span class="nf">format_exception</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given an exception message string, uses new-style formatting arguments</span>
+<span class="sd">    ``{filename}``, ``{lineno}``, ``{func}`` and/or ``{text}`` to fill in</span>
+<span class="sd">    information about the exception that occurred.  For example:</span>
+
+<span class="sd">        try:</span>
+<span class="sd">            1/0</span>
+<span class="sd">        except:</span>
+<span class="sd">            raise ZeroDivisionError(</span>
+<span class="sd">                format_except(&#39;A divide by zero occurred in {filename} at &#39;</span>
+<span class="sd">                              &#39;line {lineno} of function {func}.&#39;))</span>
+
+<span class="sd">    Any additional positional or keyword arguments passed to this function are</span>
+<span class="sd">    also used to format the message.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This uses `sys.exc_info` to gather up the information needed to fill</span>
+<span class="sd">        in the formatting arguments. Python 2.x and 3.x have slightly</span>
+<span class="sd">        different behavior regarding `sys.exc_info` (the latter will not</span>
+<span class="sd">        carry it outside a handled exception), so it&#39;s not wise to use this</span>
+<span class="sd">        outside of an ``except`` clause - if it is, this will substitute</span>
+<span class="sd">        &#39;&lt;unkown&gt;&#39; for the 4 formatting arguments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">tb</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">extract_tb</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">()[</span><span class="mi">2</span><span class="p">],</span> <span class="n">limit</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tb</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">text</span> <span class="o">=</span> <span class="n">tb</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">lineno</span> <span class="o">=</span> <span class="n">func</span> <span class="o">=</span> <span class="n">text</span> <span class="o">=</span> <span class="s">&#39;&lt;unknown&gt;&#39;</span>
+
+    <span class="k">return</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="o">=</span><span class="n">lineno</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="n">func</span><span class="p">,</span>
+                      <span class="n">text</span><span class="o">=</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="NumpyRNGContext"><a class="viewcode-back" href="../../../api/astropy.utils.misc.NumpyRNGContext.html#astropy.constants.NumpyRNGContext">[docs]</a><span class="k">class</span> <span class="nc">NumpyRNGContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A context manager (for use with the ``with`` statement) that will seed the</span>
+<span class="sd">    numpy random number generator (RNG) to a specific value, and then restore</span>
+<span class="sd">    the RNG state back to whatever it was before.</span>
+
+<span class="sd">    This is primarily intended for use in the astropy testing suit, but it</span>
+<span class="sd">    may be useful in ensuring reproducibility of Monte Carlo simulations in a</span>
+<span class="sd">    science context.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    seed : int</span>
+<span class="sd">        The value to use to seed the numpy RNG</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    A typical use case might be::</span>
+
+<span class="sd">        with NumpyRNGContext(&lt;some seed value you pick&gt;):</span>
+<span class="sd">            from numpy import random</span>
+
+<span class="sd">            randarr = random.randn(100)</span>
+<span class="sd">            ... run your test using `randarr` ...</span>
+
+<span class="sd">        #Any code using numpy.random at this indent level will act just as it</span>
+<span class="sd">        #would have if it had been before the with statement - e.g. whatever</span>
+<span class="sd">        #the default seed is.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">=</span> <span class="n">seed</span>
+
+    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">random</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">startstate</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">get_state</span><span class="p">()</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">random</span>
+
+        <span class="n">random</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startstate</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="find_api_page"><a class="viewcode-back" href="../../../api/astropy.utils.misc.find_api_page.html#astropy.constants.find_api_page">[docs]</a><span class="k">def</span> <span class="nf">find_api_page</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">openinbrowser</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines the URL of the API page for the specified object, and</span>
+<span class="sd">    optionally open that page in a web browser.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        You must be connected to the internet for this to function even if</span>
+<span class="sd">        ``openinbrowser`` is `False`, unless you provide a local version of</span>
+<span class="sd">        the documentation to ``version`` (e.g., ``file:///path/to/docs``).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    obj</span>
+<span class="sd">        The object to open the docs for or its fully-qualified name</span>
+<span class="sd">        (as a str).</span>
+<span class="sd">    version : str</span>
+<span class="sd">        The doc version - either a version number like &#39;0.1&#39;, &#39;dev&#39; for</span>
+<span class="sd">        the development/latest docs, or a URL to point to a specific</span>
+<span class="sd">        location that should be the *base* of the documentation. Defaults to</span>
+<span class="sd">        latest if you are on aren&#39;t on a release, otherwise, the version you</span>
+<span class="sd">        are on.</span>
+<span class="sd">    openinbrowser : bool</span>
+<span class="sd">        If `True`, the `webbrowser` package will be used to open the doc</span>
+<span class="sd">        page in a new web browser window.</span>
+<span class="sd">    timeout : number, optional</span>
+<span class="sd">        The number of seconds to wait before timing-out the query to</span>
+<span class="sd">        the astropy documentation.  If not given, the default python</span>
+<span class="sd">        stdlib timeout will be used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    url : str</span>
+<span class="sd">        The loaded URL</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If the documentation can&#39;t be found</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">webbrowser</span>
+
+    <span class="kn">from</span> <span class="nn">zlib</span> <span class="kn">import</span> <span class="n">decompress</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__module__&#39;</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__name__&#39;</span><span class="p">)):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__module__</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismodule</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__name__</span>
+
+    <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">version</span>
+
+        <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">release</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="s">&#39;v&#39;</span> <span class="o">+</span> <span class="n">version</span><span class="o">.</span><span class="n">version</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">version</span> <span class="o">=</span> <span class="s">&#39;dev&#39;</span>
+
+    <span class="k">if</span> <span class="s">&#39;://&#39;</span> <span class="ow">in</span> <span class="n">version</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">version</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">):</span>
+            <span class="n">baseurl</span> <span class="o">=</span> <span class="n">version</span><span class="p">[:</span><span class="o">-</span><span class="mi">10</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">version</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">):</span>
+            <span class="n">baseurl</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">baseurl</span> <span class="o">=</span> <span class="n">version</span> <span class="o">+</span> <span class="s">&#39;/&#39;</span>
+    <span class="k">elif</span> <span class="n">version</span> <span class="o">==</span> <span class="s">&#39;dev&#39;</span> <span class="ow">or</span> <span class="n">version</span> <span class="o">==</span> <span class="s">&#39;latest&#39;</span><span class="p">:</span>
+        <span class="n">baseurl</span> <span class="o">=</span> <span class="s">&#39;http://devdocs.astropy.org/&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">baseurl</span> <span class="o">=</span> <span class="s">&#39;http://docs.astropy.org/en/{vers}/&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vers</span><span class="o">=</span><span class="n">version</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">timeout</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">uf</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">baseurl</span> <span class="o">+</span> <span class="s">&#39;objects.inv&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uf</span> <span class="o">=</span> <span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlopen</span><span class="p">(</span><span class="n">baseurl</span> <span class="o">+</span> <span class="s">&#39;objects.inv&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c"># we read these lines so that `oistr` only gets the compressed</span>
+        <span class="c"># contents, not the header information</span>
+        <span class="n">isvers</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>  <span class="c"># intersphinx version line</span>
+        <span class="n">proj</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>  <span class="c"># project name</span>
+        <span class="n">vers</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>  <span class="c"># project version</span>
+        <span class="n">uf</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="n">oistr</span> <span class="o">=</span> <span class="n">uf</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">uf</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">oistr</span> <span class="o">=</span> <span class="n">decompress</span><span class="p">(</span><span class="n">oistr</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span>
+
+    <span class="n">resurl</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">oistr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">():</span>
+        <span class="n">ls</span> <span class="o">=</span> <span class="n">l</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">ls</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">ls</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">loc</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;$&#39;</span><span class="p">):</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">loc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">name</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">obj</span><span class="p">:</span>
+            <span class="n">resurl</span> <span class="o">=</span> <span class="n">baseurl</span> <span class="o">+</span> <span class="n">loc</span>
+            <span class="k">break</span>
+
+    <span class="k">if</span> <span class="n">resurl</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Could not find the docs for the object {obj}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">obj</span><span class="o">=</span><span class="n">obj</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="n">openinbrowser</span><span class="p">:</span>
+        <span class="n">webbrowser</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">resurl</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">resurl</span>
+
+</div>
+<span class="k">def</span> <span class="nf">signal_number_to_name</span><span class="p">(</span><span class="n">signum</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Given an OS signal number, returns a signal name.  If the signal</span>
+<span class="sd">    number is unknown, returns ``&#39;UNKNOWN&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Since these numbers and names are platform specific, we use the</span>
+    <span class="c"># builtin signal module and build a reverse mapping.</span>
+
+    <span class="n">signal_to_name_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">signal</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="k">if</span> <span class="n">v</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;SIG&#39;</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">signal_to_name_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">signum</span><span class="p">,</span> <span class="s">&#39;UNKNOWN&#39;</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">ctypes</span>
+
+    <span class="k">def</span> <span class="nf">_has_hidden_attribute</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns True if the given filepath has the hidden attribute on</span>
+<span class="sd">        MS-Windows.  Based on a post here:</span>
+<span class="sd">        http://stackoverflow.com/questions/284115/cross-platform-hidden-file-detection</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+            <span class="n">filepath</span> <span class="o">=</span> <span class="n">filepath</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">getfilesystemencoding</span><span class="p">())</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">attrs</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span><span class="o">.</span><span class="n">GetFileAttributesW</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">attrs</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">attrs</span> <span class="o">&amp;</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">AttributeError</span><span class="p">,</span> <span class="ne">AssertionError</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="n">result</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_has_hidden_attribute</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<div class="viewcode-block" id="is_path_hidden"><a class="viewcode-back" href="../../../api/astropy.utils.misc.is_path_hidden.html#astropy.constants.is_path_hidden">[docs]</a><span class="k">def</span> <span class="nf">is_path_hidden</span><span class="p">(</span><span class="n">filepath</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines if a given file or directory is hidden.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filepath : str</span>
+<span class="sd">        The path to a file or directory</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    hidden : bool</span>
+<span class="sd">        Returns `True` if the file is hidden</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">filepath</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+        <span class="n">is_dotted</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">b</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">is_dotted</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">is_dotted</span> <span class="ow">or</span> <span class="n">_has_hidden_attribute</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="walk_skip_hidden"><a class="viewcode-back" href="../../../api/astropy.utils.misc.walk_skip_hidden.html#astropy.constants.walk_skip_hidden">[docs]</a><span class="k">def</span> <span class="nf">walk_skip_hidden</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">onerror</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">followlinks</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A wrapper for `os.walk` that skips hidden files and directories.</span>
+
+<span class="sd">    This function does not have the parameter ``topdown`` from</span>
+<span class="sd">    `os.walk`: the directories must always be recursed top-down when</span>
+<span class="sd">    using this function.</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    os.walk : For a description of the parameters</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span>
+            <span class="n">top</span><span class="p">,</span> <span class="n">topdown</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">onerror</span><span class="o">=</span><span class="n">onerror</span><span class="p">,</span>
+            <span class="n">followlinks</span><span class="o">=</span><span class="n">followlinks</span><span class="p">):</span>
+        <span class="c"># These lists must be updated in-place so os.walk will skip</span>
+        <span class="c"># hidden directories</span>
+        <span class="n">dirs</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dirs</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_path_hidden</span><span class="p">(</span><span class="n">d</span><span class="p">)]</span>
+        <span class="n">files</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">files</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">is_path_hidden</span><span class="p">(</span><span class="n">f</span><span class="p">)]</span>
+        <span class="k">yield</span> <span class="n">root</span><span class="p">,</span> <span class="n">dirs</span><span class="p">,</span> <span class="n">files</span>
+
+</div>
+<div class="viewcode-block" id="JsonCustomEncoder"><a class="viewcode-back" href="../../../api/astropy.utils.misc.JsonCustomEncoder.html#astropy.constants.JsonCustomEncoder">[docs]</a><span class="k">class</span> <span class="nc">JsonCustomEncoder</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Support for data types that JSON default encoder</span>
+<span class="sd">    does not do.</span>
+
+<span class="sd">    This includes:</span>
+
+<span class="sd">        * Numpy array or number</span>
+<span class="sd">        * Complex number</span>
+<span class="sd">        * Set</span>
+<span class="sd">        * Bytes (Python 3)</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import json</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from astropy.utils.misc import JsonCustomEncoder</span>
+<span class="sd">    &gt;&gt;&gt; json.dumps(np.arange(3), cls=JsonCustomEncoder)</span>
+<span class="sd">    &#39;[0, 1, 2]&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="JsonCustomEncoder.default"><a class="viewcode-back" href="../../../api/astropy.utils.misc.JsonCustomEncoder.html#astropy.constants.JsonCustomEncoder.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="nb">complex</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">complex</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="p">[</span><span class="n">obj</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">imag</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>  <span class="c"># pragma: py3</span>
+            <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">JSONEncoder</span><span class="o">.</span><span class="n">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">)</span>
+
+</div></div>
+<span class="k">def</span> <span class="nf">strip_accents</span><span class="p">(</span><span class="n">s</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove accents from a Unicode string.</span>
+
+<span class="sd">    This helps with matching &quot;ångström&quot; to &quot;angstrom&quot;, for example.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="s">&#39;NFD&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">unicodedata</span><span class="o">.</span><span class="n">category</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">!=</span> <span class="s">&#39;Mn&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">did_you_mean</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    When a string isn&#39;t found in a set of candidates, we can be nice</span>
+<span class="sd">    to provide a list of alternatives in the exception.  This</span>
+<span class="sd">    convenience function helps to format that part of the exception.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    s : str</span>
+
+<span class="sd">    candidates : sequence of str or dict of str keys</span>
+
+<span class="sd">    n : int</span>
+<span class="sd">        The maximum number of results to include.  See</span>
+<span class="sd">        `difflib.get_close_matches`.</span>
+
+<span class="sd">    cutoff : float</span>
+<span class="sd">        In the range [0, 1]. Possibilities that don&#39;t score at least</span>
+<span class="sd">        that similar to word are ignored.  See</span>
+<span class="sd">        `difflib.get_close_matches`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    message : str</span>
+<span class="sd">        Returns the string &quot;Did you mean X, Y, or Z?&quot;, or the empty</span>
+<span class="sd">        string if no alternatives were found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">):</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">strip_accents</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">s_lower</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="c"># Create a mapping from the lower case name to all capitalization</span>
+    <span class="c"># variants of that name.</span>
+    <span class="n">candidates_lower</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">candidate</span> <span class="ow">in</span> <span class="n">candidates</span><span class="p">:</span>
+        <span class="n">candidate_lower</span> <span class="o">=</span> <span class="n">candidate</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">candidates_lower</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">candidate_lower</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">candidates_lower</span><span class="p">[</span><span class="n">candidate_lower</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">candidate</span><span class="p">)</span>
+
+    <span class="c"># The heuristic here is to first try &quot;singularizing&quot; the word.  If</span>
+    <span class="c"># that doesn&#39;t match anything use difflib to find close matches in</span>
+    <span class="c"># original, lower and upper case.</span>
+    <span class="k">if</span> <span class="n">s_lower</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;s&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">s_lower</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">candidates_lower</span><span class="p">:</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">s_lower</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">matches</span> <span class="o">=</span> <span class="n">difflib</span><span class="o">.</span><span class="n">get_close_matches</span><span class="p">(</span>
+            <span class="n">s_lower</span><span class="p">,</span> <span class="n">candidates_lower</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">cutoff</span><span class="o">=</span><span class="n">cutoff</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">):</span>
+        <span class="n">capitalized_matches</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span><span class="p">:</span>
+            <span class="n">capitalized_matches</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">candidates_lower</span><span class="p">[</span><span class="n">match</span><span class="p">])</span>
+
+        <span class="n">matches</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">capitalized_matches</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="n">matches</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">matches</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">matches</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="s">&#39; or &#39;</span> <span class="o">+</span> <span class="n">matches</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="s">&#39;Did you mean {0}?&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s">&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="InheritDocstrings"><a class="viewcode-back" href="../../../api/astropy.utils.misc.InheritDocstrings.html#astropy.constants.InheritDocstrings">[docs]</a><span class="k">class</span> <span class="nc">InheritDocstrings</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This metaclass makes methods of a class automatically have their</span>
+<span class="sd">    docstrings filled in from the methods they override in the base</span>
+<span class="sd">    class.</span>
+
+<span class="sd">    If the class uses multiple inheritance, the docstring will be</span>
+<span class="sd">    chosen from the first class in the bases list, in the same way as</span>
+<span class="sd">    methods are normally resolved in Python.  If this results in</span>
+<span class="sd">    selecting the wrong docstring, the docstring will need to be</span>
+<span class="sd">    explicitly included on the method.</span>
+
+<span class="sd">    For example::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.utils.misc import InheritDocstrings</span>
+<span class="sd">        &gt;&gt;&gt; from astropy.extern import six</span>
+<span class="sd">        &gt;&gt;&gt; @six.add_metaclass(InheritDocstrings)</span>
+<span class="sd">        ... class A(object):</span>
+<span class="sd">        ...     def wiggle(self):</span>
+<span class="sd">        ...         &quot;Wiggle the thingamajig&quot;</span>
+<span class="sd">        ...         pass</span>
+<span class="sd">        &gt;&gt;&gt; class B(A):</span>
+<span class="sd">        ...     def wiggle(self):</span>
+<span class="sd">        ...         pass</span>
+<span class="sd">        &gt;&gt;&gt; B.wiggle.__doc__</span>
+<span class="sd">        u&#39;Wiggle the thingamajig&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">dct</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">dct</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="n">val</span><span class="o">.</span><span class="n">__doc__</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">base</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">__mro__</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                    <span class="n">super_method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">super_method</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                        <span class="n">val</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">super_method</span><span class="o">.</span><span class="n">__doc__</span>
+                        <span class="k">break</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

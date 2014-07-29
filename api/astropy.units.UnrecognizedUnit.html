@@ -1,0 +1,288 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>UnrecognizedUnit &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Units and Quantities (astropy.units)" href="../units/index.html" />
+    <link rel="next" title="get_format" href="astropy.units.format.get_format.html" />
+    <link rel="prev" title="UnitsWarning" href="astropy.units.UnitsWarning.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.units.format.get_format.html" title="get_format">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.units.UnitsWarning.html" title="UnitsWarning">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../units/index.html" accesskey="U">Units and Quantities (<tt class="docutils literal"><span class="pre">astropy.units</span></tt>)</a> &raquo;</li>
+      
+      <li>UnrecognizedUnit</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="unrecognizedunit">
+<h1>UnrecognizedUnit<a class="headerlink" href="#unrecognizedunit" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.units.UnrecognizedUnit">
+<em class="property">class </em><tt class="descclassname">astropy.units.</tt><tt class="descname">UnrecognizedUnit</tt><big>(</big><em>st</em>, <em>register=None</em>, <em>doc=None</em>, <em>format=None</em>, <em>namespace=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#UnrecognizedUnit"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1598" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.UnrecognizedUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.units.IrreducibleUnit.html#astropy.units.IrreducibleUnit" title="astropy.units.core.IrreducibleUnit"><tt class="docutils literal"><span class="pre">astropy.units.IrreducibleUnit</span></tt></a></p>
+<p>A unit that did not parse correctly.  This allows for
+roundtripping it as a string, but no unit operations actually work
+on it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>st</strong> : str</p>
+<blockquote class="last">
+<div><p>The name of the unit.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.UnrecognizedUnit.get_converter" title="astropy.units.UnrecognizedUnit.get_converter"><tt class="xref py py-obj docutils literal"><span class="pre">get_converter</span></tt></a>(other[,&nbsp;equivalencies])</td>
+<td>Return the conversion function to convert values from <tt class="docutils literal"><span class="pre">self</span></tt> to the specified unit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.UnrecognizedUnit.get_format_name" title="astropy.units.UnrecognizedUnit.get_format_name"><tt class="xref py py-obj docutils literal"><span class="pre">get_format_name</span></tt></a>(format)</td>
+<td>Get a name for this unit that is specific to a particular format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.UnrecognizedUnit.is_equivalent" title="astropy.units.UnrecognizedUnit.is_equivalent"><tt class="xref py py-obj docutils literal"><span class="pre">is_equivalent</span></tt></a>(other[,&nbsp;equivalencies])</td>
+<td>Returns <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> if this unit is equivalent to <tt class="docutils literal"><span class="pre">other</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.UnrecognizedUnit.is_unity" title="astropy.units.UnrecognizedUnit.is_unity"><tt class="xref py py-obj docutils literal"><span class="pre">is_unity</span></tt></a>()</td>
+<td>Returns <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> if the unit is unscaled and dimensionless.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.UnrecognizedUnit.to_string" title="astropy.units.UnrecognizedUnit.to_string"><tt class="xref py py-obj docutils literal"><span class="pre">to_string</span></tt></a>([format])</td>
+<td>Output the unit in the given format as a string.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.units.UnrecognizedUnit.get_converter">
+<tt class="descname">get_converter</tt><big>(</big><em>other</em>, <em>equivalencies=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#UnrecognizedUnit.get_converter"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1650" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.UnrecognizedUnit.get_converter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the conversion function to convert values from <tt class="docutils literal"><span class="pre">self</span></tt>
+to the specified unit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> : unit object or string</p>
+<blockquote>
+<div><p>The unit to convert to.</p>
+</div></blockquote>
+<p><strong>equivalencies</strong> : list of equivalence pairs, optional</p>
+<blockquote>
+<div><p>A list of equivalence pairs to try if the units are not
+directly convertible.  See <a class="reference internal" href="../units/equivalencies.html#unit-equivalencies"><em>Equivalencies</em></a>.
+This list is in addition to possible global defaults set by, e.g.,
+<a class="reference internal" href="astropy.units.set_enabled_equivalencies.html#astropy.units.set_enabled_equivalencies" title="astropy.units.set_enabled_equivalencies"><tt class="xref py py-obj docutils literal"><span class="pre">set_enabled_equivalencies</span></tt></a>.
+Use <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> to turn off all equivalencies.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>func</strong> : callable</p>
+<blockquote>
+<div><p>A callable that normally expects a single argument that is
+a scalar value or an array of values (or anything that may
+be converted to an array).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>UnitsError</strong></p>
+<blockquote class="last">
+<div><p>If units are inconsistent</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.UnrecognizedUnit.get_format_name">
+<tt class="descname">get_format_name</tt><big>(</big><em>format</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#UnrecognizedUnit.get_format_name"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1656" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.UnrecognizedUnit.get_format_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a name for this unit that is specific to a particular
+format.</p>
+<p>Uses the dictionary passed into the <a class="reference internal" href="../units/index.html#module-astropy.units.format" title="astropy.units.format"><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt></a> kwarg in the
+constructor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>format</strong> : str</p>
+<blockquote>
+<div><p>The name of the format</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote class="last">
+<div><p>The name of the unit for the given format.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.UnrecognizedUnit.is_equivalent">
+<tt class="descname">is_equivalent</tt><big>(</big><em>other</em>, <em>equivalencies=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#UnrecognizedUnit.is_equivalent"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1646" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.UnrecognizedUnit.is_equivalent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> if this unit is equivalent to <tt class="docutils literal"><span class="pre">other</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> : unit object or string or tuple</p>
+<blockquote>
+<div><p>The unit to convert to. If a tuple of units is specified, this
+method returns true if the unit matches any of those in the tuple.</p>
+</div></blockquote>
+<p><strong>equivalencies</strong> : list of equivalence pairs, optional</p>
+<blockquote>
+<div><p>A list of equivalence pairs to try if the units are not
+directly convertible.  See <a class="reference internal" href="../units/equivalencies.html#unit-equivalencies"><em>Equivalencies</em></a>.
+This list is in addition to possible global defaults set by, e.g.,
+<a class="reference internal" href="astropy.units.set_enabled_equivalencies.html#astropy.units.set_enabled_equivalencies" title="astropy.units.set_enabled_equivalencies"><tt class="xref py py-obj docutils literal"><span class="pre">set_enabled_equivalencies</span></tt></a>.
+Use <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> to turn off all equivalencies.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bool</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.UnrecognizedUnit.is_unity">
+<tt class="descname">is_unity</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#UnrecognizedUnit.is_unity"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1659" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.UnrecognizedUnit.is_unity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> if the unit is unscaled and dimensionless.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.UnrecognizedUnit.to_string">
+<tt class="descname">to_string</tt><big>(</big><em>format=u'generic'</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#UnrecognizedUnit.to_string"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1627" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.UnrecognizedUnit.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the unit in the given format as a string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>format</strong> : <a class="reference internal" href="astropy.units.format.Base.html#astropy.units.format.Base" title="astropy.units.format.Base"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units.format.Base</span></tt></a> instance or str</p>
+<blockquote class="last">
+<div><p>The name of a format or a formatter object.  If not
+provided, defaults to the generic format.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">UnrecognizedUnit</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.units.UnrecognizedUnit.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.units.UnrecognizedUnit.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>NDData overview &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="N-dimensional datasets (astropy.nddata)" href="index.html" />
+    <link rel="next" title="Subclassing NDData and NDUncertainty" href="subclassing.html" />
+    <link rel="prev" title="N-dimensional datasets (astropy.nddata)" href="index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="subclassing.html" title="Subclassing NDData and NDUncertainty">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="index.html" title="N-dimensional datasets (astropy.nddata)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">N-dimensional datasets (<tt class="docutils literal"><span class="pre">astropy.nddata</span></tt>)</a> &raquo;</li>
+      
+      <li>NDData overview</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nddata-overview">
+<h1>NDData overview<a class="headerlink" href="#nddata-overview" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="initializing">
+<h2>Initializing<a class="headerlink" href="#initializing" title="Permalink to this headline">¶</a></h2>
+<p>An <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object can be instantiated by passing it an
+n-dimensional Numpy array:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">NDData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>  <span class="c"># a 3-dimensional array with all zeros</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span> <span class="o">=</span> <span class="n">NDData</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that the data in <tt class="docutils literal"><span class="pre">ndd</span></tt> is a reference to the original <tt class="docutils literal"><span class="pre">array</span></tt>, so
+changing the data in <tt class="docutils literal"><span class="pre">ndd</span></tt> will change the corresponding data in <tt class="docutils literal"><span class="pre">array</span></tt>
+in most circumstances.</p>
+<p>An <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object can also be instantiated by passing it an
+<a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ndd1</span> <span class="o">=</span> <span class="n">NDData</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd2</span> <span class="o">=</span> <span class="n">NDData</span><span class="p">(</span><span class="n">ndd1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As above, the data in``ndd2`` is a reference to the data in <tt class="docutils literal"><span class="pre">ndd1</span></tt>, so
+changes to one will affect the other.</p>
+<p>This object has a few attributes in common with Numpy:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">ndim</span>
+<span class="go">3</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(12, 12, 12)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">dtype</span>
+<span class="go">dtype(&#39;float64&#39;)</span>
+</pre></div>
+</div>
+<p>The underlying Numpy array can be accessed via the <tt class="docutils literal"><span class="pre">data</span></tt> attribute:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">data</span>
+<span class="go">array([[[ 0.,  0.,  0., ...</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="mask">
+<h2>Mask<a class="headerlink" href="#mask" title="Permalink to this headline">¶</a></h2>
+<p>Values can be masked using the <tt class="docutils literal"><span class="pre">mask</span></tt> attribute, which should be a boolean
+Numpy array with the same dimensions as the data, e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">ndd</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">0.9</span>
+</pre></div>
+</div>
+<p>A mask value of <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> indicates a value that should be ignored, while a mask
+value of <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> indicates a valid value.</p>
+</div>
+<div class="section" id="flags">
+<h2>Flags<a class="headerlink" href="#flags" title="Permalink to this headline">¶</a></h2>
+<p>Values can be assigned one or more flags. The <tt class="docutils literal"><span class="pre">flags</span></tt> attribute is used to
+store either a single Numpy array (of any type) with dimensions matching that
+of the data, or a <a class="reference internal" href="../api/astropy.nddata.FlagCollection.html#astropy.nddata.FlagCollection" title="astropy.nddata.FlagCollection"><tt class="xref py py-obj docutils literal"><span class="pre">FlagCollection</span></tt></a>, which is
+essentially a dictionary of Numpy arrays (of any type) with the same shape as
+the data. The following example demonstrates setting a single set of integer
+flags:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ndd</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="n">ndd</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="n">ndd</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p>but one can also have multiple flag layers with different types:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">FlagCollection</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">FlagCollection</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s">&#39;photometry&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ndd</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s">&#39;photometry&#39;</span><span class="p">][</span><span class="n">ndd</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">0.9</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;s&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s">&#39;cosmic_rays&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ndd</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s">&#39;cosmic_rays&#39;</span><span class="p">][</span><span class="n">ndd</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mf">0.99</span><span class="p">]</span> <span class="o">=</span> <span class="mi">99</span>
+</pre></div>
+</div>
+<p>and flags can easily be used to set the mask:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">ndd</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="s">&#39;cosmic_rays&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">99</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="uncertainties">
+<h2>Uncertainties<a class="headerlink" href="#uncertainties" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> objects have an <tt class="docutils literal"><span class="pre">uncertainty</span></tt> attribute that can be
+used to set the uncertainty on the data values. This is done by using classes
+to represent the uncertainties of a given type. For example, to set standard
+deviation uncertainties on the pixel values, you can do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">StdDevUncertainty</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndd</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">StdDevUncertainty</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">For information on creating your own uncertainty classes,
+see <a class="reference internal" href="subclassing.html"><em>Subclassing NDData and NDUncertainty</em></a>.</p>
+</div>
+</div>
+<div class="section" id="arithmetic">
+<h2>Arithmetic<a class="headerlink" href="#arithmetic" title="Permalink to this headline">¶</a></h2>
+<p>Provided that the world coordinate system (WCS) and shape match, and that the
+units are consisten, two <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-class docutils literal"><span class="pre">NDData</span></tt></a> instances can be
+added, subtracted, multiplied or divided from each other, with uncertainty
+propagation, creating a new <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-class docutils literal"><span class="pre">NDData</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ndd3</span> <span class="o">=</span> <span class="n">ndd1</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ndd2</span><span class="p">)</span>
+<span class="n">ndd4</span> <span class="o">=</span> <span class="n">ndd1</span><span class="o">.</span><span class="n">subtract</span><span class="p">(</span><span class="n">ndd2</span><span class="p">)</span>
+<span class="n">ndd5</span> <span class="o">=</span> <span class="n">ndd1</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span><span class="n">ndd2</span><span class="p">)</span>
+<span class="n">ndd6</span> <span class="o">=</span> <span class="n">ndd1</span><span class="o">.</span><span class="n">divide</span><span class="p">(</span><span class="n">ndd2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The purpose of the <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData.add" title="astropy.nddata.nddata.NDData"><tt class="xref py py-meth docutils literal"><span class="pre">add()</span></tt></a>,
+<a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData.subtract" title="astropy.nddata.nddata.NDData"><tt class="xref py py-meth docutils literal"><span class="pre">subtract()</span></tt></a>,
+<a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData.multiply" title="astropy.nddata.nddata.NDData"><tt class="xref py py-meth docutils literal"><span class="pre">multiply()</span></tt></a> and
+<a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData.divide" title="astropy.nddata.nddata.NDData"><tt class="xref py py-meth docutils literal"><span class="pre">divide()</span></tt></a> methods is to allow the
+combination of two data objects that have common WCS and shape and units
+consistent with the operation performed, with consistent behavior for masks,
+and with a framework to propagate uncertainties. Currently any flags on the
+operands are dropped so that the result of the operation always has no flags.
+These methods are intended for use by sub-classes and functions that deal with
+more complex combinations.</p>
+<p>Entries that are masked in either of the operands are also masked in the
+result.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Uncertainty propagation is still experimental, and does not take
+into account correlated uncertainties.</p>
+</div>
+</div>
+<div class="section" id="meta-data">
+<h2>Meta-data<a class="headerlink" href="#meta-data" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-class docutils literal"><span class="pre">NDData</span></tt></a> class includes a <tt class="docutils literal"><span class="pre">meta</span></tt> attribute
+that defaults to an empty dictionary, and can be used to set overall meta-data
+for the dataset:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ndd</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s">&#39;exposure_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">340.</span>
+<span class="n">ndd</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s">&#39;filter&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;J&#39;</span>
+</pre></div>
+</div>
+<p>Elements of the meta-data dictionary can be set to any valid Python object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">ndd</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s">&#39;history&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;calibrated&#39;</span><span class="p">,</span> <span class="s">&#39;aligned&#39;</span><span class="p">,</span> <span class="s">&#39;flat-fielded&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="converting-to-numpy-arrays">
+<h2>Converting to Numpy arrays<a class="headerlink" href="#converting-to-numpy-arrays" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> objects can also be easily converted to
+numpy arrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ndd</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">arr</span> <span class="o">==</span> <span class="n">mydataarray</span><span class="p">)</span>  
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>If a <tt class="docutils literal"><span class="pre">mask</span></tt> is defined, this will result in a <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">MaskedArray</span></tt></a>, so
+in all cases a useable <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></tt></a> or subclass will result. This allows
+straightforward plotting of <a class="reference internal" href="../api/astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> objects with 1-
+and 2-dimensional datasets using Matplotlib:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ndd</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>This works because the Matplotlib plotting functions automatically convert
+their inputs using <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.array.html#numpy.array" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.array</span></tt></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">NDData overview</a><ul>
+<li><a class="reference internal" href="#initializing">Initializing</a></li>
+<li><a class="reference internal" href="#mask">Mask</a></li>
+<li><a class="reference internal" href="#flags">Flags</a></li>
+<li><a class="reference internal" href="#uncertainties">Uncertainties</a></li>
+<li><a class="reference internal" href="#arithmetic">Arithmetic</a></li>
+<li><a class="reference internal" href="#meta-data">Meta-data</a></li>
+<li><a class="reference internal" href="#converting-to-numpy-arrays">Converting to Numpy arrays</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/nddata/nddata.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/nddata/nddata.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Optimization &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="SLSQP" href="astropy.modeling.optimizers.SLSQP.html" />
+    <link rel="prev" title="TrapezoidDisk2D" href="astropy.modeling.functional_models.TrapezoidDisk2D.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.optimizers.SLSQP.html" title="SLSQP">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.TrapezoidDisk2D.html" title="TrapezoidDisk2D">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Optimization</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="optimization">
+<h1>Optimization<a class="headerlink" href="#optimization" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.optimizers.Optimization">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.optimizers.</tt><tt class="descname">Optimization</tt><big>(</big><em>opt_method</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/optimizers.html#Optimization"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/optimizers.py#L30" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.optimizers.Optimization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Base class for optimizers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>opt_method</strong> : callable</p>
+<blockquote class="last">
+<div><p>Implements optimization method</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The base Optimizer does not support any constraints by default; individual
+optimizers should explicitly set this list to the specific constraints
+it supports.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.optimizers.Optimization.acc" title="astropy.modeling.optimizers.Optimization.acc"><tt class="xref py py-obj docutils literal"><span class="pre">acc</span></tt></a></td>
+<td>Requested accuracy</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.optimizers.Optimization.eps" title="astropy.modeling.optimizers.Optimization.eps"><tt class="xref py py-obj docutils literal"><span class="pre">eps</span></tt></a></td>
+<td>Step for the forward difference approximation of the Jacobian</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.optimizers.Optimization.maxiter" title="astropy.modeling.optimizers.Optimization.maxiter"><tt class="xref py py-obj docutils literal"><span class="pre">maxiter</span></tt></a></td>
+<td>Maximum number of iterations</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.optimizers.Optimization.opt_method" title="astropy.modeling.optimizers.Optimization.opt_method"><tt class="xref py py-obj docutils literal"><span class="pre">opt_method</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.optimizers.Optimization.supported_constraints" title="astropy.modeling.optimizers.Optimization.supported_constraints"><tt class="xref py py-obj docutils literal"><span class="pre">supported_constraints</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.optimizers.Optimization.__call__" title="astropy.modeling.optimizers.Optimization.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.optimizers.Optimization.acc">
+<tt class="descname">acc</tt><a class="headerlink" href="#astropy.modeling.optimizers.Optimization.acc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Requested accuracy</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.optimizers.Optimization.eps">
+<tt class="descname">eps</tt><a class="headerlink" href="#astropy.modeling.optimizers.Optimization.eps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Step for the forward difference approximation of the Jacobian</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.optimizers.Optimization.maxiter">
+<tt class="descname">maxiter</tt><a class="headerlink" href="#astropy.modeling.optimizers.Optimization.maxiter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum number of iterations</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.optimizers.Optimization.opt_method">
+<tt class="descname">opt_method</tt><a class="headerlink" href="#astropy.modeling.optimizers.Optimization.opt_method" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.optimizers.Optimization.supported_constraints">
+<tt class="descname">supported_constraints</tt><em class="property"> = []</em><a class="headerlink" href="#astropy.modeling.optimizers.Optimization.supported_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.modeling.optimizers.Optimization.__call__">
+<tt class="descname">__call__</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/optimizers.html#Optimization.__call__"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/optimizers.py#L93" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.optimizers.Optimization.__call__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Optimization</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.optimizers.Optimization.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.optimizers.Optimization.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

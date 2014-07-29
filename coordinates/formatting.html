@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Formatting Coordinate Strings &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="index.html" />
+    <link rel="next" title="Separations, Catalog Matching, and Related Functionality" href="matchsep.html" />
+    <link rel="prev" title="Transforming Between Systems" href="transforming.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="matchsep.html" title="Separations, Catalog Matching, and Related Functionality">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="transforming.html" title="Transforming Between Systems">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>Formatting Coordinate Strings</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="formatting-coordinate-strings">
+<h1>Formatting Coordinate Strings<a class="headerlink" href="#formatting-coordinate-strings" title="Permalink to this headline">¶</a></h1>
+<p>Getting a string representation of a coordinate is most powerfuly
+approached by treating the components (e.g., RA and Dec) separately.
+For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">ICRS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">ICRS</span><span class="p">(</span><span class="mf">187.70592</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="mf">12.39112</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="p">)</span>
+<span class="go">&#39;187d42m21.312s 12d23m28.032s&#39;</span>
+</pre></div>
+</div>
+<p>To get better control over the formatting, you can use the angles&#8217;
+<a class="reference internal" href="../api/astropy.coordinates.Angle.html#astropy.coordinates.Angle.to_string" title="astropy.coordinates.Angle.to_string"><tt class="xref py py-meth docutils literal"><span class="pre">to_string()</span></tt></a> method (see <a class="reference internal" href="angles.html"><em>Working with Angles</em></a> for
+more).  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">rahmsstr</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">hour</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">rahmsstr</span><span class="p">)</span>
+<span class="go">&#39;12h30m49.4208s&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">decdmsstr</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">alwayssign</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">str</span><span class="p">(</span><span class="n">decdmsstr</span><span class="p">)</span>
+<span class="go">&#39;+12d23m28.032s&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rahmsstr</span> <span class="o">+</span> <span class="s">&#39; &#39;</span> <span class="o">+</span> <span class="n">decdmsstr</span>
+<span class="go">u&#39;12h30m49.4208s +12d23m28.032s&#39;</span>
+</pre></div>
+</div>
+<p>You can also use python&#8217;s <a class="reference external" href="http://docs.python.org/library/functions.html#format" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt></a> string method to create more complex
+string expressions, such as IAU-style coordinates or even full sentences:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;SDSS J{0}{1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="bp">True</span><span class="p">),</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">sep</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alwayssign</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+<span class="go">&#39;SDSS J1874221.31+122328.03&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&#39;The galaxy M87, at an RA of {0.ra.deg:.1f} and Dec of {0.dec.deg:.1f} degrees, has an impressive jet.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+<span class="go">&#39;The galaxy M87, at an RA of 187.7 and Dec of 12.4 degrees, has an impressive jet.&#39;</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Formatting Coordinate Strings</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/coordinates/formatting.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/coordinates/formatting.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

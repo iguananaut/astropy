@@ -1,0 +1,50 @@
+
+
+FittableModel
+==============================
+
+.. currentmodule:: astropy.modeling
+
+.. autoclass:: FittableModel
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~FittableModel.col_fit_deriv
+      ~FittableModel.fit_deriv
+      ~FittableModel.fittable
+      ~FittableModel.input_names
+      ~FittableModel.linear
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: col_fit_deriv
+   .. autoattribute:: fit_deriv
+   .. autoattribute:: fittable
+   .. autoattribute:: input_names
+   .. autoattribute:: linear
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,46 @@
+
+.. include:: ../time/references.txt
+
+
+TimeDeltaJD
+========================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeDeltaJD
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeDeltaJD.name
+      ~TimeDeltaJD.unit
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: name
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+   

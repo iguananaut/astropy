@@ -1,0 +1,8 @@
+
+
+H
+===================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: H

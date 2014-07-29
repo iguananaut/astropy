@@ -1,0 +1,572 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Cards &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="FITS File handling (astropy.io.fits)" href="../index.html" />
+    <link rel="next" title="Tables" href="tables.html" />
+    <link rel="prev" title="Headers" href="headers.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="tables.html" title="Tables">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="headers.html" title="Headers">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" accesskey="U">FITS File handling (<tt class="docutils literal"><span class="pre">astropy.io.fits</span></tt>)</a> &raquo;</li>
+      
+      <li>Cards</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="cards">
+<h1>Cards<a class="headerlink" href="#cards" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="card">
+<h2><a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-class docutils literal"><span class="pre">Card</span></tt></a><a class="headerlink" href="#card" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="astropy.io.fits.Card">
+<em class="property">class </em><tt class="descclassname">astropy.io.fits.</tt><tt class="descname">Card</tt><big>(</big><em>keyword=None</em>, <em>value=None</em>, <em>comment=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#Card"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L299" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Card" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.fits.verify._Verify</span></tt></p>
+<dl class="method">
+<dt id="astropy.io.fits.Card.ascardimage">
+<tt class="descname">ascardimage</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#Card.ascardimage"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Card.ascardimage" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use the <a class="reference internal" href="#astropy.io.fits.Card.image" title="astropy.io.fits.Card.image"><tt class="xref py py-obj docutils literal"><span class="pre">image</span></tt></a> attribute instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.cardimage">
+<tt class="descname">cardimage</tt><a class="headerlink" href="#astropy.io.fits.Card.cardimage" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use the <a class="reference internal" href="#astropy.io.fits.Card.image" title="astropy.io.fits.Card.image"><tt class="xref py py-obj docutils literal"><span class="pre">image</span></tt></a> attribute instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.comment">
+<tt class="descname">comment</tt><a class="headerlink" href="#astropy.io.fits.Card.comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the comment attribute from the card image if not already set.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.field_specifier">
+<tt class="descname">field_specifier</tt><a class="headerlink" href="#astropy.io.fits.Card.field_specifier" title="Permalink to this definition">¶</a></dt>
+<dd><p>The field-specifier of record-valued keyword cards; always <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> on
+normal cards.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.Card.fromstring">
+<em class="property">classmethod </em><tt class="descname">fromstring</tt><big>(</big><em>image</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#Card.fromstring"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L803" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Card.fromstring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> object from a (raw) string. It will pad the string
+if it is not the length of a card image (80 columns).  If the card
+image is longer than 80 columns, assume it contains <tt class="docutils literal"><span class="pre">CONTINUE</span></tt>
+card(s).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.image">
+<tt class="descname">image</tt><a class="headerlink" href="#astropy.io.fits.Card.image" title="Permalink to this definition">¶</a></dt>
+<dd><p>The card &#8220;image&#8221;, that is, the 80 byte character string that represents
+this card in an actual FITS header.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.is_blank">
+<tt class="descname">is_blank</tt><a class="headerlink" href="#astropy.io.fits.Card.is_blank" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> if the card is completely blank&#8211;that is, it has no keyword,
+value, or comment.  It appears in the header as 80 spaces.</p>
+<p>Returns <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> otherwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.key">
+<tt class="descname">key</tt><a class="headerlink" href="#astropy.io.fits.Card.key" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use the <a class="reference internal" href="#astropy.io.fits.Card.keyword" title="astropy.io.fits.Card.keyword"><tt class="xref py py-obj docutils literal"><span class="pre">keyword</span></tt></a> attribute instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.keyword">
+<tt class="descname">keyword</tt><a class="headerlink" href="#astropy.io.fits.Card.keyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the keyword name parsed from the card image.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.length">
+<tt class="descname">length</tt><em class="property"> = 80</em><a class="headerlink" href="#astropy.io.fits.Card.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>The length of a Card image; should always be 80 for valid FITS files.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.Card.normalize_keyword">
+<em class="property">classmethod </em><tt class="descname">normalize_keyword</tt><big>(</big><em>keyword</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#Card.normalize_keyword"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L817" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Card.normalize_keyword" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.python.org/library/functions.html#classmethod" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">classmethod</span></tt></a> to convert a keyword value that may contain a
+field-specifier to uppercase.  The effect is to raise the key to
+uppercase and leave the field specifier in its original case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : or str</p>
+<blockquote class="last">
+<div><p>A keyword value or a <tt class="docutils literal"><span class="pre">keyword.field-specifier</span></tt> value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.rawkeyword">
+<tt class="descname">rawkeyword</tt><a class="headerlink" href="#astropy.io.fits.Card.rawkeyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>On record-valued keyword cards this is the name of the standard &lt;= 8
+character FITS keyword that this RVKC is stored in.  Otherwise it is
+the card&#8217;s normal keyword.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.rawvalue">
+<tt class="descname">rawvalue</tt><a class="headerlink" href="#astropy.io.fits.Card.rawvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>On record-valued keyword cards this is the raw string value in
+the <tt class="docutils literal"><span class="pre">&lt;field-specifier&gt;:</span> <span class="pre">&lt;value&gt;</span></tt> format stored in the card in order
+to represent a RVKC.  Otherwise it is the card&#8217;s normal value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Card.run_option">
+<tt class="descname">run_option</tt><big>(</big><em>option=u'warn'</em>, <em>err_text=u''</em>, <em>fix_text=u'Fixed.'</em>, <em>fix=None</em>, <em>fixable=True</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/verify.py#L33" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Card.run_option" title="Permalink to this definition">¶</a></dt>
+<dd><p>Execute the verification with selected option.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Card.value">
+<tt class="descname">value</tt><a class="headerlink" href="#astropy.io.fits.Card.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The value associated with the keyword stored in this card.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Card.verify">
+<tt class="descname">verify</tt><big>(</big><em>option=u'warn'</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/verify.py#L53" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Card.verify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify all values in the instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>option</strong> : str</p>
+<blockquote class="last">
+<div><p>Output verification option.  Must be one of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt>,
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">&quot;warn&quot;</span></tt>, or
+<tt class="docutils literal"><span class="pre">&quot;exception&quot;</span></tt>.  May also be any combination of <tt class="docutils literal"><span class="pre">&quot;fix&quot;</span></tt> or
+<tt class="docutils literal"><span class="pre">&quot;silentfix&quot;</span></tt> with <tt class="docutils literal"><span class="pre">&quot;+ignore&quot;</span></tt>, <tt class="docutils literal"><span class="pre">+warn</span></tt>, or <tt class="docutils literal"><span class="pre">+exception&quot;</span>
+<span class="pre">(e.g.</span> <span class="pre">``&quot;fix+warn&quot;</span></tt>).  See <a class="reference internal" href="verification.html#verify"><em>Verification options</em></a> for more info.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="deprecated-interfaces">
+<h2>Deprecated Interfaces<a class="headerlink" href="#deprecated-interfaces" title="Permalink to this headline">¶</a></h2>
+<p>The following classes and functions are deprecated as of the PyFITS 3.1 header
+refactoring, though they are currently still available for backwards-compatibility.</p>
+<dl class="class">
+<dt id="astropy.io.fits.CardList">
+<em class="property">class </em><tt class="descclassname">astropy.io.fits.</tt><tt class="descname">CardList</tt><big>(</big><em>cards=</em>, <span class="optional">[</span><span class="optional">]</span><em>keylist=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L44" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">list</span></tt></p>
+<div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span><a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a> used to provide the list-like functionality for manipulating
+a header as a list of cards.  This functionality is now subsumed into
+the <a class="reference internal" href="headers.html#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> class itself, so it is no longer necessary to create or
+use <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>s.</p>
+</div>
+<p>Construct the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a> object from a list of <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> objects.</p>
+<p><a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a> is now merely a thin wrapper around <a class="reference internal" href="headers.html#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> to provide
+backwards compatibility for the old API.  This should not be used for
+any new code.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cards</strong></p>
+<blockquote class="last">
+<div><p>A list of <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> objects.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="astropy.io.fits.CardList.append">
+<tt class="descname">append</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.append"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.append" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.append" title="astropy.io.fits.Header.append"><tt class="xref py py-meth docutils literal"><span class="pre">Header.append()</span></tt></a> instead.</p>
+</div>
+<p>Append a <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> to the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>card</strong> : <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> object</p>
+<blockquote>
+<div><p>The <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> to be appended.</p>
+</div></blockquote>
+<p><strong>useblanks</strong> : bool, optional</p>
+<blockquote>
+<div><p>Use any <em>extra</em> blank cards?</p>
+<p>If <tt class="docutils literal"><span class="pre">useblanks</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, and if there are blank cards directly
+before <tt class="docutils literal"><span class="pre">END</span></tt>, it will use this space first, instead of appending
+after these blank cards, so the total space will not increase.
+When <tt class="docutils literal"><span class="pre">useblanks</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, the card will be appended at the
+end, even if there are blank cards in front of <tt class="docutils literal"><span class="pre">END</span></tt>.</p>
+</div></blockquote>
+<p><strong>bottom</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> the card will be appended after the last non-commentary
+card.  If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> the card will be appended after the last non-blank
+card.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.copy">
+<tt class="descname">copy</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.copy"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.copy" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.copy" title="astropy.io.fits.Header.copy"><tt class="xref py py-meth docutils literal"><span class="pre">Header.copy()</span></tt></a> instead.</p>
+</div>
+<p>Make a (deep)copy of the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.count">
+<tt class="descname">count</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.count"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.count" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.count" title="astropy.io.fits.Header.count"><tt class="xref py py-meth docutils literal"><span class="pre">Header.count()</span></tt></a> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.count_blanks">
+<tt class="descname">count_blanks</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.count_blanks"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.count_blanks" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>The count_blanks function is deprecated and may be removed in a future version.</p>
+</div>
+<p>Returns how many blank cards are <em>directly</em> before the <tt class="docutils literal"><span class="pre">END</span></tt>
+card.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.extend">
+<tt class="descname">extend</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.extend"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.extend" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.extend" title="astropy.io.fits.Header.extend"><tt class="xref py py-meth docutils literal"><span class="pre">Header.extend()</span></tt></a> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.filter_list">
+<tt class="descname">filter_list</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.filter_list"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.filter_list" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <tt class="docutils literal"><span class="pre">header[&lt;wildcard_pattern&gt;]</span></tt> instead.</p>
+</div>
+<p>Construct a <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a> that contains references to all of the cards in
+this <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a> that match the input key value including any special
+filter keys (<tt class="docutils literal"><span class="pre">*</span></tt>, <tt class="docutils literal"><span class="pre">?</span></tt>, and <tt class="docutils literal"><span class="pre">...</span></tt>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : str</p>
+<blockquote>
+<div><p>key value to filter the list with</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">cardlist</p>
+<blockquote class="last">
+<div><p>A <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a> object containing references to all the
+requested cards.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.index">
+<tt class="descname">index</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.index"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.index" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.index" title="astropy.io.fits.Header.index"><tt class="xref py py-meth docutils literal"><span class="pre">Header.index()</span></tt></a> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.index_of">
+<tt class="descname">index_of</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.index_of"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.index_of" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.index" title="astropy.io.fits.Header.index"><tt class="xref py py-meth docutils literal"><span class="pre">Header.index()</span></tt></a> instead.</p>
+</div>
+<p>Get the index of a keyword in the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : str or int</p>
+<blockquote>
+<div><p>The keyword name (a string) or the index (an integer).</p>
+</div></blockquote>
+<p><strong>backward</strong> : bool, optional</p>
+<blockquote>
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, search the index from the <tt class="docutils literal"><span class="pre">END</span></tt>, i.e.,
+backward.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote class="last">
+<div><p>The index of the <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> with the given keyword.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.insert">
+<tt class="descname">insert</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.insert"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.insert" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.insert" title="astropy.io.fits.Header.insert"><tt class="xref py py-meth docutils literal"><span class="pre">Header.insert()</span></tt></a> instead.</p>
+</div>
+<p>Insert a <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> to the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>pos</strong> : int</p>
+<blockquote>
+<div><p>The position (index, keyword name will not be allowed) to
+insert. The new card will be inserted before it.</p>
+</div></blockquote>
+<p><strong>card</strong> : <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> object</p>
+<blockquote>
+<div><p>The card to be inserted.</p>
+</div></blockquote>
+<p><strong>useblanks</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If <tt class="docutils literal"><span class="pre">useblanks</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, and if there are blank cards directly
+before <tt class="docutils literal"><span class="pre">END</span></tt>, it will use this space first, instead of appending
+after these blank cards, so the total space will not increase.
+When <tt class="docutils literal"><span class="pre">useblanks</span></tt> is <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, the card will be appended at the end,
+even if there are blank cards in front of <tt class="docutils literal"><span class="pre">END</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.keys">
+<tt class="descname">keys</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.keys"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.keys" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.keys" title="astropy.io.fits.Header.keys"><tt class="xref py py-meth docutils literal"><span class="pre">Header.keys()</span></tt></a> instead.</p>
+</div>
+<p>Return a list of all keywords from the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.pop">
+<tt class="descname">pop</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.pop"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.pop" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.pop" title="astropy.io.fits.Header.pop"><tt class="xref py py-meth docutils literal"><span class="pre">Header.pop()</span></tt></a> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.remove">
+<tt class="descname">remove</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.remove"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.remove" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.remove" title="astropy.io.fits.Header.remove"><tt class="xref py py-meth docutils literal"><span class="pre">Header.remove()</span></tt></a> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.CardList.values">
+<tt class="descname">values</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#CardList.values"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.CardList.values" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="headers.html#astropy.io.fits.Header.values" title="astropy.io.fits.Header.values"><tt class="xref py py-meth docutils literal"><span class="pre">Header.values()</span></tt></a> instead.</p>
+</div>
+<p>Return a list of the values of all cards in the <a class="reference internal" href="#astropy.io.fits.CardList" title="astropy.io.fits.CardList"><tt class="xref py py-obj docutils literal"><span class="pre">CardList</span></tt></a>.</p>
+<p>For <tt class="docutils literal"><span class="pre">RecordValuedKeywordCard</span></tt> objects, the value returned is
+the floating point value, exclusive of the
+<tt class="docutils literal"><span class="pre">field_specifier</span></tt>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="astropy.io.fits.create_card">
+<tt class="descclassname">astropy.io.fits.</tt><tt class="descname">create_card</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#create_card"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.create_card" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <tt class="docutils literal"><span class="pre">Card.__init__</span></tt> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="astropy.io.fits.create_card_from_string">
+<tt class="descclassname">astropy.io.fits.</tt><tt class="descname">create_card_from_string</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#create_card_from_string"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.create_card_from_string" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="#astropy.io.fits.Card.fromstring" title="astropy.io.fits.Card.fromstring"><tt class="xref py py-meth docutils literal"><span class="pre">Card.fromstring()</span></tt></a> instead.</p>
+</div>
+<p>Construct a <a class="reference internal" href="#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> object from a (raw) string. It will pad the string
+if it is not the length of a card image (80 columns).  If the card
+image is longer than 80 columns, assume it contains <tt class="docutils literal"><span class="pre">CONTINUE</span></tt>
+card(s).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="astropy.io.fits.upper_key">
+<tt class="descclassname">astropy.io.fits.</tt><tt class="descname">upper_key</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/card.html#upper_key"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/card.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.upper_key" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="#astropy.io.fits.Card.normalize_keyword" title="astropy.io.fits.Card.normalize_keyword"><tt class="xref py py-meth docutils literal"><span class="pre">Card.normalize_keyword()</span></tt></a> instead.</p>
+</div>
+<p><a class="reference external" href="http://docs.python.org/library/functions.html#classmethod" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">classmethod</span></tt></a> to convert a keyword value that may contain a
+field-specifier to uppercase.  The effect is to raise the key to
+uppercase and leave the field specifier in its original case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : or str</p>
+<blockquote class="last">
+<div><p>A keyword value or a <tt class="docutils literal"><span class="pre">keyword.field-specifier</span></tt> value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Cards</a><ul>
+<li><a class="reference internal" href="#card"><tt class="docutils literal"><span class="pre">Card</span></tt></a></li>
+<li><a class="reference internal" href="#deprecated-interfaces">Deprecated Interfaces</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/fits/api/cards.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../../_sources/io/fits/api/cards.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

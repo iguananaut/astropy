@@ -1,0 +1,1516 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.modeling.functional_models &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.modeling.functional_models</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="sd">&quot;&quot;&quot;Mathematical models.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="p">(</span><span class="n">FittableModel</span><span class="p">,</span> <span class="n">Fittable1DModel</span><span class="p">,</span> <span class="n">Fittable2DModel</span><span class="p">,</span>
+                   <span class="n">Model</span><span class="p">,</span> <span class="n">ModelDefinitionError</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.parameters</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">InputParameterError</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_current_module</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span>
+    <span class="s">&#39;AiryDisk2D&#39;</span><span class="p">,</span> <span class="s">&#39;Beta1D&#39;</span><span class="p">,</span> <span class="s">&#39;Beta2D&#39;</span><span class="p">,</span> <span class="s">&#39;Box1D&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Box2D&#39;</span><span class="p">,</span> <span class="s">&#39;Const1D&#39;</span><span class="p">,</span> <span class="s">&#39;Const2D&#39;</span><span class="p">,</span> <span class="s">&#39;Disk2D&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Gaussian1D&#39;</span><span class="p">,</span> <span class="s">&#39;GaussianAbsorption1D&#39;</span><span class="p">,</span> <span class="s">&#39;Gaussian2D&#39;</span><span class="p">,</span> <span class="s">&#39;Linear1D&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Lorentz1D&#39;</span><span class="p">,</span> <span class="s">&#39;MexicanHat1D&#39;</span><span class="p">,</span> <span class="s">&#39;MexicanHat2D&#39;</span><span class="p">,</span> <span class="s">&#39;Scale&#39;</span><span class="p">,</span> <span class="s">&#39;Redshift&#39;</span><span class="p">,</span> <span class="s">&#39;Shift&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Sine1D&#39;</span><span class="p">,</span> <span class="s">&#39;Trapezoid1D&#39;</span><span class="p">,</span> <span class="s">&#39;TrapezoidDisk2D&#39;</span><span class="p">,</span> <span class="s">&#39;Ring2D&#39;</span><span class="p">,</span>
+    <span class="s">&#39;custom_model_1d&#39;</span>
+<span class="p">])</span>
+
+
+<div class="viewcode-block" id="Gaussian1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Gaussian1D.html#astropy.modeling.functional_models.Gaussian1D">[docs]</a><span class="k">class</span> <span class="nc">Gaussian1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Gaussian model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the Gaussian.</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        Mean of the Gaussian.</span>
+<span class="sd">    stddev : float</span>
+<span class="sd">        Standard deviation of the Gaussian.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(x) = A e^{- \\frac{\\left(x - x_{0}\\right)^{2}}{2 \\sigma^{2}}}</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from astropy.modeling import models</span>
+<span class="sd">    &gt;&gt;&gt; def tie_center(model):</span>
+<span class="sd">    ...         mean = 50 * model.stddev</span>
+<span class="sd">    ...         return mean</span>
+<span class="sd">    &gt;&gt;&gt; tied_parameters = {&#39;mean&#39;: tie_center}</span>
+
+<span class="sd">    Specify that &#39;mean&#39; is a tied parameter in one of two ways:</span>
+
+<span class="sd">    &gt;&gt;&gt; g1 = models.Gaussian1D(amplitude=10, mean=5, stddev=.3,</span>
+<span class="sd">    ...                             tied=tied_parameters)</span>
+
+<span class="sd">    or</span>
+
+<span class="sd">    &gt;&gt;&gt; g1 = models.Gaussian1D(amplitude=10, mean=5, stddev=.3)</span>
+<span class="sd">    &gt;&gt;&gt; g1.mean.tied</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; g1.mean.tied = tie_center</span>
+<span class="sd">    &gt;&gt;&gt; g1.mean.tied</span>
+<span class="sd">    &lt;function tie_center at 0x...&gt;</span>
+
+<span class="sd">    Fixed parameters:</span>
+
+<span class="sd">    &gt;&gt;&gt; g1 = models.Gaussian1D(amplitude=10, mean=5, stddev=.3,</span>
+<span class="sd">    ...                        fixed={&#39;stddev&#39;: True})</span>
+<span class="sd">    &gt;&gt;&gt; g1.stddev.fixed</span>
+<span class="sd">    True</span>
+
+<span class="sd">    or</span>
+
+<span class="sd">    &gt;&gt;&gt; g1 = models.Gaussian1D(amplitude=10, mean=5, stddev=.3)</span>
+<span class="sd">    &gt;&gt;&gt; g1.stddev.fixed</span>
+<span class="sd">    False</span>
+<span class="sd">    &gt;&gt;&gt; g1.stddev.fixed = True</span>
+<span class="sd">    &gt;&gt;&gt; g1.stddev.fixed</span>
+<span class="sd">    True</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Gaussian2D, Box1D, Beta1D, Lorentz1D</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">stddev</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Gaussian1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="n">stddev</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Gaussian1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Gaussian1D.html#astropy.modeling.functional_models.Gaussian1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gaussian1D model function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">stddev</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Gaussian1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Gaussian1D.html#astropy.modeling.functional_models.Gaussian1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gaussian1D model function derivatives.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">d_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span> <span class="o">/</span> <span class="n">stddev</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">d_mean</span> <span class="o">=</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">d_amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">stddev</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">d_stddev</span> <span class="o">=</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">d_amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">stddev</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_amplitude</span><span class="p">,</span> <span class="n">d_mean</span><span class="p">,</span> <span class="n">d_stddev</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="GaussianAbsorption1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.GaussianAbsorption1D.html#astropy.modeling.functional_models.GaussianAbsorption1D">[docs]</a><span class="k">class</span> <span class="nc">GaussianAbsorption1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Gaussian absorption line model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the gaussian absorption.</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        Mean of the gaussian.</span>
+<span class="sd">    stddev : float</span>
+<span class="sd">        Standard deviation of the gaussian.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(x) = 1 - A e^{- \\frac{\\left(x - x_{0}\\right)^{2}}{2 \\sigma^{2}}}</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Gaussian1D</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">mean</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">stddev</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GaussianAbsorption1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=</span><span class="n">stddev</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GaussianAbsorption1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.GaussianAbsorption1D.html#astropy.modeling.functional_models.GaussianAbsorption1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        GaussianAbsorption1D model function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Gaussian1D</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="GaussianAbsorption1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.GaussianAbsorption1D.html#astropy.modeling.functional_models.GaussianAbsorption1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        GaussianAbsorption1D model function derivatives.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">operator</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">moves</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">operator</span><span class="o">.</span><span class="n">neg</span><span class="p">,</span> <span class="n">Gaussian1D</span><span class="o">.</span><span class="n">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span><span class="p">)))</span>
+
+</div></div>
+<div class="viewcode-block" id="Gaussian2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Gaussian2D.html#astropy.modeling.functional_models.Gaussian2D">[docs]</a><span class="k">class</span> <span class="nc">Gaussian2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional Gaussian model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the Gaussian.</span>
+<span class="sd">    x_mean : float</span>
+<span class="sd">        Mean of the Gaussian in x.</span>
+<span class="sd">    y_mean : float</span>
+<span class="sd">        Mean of the Gaussian in y.</span>
+<span class="sd">    x_stddev : float</span>
+<span class="sd">        Standard deviation of the Gaussian in x.</span>
+<span class="sd">        ``x_stddev`` and ``y_stddev`` must be specified unless a covariance</span>
+<span class="sd">        matrix (``cov_matrix``) is input.</span>
+<span class="sd">    y_stddev : float</span>
+<span class="sd">        Standard deviation of the Gaussian in y.</span>
+<span class="sd">        ``x_stddev`` and ``y_stddev`` must be specified unless a covariance</span>
+<span class="sd">        matrix (``cov_matrix``) is input.</span>
+<span class="sd">    theta : float, optional</span>
+<span class="sd">        Rotation angle in radians. The rotation angle increases</span>
+<span class="sd">        counterclockwise.</span>
+<span class="sd">    cov_matrix : ndarray, optional</span>
+<span class="sd">        A 2x2 covariance matrix. If specified, overrides the ``x_stddev``,</span>
+<span class="sd">        ``y_stddev``, and ``theta`` specification.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            f(x, y) = A e^{-a\\left(x - x_{0}\\right)^{2}  -b\\left(x - x_{0}\\right)</span>
+<span class="sd">            \\left(y - y_{0}\\right)  -c\\left(y - y_{0}\\right)^{2}}</span>
+
+<span class="sd">    Using the following definitions:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            a = \\left(\\frac{\\cos^{2}{\\left (\\theta \\right )}}{2 \\sigma_{x}^{2}} +</span>
+<span class="sd">            \\frac{\\sin^{2}{\\left (\\theta \\right )}}{2 \\sigma_{y}^{2}}\\right)</span>
+
+<span class="sd">            b = \\left(\\frac{\\sin{\\left (2 \\theta \\right )}}{2 \\sigma_{x}^{2}} -</span>
+<span class="sd">            \\frac{\\sin{\\left (2 \\theta \\right )}}{2 \\sigma_{y}^{2}}\\right)</span>
+
+<span class="sd">            c = \\left(\\frac{\\sin^{2}{\\left (\\theta \\right )}}{2 \\sigma_{x}^{2}} +</span>
+<span class="sd">            \\frac{\\cos^{2}{\\left (\\theta \\right )}}{2 \\sigma_{y}^{2}}\\right)</span>
+
+<span class="sd">    If using a ``cov_matrix``, the model is of the form:</span>
+<span class="sd">        .. math::</span>
+<span class="sd">            f(x, y) = A e^{-0.5 \\left(\\vec{x} - \\vec{x}_{0}\\right)^{T} \\Sigma^{-1} \\left(\\vec{x} - \\vec{x}_{0}\\right)}</span>
+
+<span class="sd">    where :math:`\\vec{x} = [x, y]`, :math:`\\vec{x}_{0} = [x_{0}, y_{0}]`,</span>
+<span class="sd">    and :math:`\\Sigma` is the covariance matrix:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \\Sigma = \\left(\\begin{array}{ccc}</span>
+<span class="sd">            \\sigma_x^2               &amp; \\rho \\sigma_x \\sigma_y \\\\</span>
+<span class="sd">            \\rho \\sigma_x \\sigma_y &amp; \\sigma_y^2</span>
+<span class="sd">            \end{array}\\right)</span>
+
+<span class="sd">    :math:`\\rho` is the correlation between ``x`` and ``y``, which should</span>
+<span class="sd">    be between -1 and +1.  Positive correlation corresponds to a</span>
+<span class="sd">    ``theta`` in the range 0 to 90 degrees.  Negative correlation</span>
+<span class="sd">    corresponds to a ``theta`` in the range of 0 to -90 degrees.</span>
+
+<span class="sd">    See [1]_ for more details about the 2D Gaussian function.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Gaussian1D, Box2D, Beta2D</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] http://en.wikipedia.org/wiki/Gaussian_function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_mean</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_mean</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_stddev</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_stddev</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_mean</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">x_stddev</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">y_stddev</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">theta</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">cov_matrix</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">y_stddev</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">cov_matrix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputParameterError</span><span class="p">(</span>
+                <span class="s">&quot;Either x/y_stddev must be specified, or a &quot;</span>
+                <span class="s">&quot;covariance matrix.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">x_stddev</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">cov_matrix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InputParameterError</span><span class="p">(</span>
+                <span class="s">&quot;Either x/y_stddev must be specified, or a &quot;</span>
+                <span class="s">&quot;covariance matrix.&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">cov_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">x_stddev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">or</span>
+                                         <span class="n">y_stddev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">InputParameterError</span><span class="p">(</span>
+                <span class="s">&quot;Cannot specify both cov_matrix and x/y_stddev&quot;</span><span class="p">)</span>
+
+        <span class="c"># Compute principle coordinate system transformation</span>
+        <span class="k">elif</span> <span class="n">cov_matrix</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">cov_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cov_matrix</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Covariance matrix must be 2x2&quot;</span><span class="p">)</span>
+            <span class="n">eig_vals</span><span class="p">,</span> <span class="n">eig_vecs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">cov_matrix</span><span class="p">)</span>
+            <span class="n">x_stddev</span><span class="p">,</span> <span class="n">y_stddev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">eig_vals</span><span class="p">)</span>
+            <span class="n">y_vec</span> <span class="o">=</span> <span class="n">eig_vecs</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">y_vec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_vec</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Gaussian2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_mean</span><span class="o">=</span><span class="n">x_mean</span><span class="p">,</span> <span class="n">y_mean</span><span class="o">=</span><span class="n">y_mean</span><span class="p">,</span>
+            <span class="n">x_stddev</span><span class="o">=</span><span class="n">x_stddev</span><span class="p">,</span> <span class="n">y_stddev</span><span class="o">=</span><span class="n">y_stddev</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Gaussian2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Gaussian2D.html#astropy.modeling.functional_models.Gaussian2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_mean</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">x_stddev</span><span class="p">,</span> <span class="n">y_stddev</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Gaussian function&quot;&quot;&quot;</span>
+
+        <span class="n">cost2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">sint2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">sin2t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">xstd2</span> <span class="o">=</span> <span class="n">x_stddev</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">ystd2</span> <span class="o">=</span> <span class="n">y_stddev</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">xdiff</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x_mean</span>
+        <span class="n">ydiff</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_mean</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">cost2</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">sint2</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">sin2t</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">sin2t</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">))</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">sint2</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">cost2</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">a</span> <span class="o">*</span> <span class="n">xdiff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">xdiff</span> <span class="o">*</span> <span class="n">ydiff</span><span class="p">)</span> <span class="o">+</span>
+                                    <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">ydiff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Gaussian2D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Gaussian2D.html#astropy.modeling.functional_models.Gaussian2D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_mean</span><span class="p">,</span> <span class="n">y_mean</span><span class="p">,</span> <span class="n">x_stddev</span><span class="p">,</span> <span class="n">y_stddev</span><span class="p">,</span> <span class="n">theta</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Gaussian function derivative with respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">cost</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">sint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">cost2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">sint2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">cos2t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">sin2t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">theta</span><span class="p">)</span>
+        <span class="n">xstd2</span> <span class="o">=</span> <span class="n">x_stddev</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">ystd2</span> <span class="o">=</span> <span class="n">y_stddev</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">xstd3</span> <span class="o">=</span> <span class="n">x_stddev</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="n">ystd3</span> <span class="o">=</span> <span class="n">y_stddev</span> <span class="o">**</span> <span class="mi">3</span>
+        <span class="n">xdiff</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x_mean</span>
+        <span class="n">ydiff</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="n">y_mean</span>
+        <span class="n">xdiff2</span> <span class="o">=</span> <span class="n">xdiff</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">ydiff2</span> <span class="o">=</span> <span class="n">ydiff</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">cost2</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">sint2</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">))</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">sin2t</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">sin2t</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">))</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">sint2</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">cost2</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">))</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">a</span> <span class="o">*</span> <span class="n">xdiff2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">xdiff</span> <span class="o">*</span> <span class="n">ydiff</span><span class="p">)</span> <span class="o">+</span>
+                                 <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">ydiff2</span><span class="p">)))</span>
+        <span class="n">da_dtheta</span> <span class="o">=</span> <span class="p">(</span><span class="n">sint</span> <span class="o">*</span> <span class="n">cost</span> <span class="o">*</span> <span class="p">((</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)))</span>
+        <span class="n">da_dx_stddev</span> <span class="o">=</span> <span class="o">-</span><span class="n">cost2</span> <span class="o">/</span> <span class="n">xstd3</span>
+        <span class="n">da_dy_stddev</span> <span class="o">=</span> <span class="o">-</span><span class="n">sint2</span> <span class="o">/</span> <span class="n">ystd3</span>
+        <span class="n">db_dtheta</span> <span class="o">=</span> <span class="p">(</span><span class="n">cos2t</span> <span class="o">/</span> <span class="n">xstd2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">cos2t</span> <span class="o">/</span> <span class="n">ystd2</span><span class="p">)</span>
+        <span class="n">db_dx_stddev</span> <span class="o">=</span> <span class="o">-</span><span class="n">sin2t</span> <span class="o">/</span> <span class="n">xstd3</span>
+        <span class="n">db_dy_stddev</span> <span class="o">=</span> <span class="n">sin2t</span> <span class="o">/</span> <span class="n">ystd3</span>
+        <span class="n">dc_dtheta</span> <span class="o">=</span> <span class="o">-</span><span class="n">da_dtheta</span>
+        <span class="n">dc_dx_stddev</span> <span class="o">=</span> <span class="o">-</span><span class="n">sint2</span> <span class="o">/</span> <span class="n">xstd3</span>
+        <span class="n">dc_dy_stddev</span> <span class="o">=</span> <span class="o">-</span><span class="n">cost2</span> <span class="o">/</span> <span class="n">ystd3</span>
+        <span class="n">dg_dA</span> <span class="o">=</span> <span class="n">g</span> <span class="o">/</span> <span class="n">amplitude</span>
+        <span class="n">dg_dx_mean</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="p">((</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">xdiff</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="n">ydiff</span><span class="p">))</span>
+        <span class="n">dg_dy_mean</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="p">((</span><span class="n">b</span> <span class="o">*</span> <span class="n">xdiff</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">c</span> <span class="o">*</span> <span class="n">ydiff</span><span class="p">))</span>
+        <span class="n">dg_dx_stddev</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">da_dx_stddev</span> <span class="o">*</span> <span class="n">xdiff2</span> <span class="o">+</span>
+                              <span class="n">db_dx_stddev</span> <span class="o">*</span> <span class="n">xdiff</span> <span class="o">*</span> <span class="n">ydiff</span> <span class="o">+</span>
+                              <span class="n">dc_dx_stddev</span> <span class="o">*</span> <span class="n">ydiff2</span><span class="p">))</span>
+        <span class="n">dg_dy_stddev</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">da_dy_stddev</span> <span class="o">*</span> <span class="n">xdiff2</span> <span class="o">+</span>
+                              <span class="n">db_dy_stddev</span> <span class="o">*</span> <span class="n">xdiff</span> <span class="o">*</span> <span class="n">ydiff</span> <span class="o">+</span>
+                              <span class="n">dc_dy_stddev</span> <span class="o">*</span> <span class="n">ydiff2</span><span class="p">))</span>
+        <span class="n">dg_dtheta</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">da_dtheta</span> <span class="o">*</span> <span class="n">xdiff2</span> <span class="o">+</span>
+                           <span class="n">db_dtheta</span> <span class="o">*</span> <span class="n">xdiff</span> <span class="o">*</span> <span class="n">ydiff</span> <span class="o">+</span>
+                           <span class="n">dc_dtheta</span> <span class="o">*</span> <span class="n">ydiff2</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dg_dA</span><span class="p">,</span> <span class="n">dg_dx_mean</span><span class="p">,</span> <span class="n">dg_dy_mean</span><span class="p">,</span> <span class="n">dg_dx_stddev</span><span class="p">,</span> <span class="n">dg_dy_stddev</span><span class="p">,</span>
+                <span class="n">dg_dtheta</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Shift"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Shift.html#astropy.modeling.functional_models.Shift">[docs]</a><span class="k">class</span> <span class="nc">Shift</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shift a coordinate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    offsets : float or a list of floats</span>
+<span class="sd">        offsets to be applied to a coordinate</span>
+<span class="sd">        if a list - each value in the list is an offset to be applied to a</span>
+<span class="sd">        column in the input coordinate array</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">offsets</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offsets</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Shift</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">offsets</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c"># TODO: Might need to do some work to ensure that cases like this work</span>
+    <span class="c"># consistently.  Should iterating over self.offsets mean iterating over its</span>
+    <span class="c"># parameter sets?  Maybe something like this should just work seamlessly</span>
+<div class="viewcode-block" id="Shift.inverse"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Shift.html#astropy.modeling.functional_models.Shift.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">inv</span><span class="o">.</span><span class="n">offsets</span> <span class="o">*=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">inv</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Shift.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Shift.html#astropy.modeling.functional_models.Shift.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">offsets</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">offsets</span>
+
+</div></div>
+<div class="viewcode-block" id="Scale"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Scale.html#astropy.modeling.functional_models.Scale">[docs]</a><span class="k">class</span> <span class="nc">Scale</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multiply a model by a factor.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    factors : float or a list of floats</span>
+<span class="sd">        scale for a coordinate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">factors</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">linear</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Scale</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">factors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Scale.inverse"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Scale.html#astropy.modeling.functional_models.Scale.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">inv</span><span class="o">.</span><span class="n">factors</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">factors</span>
+        <span class="k">return</span> <span class="n">inv</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Scale.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Scale.html#astropy.modeling.functional_models.Scale.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">factors</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">factors</span> <span class="o">*</span> <span class="n">x</span>
+
+</div></div>
+<div class="viewcode-block" id="Redshift"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Redshift.html#astropy.modeling.functional_models.Redshift">[docs]</a><span class="k">class</span> <span class="nc">Redshift</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional redshift model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : float or a list of floats</span>
+<span class="sd">        Redshift value(s).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: \\lambda_{obs} = (1 + z) \\lambda_{rest}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">&#39;redshift&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Redshift</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Redshift.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Redshift.html#astropy.modeling.functional_models.Redshift.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Redshift model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Redshift.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Redshift.html#astropy.modeling.functional_models.Redshift.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Redshift model derivative&quot;&quot;&quot;</span>
+        <span class="n">d_z</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_z</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="Redshift.inverse"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Redshift.html#astropy.modeling.functional_models.Redshift.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inverse Redshift model&quot;&quot;&quot;</span>
+
+        <span class="n">inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">inv</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.0</span>
+        <span class="k">return</span> <span class="n">inv</span>
+
+</div></div>
+<div class="viewcode-block" id="Sine1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Sine1D.html#astropy.modeling.functional_models.Sine1D">[docs]</a><span class="k">class</span> <span class="nc">Sine1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Sine model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Oscillation amplitude</span>
+<span class="sd">    frequency : float</span>
+<span class="sd">        Oscillation frequency</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Const1D, Linear1D</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(x) = A \\sin(2 \\pi f x)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">frequency</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Sine1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">frequency</span><span class="o">=</span><span class="n">frequency</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Sine1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Sine1D.html#astropy.modeling.functional_models.Sine1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">frequency</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Sine model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Sine1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Sine1D.html#astropy.modeling.functional_models.Sine1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">frequency</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Sine model derivative&quot;&quot;&quot;</span>
+
+        <span class="n">d_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+        <span class="n">d_frequency</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">amplitude</span> <span class="o">*</span>
+                       <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_amplitude</span><span class="p">,</span> <span class="n">d_frequency</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Linear1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Linear1D.html#astropy.modeling.functional_models.Linear1D">[docs]</a><span class="k">class</span> <span class="nc">Linear1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Line model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    slope : float</span>
+<span class="sd">        Slope of the straight line</span>
+
+<span class="sd">    intercept : float</span>
+<span class="sd">        Intercept of the straight line</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Const1D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(x) = a x + b</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">intercept</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">linear</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Linear1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">slope</span><span class="o">=</span><span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="o">=</span><span class="n">intercept</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Linear1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Linear1D.html#astropy.modeling.functional_models.Linear1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Line model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">intercept</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Linear1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Linear1D.html#astropy.modeling.functional_models.Linear1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="n">intercept</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Line model derivative with respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">d_slope</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">d_intercept</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_slope</span><span class="p">,</span> <span class="n">d_intercept</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Lorentz1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Lorentz1D.html#astropy.modeling.functional_models.Lorentz1D">[docs]</a><span class="k">class</span> <span class="nc">Lorentz1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Lorentzian model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Peak value</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        Position of the peak</span>
+<span class="sd">    fwhm : float</span>
+<span class="sd">        Full width at half maximum</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Gaussian1D, Box1D, MexicanHat1D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(x) = \\frac{A \\gamma^{2}}{\\gamma^{2} + \\left(x - x_{0}\\right)^{2}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">fwhm</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Lorentz1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">fwhm</span><span class="o">=</span><span class="n">fwhm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Lorentz1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Lorentz1D.html#astropy.modeling.functional_models.Lorentz1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Lorentzian model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">amplitude</span> <span class="o">*</span> <span class="p">((</span><span class="n">fwhm</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span>
+                <span class="p">(</span><span class="n">fwhm</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Lorentz1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Lorentz1D.html#astropy.modeling.functional_models.Lorentz1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">fwhm</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Lorentzian model derivative wiht respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">d_amplitude</span> <span class="o">=</span> <span class="n">fwhm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">fwhm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">d_x_0</span> <span class="o">=</span> <span class="p">(</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">d_amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">/</span>
+                 <span class="p">(</span><span class="n">fwhm</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">d_fwhm</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">d_amplitude</span> <span class="o">/</span> <span class="n">fwhm</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">d_amplitude</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_amplitude</span><span class="p">,</span> <span class="n">d_x_0</span><span class="p">,</span> <span class="n">d_fwhm</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Const1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Const1D.html#astropy.modeling.functional_models.Const1D">[docs]</a><span class="k">class</span> <span class="nc">Const1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Constant model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Value of the constant function</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Const2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(x) = A</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">linear</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Const1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Const1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Const1D.html#astropy.modeling.functional_models.Const1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Constant model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Const1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Const1D.html#astropy.modeling.functional_models.Const1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Constant model derivative with respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">d_amplitude</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_amplitude</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Const2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Const2D.html#astropy.modeling.functional_models.Const2D">[docs]</a><span class="k">class</span> <span class="nc">Const2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional Constant model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Value of the constant function</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Const1D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(x, y) = A</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">linear</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Const2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Const2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Const2D.html#astropy.modeling.functional_models.Const2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Constant model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Disk2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Disk2D.html#astropy.modeling.functional_models.Disk2D">[docs]</a><span class="k">class</span> <span class="nc">Disk2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional radial symmetric Disk model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Value of the disk function</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position center of the disk</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position center of the disk</span>
+<span class="sd">    R_0 : float</span>
+<span class="sd">        Radius of the disk</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Box2D, TrapezoidDisk2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            f(r) = \\left \\{</span>
+<span class="sd">                     \\begin{array}{ll}</span>
+<span class="sd">                       A &amp; : r \\leq R_0 \\\\</span>
+<span class="sd">                       0 &amp; : r &gt; R_0</span>
+<span class="sd">                     \\end{array}</span>
+<span class="sd">                   \\right.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">R_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">R_0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Disk2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">R_0</span><span class="o">=</span><span class="n">R_0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Disk2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Disk2D.html#astropy.modeling.functional_models.Disk2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">R_0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Disk model function&quot;&quot;&quot;</span>
+
+        <span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">rr</span> <span class="o">&lt;=</span> <span class="n">R_0</span> <span class="o">**</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="n">amplitude</span><span class="p">])</span>
+
+</div></div>
+<div class="viewcode-block" id="Ring2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Ring2D.html#astropy.modeling.functional_models.Ring2D">[docs]</a><span class="k">class</span> <span class="nc">Ring2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional radial symmetric Ring model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Value of the disk function</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position center of the disk</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position center of the disk</span>
+<span class="sd">    r_in : float</span>
+<span class="sd">        Inner radius of the ring</span>
+<span class="sd">    width : float</span>
+<span class="sd">        Width of the ring.</span>
+<span class="sd">    r_out : float</span>
+<span class="sd">        Outer Radius of the ring. Can be specified instead of width.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Disk2D, TrapezoidDisk2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            f(r) = \\left \\{</span>
+<span class="sd">                     \\begin{array}{ll}</span>
+<span class="sd">                       A &amp; : r_{in} \\leq r \\leq r_{out} \\\\</span>
+<span class="sd">                       0 &amp; : \\textnormal{else}</span>
+<span class="sd">                     \\end{array}</span>
+<span class="sd">                   \\right.</span>
+
+<span class="sd">    Where :math:`r_{out} = r_{in} + r_{width}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">r_in</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">r_in</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">r_out</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">r_out</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="n">r_out</span> <span class="o">-</span> <span class="n">r_in</span>
+        <span class="k">if</span> <span class="n">r_out</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">width</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span><span class="s">&quot;Either specify width or r_out.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">Ring2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">r_in</span><span class="o">=</span><span class="n">r_in</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Ring2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Ring2D.html#astropy.modeling.functional_models.Ring2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">r_in</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Ring model function.&quot;&quot;&quot;</span>
+
+        <span class="n">rr</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">r_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">rr</span> <span class="o">&gt;=</span> <span class="n">r_in</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">rr</span> <span class="o">&lt;=</span> <span class="p">(</span><span class="n">r_in</span> <span class="o">+</span> <span class="n">width</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">r_range</span><span class="p">],</span> <span class="p">[</span><span class="n">amplitude</span><span class="p">])</span>
+
+</div></div>
+<span class="k">class</span> <span class="nc">Delta1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;One dimensional Dirac delta function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span><span class="s">&quot;Not implemented&quot;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Delta2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Two dimensional Dirac delta function.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span><span class="s">&quot;Not implemented&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Box1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Box1D.html#astropy.modeling.functional_models.Box1D">[docs]</a><span class="k">class</span> <span class="nc">Box1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Box model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude A</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        Position of the center of the box function</span>
+<span class="sd">    width : float</span>
+<span class="sd">        Width of the box</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Box2D, TrapezoidDisk2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">            f(x) = \\left \\{</span>
+<span class="sd">                     \\begin{array}{ll}</span>
+<span class="sd">                       A &amp; : x_0 - w/2 \\geq x \\geq x_0 + w/2 \\\\</span>
+<span class="sd">                       0 &amp; : \\textnormal{else}</span>
+<span class="sd">                     \\end{array}</span>
+<span class="sd">                   \\right.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Box1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Box1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Box1D.html#astropy.modeling.functional_models.Box1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Box model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x_0</span> <span class="o">-</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span>
+                                         <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">x_0</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)],</span>
+                         <span class="p">[</span><span class="n">amplitude</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Box1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Box1D.html#astropy.modeling.functional_models.Box1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Box model derivative with respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">d_amplitude</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span>
+        <span class="n">d_x_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">d_width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_amplitude</span><span class="p">,</span> <span class="n">d_x_0</span><span class="p">,</span> <span class="n">d_width</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Box2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Box2D.html#astropy.modeling.functional_models.Box2D">[docs]</a><span class="k">class</span> <span class="nc">Box2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional Box model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude A</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position of the center of the box function</span>
+<span class="sd">    x_width : float</span>
+<span class="sd">        Width in x direction of the box</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position of the center of the box function</span>
+<span class="sd">    y_width : float</span>
+<span class="sd">        Width in y direction of the box</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Box1D, Gaussian2D, Beta2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">            f(x, y) = \\left \\{</span>
+<span class="sd">                     \\begin{array}{ll}</span>
+<span class="sd">                       A &amp; : x_0 - w_x/2 \\geq x \\geq x_0 + w_x/2 \\\\</span>
+<span class="sd">                       A &amp; : y_0 - w_y/2 \\geq y \\geq y_0 + w_y/2 \\\\</span>
+<span class="sd">                       0 &amp; : \\textnormal{else}</span>
+<span class="sd">                     \\end{array}</span>
+<span class="sd">                   \\right.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_width</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_width</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">x_width</span><span class="p">,</span> <span class="n">y_width</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Box2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">x_width</span><span class="o">=</span><span class="n">x_width</span><span class="p">,</span>
+            <span class="n">y_width</span><span class="o">=</span><span class="n">y_width</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Box2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Box2D.html#astropy.modeling.functional_models.Box2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">x_width</span><span class="p">,</span> <span class="n">y_width</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Box model function&quot;&quot;&quot;</span>
+
+        <span class="n">x_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x_0</span> <span class="o">-</span> <span class="n">x_width</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span>
+                                 <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">x_0</span> <span class="o">+</span> <span class="n">x_width</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+        <span class="n">y_range</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">y</span> <span class="o">&gt;=</span> <span class="n">y_0</span> <span class="o">-</span> <span class="n">y_width</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span>
+                                 <span class="n">y</span> <span class="o">&lt;=</span> <span class="n">y_0</span> <span class="o">+</span> <span class="n">y_width</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x_range</span><span class="p">,</span> <span class="n">y_range</span><span class="p">)],</span> <span class="p">[</span><span class="n">amplitude</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Trapezoid1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Trapezoid1D.html#astropy.modeling.functional_models.Trapezoid1D">[docs]</a><span class="k">class</span> <span class="nc">Trapezoid1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Trapezoid model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the trapezoid</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        Center position of the trapezoid</span>
+<span class="sd">    width : float</span>
+<span class="sd">        Width of the constant part of the trapezoid.</span>
+<span class="sd">    slope : float</span>
+<span class="sd">        Slope of the tails of the trapezoid</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Box1D, Gaussian1D, Beta1D</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Trapezoid1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="n">slope</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Trapezoid1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Trapezoid1D.html#astropy.modeling.functional_models.Trapezoid1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Trapezoid model function&quot;&quot;&quot;</span>
+
+        <span class="c"># Compute the four points where the trapezoid changes slope</span>
+        <span class="c"># x1 &lt;= x2 &lt;= x3 &lt;= x4</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">x_0</span> <span class="o">-</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="n">x3</span> <span class="o">=</span> <span class="n">x_0</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">x2</span> <span class="o">-</span> <span class="n">amplitude</span> <span class="o">/</span> <span class="n">slope</span>
+        <span class="n">x4</span> <span class="o">=</span> <span class="n">x3</span> <span class="o">+</span> <span class="n">amplitude</span> <span class="o">/</span> <span class="n">slope</span>
+
+        <span class="c"># Compute model values in pieces between the change points</span>
+        <span class="n">range_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x2</span><span class="p">)</span>
+        <span class="n">range_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x2</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x3</span><span class="p">)</span>
+        <span class="n">range_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">x3</span><span class="p">,</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">x4</span><span class="p">)</span>
+        <span class="n">val_a</span> <span class="o">=</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span>
+        <span class="n">val_b</span> <span class="o">=</span> <span class="n">amplitude</span>
+        <span class="n">val_c</span> <span class="o">=</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">x4</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">range_a</span><span class="p">,</span> <span class="n">range_b</span><span class="p">,</span> <span class="n">range_c</span><span class="p">],</span> <span class="p">[</span><span class="n">val_a</span><span class="p">,</span> <span class="n">val_b</span><span class="p">,</span> <span class="n">val_c</span><span class="p">])</span>
+
+</div></div>
+<div class="viewcode-block" id="TrapezoidDisk2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.TrapezoidDisk2D.html#astropy.modeling.functional_models.TrapezoidDisk2D">[docs]</a><span class="k">class</span> <span class="nc">TrapezoidDisk2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional circular Trapezoid model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the trapezoid</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position of the center of the trapezoid</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position of the center of the trapezoid</span>
+<span class="sd">    R_0 : float</span>
+<span class="sd">        Radius of the constant part of the trapezoid.</span>
+<span class="sd">    slope : float</span>
+<span class="sd">        Slope of the tails of the trapezoid in x direction.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Disk2D, Box2D</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">R_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">slope</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">R_0</span><span class="p">,</span> <span class="n">slope</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TrapezoidDisk2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">R_0</span><span class="o">=</span><span class="n">R_0</span><span class="p">,</span> <span class="n">slope</span><span class="o">=</span><span class="n">slope</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="TrapezoidDisk2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.TrapezoidDisk2D.html#astropy.modeling.functional_models.TrapezoidDisk2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">R_0</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Trapezoid Disk model function&quot;&quot;&quot;</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">range_1</span> <span class="o">=</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">R_0</span>
+        <span class="n">range_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">r</span> <span class="o">&gt;</span> <span class="n">R_0</span><span class="p">,</span>  <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">R_0</span> <span class="o">+</span> <span class="n">amplitude</span> <span class="o">/</span> <span class="n">slope</span><span class="p">)</span>
+        <span class="n">val_1</span> <span class="o">=</span> <span class="n">amplitude</span>
+        <span class="n">val_2</span> <span class="o">=</span> <span class="n">amplitude</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_0</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">select</span><span class="p">([</span><span class="n">range_1</span><span class="p">,</span> <span class="n">range_2</span><span class="p">],</span> <span class="p">[</span><span class="n">val_1</span><span class="p">,</span> <span class="n">val_2</span><span class="p">])</span>
+
+</div></div>
+<div class="viewcode-block" id="MexicanHat1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.MexicanHat1D.html#astropy.modeling.functional_models.MexicanHat1D">[docs]</a><span class="k">class</span> <span class="nc">MexicanHat1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Mexican Hat model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        Position of the peak</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Width of the Mexican hat</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MexicanHat2D, Box1D, Gaussian1D, Trapezoid1D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(x) = {A \\left(1 - \\frac{\\left(x - x_{0}\\right)^{2}}{\\sigma^{2}}\\right)</span>
+<span class="sd">        e^{- \\frac{\\left(x - x_{0}\\right)^{2}}{2 \\sigma^{2}}}}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MexicanHat1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="MexicanHat1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.MexicanHat1D.html#astropy.modeling.functional_models.MexicanHat1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Mexican Hat model function&quot;&quot;&quot;</span>
+
+        <span class="n">xx_ww</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">xx_ww</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">xx_ww</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="MexicanHat2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.MexicanHat2D.html#astropy.modeling.functional_models.MexicanHat2D">[docs]</a><span class="k">class</span> <span class="nc">MexicanHat2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional symmetric Mexican Hat model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position of the peak</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position of the peak</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Width of the Mexican hat</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    MexicanHat1D, Gaussian2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(x, y) = A \\left(1 - \\frac{\\left(x - x_{0}\\right)^{2}</span>
+<span class="sd">        + \\left(y - y_{0}\\right)^{2}}{\\sigma^{2}}\\right)</span>
+<span class="sd">        e^{\\frac{- \\left(x - x_{0}\\right)^{2}</span>
+<span class="sd">        - \\left(y - y_{0}\\right)^{2}}{2 \\sigma^{2}}}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MexicanHat2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="MexicanHat2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.MexicanHat2D.html#astropy.modeling.functional_models.MexicanHat2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Mexican Hat model function&quot;&quot;&quot;</span>
+
+        <span class="n">rr_ww</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rr_ww</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">rr_ww</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="AiryDisk2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.AiryDisk2D.html#astropy.modeling.functional_models.AiryDisk2D">[docs]</a><span class="k">class</span> <span class="nc">AiryDisk2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional Airy disk model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the Airy function.</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position of the maximum of the Airy function.</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position of the maximum of the Airy function.</span>
+<span class="sd">    radius : float</span>
+<span class="sd">        The radius of the Airy disk (radius of the first zero).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Box2D, TrapezoidDisk2D, Gaussian2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">        .. math:: f(r) = A \\left[\\frac{2 J_1(\\frac{\\pi r}{R/R_z})}{\\frac{\\pi r}{R/R_z}}\\right]^2</span>
+
+<span class="sd">    Where :math:`J_1` is the first order Bessel function of the first</span>
+<span class="sd">    kind, :math:`r` is radial distance from the maximum of the Airy</span>
+<span class="sd">    function (:math:`r = \\sqrt{(x - x_0)^2 + (y - y_0)^2}`), :math:`R`</span>
+<span class="sd">    is the input ``radius`` parameter, and :math:`R_z =</span>
+<span class="sd">    1.2196698912665045`).</span>
+
+<span class="sd">    For an optical system, the radius of the first zero represents the</span>
+<span class="sd">    limiting angular resolution and is approximately 1.22 * lambda / D,</span>
+<span class="sd">    where lambda is the wavelength of the light and D is the diameter of</span>
+<span class="sd">    the aperture.</span>
+
+<span class="sd">    See [1]_ for more details about the Airy disk.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] http://en.wikipedia.org/wiki/Airy_disk</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">_j1</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_j1</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">j1</span><span class="p">,</span> <span class="n">jn_zeros</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">_j1</span> <span class="o">=</span> <span class="n">j1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">_rz</span> <span class="o">=</span> <span class="n">jn_zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+            <span class="c"># add a ValueError here for python3 + scipy &lt; 0.12</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s">&quot;AiryDisk2D model requires scipy &gt; 0.11.&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">AiryDisk2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c"># TODO: Why does this particular model have its own special __deepcopy__</span>
+    <span class="c"># and __copy__?  If it has anything to do with the use of the j_1 function</span>
+    <span class="c"># that should be reworked.</span>
+    <span class="k">def</span> <span class="nf">__deepcopy__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">):</span>
+        <span class="n">new_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">y_0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_model</span>
+
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">y_0</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_model</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AiryDisk2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.AiryDisk2D.html#astropy.modeling.functional_models.AiryDisk2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">radius</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Airy model function&quot;&quot;&quot;</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">radius</span> <span class="o">/</span> <span class="n">cls</span><span class="o">.</span><span class="n">_rz</span><span class="p">)</span>
+        <span class="c"># Since r can be zero, we have to take care to treat that case</span>
+        <span class="c"># separately so as not to raise a numpy warning</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">rt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r</span><span class="p">[</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">z</span><span class="p">[</span><span class="n">r</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">cls</span><span class="o">.</span><span class="n">_j1</span><span class="p">(</span><span class="n">rt</span><span class="p">)</span> <span class="o">/</span> <span class="n">rt</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">z</span> <span class="o">*=</span> <span class="n">amplitude</span>
+        <span class="k">return</span> <span class="n">z</span>
+
+</div></div>
+<div class="viewcode-block" id="Beta1D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Beta1D.html#astropy.modeling.functional_models.Beta1D">[docs]</a><span class="k">class</span> <span class="nc">Beta1D</span><span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    One dimensional Beta model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the model.</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position of the maximum of the Beta model.</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        Core width of the Beta model.</span>
+<span class="sd">    alpha : float</span>
+<span class="sd">        Power index of the beta model.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Gaussian1D, Box1D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(x) = A \\left(1 + \\frac{\\left(x - x_{0}\\right)^{2}}{\\gamma^{2}}\\right)^{- \\alpha}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Beta1D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Beta1D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Beta1D.html#astropy.modeling.functional_models.Beta1D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Beta model function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Beta1D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Beta1D.html#astropy.modeling.functional_models.Beta1D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;One dimensional Beta model derivative with respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">d_A</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">d_x_0</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">/</span>
+                 <span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">**</span> <span class="n">alpha</span><span class="p">))</span>
+        <span class="n">d_gamma</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span>
+                   <span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">**</span> <span class="n">alpha</span><span class="p">))</span>
+        <span class="n">d_alpha</span> <span class="o">=</span> <span class="o">-</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_A</span><span class="p">,</span> <span class="n">d_x_0</span><span class="p">,</span> <span class="n">d_gamma</span><span class="p">,</span> <span class="n">d_alpha</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="Beta2D"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Beta2D.html#astropy.modeling.functional_models.Beta2D">[docs]</a><span class="k">class</span> <span class="nc">Beta2D</span><span class="p">(</span><span class="n">Fittable2DModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Two dimensional Beta model.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    amplitude : float</span>
+<span class="sd">        Amplitude of the model.</span>
+<span class="sd">    x_0 : float</span>
+<span class="sd">        x position of the maximum of the Beta model.</span>
+<span class="sd">    y_0 : float</span>
+<span class="sd">        y position of the maximum of the Beta model.</span>
+<span class="sd">    gamma : float</span>
+<span class="sd">        Core width of the Beta model.</span>
+<span class="sd">    alpha : float</span>
+<span class="sd">        Power index of the beta model.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    Gaussian2D, Box2D</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Model formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(x, y) = A \\left(1 + \\frac{\\left(x - x_{0}\\right)^{2} +</span>
+<span class="sd">        \\left(y - y_{0}\\right)^{2}}{\\gamma^{2}}\\right)^{- \\alpha}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">x_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">y_0</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">gamma</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Beta2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">amplitude</span><span class="o">=</span><span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="o">=</span><span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Beta2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Beta2D.html#astropy.modeling.functional_models.Beta2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Beta model function&quot;&quot;&quot;</span>
+
+        <span class="n">rr_gg</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rr_gg</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+</div>
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Beta2D.fit_deriv"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.Beta2D.html#astropy.modeling.functional_models.Beta2D.fit_deriv">[docs]</a>    <span class="k">def</span> <span class="nf">fit_deriv</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">amplitude</span><span class="p">,</span> <span class="n">x_0</span><span class="p">,</span> <span class="n">y_0</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Two dimensional Beta model derivative with respect to parameters&quot;&quot;&quot;</span>
+
+        <span class="n">rr_gg</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">d_A</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rr_gg</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">d_x_0</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">x_0</span><span class="p">)</span> <span class="o">/</span>
+                 <span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rr_gg</span><span class="p">)))</span>
+        <span class="n">d_y_0</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">y_0</span><span class="p">)</span> <span class="o">/</span>
+                 <span class="p">(</span><span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rr_gg</span><span class="p">)))</span>
+        <span class="n">d_alpha</span> <span class="o">=</span> <span class="o">-</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rr_gg</span><span class="p">)</span>
+        <span class="n">d_gamma</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">amplitude</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">d_A</span> <span class="o">*</span> <span class="p">(</span><span class="n">rr_gg</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">rr_gg</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">d_A</span><span class="p">,</span> <span class="n">d_x_0</span><span class="p">,</span> <span class="n">d_y_0</span><span class="p">,</span> <span class="n">d_gamma</span><span class="p">,</span> <span class="n">d_alpha</span><span class="p">]</span>
+
+</div></div>
+<div class="viewcode-block" id="custom_model_1d"><a class="viewcode-back" href="../../../api/astropy.modeling.functional_models.custom_model_1d.html#astropy.modeling.functional_models.custom_model_1d">[docs]</a><span class="k">def</span> <span class="nf">custom_model_1d</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">func_fit_deriv</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a one dimensional model from a user defined function. The</span>
+<span class="sd">    parameters of the model will be inferred from the arguments of</span>
+<span class="sd">    the function.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        All model parameters have to be defined as keyword arguments</span>
+<span class="sd">        with default values in the model function.</span>
+
+<span class="sd">    If you want to use parameter sets in the model, the parameters should be</span>
+<span class="sd">    treated as lists or arrays.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : function</span>
+<span class="sd">        Function which defines the model.  It should take one positional</span>
+<span class="sd">        argument (the independent variable in the model), and any number of</span>
+<span class="sd">        keyword arguments (the parameters).  It must return the value of the</span>
+<span class="sd">        model (typically as an array, but can also be a scalar for scalar</span>
+<span class="sd">        inputs).  This corresponds to the</span>
+<span class="sd">        `~astropy.modeling.Model.evaluate` method.</span>
+<span class="sd">    func_fit_deriv : function, optional</span>
+<span class="sd">        Function which defines the Jacobian derivative of the model. I.e., the</span>
+<span class="sd">        derivive with respect to the *parameters* of the model.  It should</span>
+<span class="sd">        have the same argument signature as ``func``, but should return a</span>
+<span class="sd">        sequence where each element of the sequence is the derivative</span>
+<span class="sd">        with respect to the correseponding argument. This corresponds to the</span>
+<span class="sd">        :meth:`~astropy.modeling.FittableModel.fit_deriv` method.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Define a sinusoidal model function as a custom 1D model:</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.modeling.models import custom_model_1d</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; def sine_model(x, amplitude=1., frequency=1.):</span>
+<span class="sd">        ...     return amplitude * np.sin(2 * np.pi * frequency * x)</span>
+<span class="sd">        &gt;&gt;&gt; def sine_deriv(x, amplitude=1., frequency=1.):</span>
+<span class="sd">        ...     return 2 * np.pi * amplitude * np.cos(2 * np.pi * frequency * x)</span>
+<span class="sd">        &gt;&gt;&gt; SineModel = custom_model_1d(sine_model, func_fit_deriv=sine_deriv)</span>
+
+<span class="sd">    Create an instance of the custom model and evaluate it:</span>
+
+<span class="sd">        &gt;&gt;&gt; model = SineModel()</span>
+<span class="sd">        &gt;&gt;&gt; model(0.25)</span>
+<span class="sd">        1.0</span>
+
+<span class="sd">    This model instance can now be used like a usual astropy model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">six</span><span class="o">.</span><span class="n">callable</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span><span class="s">&quot;Not callable. Must be function&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">func_fit_deriv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">six</span><span class="o">.</span><span class="n">callable</span><span class="p">(</span><span class="n">func_fit_deriv</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span>
+                <span class="s">&quot;func_fit_deriv not callable. Must be function&quot;</span><span class="p">)</span>
+
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="n">param_values</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">get_function_defaults</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+    <span class="c"># Check if all parameters are keyword arguments</span>
+    <span class="n">nparams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_values</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">func_fit_deriv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">get_function_defaults</span><span class="p">(</span><span class="n">func_fit_deriv</span><span class="p">))</span> <span class="o">!=</span> <span class="n">nparams</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span><span class="s">&quot;derivative function should accept &quot;</span>
+                                   <span class="s">&quot;same number of parameters as func.&quot;</span><span class="p">)</span>
+
+    <span class="n">func_code</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">get_function_code</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">func_code</span><span class="o">.</span><span class="n">co_argcount</span> <span class="o">==</span> <span class="n">nparams</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">param_names</span> <span class="o">=</span> <span class="n">func_code</span><span class="o">.</span><span class="n">co_varnames</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">nparams</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">ModelDefinitionError</span><span class="p">(</span>
+            <span class="s">&quot;All parameters must be keyword arguments&quot;</span><span class="p">)</span>
+
+    <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">))</span>
+                  <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">default</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">param_names</span><span class="p">,</span> <span class="n">param_values</span><span class="p">))</span>
+
+    <span class="n">arg_signature_1</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;{0}=None&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">param_names</span><span class="p">)</span>
+    <span class="n">arg_signature_2</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;{0}={0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">param_names</span><span class="p">)</span>
+
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mod</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">__file__</span>
+        <span class="n">modname</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">__name__</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s">&#39;&lt;string&gt;&#39;</span>
+        <span class="n">modname</span> <span class="o">=</span> <span class="s">&#39;__main__&#39;</span>
+
+    <span class="n">members</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;evaluate&#39;</span><span class="p">:</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">func</span><span class="p">)}</span>
+
+    <span class="n">eval_globals</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">init_code_string</span> <span class="o">=</span> <span class="n">dedent</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span>
+<span class="s">        def __init__(self, {0}, **kwargs):</span>
+<span class="s">            super(self.__class__, self).__init__({1}, **kwargs)</span>
+<span class="s">    &quot;&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_signature_1</span><span class="p">,</span> <span class="n">arg_signature_2</span><span class="p">)</span>
+
+    <span class="nb">eval</span><span class="p">(</span><span class="nb">compile</span><span class="p">(</span><span class="n">init_code_string</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="s">&#39;single&#39;</span><span class="p">),</span> <span class="n">eval_globals</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">func_fit_deriv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">members</span><span class="p">[</span><span class="s">&#39;fit_deriv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">func_fit_deriv</span><span class="p">)</span>
+
+    <span class="n">members</span><span class="p">[</span><span class="s">&#39;__init__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_globals</span><span class="p">[</span><span class="s">&#39;__init__&#39;</span><span class="p">]</span>
+    <span class="n">members</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="n">cls</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">model_name</span><span class="p">,</span> <span class="p">(</span><span class="n">Fittable1DModel</span><span class="p">,),</span> <span class="n">members</span><span class="p">)</span>
+    <span class="n">cls</span><span class="o">.</span><span class="n">__module__</span> <span class="o">=</span> <span class="n">modname</span>
+
+    <span class="k">return</span> <span class="n">cls</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

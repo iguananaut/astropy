@@ -1,0 +1,8 @@
+
+
+config.ConfigurationItem
+================================
+
+.. currentmodule:: astropy
+
+.. autoattribute:: config.ConfigurationItem

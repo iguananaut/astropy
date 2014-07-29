@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>FixedWidthTwoLine &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="ASCII Tables (astropy.io.ascii)" href="../io/ascii/index.html" />
+    <link rel="next" title="FloatType" href="astropy.io.ascii.FloatType.html" />
+    <link rel="prev" title="FixedWidthSplitter" href="astropy.io.ascii.FixedWidthSplitter.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.io.ascii.FloatType.html" title="FloatType">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.io.ascii.FixedWidthSplitter.html" title="FixedWidthSplitter">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../io/ascii/index.html" accesskey="U">ASCII Tables (<tt class="docutils literal"><span class="pre">astropy.io.ascii</span></tt>)</a> &raquo;</li>
+      
+      <li>FixedWidthTwoLine</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fixedwidthtwoline">
+<h1>FixedWidthTwoLine<a class="headerlink" href="#fixedwidthtwoline" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.io.ascii.FixedWidthTwoLine">
+<em class="property">class </em><tt class="descclassname">astropy.io.ascii.</tt><tt class="descname">FixedWidthTwoLine</tt><big>(</big><em>position_line=1</em>, <em>position_char='-'</em>, <em>delimiter_pad=None</em>, <em>bookend=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/io/ascii/fixedwidth.html#FixedWidthTwoLine"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/ascii/fixedwidth.py#L331" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.ascii.FixedWidthTwoLine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.io.ascii.FixedWidth.html#astropy.io.ascii.FixedWidth" title="astropy.io.ascii.fixedwidth.FixedWidth"><tt class="docutils literal"><span class="pre">astropy.io.ascii.FixedWidth</span></tt></a></p>
+<p>Read or write a fixed width table which has two header lines.  The first
+header line defines the column names and the second implicitly defines the
+column positions.  Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre># Typical case with column extent defined by ---- under column names.
+
+ col1    col2         &lt;== header_start = 0
+-----  ------------   &lt;== position_line = 1, position_char = &quot;-&quot;
+  1     bee flies     &lt;== data_start = 2
+  2     fish swims
+
+# Pretty-printed table
+
++------+------------+
+| Col1 |   Col2     |
++------+------------+
+|  1.2 | &quot;hello&quot;    |
+|  2.4 | there world|
++------+------------+
+</pre></div>
+</div>
+<p>See the <a class="reference internal" href="../io/ascii/fixed_width_gallery.html#fixed-width-gallery"><em>Fixed-width Gallery</em></a> for specific usage examples.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position_line</strong> &#8211; row index of line that specifies position (default = 1)</li>
+<li><strong>position_char</strong> &#8211; character used to write the position line (default = &#8220;-&#8221;)</li>
+<li><strong>delimiter_pad</strong> &#8211; padding around delimiter when writing (default = None)</li>
+<li><strong>bookend</strong> &#8211; put the delimiter at start and end of line when writing (default = False)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">FixedWidthTwoLine</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.io.ascii.FixedWidthTwoLine.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.io.ascii.FixedWidthTwoLine.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

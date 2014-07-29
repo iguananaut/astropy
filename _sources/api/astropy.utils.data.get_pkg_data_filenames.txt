@@ -1,0 +1,8 @@
+
+
+get_pkg_data_filenames
+=========================================
+
+.. currentmodule:: astropy.utils.data
+
+.. autofunction:: get_pkg_data_filenames

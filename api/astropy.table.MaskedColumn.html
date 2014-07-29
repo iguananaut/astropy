@@ -1,0 +1,489 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MaskedColumn &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Data Tables (astropy.table)" href="../table/index.html" />
+    <link rel="next" title="Row" href="astropy.table.Row.html" />
+    <link rel="prev" title="Conf" href="astropy.table.Conf.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.table.Row.html" title="Row">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.table.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../table/index.html" accesskey="U">Data Tables (<tt class="docutils literal"><span class="pre">astropy.table</span></tt>)</a> &raquo;</li>
+      
+      <li>MaskedColumn</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="maskedcolumn">
+<h1>MaskedColumn<a class="headerlink" href="#maskedcolumn" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.table.MaskedColumn">
+<em class="property">class </em><tt class="descclassname">astropy.table.</tt><tt class="descname">MaskedColumn</tt><a class="reference internal" href="../_modules/astropy/table/column.html#MaskedColumn"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L621" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.table.Column.html#astropy.table.Column" title="astropy.table.column.Column"><tt class="docutils literal"><span class="pre">astropy.table.Column</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">numpy.ma.core.MaskedArray</span></tt></p>
+<p>Define a masked data column for use in a Table object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : list, ndarray or None</p>
+<blockquote>
+<div><p>Column data values</p>
+</div></blockquote>
+<p><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Column name and key for reference within Table</p>
+</div></blockquote>
+<p><strong>mask</strong> : list, ndarray or None</p>
+<blockquote>
+<div><p>Boolean mask for which True indicates missing or invalid data</p>
+</div></blockquote>
+<p><strong>fill_value</strong> : float, int, str or None</p>
+<blockquote>
+<div><p>Value used when filling masked column elements</p>
+</div></blockquote>
+<p><strong>dtype</strong> : numpy.dtype compatible value</p>
+<blockquote>
+<div><p>Data type for column</p>
+</div></blockquote>
+<p><strong>shape</strong> : tuple or ()</p>
+<blockquote>
+<div><p>Dimensions of a single row element in the column data</p>
+</div></blockquote>
+<p><strong>length</strong> : int or 0</p>
+<blockquote>
+<div><p>Number of row elements in column data</p>
+</div></blockquote>
+<p><strong>description</strong> : str or None</p>
+<blockquote>
+<div><p>Full description of column</p>
+</div></blockquote>
+<p><strong>unit</strong> : str or None</p>
+<blockquote>
+<div><p>Physical unit</p>
+</div></blockquote>
+<p><strong>format</strong> : str or None or function or callable</p>
+<blockquote>
+<div><p>Format string for outputting column values.  This can be an
+&#8220;old-style&#8221; (<tt class="docutils literal"><span class="pre">format</span> <span class="pre">%</span> <span class="pre">value</span></tt>) or &#8220;new-style&#8221; (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#str.format" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">str.format</span></tt></a>)
+format specification string or a function or any callable object that
+accepts a single value and returns a string.</p>
+</div></blockquote>
+<p><strong>meta</strong> : dict-like or None</p>
+<blockquote class="last">
+<div><p>Meta-data associated with the column</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>A MaskedColumn is similar to a Column except that it includes <tt class="docutils literal"><span class="pre">mask</span></tt> and
+<tt class="docutils literal"><span class="pre">fill_value</span></tt> attributes.  It can be created in two different ways:</p>
+<ul>
+<li><p class="first">Provide a <tt class="docutils literal"><span class="pre">data</span></tt> value but not <tt class="docutils literal"><span class="pre">shape</span></tt> or <tt class="docutils literal"><span class="pre">length</span></tt> (which are
+inferred from the data).</p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">col</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;name&#39;</span><span class="p">)</span>
+<span class="n">col</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="p">[</span><span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">])</span>
+<span class="n">col</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">fill_value</span><span class="o">=</span><span class="mi">99</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">mask</span></tt> argument will be cast as a boolean array and specifies
+which elements are considered to be missing or invalid.</p>
+<p>The <tt class="docutils literal"><span class="pre">dtype</span></tt> argument can be any value which is an acceptable
+fixed-size data-type initializer for the numpy.dtype() method.  See
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html">http://docs.scipy.org/doc/numpy/reference/arrays.dtypes.html</a>.
+Examples include:</p>
+<ul class="simple">
+<li>Python non-string type (float, int, bool)</li>
+<li>Numpy non-string type (e.g. np.float32, np.int64, np.bool)</li>
+<li>Numpy.dtype array-protocol type strings (e.g. &#8216;i4&#8217;, &#8216;f8&#8217;, &#8216;S15&#8217;)</li>
+</ul>
+<p>If no <tt class="docutils literal"><span class="pre">dtype</span></tt> value is provide then the type is inferred using
+<tt class="docutils literal"><span class="pre">np.array(data)</span></tt>.  When <tt class="docutils literal"><span class="pre">data</span></tt> is provided then the <tt class="docutils literal"><span class="pre">shape</span></tt>
+and <tt class="docutils literal"><span class="pre">length</span></tt> arguments are ignored.</p>
+</li>
+<li><p class="first">Provide <tt class="docutils literal"><span class="pre">length</span></tt> and optionally <tt class="docutils literal"><span class="pre">shape</span></tt>, but not <tt class="docutils literal"><span class="pre">data</span></tt></p>
+<p>Examples:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">col</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">col</span> <span class="o">=</span> <span class="n">MaskedColumn</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The default <tt class="docutils literal"><span class="pre">dtype</span></tt> is <tt class="docutils literal"><span class="pre">np.float64</span></tt>.  The <tt class="docutils literal"><span class="pre">shape</span></tt> argument is the
+array shape of a single cell in the column.</p>
+</li>
+</ul>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.MaskedColumn.data" title="astropy.table.MaskedColumn.data"><tt class="xref py py-obj docutils literal"><span class="pre">data</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.MaskedColumn.fill_value" title="astropy.table.MaskedColumn.fill_value"><tt class="xref py py-obj docutils literal"><span class="pre">fill_value</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.MaskedColumn.name" title="astropy.table.MaskedColumn.name"><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.MaskedColumn.convert_unit_to" title="astropy.table.MaskedColumn.convert_unit_to"><tt class="xref py py-obj docutils literal"><span class="pre">convert_unit_to</span></tt></a>(new_unit[,&nbsp;equivalencies])</td>
+<td>Converts the values of the column in-place from the current unit to the given unit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.MaskedColumn.copy" title="astropy.table.MaskedColumn.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>([order,&nbsp;data,&nbsp;copy_data])</td>
+<td>Return a copy of the current instance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.MaskedColumn.filled" title="astropy.table.MaskedColumn.filled"><tt class="xref py py-obj docutils literal"><span class="pre">filled</span></tt></a>([fill_value])</td>
+<td>Return a copy of self, with masked values filled with a given value.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.MaskedColumn.more" title="astropy.table.MaskedColumn.more"><tt class="xref py py-obj docutils literal"><span class="pre">more</span></tt></a>([max_lines,&nbsp;show_name,&nbsp;show_unit])</td>
+<td>Interactively browse column with a paging interface.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.MaskedColumn.pformat" title="astropy.table.MaskedColumn.pformat"><tt class="xref py py-obj docutils literal"><span class="pre">pformat</span></tt></a>([max_lines,&nbsp;show_name,&nbsp;show_unit])</td>
+<td>Return a list of formatted string representation of column values.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.MaskedColumn.pprint" title="astropy.table.MaskedColumn.pprint"><tt class="xref py py-obj docutils literal"><span class="pre">pprint</span></tt></a>([max_lines,&nbsp;show_name,&nbsp;show_unit])</td>
+<td>Print a formatted string representation of column values.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.table.MaskedColumn.data">
+<tt class="descname">data</tt><a class="headerlink" href="#astropy.table.MaskedColumn.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.MaskedColumn.fill_value">
+<tt class="descname">fill_value</tt><a class="headerlink" href="#astropy.table.MaskedColumn.fill_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.MaskedColumn.name">
+<tt class="descname">name</tt><a class="headerlink" href="#astropy.table.MaskedColumn.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.table.MaskedColumn.convert_unit_to">
+<tt class="descname">convert_unit_to</tt><big>(</big><em>new_unit</em>, <em>equivalencies=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L437" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn.convert_unit_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the values of the column in-place from the current
+unit to the given unit.</p>
+<p>To change the unit associated with this column without
+actually changing the data values, simply set the <tt class="docutils literal"><span class="pre">unit</span></tt>
+property.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>new_unit</strong> : str or <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units.UnitBase</span></tt></a> instance</p>
+<blockquote>
+<div><p>The unit to convert to.</p>
+</div></blockquote>
+<p><strong>equivalencies</strong> : list of equivalence pairs, optional</p>
+<blockquote>
+<div><p>A list of equivalence pairs to try if the unit are not
+directly convertible.  See <a class="reference internal" href="../units/equivalencies.html#unit-equivalencies"><em>Equivalencies</em></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>astropy.units.UnitsError</strong></p>
+<blockquote class="last">
+<div><p>If units are inconsistent</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.MaskedColumn.copy">
+<tt class="descname">copy</tt><big>(</big><em>order=u'C'</em>, <em>data=None</em>, <em>copy_data=True</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L115" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the current instance.</p>
+<p>If <tt class="docutils literal"><span class="pre">data</span></tt> is supplied then a view (reference) of <tt class="docutils literal"><span class="pre">data</span></tt> is used,
+and <tt class="docutils literal"><span class="pre">copy_data</span></tt> is ignored.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>order</strong> : {&#8216;C&#8217;, &#8216;F&#8217;, &#8216;A&#8217;, &#8216;K&#8217;}, optional</p>
+<blockquote>
+<div><p>Controls the memory layout of the copy. &#8216;C&#8217; means C-order,
+&#8216;F&#8217; means F-order, &#8216;A&#8217; means &#8216;F&#8217; if <tt class="docutils literal"><span class="pre">a</span></tt> is Fortran contiguous,
+&#8216;C&#8217; otherwise. &#8216;K&#8217; means match the layout of <tt class="docutils literal"><span class="pre">a</span></tt> as closely
+as possible. (Note that this function and :func:numpy.copy are very
+similar, but have different default values for their order=
+arguments.)  Default is &#8216;C&#8217;.</p>
+</div></blockquote>
+<p><strong>data</strong> : array, optional</p>
+<blockquote>
+<div><p>If supplied then use a view of <tt class="docutils literal"><span class="pre">data</span></tt> instead of the instance
+data.  This allows copying the instance attributes and meta.</p>
+</div></blockquote>
+<p><strong>copy_data</strong> : bool, optional</p>
+<blockquote>
+<div><p>Make a copy of the internal numpy array instead of using a
+reference.  Default is True.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">col: Column or MaskedColumn</p>
+<blockquote class="last">
+<div><p>Copy of the current column (same type as original)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.MaskedColumn.filled">
+<tt class="descname">filled</tt><big>(</big><em>fill_value=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/column.html#MaskedColumn.filled"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L777" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn.filled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of self, with masked values filled with a given value.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fill_value</strong> : scalar; optional</p>
+<blockquote>
+<div><p>The value to use for invalid entries (<a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> by default).  If
+<a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>, the <tt class="docutils literal"><span class="pre">fill_value</span></tt> attribute of the array is used
+instead.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>filled_column</strong> : Column</p>
+<blockquote class="last">
+<div><p>A copy of <tt class="docutils literal"><span class="pre">self</span></tt> with masked entries replaced by <a class="reference internal" href="#astropy.table.MaskedColumn.fill_value" title="astropy.table.MaskedColumn.fill_value"><tt class="xref py py-obj docutils literal"><span class="pre">fill_value</span></tt></a>
+(be it the function argument or the attribute of <tt class="docutils literal"><span class="pre">self</span></tt>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.MaskedColumn.more">
+<tt class="descname">more</tt><big>(</big><em>max_lines=None</em>, <em>show_name=True</em>, <em>show_unit=False</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L369" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn.more" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interactively browse column with a paging interface.</p>
+<p>Supported keys:</p>
+<div class="highlight-python"><div class="highlight"><pre>f, &lt;space&gt; : forward one page
+b : back one page
+r : refresh same page
+n : next row
+p : previous row
+&lt; : go to beginning
+&gt; : go to end
+q : quit browsing
+h : print this help
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_lines</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of lines in table output</p>
+</div></blockquote>
+<p><strong>show_name</strong> : bool</p>
+<blockquote>
+<div><p>Include a header row for column names (default=True)</p>
+</div></blockquote>
+<p><strong>show_unit</strong> : bool</p>
+<blockquote class="last">
+<div><p>Include a header row for unit (default=False)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.MaskedColumn.pformat">
+<tt class="descname">pformat</tt><big>(</big><em>max_lines=None</em>, <em>show_name=True</em>, <em>show_unit=False</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L309" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn.pformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of formatted string representation of column values.</p>
+<p>If no value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then the height of the
+screen terminal is used to set <tt class="docutils literal"><span class="pre">max_lines</span></tt>.  If the terminal
+height cannot be determined then the default will be
+determined using the <tt class="docutils literal"><span class="pre">astropy.conf.max_lines</span></tt> configuration
+item. If a negative value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then
+there is no line limit applied.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_lines</strong> : int</p>
+<blockquote>
+<div><p>Maximum lines of output (header + data rows)</p>
+</div></blockquote>
+<p><strong>show_name</strong> : bool</p>
+<blockquote>
+<div><p>Include column name (default=True)</p>
+</div></blockquote>
+<p><strong>show_unit</strong> : bool</p>
+<blockquote>
+<div><p>Include a header row for unit (default=False)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>lines</strong> : list</p>
+<blockquote class="last">
+<div><p>List of lines with header and formatted column values</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.MaskedColumn.pprint">
+<tt class="descname">pprint</tt><big>(</big><em>max_lines=None</em>, <em>show_name=True</em>, <em>show_unit=False</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/column.py#L340" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.MaskedColumn.pprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a formatted string representation of column values.</p>
+<p>If no value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then the height of the
+screen terminal is used to set <tt class="docutils literal"><span class="pre">max_lines</span></tt>.  If the terminal
+height cannot be determined then the default will be
+determined using the <tt class="docutils literal"><span class="pre">astropy.conf.max_lines</span></tt> configuration
+item. If a negative value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then
+there is no line limit applied.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_lines</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of values in output</p>
+</div></blockquote>
+<p><strong>show_name</strong> : bool</p>
+<blockquote>
+<div><p>Include column name (default=True)</p>
+</div></blockquote>
+<p><strong>show_unit</strong> : bool</p>
+<blockquote class="last">
+<div><p>Include a header row for unit (default=False)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">MaskedColumn</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.table.MaskedColumn.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.table.MaskedColumn.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

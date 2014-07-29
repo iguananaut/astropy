@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>read &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="ASCII Tables (astropy.io.ascii)" href="../io/ascii/index.html" />
+    <link rel="next" title="set_guess" href="astropy.io.ascii.set_guess.html" />
+    <link rel="prev" title="get_writer" href="astropy.io.ascii.get_writer.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.io.ascii.set_guess.html" title="set_guess">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.io.ascii.get_writer.html" title="get_writer">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../io/ascii/index.html" accesskey="U">ASCII Tables (<tt class="docutils literal"><span class="pre">astropy.io.ascii</span></tt>)</a> &raquo;</li>
+      
+      <li>read</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="read">
+<h1>read<a class="headerlink" href="#read" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.io.ascii.read">
+<tt class="descclassname">astropy.io.ascii.</tt><tt class="descname">read</tt><big>(</big><em>table</em>, <em>guess=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/io/ascii/ui.html#read"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/ascii/ui.py#L85" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.ascii.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read the input <tt class="docutils literal"><span class="pre">table</span></tt> and return the table.  Most of
+the default behavior for various parameters is determined by the Reader
+class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>table</strong> &#8211; input table (file name, file-like object, list of strings, or single newline-separated string)</li>
+<li><strong>guess</strong> &#8211; try to guess the table format (default=True)</li>
+<li><strong>format</strong> &#8211; input table format</li>
+<li><strong>Inputter</strong> &#8211; Inputter class</li>
+<li><strong>Outputter</strong> &#8211; Outputter class (default=TableOutputter)</li>
+<li><strong>delimiter</strong> &#8211; column delimiter string</li>
+<li><strong>comment</strong> &#8211; regular expression defining a comment line in table</li>
+<li><strong>quotechar</strong> &#8211; one-character string to quote fields containing special characters</li>
+<li><strong>header_start</strong> &#8211; line index for the header line not counting comment lines</li>
+<li><strong>data_start</strong> &#8211; line index for the start of data not counting comment lines</li>
+<li><strong>data_end</strong> &#8211; line index for the end of data (can be negative to count from end)</li>
+<li><strong>converters</strong> &#8211; dict of converters</li>
+<li><strong>data_Splitter</strong> &#8211; Splitter class to split data columns</li>
+<li><strong>header_Splitter</strong> &#8211; Splitter class to split header columns</li>
+<li><strong>names</strong> &#8211; list of names corresponding to each data column</li>
+<li><strong>include_names</strong> &#8211; list of names to include in output (default=None selects all names)</li>
+<li><strong>exclude_names</strong> &#8211; list of names to exlude from output (applied after <tt class="docutils literal"><span class="pre">include_names</span></tt>)</li>
+<li><strong>fill_values</strong> &#8211; specification of fill values for bad or missing table values (default=(&#8216;&#8217;, &#8216;0&#8217;))</li>
+<li><strong>fill_include_names</strong> &#8211; list of names to include in fill_values (default=None selects all names)</li>
+<li><strong>fill_exclude_names</strong> &#8211; list of names to exlude from fill_values (applied after <tt class="docutils literal"><span class="pre">fill_include_names</span></tt>)</li>
+<li><strong>Reader</strong> &#8211; Reader class (DEPRECATED) (default=``ascii.Basic``)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">read</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.io.ascii.read.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.io.ascii.read.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

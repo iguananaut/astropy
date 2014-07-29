@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Starting and stopping a SAMP hub server &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+    <link rel="up" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)" href="index.html" />
+    <link rel="next" title="Sending/receiving tables and images over SAMP" href="example_table_image.html" />
+    <link rel="prev" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)" href="index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="example_table_image.html" title="Sending/receiving tables and images over SAMP">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="index.html" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="index.html" accesskey="U">SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</a> &raquo;</li>
+      
+      <li>Starting and stopping a SAMP hub server</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="starting-and-stopping-a-samp-hub-server">
+<span id="vo-samp-example-hub"></span><h1>Starting and stopping a SAMP hub server<a class="headerlink" href="#starting-and-stopping-a-samp-hub-server" title="Permalink to this headline">¶</a></h1>
+<p>There are several ways you can start up a SAMP hub:</p>
+<div class="section" id="using-an-existing-hub">
+<h2>Using an existing hub<a class="headerlink" href="#using-an-existing-hub" title="Permalink to this headline">¶</a></h2>
+<p>You can start up another application that includes a hub, such as
+<a class="reference external" href="http://www.star.bris.ac.uk/~mbt/topcat/">TOPCAT</a>,
+<a class="reference external" href="http://hea-www.harvard.edu/RD/ds9">SAO Ds9</a>, or
+<a class="reference external" href="http://aladin.u-strasbg.fr">Aladin Desktop</a>.</p>
+</div>
+<div class="section" id="using-the-command-line-hub-utility">
+<h2>Using the command-line hub utility<a class="headerlink" href="#using-the-command-line-hub-utility" title="Permalink to this headline">¶</a></h2>
+<p>You can make use of the <tt class="docutils literal"><span class="pre">samp_hub</span></tt> command-line utility, which is included in
+Astropy:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ samp_hub
+</pre></div>
+</div>
+<p>To get more help on available options for <tt class="docutils literal"><span class="pre">samp_hub</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ samp_hub -h
+</pre></div>
+</div>
+<p>To stop the server, you can simply press control-C.</p>
+</div>
+<div class="section" id="starting-a-hub-programmatically-advanced">
+<h2>Starting a hub programmatically (advanced)<a class="headerlink" href="#starting-a-hub-programmatically-advanced" title="Permalink to this headline">¶</a></h2>
+<p>You can start up a hub by creating a <a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="astropy.vo.samp.SAMPHubServer"><tt class="xref py py-class docutils literal"><span class="pre">SAMPHubServer</span></tt></a> instance and starting it,
+either from the interactive Python prompt, or from a Python script:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPHubServer</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hub</span> <span class="o">=</span> <span class="n">SAMPHubServer</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hub</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>You can then stop the hub by calling:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">hub</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>However, this method is generally not recommended for average users because it
+does not work correctly when web SAMP clients try and connect. Instead, this
+should be reserved for developers who want to embed a SAMP hub in a GUI for
+example. For more information, see <a class="reference internal" href="advanced_embed_samp_hub.html"><em>Embedding a SAMP hub in a GUI</em></a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Starting and stopping a SAMP hub server</a><ul>
+<li><a class="reference internal" href="#using-an-existing-hub">Using an existing hub</a></li>
+<li><a class="reference internal" href="#using-the-command-line-hub-utility">Using the command-line hub utility</a></li>
+<li><a class="reference internal" href="#starting-a-hub-programmatically-advanced">Starting a hub programmatically (advanced)</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/vo/samp/example_hub.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/vo/samp/example_hub.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

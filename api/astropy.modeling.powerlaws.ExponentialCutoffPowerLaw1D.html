@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ExponentialCutoffPowerLaw1D &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="LogParabola1D" href="astropy.modeling.powerlaws.LogParabola1D.html" />
+    <link rel="prev" title="BrokenPowerLaw1D" href="astropy.modeling.powerlaws.BrokenPowerLaw1D.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.powerlaws.LogParabola1D.html" title="LogParabola1D">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.powerlaws.BrokenPowerLaw1D.html" title="BrokenPowerLaw1D">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>ExponentialCutoffPowerLaw1D</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="exponentialcutoffpowerlaw1d">
+<h1>ExponentialCutoffPowerLaw1D<a class="headerlink" href="#exponentialcutoffpowerlaw1d" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.powerlaws.</tt><tt class="descname">ExponentialCutoffPowerLaw1D</tt><big>(</big><em>amplitude</em>, <em>x_0</em>, <em>alpha</em>, <em>x_cutoff</em>, <em>**constraints</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/powerlaws.html#ExponentialCutoffPowerLaw1D"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/powerlaws.py#L141" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="astropy.modeling.core.Fittable1DModel"><tt class="docutils literal"><span class="pre">astropy.modeling.Fittable1DModel</span></tt></a></p>
+<p>One dimensional power law model with an exponential cutoff.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>amplitude</strong> : float</p>
+<blockquote>
+<div><p>Model amplitude</p>
+</div></blockquote>
+<p><strong>x_0</strong> : float</p>
+<blockquote>
+<div><p>Reference point</p>
+</div></blockquote>
+<p><strong>alpha</strong> : float</p>
+<blockquote>
+<div><p>Power law index</p>
+</div></blockquote>
+<p><strong>x_cutoff</strong> : float</p>
+<blockquote class="last">
+<div><p>Cutoff point</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="astropy.modeling.powerlaws.PowerLaw1D.html#astropy.modeling.powerlaws.PowerLaw1D" title="astropy.modeling.powerlaws.PowerLaw1D"><tt class="xref py py-obj docutils literal"><span class="pre">PowerLaw1D</span></tt></a>, <a class="reference internal" href="astropy.modeling.powerlaws.BrokenPowerLaw1D.html#astropy.modeling.powerlaws.BrokenPowerLaw1D" title="astropy.modeling.powerlaws.BrokenPowerLaw1D"><tt class="xref py py-obj docutils literal"><span class="pre">BrokenPowerLaw1D</span></tt></a>, <a class="reference internal" href="astropy.modeling.powerlaws.LogParabola1D.html#astropy.modeling.powerlaws.LogParabola1D" title="astropy.modeling.powerlaws.LogParabola1D"><tt class="xref py py-obj docutils literal"><span class="pre">LogParabola1D</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Model formula (with <img class="math" src="../_images/math/0acafa529182e79b4f56165ec677554fba7fcf98.png" alt="A"/> for <tt class="docutils literal"><span class="pre">amplitude</span></tt> and <img class="math" src="../_images/math/ad59b6e24a4a00ac621801f8d7513d68be654ab5.png" alt="\alpha"/> for <tt class="docutils literal"><span class="pre">alpha</span></tt>):</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/c86d99f13fb2e516d778a26f8999314805e7c0b2.png" alt="f(x) = A (x / x_0) ^ {-\alpha} \exp (-x / x_{cutoff})"/></p>
+</div></div></blockquote>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.alpha" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.alpha"><tt class="xref py py-obj docutils literal"><span class="pre">alpha</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.amplitude" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.amplitude"><tt class="xref py py-obj docutils literal"><span class="pre">amplitude</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.input_names" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.param_names" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.param_names"><tt class="xref py py-obj docutils literal"><span class="pre">param_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_0" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_0"><tt class="xref py py-obj docutils literal"><span class="pre">x_0</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_cutoff" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_cutoff"><tt class="xref py py-obj docutils literal"><span class="pre">x_cutoff</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.evaluate" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;amplitude,&nbsp;x_0,&nbsp;alpha,&nbsp;x_cutoff)</td>
+<td>One dimensional exponential cutoff power law model function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.fit_deriv" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.fit_deriv"><tt class="xref py py-obj docutils literal"><span class="pre">fit_deriv</span></tt></a>(x,&nbsp;amplitude,&nbsp;x_0,&nbsp;alpha,&nbsp;x_cutoff)</td>
+<td>One dimensional exponential cutoff power law derivative with respect to parameters</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.alpha">
+<tt class="descname">alpha</tt><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.alpha" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.amplitude">
+<tt class="descname">amplitude</tt><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.amplitude" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.input_names">
+<tt class="descname">input_names</tt><em class="property"> = ['x']</em><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.param_names">
+<tt class="descname">param_names</tt><em class="property"> = ['amplitude', 'x_0', 'alpha', 'x_cutoff']</em><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.param_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_0">
+<tt class="descname">x_0</tt><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_0" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_cutoff">
+<tt class="descname">x_cutoff</tt><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.x_cutoff" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="staticmethod">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.evaluate">
+<em class="property">static </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>amplitude</em>, <em>x_0</em>, <em>alpha</em>, <em>x_cutoff</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/powerlaws.html#ExponentialCutoffPowerLaw1D.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/powerlaws.py#L178" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional exponential cutoff power law model function</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.fit_deriv">
+<em class="property">static </em><tt class="descname">fit_deriv</tt><big>(</big><em>x</em>, <em>amplitude</em>, <em>x_0</em>, <em>alpha</em>, <em>x_cutoff</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/powerlaws.html#ExponentialCutoffPowerLaw1D.fit_deriv"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/powerlaws.py#L185" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.fit_deriv" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional exponential cutoff power law derivative with respect to parameters</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ExponentialCutoffPowerLaw1D</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,10 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+convert_numpy
+==============================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autofunction:: convert_numpy

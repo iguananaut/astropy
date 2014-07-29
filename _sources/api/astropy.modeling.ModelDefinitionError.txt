@@ -1,0 +1,8 @@
+
+
+ModelDefinitionError
+=====================================
+
+.. currentmodule:: astropy.modeling
+
+.. autoexception:: ModelDefinitionError

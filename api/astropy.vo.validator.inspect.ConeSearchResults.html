@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ConeSearchResults &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="VO Simple Cone Search" href="../vo/conesearch/index.html" />
+    <link rel="next" title="BaseVOValidationError" href="astropy.vo.validator.exceptions.BaseVOValidationError.html" />
+    <link rel="prev" title="check_conesearch_sites" href="astropy.vo.validator.validate.check_conesearch_sites.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.validator.exceptions.BaseVOValidationError.html" title="BaseVOValidationError">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.validator.validate.check_conesearch_sites.html" title="check_conesearch_sites">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/conesearch/index.html" accesskey="U">VO Simple Cone Search</a> &raquo;</li>
+      
+      <li>ConeSearchResults</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="conesearchresults">
+<h1>ConeSearchResults<a class="headerlink" href="#conesearchresults" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.vo.validator.inspect.ConeSearchResults">
+<em class="property">class </em><tt class="descclassname">astropy.vo.validator.inspect.</tt><tt class="descname">ConeSearchResults</tt><big>(</big><em>cache=False</em>, <em>verbose=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/validator/inspect.html#ConeSearchResults"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/validator/inspect.py#L15" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.validator.inspect.ConeSearchResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A class to store Cone Search validation results.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cache</strong> : bool</p>
+<blockquote>
+<div><p>Read from cache, if available.
+Default is <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> to ensure the latest data are read.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote class="last">
+<div><p>Show download progress bars.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>dbtypes</td>
+<td>(list) Cone Search database identifiers.</td>
+</tr>
+<tr class="row-even"><td>dbs</td>
+<td>(dict) Stores <a class="reference internal" href="astropy.vo.client.vos_catalog.VOSDatabase.html#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a> for each <tt class="docutils literal"><span class="pre">dbtypes</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>catkeys</td>
+<td>(dict) Stores sorted catalog keys for each <tt class="docutils literal"><span class="pre">dbtypes</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.validator.inspect.ConeSearchResults.list_cats" title="astropy.vo.validator.inspect.ConeSearchResults.list_cats"><tt class="xref py py-obj docutils literal"><span class="pre">list_cats</span></tt></a>(typ[,&nbsp;fout,&nbsp;ignore_noncrit])</td>
+<td>List catalogs in given database.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.validator.inspect.ConeSearchResults.print_cat" title="astropy.vo.validator.inspect.ConeSearchResults.print_cat"><tt class="xref py py-obj docutils literal"><span class="pre">print_cat</span></tt></a>(key[,&nbsp;fout])</td>
+<td>Display a single catalog of given key.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.validator.inspect.ConeSearchResults.tally" title="astropy.vo.validator.inspect.ConeSearchResults.tally"><tt class="xref py py-obj docutils literal"><span class="pre">tally</span></tt></a>([fout])</td>
+<td>Tally databases.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.vo.validator.inspect.ConeSearchResults.list_cats">
+<tt class="descname">list_cats</tt><big>(</big><em>typ</em>, <em>fout=None</em>, <em>ignore_noncrit=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/validator/inspect.html#ConeSearchResults.list_cats"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/validator/inspect.py#L75" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.validator.inspect.ConeSearchResults.list_cats" title="Permalink to this definition">¶</a></dt>
+<dd><p>List catalogs in given database.</p>
+<p>Listing contains:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Catalog key</li>
+<li>Cone search access URL</li>
+<li>Warning codes</li>
+<li>Warning descriptions</li>
+</ol>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>typ</strong> : str</p>
+<blockquote>
+<div><p>Any value in <tt class="docutils literal"><span class="pre">self.dbtypes</span></tt>.</p>
+</div></blockquote>
+<p><strong>fout</strong> : output stream</p>
+<blockquote>
+<div><p>Default is screen output.</p>
+</div></blockquote>
+<p><strong>ignore_noncrit</strong> : bool</p>
+<blockquote class="last">
+<div><p>Exclude warnings in
+<a class="reference internal" href="astropy.vo.validator.Conf.html#astropy.vo.validator.Conf.noncritical_warnings" title="astropy.vo.validator.Conf.noncritical_warnings"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.validator.Conf.noncritical_warnings</span></tt></a>.  This is
+useful to see why a catalog failed validation.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.validator.inspect.ConeSearchResults.print_cat">
+<tt class="descname">print_cat</tt><big>(</big><em>key</em>, <em>fout=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/validator/inspect.html#ConeSearchResults.print_cat"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/validator/inspect.py#L132" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.validator.inspect.ConeSearchResults.print_cat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display a single catalog of given key.</p>
+<p>If not found, nothing is written out.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : str</p>
+<blockquote>
+<div><p>Catalog key.</p>
+</div></blockquote>
+<p><strong>fout</strong> : output stream</p>
+<blockquote class="last">
+<div><p>Default is screen output.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.validator.inspect.ConeSearchResults.tally">
+<tt class="descname">tally</tt><big>(</big><em>fout=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/validator/inspect.html#ConeSearchResults.tally"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/validator/inspect.py#L50" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.validator.inspect.ConeSearchResults.tally" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tally databases.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fout</strong> : output stream</p>
+<blockquote class="last">
+<div><p>Default is screen output.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ConeSearchResults</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.validator.inspect.ConeSearchResults.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.validator.inspect.ConeSearchResults.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+CommentedHeader
+================================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autoclass:: CommentedHeader
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

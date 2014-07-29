@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>NDUncertainty &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="N-dimensional datasets (astropy.nddata)" href="../nddata/index.html" />
+    <link rel="next" title="StdDevUncertainty" href="astropy.nddata.StdDevUncertainty.html" />
+    <link rel="prev" title="NDData" href="astropy.nddata.NDData.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.nddata.StdDevUncertainty.html" title="StdDevUncertainty">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.nddata.NDData.html" title="NDData">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../nddata/index.html" accesskey="U">N-dimensional datasets (<tt class="docutils literal"><span class="pre">astropy.nddata</span></tt>)</a> &raquo;</li>
+      
+      <li>NDUncertainty</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nduncertainty">
+<h1>NDUncertainty<a class="headerlink" href="#nduncertainty" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.nddata.NDUncertainty">
+<em class="property">class </em><tt class="descclassname">astropy.nddata.</tt><tt class="descname">NDUncertainty</tt><a class="reference internal" href="../_modules/astropy/nddata/nduncertainty.html#NDUncertainty"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nduncertainty.py#L31" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDUncertainty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>This is the base class for uncertainty classes used with NDData. It is
+implemented as an abstract class and should never be directly
+instantiated.</p>
+<p>Classes inheriting from NDData should overload the <tt class="docutils literal"><span class="pre">propagate_*</span></tt>
+methods, keeping the call signature the same. The propagate methods can
+assume that a <a class="reference internal" href="#astropy.nddata.NDUncertainty.parent_nddata" title="astropy.nddata.NDUncertainty.parent_nddata"><tt class="xref py py-obj docutils literal"><span class="pre">parent_nddata</span></tt></a> attribute is present which links to the parent_nddata
+dataset, and take an <a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> instance as the positional
+argument, <em>not</em> an <a class="reference internal" href="#astropy.nddata.NDUncertainty" title="astropy.nddata.NDUncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">NDUncertainty</span></tt></a> instance, because the
+<a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> instance can be used to access both the data and
+the uncertainties (some propagations require the data values).</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDUncertainty.parent_nddata" title="astropy.nddata.NDUncertainty.parent_nddata"><tt class="xref py py-obj docutils literal"><span class="pre">parent_nddata</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDUncertainty.supports_correlated" title="astropy.nddata.NDUncertainty.supports_correlated"><tt class="xref py py-obj docutils literal"><span class="pre">supports_correlated</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDUncertainty.propagate_add" title="astropy.nddata.NDUncertainty.propagate_add"><tt class="xref py py-obj docutils literal"><span class="pre">propagate_add</span></tt></a>(other_nddata,&nbsp;result_data)</td>
+<td>Propagate uncertainties for addition.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDUncertainty.propagate_divide" title="astropy.nddata.NDUncertainty.propagate_divide"><tt class="xref py py-obj docutils literal"><span class="pre">propagate_divide</span></tt></a>(other_nddata,&nbsp;result_data)</td>
+<td>Propagate uncertainties for division.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDUncertainty.propagate_multiply" title="astropy.nddata.NDUncertainty.propagate_multiply"><tt class="xref py py-obj docutils literal"><span class="pre">propagate_multiply</span></tt></a>(other_nddata,&nbsp;result_data)</td>
+<td>Propagate uncertainties for multiplication.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDUncertainty.propagate_subtract" title="astropy.nddata.NDUncertainty.propagate_subtract"><tt class="xref py py-obj docutils literal"><span class="pre">propagate_subtract</span></tt></a>(other_nddata,&nbsp;result_data)</td>
+<td>Propagate uncertainties for subtraction.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.nddata.NDUncertainty.parent_nddata">
+<tt class="descname">parent_nddata</tt><a class="headerlink" href="#astropy.nddata.NDUncertainty.parent_nddata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDUncertainty.supports_correlated">
+<tt class="descname">supports_correlated</tt><em class="property"> = False</em><a class="headerlink" href="#astropy.nddata.NDUncertainty.supports_correlated" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.nddata.NDUncertainty.propagate_add">
+<tt class="descname">propagate_add</tt><big>(</big><em>other_nddata</em>, <em>result_data</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nduncertainty.html#NDUncertainty.propagate_add"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nduncertainty.py#L63" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDUncertainty.propagate_add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate uncertainties for addition.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other_nddata</strong> : NDData instance</p>
+<blockquote>
+<div><p>The data for the second other_nddata in a + b</p>
+</div></blockquote>
+<p><strong>result_data</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a> instance</p>
+<blockquote>
+<div><p>The data array that is the result of the addition</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result_uncertainty</strong> : NDUncertainty instance</p>
+<blockquote>
+<div><p>The resulting uncertainty</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>IncompatibleUncertaintiesException</strong></p>
+<blockquote class="last">
+<div><p>Raised if the method does not know how to add the uncertainties</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDUncertainty.propagate_divide">
+<tt class="descname">propagate_divide</tt><big>(</big><em>other_nddata</em>, <em>result_data</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nduncertainty.html#NDUncertainty.propagate_divide"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nduncertainty.py#L127" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDUncertainty.propagate_divide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate uncertainties for division.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other_nddata</strong> : NDData instance</p>
+<blockquote>
+<div><p>The data for the second other_nddata in a + b</p>
+</div></blockquote>
+<p><strong>result_data</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a> instance</p>
+<blockquote>
+<div><p>The data array that is the result of the addition</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result_uncertainty</strong> : NDUncertainty instance</p>
+<blockquote class="last">
+<div><p>The resulting uncertainty</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDUncertainty.propagate_multiply">
+<tt class="descname">propagate_multiply</tt><big>(</big><em>other_nddata</em>, <em>result_data</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nduncertainty.html#NDUncertainty.propagate_multiply"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nduncertainty.py#L109" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDUncertainty.propagate_multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate uncertainties for multiplication.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other_nddata</strong> : NDData instance</p>
+<blockquote>
+<div><p>The data for the second other_nddata in a + b</p>
+</div></blockquote>
+<p><strong>result_data</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a> instance</p>
+<blockquote>
+<div><p>The data array that is the result of the addition</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result_uncertainty</strong> : NDUncertainty instance</p>
+<blockquote class="last">
+<div><p>The resulting uncertainty</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDUncertainty.propagate_subtract">
+<tt class="descname">propagate_subtract</tt><big>(</big><em>other_nddata</em>, <em>result_data</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nduncertainty.html#NDUncertainty.propagate_subtract"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nduncertainty.py#L86" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDUncertainty.propagate_subtract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate uncertainties for subtraction.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other_nddata</strong> : NDData instance</p>
+<blockquote>
+<div><p>The data for the second other_nddata in a + b</p>
+</div></blockquote>
+<p><strong>result_data</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a> instance</p>
+<blockquote>
+<div><p>The data array that is the result of the addition</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result_uncertainty</strong> : NDUncertainty instance</p>
+<blockquote>
+<div><p>The resulting uncertainty</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>IncompatibleUncertaintiesException</strong></p>
+<blockquote class="last">
+<div><p>Raised if the method does not know how to add the uncertainties</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">NDUncertainty</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.nddata.NDUncertainty.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.nddata.NDUncertainty.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

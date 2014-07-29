@@ -1,0 +1,1084 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.coordinates.sky_coordinate &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.coordinates.sky_coordinate</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..utils.compat.misc</span> <span class="kn">import</span> <span class="n">override__dir__</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">..extern.six.moves</span> <span class="kn">import</span> <span class="nb">zip</span>
+<span class="kn">from</span> <span class="nn">..units</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">IrreducibleUnit</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span> <span class="nn">.distances</span> <span class="kn">import</span> <span class="n">Distance</span>
+<span class="kn">from</span> <span class="nn">.baseframe</span> <span class="kn">import</span> <span class="n">BaseCoordinateFrame</span><span class="p">,</span> <span class="n">frame_transform_graph</span><span class="p">,</span> <span class="n">GenericFrame</span><span class="p">,</span> <span class="n">_get_repr_cls</span>
+<span class="kn">from</span> <span class="nn">.builtin_frames</span> <span class="kn">import</span> <span class="n">ICRS</span>
+<span class="kn">from</span> <span class="nn">.representation</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">,</span> <span class="n">SphericalRepresentation</span><span class="p">,</span>
+                             <span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;SkyCoord&#39;</span><span class="p">]</span>
+
+
+<span class="c"># Define a convenience mapping.  This is used like a module constants</span>
+<span class="c"># but is actually dynamically evaluated.</span>
+<span class="k">def</span> <span class="nf">FRAME_ATTR_NAMES_SET</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Set of all possible frame-specific attributes&quot;&quot;&quot;</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">frame_cls</span> <span class="ow">in</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">frame_set</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">frame_cls</span><span class="o">.</span><span class="n">get_frame_attr_names</span><span class="p">()</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<div class="viewcode-block" id="SkyCoord"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord">[docs]</a><span class="k">class</span> <span class="nc">SkyCoord</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;High-level object providing a flexible interface for celestial coordinate</span>
+<span class="sd">    representation, manipulation, and transformation between systems.</span>
+
+<span class="sd">    The `SkyCoord` class accepts a wide variety of inputs for initialization.</span>
+<span class="sd">    At a minimum these must provide one or more celestial coordinate values</span>
+<span class="sd">    with unambiguous units.  Typically one also specifies the coordinate</span>
+<span class="sd">    frame, though this is not required.  The general pattern is for spherical</span>
+<span class="sd">    representations is::</span>
+
+<span class="sd">      SkyCoord(COORD, [FRAME], keyword_args ...)</span>
+<span class="sd">      SkyCoord(LON, LAT, [FRAME], keyword_args ...)</span>
+<span class="sd">      SkyCoord(LON, LAT, [DISTANCE], frame=FRAME, unit=UNIT, keyword_args ...)</span>
+<span class="sd">      SkyCoord([FRAME], &lt;lon_attr&gt;=LON, &lt;lat_attr&gt;=LAT, keyword_args ...)</span>
+
+<span class="sd">    It is also possible to input coordinate values in other representations</span>
+<span class="sd">    such as cartesian or cylindrical.  In this case one includes the keyword</span>
+<span class="sd">    argument ``representation=&#39;cartesian&#39;`` (for example) along with data in</span>
+<span class="sd">    ``x``, ``y``, and ``z``.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The examples below illustrate common ways of initializing a `SkyCoord`</span>
+<span class="sd">    object.  For a complete description of the allowed syntax see the</span>
+<span class="sd">    full coordinates documentation.  First some imports::</span>
+
+<span class="sd">      &gt;&gt;&gt; from astropy.coordinates import SkyCoord  # High-level coordinates</span>
+<span class="sd">      &gt;&gt;&gt; from astropy.coordinates import ICRS, Galactic, FK4, FK5  # Low-level frames</span>
+<span class="sd">      &gt;&gt;&gt; from astropy.coordinates import Angle, Latitude, Longitude  # Angles</span>
+<span class="sd">      &gt;&gt;&gt; import astropy.units as u</span>
+
+<span class="sd">    The coordinate values and frame specification can now be provided using</span>
+<span class="sd">    positional and keyword arguments::</span>
+
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(10, 20, unit=&quot;deg&quot;)  # defaults to ICRS frame</span>
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord([1, 2, 3], [-30, 45, 8], &quot;icrs&quot;, unit=&quot;deg&quot;)  # 3 coords</span>
+
+<span class="sd">      &gt;&gt;&gt; coords = [&quot;1:12:43.2 +1:12:43&quot;, &quot;1 12 43.2 +1 12 43&quot;]</span>
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(coords, FK4, unit=(u.deg, u.hourangle), obstime=&quot;J1992.21&quot;)</span>
+
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(&quot;1h12m43.2s +1d12m43s&quot;, Galactic)  # Units from string</span>
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(&quot;galactic&quot;, l=&quot;1h12m43.2s&quot;, b=&quot;+1d12m43s&quot;)</span>
+
+<span class="sd">      &gt;&gt;&gt; ra = Longitude([1, 2, 3], unit=u.deg)  # Could also use Angle</span>
+<span class="sd">      &gt;&gt;&gt; dec = np.array([4.5, 5.2, 6.3]) * u.deg  # Astropy Quantity</span>
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(ra, dec, frame=&#39;icrs&#39;)</span>
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(ICRS, ra=ra, dec=dec, obstime=&#39;2001-01-02T12:34:56&#39;)</span>
+
+<span class="sd">      &gt;&gt;&gt; c = FK4(1 * u.deg, 2 * u.deg)  # Uses defaults for obstime, equinox</span>
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(c, obstime=&#39;J2010.11&#39;, equinox=&#39;B1965&#39;)  # Override defaults</span>
+
+<span class="sd">      &gt;&gt;&gt; c = SkyCoord(w=0, u=1, v=2, unit=&#39;kpc&#39;, frame=&#39;galactic&#39;, representation=&#39;cartesian&#39;)</span>
+
+<span class="sd">    As shown, the frame can be a `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">    class or the corresponding string alias.  The frame classes that are built in</span>
+<span class="sd">    to astropy are `ICRS`, `FK5`, `FK4`, `FK4NoETerms`, and `Galactic`.</span>
+<span class="sd">    The string aliases are simply lower-case versions of the class name, and</span>
+<span class="sd">    allow for creating a `SkyCoord` object and transforming frames without</span>
+<span class="sd">    explicitly importing the frame classes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frame : `~astropy.coordinates.BaseCoordinateFrame` class or string, optional</span>
+<span class="sd">        Type of coordinate frame this `SkyCoord` should represent. Defaults to</span>
+<span class="sd">        to ICRS if not given or given as None.</span>
+<span class="sd">    unit : `~astropy.units.Unit`, string, or tuple of :class:`~astropy.units.Unit` or str, optional</span>
+<span class="sd">        Units for supplied ``LON`` and ``LAT`` values, respectively.  If</span>
+<span class="sd">        only one unit is supplied then it applies to both ``LON`` and</span>
+<span class="sd">        ``LAT``.</span>
+<span class="sd">    obstime : valid `~astropy.time.Time` initializer, optional</span>
+<span class="sd">        Time of observation</span>
+<span class="sd">    equinox : valid `~astropy.time.Time` initializer, optional</span>
+<span class="sd">        Coordinate frame equinox</span>
+<span class="sd">    representation : str or Representation class</span>
+<span class="sd">        Specifies the representation, e.g. &#39;spherical&#39;, &#39;cartesian&#39;, or</span>
+<span class="sd">        &#39;cylindrical&#39;.  This affects the positional args and other keyword args</span>
+<span class="sd">        which must correspond to the given representation.</span>
+<span class="sd">    **keyword_args</span>
+<span class="sd">        Other keyword arguments as applicable for user-defined coordinate frames.</span>
+<span class="sd">        Common options include:</span>
+
+<span class="sd">        ra, dec : valid `~astropy.coordinates.Angle` initializer, optional</span>
+<span class="sd">            RA and Dec for frames where ``ra`` and ``dec`` are keys in the</span>
+<span class="sd">            frame&#39;s ``representation_component_names``, including `ICRS`,</span>
+<span class="sd">            `FK5`, `FK4`, and `FK4NoETerms`.</span>
+<span class="sd">        l, b : valid `~astropy.coordinates.Angle` initializer, optional</span>
+<span class="sd">            Galactic ``l`` and ``b`` for for frames where ``l`` and ``b`` are</span>
+<span class="sd">            keys in the frame&#39;s ``representation_component_names``, including</span>
+<span class="sd">            the `Galactic` frame.</span>
+<span class="sd">        x, y, z : float or `~astropy.units.Quantity`, optional</span>
+<span class="sd">            Cartesian coordinates values</span>
+<span class="sd">        w, u, v : float or `~astropy.units.Quantity`, optional</span>
+<span class="sd">            Cartesian coordinates values for the Galactic frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c"># Parse the args and kwargs to assemble a sanitized and validated</span>
+        <span class="c"># kwargs dict for initializing attributes for this object and for</span>
+        <span class="c"># creating the internal self._sky_coord_frame object</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>  <span class="c"># Make it mutable</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_inputs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c"># Set internal versions of object state attributes</span>
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FRAME_ATTR_NAMES_SET</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">attr</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;frame&#39;</span><span class="p">]</span>
+        <span class="n">coord_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="s">&#39;representation&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">coord_kwargs</span><span class="p">[</span><span class="s">&#39;representation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;representation&#39;</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">attr</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation_component_names</span>
+                                      <span class="ow">or</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">get_frame_attr_names</span><span class="p">()):</span>
+                <span class="n">coord_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+        <span class="c"># Finally make the internal coordinate object.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="o">**</span><span class="n">coord_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot create a SkyCoord without data&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">representation</span>
+
+    <span class="nd">@representation.setter</span>
+    <span class="k">def</span> <span class="nf">representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">representation</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Py 2.x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">__nonzero__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Py 3.x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">__bool__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">self_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c"># First turn `self` into a mockup of the thing we want - we can copy</span>
+            <span class="c"># this to get all the right attributes</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span> <span class="o">=</span> <span class="n">self_frame</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c"># now put back the right frame in self</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span> <span class="o">=</span> <span class="n">self_frame</span>
+
+    <span class="k">def</span> <span class="nf">_parse_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assemble a validated and sanitized keyword args dict for instantiating a</span>
+<span class="sd">        SkyCoord and coordinate object from the provided `args`, and `kwargs`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">valid_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c"># Put the SkyCoord attributes like frame, equinox, obstime, location</span>
+        <span class="c"># into valid_kwargs dict.  `Frame` could come from args or kwargs, so</span>
+        <span class="c"># set valid_kwargs[&#39;frame&#39;] accordingly.  The others must be specified</span>
+        <span class="c"># by keyword args or else get a None default.  Pop them off of kwargs</span>
+        <span class="c"># in the process.</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">valid_kwargs</span><span class="p">[</span><span class="s">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_frame</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&#39;representation&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">valid_kwargs</span><span class="p">[</span><span class="s">&#39;representation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;representation&#39;</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FRAME_ATTR_NAMES_SET</span><span class="p">():</span>
+            <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="c"># Get units</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">_get_units</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c"># Grab any frame-specific attr names like `ra` or `l` or `distance` from kwargs</span>
+        <span class="c"># and migrate to valid_kwargs.</span>
+        <span class="n">valid_kwargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">_get_representation_attrs</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">))</span>
+
+        <span class="c"># Error if anything is still left in kwargs</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Unrecognized keyword argument(s) {0}&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)))</span>
+
+        <span class="c"># Finally deal with the unnamed args.  This figures out what the arg[0] is</span>
+        <span class="c"># and returns a dict with appropriate key/values for initializing frame class.</span>
+        <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="c"># One arg which must be a coordinate.  In this case</span>
+                <span class="c"># coord_kwargs will contain keys like &#39;ra&#39;, &#39;dec&#39;, &#39;distance&#39;</span>
+                <span class="c"># along with any frame attributes like equinox or obstime which</span>
+                <span class="c"># were explicitly specified in the coordinate object (i.e. non-default).</span>
+                <span class="n">coord_kwargs</span> <span class="o">=</span> <span class="n">_parse_coordinate_arg</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">frame</span><span class="p">,</span> <span class="n">units</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">frame_attr_names</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="n">repr_attr_names</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="n">coord_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">arg</span><span class="p">,</span> <span class="n">frame_attr_name</span><span class="p">,</span> <span class="n">repr_attr_name</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">frame_attr_names</span><span class="p">,</span>
+                                                                      <span class="n">repr_attr_names</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+                    <span class="n">attr_class</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="n">repr_attr_name</span><span class="p">]</span>
+                    <span class="n">coord_kwargs</span><span class="p">[</span><span class="n">frame_attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">attr_class</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Must supply no more than three positional arguments, got {}&#39;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+
+            <span class="c"># Copy the coord_kwargs into the final valid_kwargs dict.  For each</span>
+            <span class="c"># of the coord_kwargs ensure that there is no conflict with a value</span>
+            <span class="c"># specified by the user in the original kwargs.</span>
+            <span class="k">for</span> <span class="n">attr</span><span class="p">,</span> <span class="n">coord_value</span> <span class="ow">in</span> <span class="n">coord_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">attr</span> <span class="ow">in</span> <span class="n">valid_kwargs</span>
+                        <span class="ow">and</span> <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                        <span class="ow">and</span> <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">!=</span> <span class="n">coord_value</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Coordinate attribute &#39;{0}&#39;={1!r} conflicts with &quot;</span>
+                                     <span class="s">&quot;keyword argument &#39;{0}&#39;={2!r}&quot;</span>
+                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">coord_value</span><span class="p">,</span> <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]))</span>
+                <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">coord_value</span>
+
+        <span class="k">return</span> <span class="n">valid_kwargs</span>
+
+<div class="viewcode-block" id="SkyCoord.transform_to"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.transform_to">[docs]</a>    <span class="k">def</span> <span class="nf">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform this coordinate to a new frame.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        frame : str or `BaseCoordinateFrame` class / instance or `SkyCoord` instance</span>
+<span class="sd">            The frame to transform this coordinate into.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        coord : `SkyCoord`</span>
+<span class="sd">            A new object with this coordinate represented in the `frame` frame.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If there is no possible transformation route.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">astropy.coordinates.errors</span> <span class="kn">import</span> <span class="n">ConvertError</span>
+
+        <span class="n">frame_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c"># Frame name (string) or frame class?  Coerce into an instance.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">_get_frame_class</span><span class="p">(</span><span class="n">frame</span><span class="p">)()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">):</span>
+            <span class="n">frame</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">frame</span>  <span class="c"># Change to underlying coord frame instance</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+            <span class="n">new_frame_cls</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">__class__</span>
+
+            <span class="c"># Set the keyword args for making a new frame instance for the</span>
+            <span class="c"># transform.  If the supplied frame instance has a non-default</span>
+            <span class="c"># value set then use that, otherwise use the self attribute value</span>
+            <span class="c"># if it is not None.</span>
+            <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FRAME_ATTR_NAMES_SET</span><span class="p">():</span>
+                <span class="n">self_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                <span class="n">frame_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">frame_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span>
+                        <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">frame</span><span class="o">.</span><span class="n">_attr_names_with_defaults</span><span class="p">):</span>
+                    <span class="n">frame_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame_val</span>
+                <span class="k">elif</span> <span class="n">self_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">frame_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">self_val</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Transform `frame` must be a frame name, class, or instance&#39;</span><span class="p">)</span>
+
+        <span class="c"># Get the composite transform to the new frame</span>
+        <span class="n">trans</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">new_frame_cls</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trans</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ConvertError</span><span class="p">(</span><span class="s">&#39;Cannot transform from {0} to {1}&#39;</span>
+                               <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">new_frame_cls</span><span class="p">))</span>
+
+        <span class="c"># Make a generic frame which will accept all the frame kwargs that</span>
+        <span class="c"># are provided and allow for transforming through intermediate frames</span>
+        <span class="c"># which may require one or more of those kwargs.</span>
+        <span class="n">generic_frame</span> <span class="o">=</span> <span class="n">GenericFrame</span><span class="p">(</span><span class="n">frame_kwargs</span><span class="p">)</span>
+
+        <span class="c"># Do the transformation, returning a coordinate frame of the desired</span>
+        <span class="c"># final type (not generic).</span>
+        <span class="n">new_coord</span> <span class="o">=</span> <span class="n">trans</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">generic_frame</span><span class="p">)</span>
+
+        <span class="c"># Finally make the new SkyCoord object from the `new_coord` and</span>
+        <span class="c"># remaining frame_kwargs that are not frame_attributes in `new_coord`.</span>
+        <span class="c"># We could remove overlaps here, but the init code is set up to accept</span>
+        <span class="c"># overlaps as long as the values are identical (which they must be).</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">new_coord</span><span class="p">,</span> <span class="o">**</span><span class="n">frame_kwargs</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Overrides getattr to return coordinates that this can be transformed</span>
+<span class="sd">        to, based on the alias attr in the master transform graph.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">attr</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>  <span class="c"># Should this be a deepcopy of self?</span>
+
+        <span class="c"># Anything in the set of all possible frame_attr_names is handled</span>
+        <span class="c"># here. If the attr is relevant for the current frame then delegate</span>
+        <span class="c"># to self.frame otherwise get it from self._&lt;attr&gt;.</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FRAME_ATTR_NAMES_SET</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">get_frame_attr_names</span><span class="p">():</span>
+                <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">attr</span><span class="p">)</span>
+
+        <span class="c"># Some attributes might not fall in the above category but still</span>
+        <span class="c"># are available through self._sky_coord_frame.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sky_coord_frame</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+        <span class="c"># Try to interpret as a new frame for transforming.</span>
+        <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">frame_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">is_transformable_to</span><span class="p">(</span><span class="n">frame_cls</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+
+        <span class="c"># Fail</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; object has no attribute &#39;{1}&#39;&quot;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+
+    <span class="nd">@override__dir__</span>
+    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override the builtin `dir` behavior to include:</span>
+<span class="sd">        - Transforms available by aliases</span>
+<span class="sd">        - Attribute / methods of the underlying self.frame object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># determine the aliases that this can be transformed to.</span>
+        <span class="n">dir_values</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">get_names</span><span class="p">():</span>
+            <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">is_transformable_to</span><span class="p">(</span><span class="n">frame_cls</span><span class="p">):</span>
+                <span class="n">dir_values</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="c"># Add public attributes of self.frame</span>
+        <span class="n">dir_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">attr</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">attr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">)))</span>
+
+        <span class="c"># Add all possible frame attributes</span>
+        <span class="n">dir_values</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">FRAME_ATTR_NAMES_SET</span><span class="p">())</span>
+
+        <span class="k">return</span> <span class="n">dir_values</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">clsnm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="n">coonm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&lt;{clsnm} ({coonm})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">**</span><span class="nb">locals</span><span class="p">())</span>
+        <span class="n">crepr</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span> <span class="o">+</span> <span class="n">crepr</span><span class="p">[</span><span class="n">crepr</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">):]</span>
+
+<div class="viewcode-block" id="SkyCoord.to_string"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.to_string">[docs]</a>    <span class="k">def</span> <span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s">&#39;decimal&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A string representation of the coordinates.</span>
+
+<span class="sd">        The default styles definitions are::</span>
+
+<span class="sd">          &#39;decimal&#39;: &#39;lat&#39;: {&#39;decimal&#39;: True, &#39;unit&#39;: &quot;deg&quot;}</span>
+<span class="sd">                     &#39;lon&#39;: {&#39;decimal&#39;: True, &#39;unit&#39;: &quot;deg&quot;}</span>
+<span class="sd">          &#39;dms&#39;: &#39;lat&#39;: {&#39;unit&#39;: &quot;deg&quot;}</span>
+<span class="sd">                 &#39;lon&#39;: {&#39;unit&#39;: &quot;deg&quot;}</span>
+<span class="sd">          &#39;hmsdms&#39;: &#39;lat&#39;: {&#39;alwayssign&#39;: True, &#39;pad&#39;: True, &#39;unit&#39;: &quot;deg&quot;}</span>
+<span class="sd">                    &#39;lon&#39;: {&#39;pad&#39;: True, &#39;unit&#39;: &quot;hour&quot;}</span>
+
+<span class="sd">        See :meth:`~astropy.coordinates.Angle.to_string` for details and</span>
+<span class="sd">        keyword arguments (the two angles forming the coordinates are are</span>
+<span class="sd">        both :class:`~astropy.coordinates.Angle` instances). Keyword</span>
+<span class="sd">        arguments have precedence over the style defaults and are passed</span>
+<span class="sd">        to :meth:`~astropy.coordinates.Angle.to_string`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        style : {&#39;hmsdms&#39;, &#39;dms&#39;, &#39;decimal&#39;}</span>
+<span class="sd">            The formatting specification to use. These encode the three most</span>
+<span class="sd">            common ways to represent coordinates. The default is `decimal`.</span>
+<span class="sd">        kwargs</span>
+<span class="sd">            Keyword args passed to :meth:`~astropy.coordinates.Angle.to_string`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sph_coord</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">SphericalRepresentation</span><span class="p">)</span>
+
+        <span class="n">styles</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;hmsdms&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;lonargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">hour</span><span class="p">,</span> <span class="s">&#39;pad&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">},</span>
+                             <span class="s">&#39;latargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;pad&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">,</span> <span class="s">&#39;alwayssign&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}},</span>
+                  <span class="s">&#39;dms&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;lonargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">},</span>
+                          <span class="s">&#39;latargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">}},</span>
+                  <span class="s">&#39;decimal&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;lonargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;decimal&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">},</span>
+                              <span class="s">&#39;latargs&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s">&#39;unit&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;decimal&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">}}</span>
+                  <span class="p">}</span>
+
+        <span class="n">lonargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">latargs</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">if</span> <span class="n">style</span> <span class="ow">in</span> <span class="n">styles</span><span class="p">:</span>
+            <span class="n">lonargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">styles</span><span class="p">[</span><span class="n">style</span><span class="p">][</span><span class="s">&#39;lonargs&#39;</span><span class="p">])</span>
+            <span class="n">latargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">styles</span><span class="p">[</span><span class="n">style</span><span class="p">][</span><span class="s">&#39;latargs&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid style.  Valid options are: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">styles</span><span class="p">)))</span>
+
+        <span class="n">lonargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">latargs</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">sph_coord</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">value</span><span class="p">):</span>
+            <span class="n">coord_string</span> <span class="o">=</span> <span class="p">(</span><span class="n">sph_coord</span><span class="o">.</span><span class="n">lon</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="o">**</span><span class="n">lonargs</span><span class="p">)</span>
+                            <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span>
+                            <span class="n">sph_coord</span><span class="o">.</span><span class="n">lat</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="o">**</span><span class="n">latargs</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">coord_string</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">lonangle</span><span class="p">,</span> <span class="n">latangle</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">sph_coord</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">sph_coord</span><span class="o">.</span><span class="n">lat</span><span class="p">):</span>
+                <span class="n">coord_string</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">lonangle</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="o">**</span><span class="n">lonargs</span><span class="p">)</span>
+                                 <span class="o">+</span> <span class="s">&quot; &quot;</span> <span class="o">+</span>
+                                 <span class="n">latangle</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="o">**</span><span class="n">latargs</span><span class="p">))]</span>
+
+        <span class="k">return</span> <span class="n">coord_string</span>
+
+    <span class="c"># High-level convinience methods</span></div>
+<div class="viewcode-block" id="SkyCoord.separation"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.separation">[docs]</a>    <span class="k">def</span> <span class="nf">separation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes on-sky separation between this coordinate and another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">            The coordinate to get the separation to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sep : `~astropy.coordinates.Angle`</span>
+<span class="sd">            The on-sky separation between this and the ``other`` coordinate.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The separation is calculated using the Vincenty formula, which</span>
+<span class="sd">        is stable at all locations, including poles and antipodes [1]_.</span>
+
+<span class="sd">        .. [1] http://en.wikipedia.org/wiki/Great-circle_distance</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">Angle</span>
+        <span class="kn">from</span> <span class="nn">.angle_utilities</span> <span class="kn">import</span> <span class="n">angular_separation</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">):</span>
+            <span class="n">self_in_other_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="c"># it&#39;s a frame</span>
+            <span class="n">self_in_other_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Can only get separation to another SkyCoord or a &#39;</span>
+                            <span class="s">&#39;coordinate frame with data&#39;</span><span class="p">)</span>
+
+        <span class="n">lon1</span> <span class="o">=</span> <span class="n">self_in_other_system</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span>
+        <span class="n">lat1</span> <span class="o">=</span> <span class="n">self_in_other_system</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span>
+        <span class="n">lon2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lon</span>
+        <span class="n">lat2</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">spherical</span><span class="o">.</span><span class="n">lat</span>
+
+        <span class="c"># Get the separation as a Quantity, convert to Angle in degrees</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">angular_separation</span><span class="p">(</span><span class="n">lon1</span><span class="p">,</span> <span class="n">lat1</span><span class="p">,</span> <span class="n">lon2</span><span class="p">,</span> <span class="n">lat2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Angle</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SkyCoord.separation_3d"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.separation_3d">[docs]</a>    <span class="k">def</span> <span class="nf">separation_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes three dimensional separation between this coordinate</span>
+<span class="sd">        and another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">            The coordinate to get the separation to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sep : `~astropy.coordinates.Distance`</span>
+<span class="sd">            The real-space distance between these two coordinates.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this or the other coordinate do not have distances.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">):</span>
+            <span class="n">self_in_other_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">)</span> <span class="ow">and</span> <span class="n">other</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="c"># it&#39;s a frame</span>
+            <span class="n">self_in_other_system</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Can only get separation to another SkyCoord or a &#39;</span>
+                            <span class="s">&#39;coordinate frame with data&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">UnitSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;This object does not have a distance; cannot &#39;</span>
+                             <span class="s">&#39;compute 3d separation.&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">UnitSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The other object does not have a distance; &#39;</span>
+                             <span class="s">&#39;cannot compute 3d separation.&#39;</span><span class="p">)</span>
+
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">self_in_other_system</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">self_in_other_system</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">dz</span> <span class="o">=</span> <span class="n">self_in_other_system</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">z</span>
+
+        <span class="n">distval</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dy</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dz</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="k">return</span> <span class="n">Distance</span><span class="p">(</span><span class="n">distval</span><span class="p">,</span> <span class="n">dx</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SkyCoord.match_to_catalog_sky"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.match_to_catalog_sky">[docs]</a>    <span class="k">def</span> <span class="nf">match_to_catalog_sky</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalogcoord</span><span class="p">,</span> <span class="n">nthneighbor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the nearest on-sky matches of this coordinate in a set of</span>
+<span class="sd">        catalog coordinates.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        catalogcoord : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">            The base catalog in which to search for matches. Typically this</span>
+<span class="sd">            will be a coordinate object that is an array (i.e.,</span>
+<span class="sd">            ``catalogcoord.isscalar == False``)</span>
+<span class="sd">        nthneighbor : int, optional</span>
+<span class="sd">            Which closest neighbor to search for.  Typically ``1`` is</span>
+<span class="sd">            desired here, as that is correct for matching one set of</span>
+<span class="sd">            coordinates to another. The next likely use case is ``2``,</span>
+<span class="sd">            for matching a coordinate catalog against *itself* (``1``</span>
+<span class="sd">            is inappropriate because each point will find itself as the</span>
+<span class="sd">            closest match).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        idx : integer array</span>
+<span class="sd">            Indices into ``catalogcoord`` to get the matched points for</span>
+<span class="sd">            each of this object&#39;s coordinates. Shape matches this</span>
+<span class="sd">            object.</span>
+<span class="sd">        sep2d : `~astropy.coordinates.Angle`</span>
+<span class="sd">            The on-sky separation between the closest match for each</span>
+<span class="sd">            element in this object in ``catalogcoord``. Shape matches</span>
+<span class="sd">            this object.</span>
+<span class="sd">        dist3d : `~astropy.units.Quantity`</span>
+<span class="sd">            The 3D distance between the closest match for each element</span>
+<span class="sd">            in this object in ``catalogcoord``. Shape matches this</span>
+<span class="sd">            object.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method requires `SciPy &lt;http://www.scipy.org&gt;`_ to be</span>
+<span class="sd">        installed or it will fail.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        astropy.coordinates.match_coordinates_sky</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.matching</span> <span class="kn">import</span> <span class="n">match_coordinates_sky</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">,</span> <span class="p">(</span><span class="n">SkyCoord</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="n">catalogcoord</span><span class="o">.</span><span class="n">has_data</span><span class="p">):</span>
+            <span class="n">self_in_catalog_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Can only get separation to another SkyCoord or a &#39;</span>
+                            <span class="s">&#39;coordinate frame with data&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">match_coordinates_sky</span><span class="p">(</span><span class="n">self_in_catalog_frame</span><span class="p">,</span> <span class="n">catalogcoord</span><span class="p">,</span>
+                                    <span class="n">nthneighbor</span><span class="o">=</span><span class="n">nthneighbor</span><span class="p">,</span>
+                                    <span class="n">storekdtree</span><span class="o">=</span><span class="s">&#39;_kdtree_sky&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="SkyCoord.match_to_catalog_3d"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.match_to_catalog_3d">[docs]</a>    <span class="k">def</span> <span class="nf">match_to_catalog_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catalogcoord</span><span class="p">,</span> <span class="n">nthneighbor</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Finds the nearest 3-dimensional matches of this coordinate to a set</span>
+<span class="sd">        of catalog coordinates.</span>
+
+<span class="sd">        This finds the 3-dimensional closest neighbor, which is only different</span>
+<span class="sd">        from the on-sky distance if ``distance`` is set in this object or the</span>
+<span class="sd">        ``catalogcoord`` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        catalogcoord : `~astropy.coordinates.SkyCoord` or `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">            The base catalog in which to search for matches. Typically this</span>
+<span class="sd">            will be a coordinate object that is an array (i.e.,</span>
+<span class="sd">            ``catalogcoord.isscalar == False``)</span>
+<span class="sd">        nthneighbor : int, optional</span>
+<span class="sd">            Which closest neighbor to search for.  Typically ``1`` is</span>
+<span class="sd">            desired here, as that is correct for matching one set of</span>
+<span class="sd">            coordinates to another.  The next likely use case is</span>
+<span class="sd">            ``2``, for matching a coordinate catalog against *itself*</span>
+<span class="sd">            (``1`` is inappropriate because each point will find</span>
+<span class="sd">            itself as the closest match).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        idx : integer array</span>
+<span class="sd">            Indices into ``catalogcoord`` to get the matched points for</span>
+<span class="sd">            each of this object&#39;s coordinates. Shape matches this</span>
+<span class="sd">            object.</span>
+<span class="sd">        sep2d : `~astropy.coordinates.Angle`</span>
+<span class="sd">            The on-sky separation between the closest match for each</span>
+<span class="sd">            element in this object in ``catalogcoord``. Shape matches</span>
+<span class="sd">            this object.</span>
+<span class="sd">        dist3d : `~astropy.units.Quantity`</span>
+<span class="sd">            The 3D distance between the closest match for each element</span>
+<span class="sd">            in this object in ``catalogcoord``. Shape matches this</span>
+<span class="sd">            object.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method requires `SciPy &lt;http://www.scipy.org&gt;`_ to be</span>
+<span class="sd">        installed or it will fail.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        astropy.coordinates.match_coordinates_3d</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.matching</span> <span class="kn">import</span> <span class="n">match_coordinates_3d</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">,</span> <span class="p">(</span><span class="n">SkyCoord</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">))</span>
+                <span class="ow">and</span> <span class="n">catalogcoord</span><span class="o">.</span><span class="n">has_data</span><span class="p">):</span>
+            <span class="n">self_in_catalog_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Can only get separation to another SkyCoord or a &#39;</span>
+                            <span class="s">&#39;coordinate frame with data&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="n">match_coordinates_3d</span><span class="p">(</span><span class="n">self_in_catalog_frame</span><span class="p">,</span> <span class="n">catalogcoord</span><span class="p">,</span>
+                                   <span class="n">nthneighbor</span><span class="o">=</span><span class="n">nthneighbor</span><span class="p">,</span>
+                                   <span class="n">storekdtree</span><span class="o">=</span><span class="s">&#39;_kdtree_3d&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="SkyCoord.position_angle"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.position_angle">[docs]</a>    <span class="k">def</span> <span class="nf">position_angle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes the on-sky position angle (East of North) between this</span>
+<span class="sd">        `SkyCoord` and another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : `SkyCoord`</span>
+<span class="sd">            The other coordinate to compute the position angle to.  It is</span>
+<span class="sd">            treated as the &quot;head&quot; of the vector of the position angle.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pa : `~astropy.coordinates.Angle`</span>
+<span class="sd">            The (positive) position angle of the vector pointing from ``self``</span>
+<span class="sd">            to ``other``.  If either ``self`` or ``other`` contain arrays, this</span>
+<span class="sd">            will be an array following the appropriate `numpy` broadcasting</span>
+<span class="sd">            rules.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        &gt;&gt;&gt; c1 = SkyCoord(0*u.deg, 0*u.deg)</span>
+<span class="sd">        &gt;&gt;&gt; c2 = SkyCoord(1*u.deg, 0*u.deg)</span>
+<span class="sd">        &gt;&gt;&gt; c1.position_angle(c2).degree</span>
+<span class="sd">        90.0</span>
+<span class="sd">        &gt;&gt;&gt; c3 = SkyCoord(1*u.deg, 1*u.deg)</span>
+<span class="sd">        &gt;&gt;&gt; c1.position_angle(c3).degree  # doctest: +FLOAT_CMP</span>
+<span class="sd">        44.995636455344844</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">angle_utilities</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">name</span><span class="p">:</span>
+            <span class="n">other_in_self_frame</span> <span class="o">=</span> <span class="n">other</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">other_in_self_frame</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>
+
+        <span class="n">slat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span><span class="o">.</span><span class="n">lat</span>
+        <span class="n">slon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span><span class="o">.</span><span class="n">lon</span>
+        <span class="n">olat</span> <span class="o">=</span> <span class="n">other_in_self_frame</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span><span class="o">.</span><span class="n">lat</span>
+        <span class="n">olon</span> <span class="o">=</span> <span class="n">other_in_self_frame</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span><span class="o">.</span><span class="n">lon</span>
+
+        <span class="k">return</span> <span class="n">angle_utilities</span><span class="o">.</span><span class="n">position_angle</span><span class="p">(</span><span class="n">slon</span><span class="p">,</span> <span class="n">slat</span><span class="p">,</span> <span class="n">olon</span><span class="p">,</span> <span class="n">olat</span><span class="p">)</span>
+
+    <span class="c"># Name resolve</span></div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SkyCoord.from_name"><a class="viewcode-back" href="../../../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.from_name">[docs]</a>    <span class="k">def</span> <span class="nf">from_name</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s">&#39;icrs&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given a name, query the CDS name resolver to attempt to retrieve</span>
+<span class="sd">        coordinate information for that object. The search database, sesame</span>
+<span class="sd">        url, and  query timeout can be set through configuration items in</span>
+<span class="sd">        ``astropy.coordinates.name_resolve`` -- see docstring for</span>
+<span class="sd">        `~astropy.coordinates.get_icrs_coordinates` for more</span>
+<span class="sd">        information.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            The name of the object to get coordinates for, e.g. ``&#39;M42&#39;``.</span>
+<span class="sd">        frame : str or `BaseCoordinateFrame` class or instance</span>
+<span class="sd">            The frame to transform the object to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        coord : SkyCoord</span>
+<span class="sd">            Instance of the SkyCoord class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="kn">from</span> <span class="nn">.name_resolve</span> <span class="kn">import</span> <span class="n">get_icrs_coordinates</span>
+
+        <span class="n">icrs_coord</span> <span class="o">=</span> <span class="n">get_icrs_coordinates</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">icrs_sky_coord</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">icrs_coord</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;icrs&#39;</span><span class="p">,</span> <span class="n">icrs_coord</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">icrs_sky_coord</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">icrs_sky_coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+<span class="c"># &lt;----------------Private utility functions below here-------------------------&gt;</span>
+
+</div></div>
+<span class="k">def</span> <span class="nf">_get_frame_class</span><span class="p">(</span><span class="n">frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get a frame class from the input `frame`, which could be a frame name</span>
+<span class="sd">    string, or frame class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">inspect</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="n">frame_names</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">get_names</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">frame_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Coordinate frame {0} not in allowed values {1}&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">frame_names</span><span class="p">)))</span>
+        <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">lookup_name</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+        <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">frame</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Coordinate frame must be a frame name or frame class&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">frame_cls</span>
+
+
+<span class="k">def</span> <span class="nf">_get_frame</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine the coordinate frame from input SkyCoord args and kwargs.  This</span>
+<span class="sd">    modifies args and/or kwargs in-place to remove the item that provided</span>
+<span class="sd">    `frame`.  It also infers the frame if an input coordinate was provided and</span>
+<span class="sd">    checks for conflicts.</span>
+
+<span class="sd">    This allows for frame to be specified as a string like &#39;icrs&#39; or a frame</span>
+<span class="sd">    class like ICRS, but not an instance ICRS() since the latter could have</span>
+<span class="sd">    non-default representation attributes which would require a three-way merge.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frame</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;frame&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">frame</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c"># Frame was provided as kwarg so validate and coerce into corresponding frame.</span>
+        <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">_get_frame_class</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+        <span class="n">frame_specified_explicitly</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c"># Look for the frame in args</span>
+        <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">_get_frame_class</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="n">frame_specified_explicitly</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">args</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Not in args nor kwargs - default to icrs</span>
+            <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">ICRS</span>
+            <span class="n">frame_specified_explicitly</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c"># Check that the new frame doesn&#39;t conflict with existing coordinate frame</span>
+    <span class="c"># if a coordinate is supplied in the args list.  If the frame still had not</span>
+    <span class="c"># been set by this point and a coordinate was supplied, then use that frame.</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">coord_frame_cls</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+            <span class="n">coord_frame_cls</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">__class__</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">):</span>
+            <span class="n">coord_frame_cls</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">frame</span><span class="o">.</span><span class="n">__class__</span>
+
+        <span class="k">if</span> <span class="n">coord_frame_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">frame_specified_explicitly</span><span class="p">:</span>
+                <span class="n">frame_cls</span> <span class="o">=</span> <span class="n">coord_frame_cls</span>
+            <span class="k">elif</span> <span class="n">frame_cls</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">coord_frame_cls</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot override frame=&#39;{0}&#39; of input coordinate with &quot;</span>
+                                 <span class="s">&quot;new frame=&#39;{1}&#39;.  Instead transform the coordinate.&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">coord_frame_cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">frame_cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="s">&#39;representation&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">frame_cls</span><span class="p">(</span><span class="n">representation</span><span class="o">=</span><span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;representation&#39;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">frame_cls</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">frame</span>
+
+
+<span class="k">def</span> <span class="nf">_get_units</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the longitude unit and latitude unit from kwargs.  Possible enhancement</span>
+<span class="sd">    is to allow input from args as well.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s">&#39;unit&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;unit&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">units</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)]</span>
+            <span class="c"># Allow for input like unit=&#39;deg&#39; or unit=&#39;m&#39;</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="n">units</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">units</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">units</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">units</span><span class="p">,</span> <span class="p">(</span><span class="n">Unit</span><span class="p">,</span> <span class="n">IrreducibleUnit</span><span class="p">)):</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="p">[</span><span class="n">units</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">units</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">units</span> <span class="o">=</span> <span class="p">[(</span><span class="n">Unit</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">if</span> <span class="n">x</span> <span class="k">else</span> <span class="bp">None</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">units</span><span class="p">]</span>
+            <span class="n">units</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">units</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Unit keyword must have one to three unit values as &#39;</span>
+                             <span class="s">&#39;tuple or comma-separated string&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">units</span>
+
+
+<span class="k">def</span> <span class="nf">_parse_coordinate_arg</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Single unnamed arg supplied.  This must be:</span>
+<span class="sd">    - Coordinate frame with data</span>
+<span class="sd">    - Representation</span>
+<span class="sd">    - List or tuple of:</span>
+<span class="sd">      - String which splits into two values</span>
+<span class="sd">      - Iterable with two values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_scalar</span> <span class="o">=</span> <span class="bp">False</span>  <span class="c"># Differentiate between scalar and list input</span>
+    <span class="n">valid_kwargs</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># Returned dict of lon, lat, and distance (optional)</span>
+
+    <span class="n">frame_attr_names</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">repr_attr_names</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">repr_attr_classes</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation</span><span class="o">.</span><span class="n">attr_classes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">n_attr_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">repr_attr_names</span><span class="p">)</span>
+
+    <span class="c"># Turn a single string into a list of strings for convenience</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="n">is_scalar</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">coords</span> <span class="o">=</span> <span class="p">[</span><span class="n">coords</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="p">(</span><span class="n">SkyCoord</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">)):</span>
+        <span class="c"># Note that during parsing of `frame` it is checked that any coordinate</span>
+        <span class="c"># args have the same frame as explicitly supplied, so don&#39;t worry here.</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">coords</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot initialize from a frame without coordinate data&#39;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">representation</span><span class="p">)</span>
+
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c"># List of values corresponding to representation attrs</span>
+        <span class="k">for</span> <span class="n">repr_attr_name</span> <span class="ow">in</span> <span class="n">repr_attr_names</span><span class="p">:</span>
+            <span class="c"># If coords did not have an explicit distance then don&#39;t include in initializers.</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="n">repr_attr_name</span> <span class="o">==</span> <span class="s">&#39;distance&#39;</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="c"># Get the value from `data` in the eventual representation</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">repr_attr_name</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">FRAME_ATTR_NAMES_SET</span><span class="p">():</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="n">use_value</span> <span class="o">=</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">SkyCoord</span><span class="p">)</span>
+                         <span class="ow">or</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">coords</span><span class="o">.</span><span class="n">_attr_names_with_defaults</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">use_value</span> <span class="ow">and</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">BaseRepresentation</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">frame</span><span class="o">.</span><span class="n">representation</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">repr_attr_name</span><span class="p">)</span> <span class="k">for</span> <span class="n">repr_attr_name</span> <span class="ow">in</span> <span class="n">repr_attr_names</span><span class="p">]</span>
+
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">coords</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">kind</span> <span class="ow">in</span> <span class="s">&#39;if&#39;</span>
+          <span class="ow">and</span> <span class="n">coords</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">coords</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">3</span><span class="p">):</span>
+        <span class="c"># 2-d array of coordinate values.  Handle specially for efficiency.</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">coords</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>  <span class="c"># Iterates over repr attrs</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coords</span><span class="p">,</span> <span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">Sequence</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="c"># Handles generic list-like input.</span>
+
+        <span class="c"># First turn into a list of lists like [[v1_0, v2_0, v3_0], ... [v1_N, v2_N, v3_N]]</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coords</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">coord1</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coord1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+                    <span class="n">coord1</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">coord1</span><span class="p">[:</span><span class="mi">3</span><span class="p">]),</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">coord1</span><span class="p">[</span><span class="mi">3</span><span class="p">:]))</span>
+                <span class="n">coord</span> <span class="o">=</span> <span class="n">coord1</span>
+
+            <span class="n">vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span>  <span class="c"># This assumes coord is a sequence at this point</span>
+
+        <span class="c"># Do some basic validation of the list elements: all have a length and all</span>
+        <span class="c"># lengths the same</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">n_coords</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;One or more elements of input sequence does not have a length&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">n_coords</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input coordinate values must have same number of elements, found {0}&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_coords</span><span class="p">))</span>
+        <span class="n">n_coords</span> <span class="o">=</span> <span class="n">n_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c"># Must have no more coord inputs than representation attributes</span>
+        <span class="k">if</span> <span class="n">n_coords</span> <span class="o">&gt;</span> <span class="n">n_attr_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Input coordinates have {0} values but {1} representation &#39;</span>
+                             <span class="s">&#39;only accepts {2}&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_coords</span><span class="p">,</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation</span><span class="o">.</span><span class="n">get_name</span><span class="p">(),</span> <span class="n">n_attr_names</span><span class="p">))</span>
+
+        <span class="c"># Now transpose vals to get [(v1_0 .. v1_N), (v2_0 .. v2_N), (v3_0 .. v3_N)]</span>
+        <span class="c"># (ok since we know it is exactly rectangular).  (Note: can&#39;t just use zip(*values)</span>
+        <span class="c"># because Longitude et al distinguishes list from tuple so [a1, a2, ..] is needed</span>
+        <span class="c"># while (a1, a2, ..) doesn&#39;t work.</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="n">is_scalar</span><span class="p">:</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot parse coordinates from first argument&#39;</span><span class="p">)</span>
+
+    <span class="c"># Finally we have a list of values from which to create the keyword args</span>
+    <span class="c"># for the frame initialization.  Validate by running through the appropriate</span>
+    <span class="c"># class initializer and supply units (which might be None).</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">frame_attr_name</span><span class="p">,</span> <span class="n">repr_attr_class</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
+                <span class="n">frame_attr_names</span><span class="p">,</span> <span class="n">repr_attr_classes</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+            <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">frame_attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">repr_attr_class</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot parse longitude and latitude from first argument: {0}&#39;</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">valid_kwargs</span>
+
+
+<span class="k">def</span> <span class="nf">_get_representation_attrs</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">units</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find instances of the &quot;representation attributes&quot; for specifying data</span>
+<span class="sd">    for this frame.  Pop them off of kwargs, run through the appropriate class</span>
+<span class="sd">    constructor (to validate and apply unit), and put into the output</span>
+<span class="sd">    valid_kwargs.  &quot;Representation attributes&quot; are the frame-specific aliases</span>
+<span class="sd">    for the underlying data values in the representation, e.g. &quot;ra&quot; for &quot;lon&quot;</span>
+<span class="sd">    for many equatorial spherical representations, or &quot;w&quot; for &quot;x&quot; in the</span>
+<span class="sd">    cartesian representation of Galactic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frame_attr_names</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">repr_attr_classes</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">representation</span><span class="o">.</span><span class="n">attr_classes</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+    <span class="n">valid_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">frame_attr_name</span><span class="p">,</span> <span class="n">repr_attr_class</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">frame_attr_names</span><span class="p">,</span> <span class="n">repr_attr_classes</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">frame_attr_name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">valid_kwargs</span><span class="p">[</span><span class="n">frame_attr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">repr_attr_class</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">valid_kwargs</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

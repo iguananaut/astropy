@@ -1,0 +1,65 @@
+
+
+Shift
+========================================
+
+.. currentmodule:: astropy.modeling.functional_models
+
+.. autoclass:: Shift
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Shift.input_names
+      ~Shift.offsets
+      ~Shift.param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Shift.evaluate
+      ~Shift.inverse
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+   .. autoattribute:: offsets
+   .. autoattribute:: param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+   .. automethod:: inverse
+
+   
+   

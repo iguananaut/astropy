@@ -1,0 +1,28 @@
+<map id="inheritance5f754a30cf" name="inheritance5f754a30cf">
+<area shape="rect" id="node1" href="../api/astropy.modeling.functional_models.AiryDisk2D.html#astropy.modeling.functional_models.AiryDisk2D" title="Two dimensional Airy disk model." alt="" coords="508,5,601,33"/>
+<area shape="rect" id="node2" href="../api/astropy.modeling.Fittable2DModel.html#astropy.modeling.Fittable2DModel" title="Base class for one&#45;dimensional fittable models." alt="" coords="288,233,421,261"/>
+<area shape="rect" id="node7" href="../api/astropy.modeling.functional_models.Beta2D.html#astropy.modeling.functional_models.Beta2D" title="Two dimensional Beta model." alt="" coords="517,55,592,83"/>
+<area shape="rect" id="node11" href="../api/astropy.modeling.functional_models.Box2D.html#astropy.modeling.functional_models.Box2D" title="Two dimensional Box model." alt="" coords="519,106,591,134"/>
+<area shape="rect" id="node15" href="../api/astropy.modeling.functional_models.Const2D.html#astropy.modeling.functional_models.Const2D" title="Two dimensional Constant model." alt="" coords="515,157,595,185"/>
+<area shape="rect" id="node17" href="../api/astropy.modeling.functional_models.Disk2D.html#astropy.modeling.functional_models.Disk2D" title="Two dimensional radial symmetric Disk model." alt="" coords="519,207,591,235"/>
+<area shape="rect" id="node26" href="../api/astropy.modeling.functional_models.Gaussian2D.html#astropy.modeling.functional_models.Gaussian2D" title="Two dimensional Gaussian model." alt="" coords="505,258,604,286"/>
+<area shape="rect" id="node36" href="../api/astropy.modeling.functional_models.MexicanHat2D.html#astropy.modeling.functional_models.MexicanHat2D" title="Two dimensional symmetric Mexican Hat model." alt="" coords="493,309,616,337"/>
+<area shape="rect" id="node40" href="../api/astropy.modeling.functional_models.Ring2D.html#astropy.modeling.functional_models.Ring2D" title="Two dimensional radial symmetric Ring model." alt="" coords="519,359,591,387"/>
+<area shape="rect" id="node50" href="../api/astropy.modeling.functional_models.TrapezoidDisk2D.html#astropy.modeling.functional_models.TrapezoidDisk2D" title="Two dimensional circular Trapezoid model." alt="" coords="489,410,620,438"/>
+<area shape="rect" id="node4" href="../api/astropy.modeling.functional_models.Beta1D.html#astropy.modeling.functional_models.Beta1D" title="One dimensional Beta model." alt="" coords="517,461,592,489"/>
+<area shape="rect" id="node5" href="../api/astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="Base class for one&#45;dimensional fittable models." alt="" coords="288,689,421,717"/>
+<area shape="rect" id="node9" href="../api/astropy.modeling.functional_models.Box1D.html#astropy.modeling.functional_models.Box1D" title="One dimensional Box model." alt="" coords="519,511,591,539"/>
+<area shape="rect" id="node13" href="../api/astropy.modeling.functional_models.Const1D.html#astropy.modeling.functional_models.Const1D" title="One dimensional Constant model." alt="" coords="515,562,595,590"/>
+<area shape="rect" id="node24" href="../api/astropy.modeling.functional_models.Gaussian1D.html#astropy.modeling.functional_models.Gaussian1D" title="One dimensional Gaussian model." alt="" coords="505,613,604,641"/>
+<area shape="rect" id="node28" href="../api/astropy.modeling.functional_models.GaussianAbsorption1D.html#astropy.modeling.functional_models.GaussianAbsorption1D" title="One dimensional Gaussian absorption line model." alt="" coords="469,663,640,691"/>
+<area shape="rect" id="node30" href="../api/astropy.modeling.functional_models.Linear1D.html#astropy.modeling.functional_models.Linear1D" title="One dimensional Line model." alt="" coords="513,714,596,742"/>
+<area shape="rect" id="node32" href="../api/astropy.modeling.functional_models.Lorentz1D.html#astropy.modeling.functional_models.Lorentz1D" title="One dimensional Lorentzian model." alt="" coords="508,765,601,793"/>
+<area shape="rect" id="node34" href="../api/astropy.modeling.functional_models.MexicanHat1D.html#astropy.modeling.functional_models.MexicanHat1D" title="One dimensional Mexican Hat model." alt="" coords="493,815,616,843"/>
+<area shape="rect" id="node38" href="../api/astropy.modeling.functional_models.Redshift.html#astropy.modeling.functional_models.Redshift" title="One dimensional redshift model." alt="" coords="516,866,593,894"/>
+<area shape="rect" id="node46" href="../api/astropy.modeling.functional_models.Sine1D.html#astropy.modeling.functional_models.Sine1D" title="One dimensional Sine model." alt="" coords="519,917,591,945"/>
+<area shape="rect" id="node48" href="../api/astropy.modeling.functional_models.Trapezoid1D.html#astropy.modeling.functional_models.Trapezoid1D" title="One dimensional Trapezoid model." alt="" coords="503,967,607,995"/>
+<area shape="rect" id="node19" href="../api/astropy.modeling.FittableModel.html#astropy.modeling.FittableModel" title="Base class for models that can be fitted using the built&#45;in fitting" alt="" coords="125,461,240,489"/>
+<area shape="rect" id="node22" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="Base class for all models." alt="" coords="5,511,77,539"/>
+<area shape="rect" id="node42" href="../api/astropy.modeling.functional_models.Scale.html#astropy.modeling.functional_models.Scale" title="Multiply a model by a factor." alt="" coords="147,511,219,539"/>
+<area shape="rect" id="node44" href="../api/astropy.modeling.functional_models.Shift.html#astropy.modeling.functional_models.Shift" title="Shift a coordinate." alt="" coords="147,562,219,590"/>
+</map>

@@ -1,0 +1,48 @@
+
+
+lazyproperty
+===============================
+
+.. currentmodule:: astropy.utils.misc
+
+.. autoclass:: lazyproperty
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~lazyproperty.deleter
+      ~lazyproperty.getter
+      ~lazyproperty.setter
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: deleter
+   .. automethod:: getter
+   .. automethod:: setter
+
+   
+   

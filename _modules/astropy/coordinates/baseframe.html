@@ -1,0 +1,1079 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.coordinates.baseframe &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.coordinates.baseframe</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Framework and base classes for coordinate frames/&quot;low-level&quot; coordinate classes.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">)</span>
+
+<span class="c"># Standard library</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="c"># Dependencies</span>
+
+<span class="c"># Project</span>
+<span class="kn">from</span> <span class="nn">..utils.compat.misc</span> <span class="kn">import</span> <span class="n">override__dir__</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">..utils.exceptions</span> <span class="kn">import</span> <span class="n">AstropyDeprecationWarning</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">.transformations</span> <span class="kn">import</span> <span class="n">TransformGraph</span>
+<span class="kn">from</span> <span class="nn">.representation</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">,</span> <span class="n">CartesianRepresentation</span><span class="p">,</span>
+                             <span class="n">SphericalRepresentation</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">,</span>
+                             <span class="n">REPRESENTATION_CLASSES</span><span class="p">)</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;BaseCoordinateFrame&#39;</span><span class="p">,</span> <span class="s">&#39;frame_transform_graph&#39;</span><span class="p">,</span> <span class="s">&#39;GenericFrame&#39;</span><span class="p">,</span> <span class="s">&#39;FrameAttribute&#39;</span><span class="p">,</span>
+           <span class="s">&#39;TimeFrameAttribute&#39;</span><span class="p">,</span> <span class="s">&#39;RepresentationMapping&#39;</span><span class="p">]</span>
+
+<span class="c"># the graph used for all transformations between frames</span>
+<span class="n">frame_transform_graph</span> <span class="o">=</span> <span class="n">TransformGraph</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_get_repr_cls</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return a valid representation class from ``value`` or raise exception.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">REPRESENTATION_CLASSES</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">REPRESENTATION_CLASSES</span><span class="p">[</span><span class="n">value</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BaseRepresentation</span><span class="p">)</span>  <span class="c"># value might not be a class, so use try</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;representation is {0!r} but must be a BaseRepresentation class &#39;</span>
+                         <span class="s">&#39; or one of the string aliases {1}&#39;</span>
+                         <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">REPRESENTATION_CLASSES</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">value</span>
+
+
+<span class="k">class</span> <span class="nc">FrameMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">clsdct</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;default_representation&#39;</span> <span class="ow">in</span> <span class="n">clsdct</span><span class="p">:</span>
+            <span class="n">def_repr</span> <span class="o">=</span> <span class="n">clsdct</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;default_representation&#39;</span><span class="p">)</span>
+            <span class="n">found_def_repr</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">def_repr</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">found_def_repr</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="s">&#39;frame_specific_representation_info&#39;</span> <span class="ow">in</span> <span class="n">clsdct</span><span class="p">:</span>
+            <span class="n">repr_info</span> <span class="o">=</span> <span class="n">clsdct</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;frame_specific_representation_info&#39;</span><span class="p">)</span>
+            <span class="n">found_repr_info</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">repr_info</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">found_repr_info</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="c"># somewhat hacky, but this is the best way to get the MRO according to</span>
+        <span class="c"># https://mail.python.org/pipermail/python-list/2002-December/167861.html</span>
+        <span class="n">mro</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">FrameMeta</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">clsdct</span><span class="p">)</span><span class="o">.</span><span class="n">__mro__</span>
+        <span class="n">parent_clsdcts</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">__dict__</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">mro</span><span class="p">]</span>
+
+        <span class="c">#now look through the whole MRO for the class attributes, raw</span>
+        <span class="c"># for frame_attr_names, and leading underscore for others</span>
+        <span class="k">for</span> <span class="n">clsdcti</span> <span class="ow">in</span> <span class="n">parent_clsdcts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found_def_repr</span> <span class="ow">and</span> <span class="s">&#39;_default_representation&#39;</span> <span class="ow">in</span> <span class="n">clsdcti</span><span class="p">:</span>
+                <span class="n">def_repr</span> <span class="o">=</span> <span class="n">clsdcti</span><span class="p">[</span><span class="s">&#39;_default_representation&#39;</span><span class="p">]</span>
+                <span class="n">found_def_repr</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">found_repr_info</span> <span class="ow">and</span> <span class="s">&#39;_frame_specific_representation_info&#39;</span> <span class="ow">in</span> <span class="n">clsdcti</span><span class="p">:</span>
+                <span class="n">repr_info</span> <span class="o">=</span> <span class="n">clsdcti</span><span class="p">[</span><span class="s">&#39;_frame_specific_representation_info&#39;</span><span class="p">]</span>
+                <span class="n">found_repr_info</span> <span class="o">=</span> <span class="bp">True</span>
+
+            <span class="k">if</span> <span class="n">found_def_repr</span> <span class="ow">and</span> <span class="n">found_repr_info</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Could not find all expected BaseCoordinateFrame &#39;</span>
+                             <span class="s">&#39;class attributes.  Are you mis-using FrameMeta?&#39;</span><span class="p">)</span>
+
+        <span class="c"># Make read-only properties for the frame class attributes that should</span>
+        <span class="c"># be read-only to make them immutable after creation.</span>
+        <span class="c"># We copy attributes instead of linking to make sure there&#39;s no</span>
+        <span class="c"># accidental cross-talk between classes</span>
+        <span class="n">clsdct</span><span class="p">[</span><span class="s">&#39;_default_representation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">def_repr</span>
+        <span class="n">clsdct</span><span class="p">[</span><span class="s">&#39;default_representation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FrameMeta</span><span class="o">.</span><span class="n">readonly_prop_factory</span><span class="p">(</span><span class="s">&#39;default_representation&#39;</span><span class="p">)</span>
+
+        <span class="n">clsdct</span><span class="p">[</span><span class="s">&#39;_frame_specific_representation_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">repr_info</span><span class="p">)</span>
+        <span class="n">clsdct</span><span class="p">[</span><span class="s">&#39;frame_specific_representation_info&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FrameMeta</span><span class="o">.</span><span class="n">readonly_prop_factory</span><span class="p">(</span><span class="s">&#39;frame_specific_representation_info&#39;</span><span class="p">)</span>
+
+        <span class="c"># now set the frame name as lower-case class name, if it isn&#39;t explicit</span>
+        <span class="k">if</span> <span class="s">&#39;name&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">clsdct</span><span class="p">:</span>
+            <span class="n">clsdct</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">FrameMeta</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parents</span><span class="p">,</span> <span class="n">clsdct</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">readonly_prop_factory</span><span class="p">(</span><span class="n">attrnm</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">getter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">attrnm</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">property</span><span class="p">(</span><span class="n">getter</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FrameAttribute"><a class="viewcode-back" href="../../../api/astropy.coordinates.FrameAttribute.html#astropy.coordinates.FrameAttribute">[docs]</a><span class="k">class</span> <span class="nc">FrameAttribute</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A non-mutable data descriptor to hold a frame attribute.</span>
+
+<span class="sd">    This class must be used to define frame attributes (e.g. ``equinox`` or</span>
+<span class="sd">    ``obstime``) that are included in a frame class definition.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The `~astropy.coordinates.FK4` class uses the following class attributes::</span>
+
+<span class="sd">      class FK4(BaseCoordinateFrame):</span>
+<span class="sd">          equinox = TimeFrameAttribute(default=_EQUINOX_B1950)</span>
+<span class="sd">          obstime = TimeFrameAttribute(default=None, secondary_attribute=&#39;equinox&#39;)</span>
+
+<span class="sd">    This means that ``equinox`` and ``obstime`` are available to be set as</span>
+<span class="sd">    keyword arguments when creating an ``FK4`` class instance and are then</span>
+<span class="sd">    accessible as instance attributes.  The instance value for the attribute</span>
+<span class="sd">    must be stored in ``&#39;_&#39; + &lt;attribute_name&gt;`` by the frame ``__init__``</span>
+<span class="sd">    method.</span>
+
+<span class="sd">    Note in this example that ``equinox`` and ``obstime`` are time attributes</span>
+<span class="sd">    and use the ``TimeAttributeFrame`` class.  This subclass overrides the</span>
+<span class="sd">    ``convert_input`` method to validate and convert inputs into a ``Time``</span>
+<span class="sd">    object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    default : object</span>
+<span class="sd">        Default value for the attribute if not provided</span>
+<span class="sd">    secondary_attribute : str</span>
+<span class="sd">        Name of a secondary instance attribute which supplies the value</span>
+<span class="sd">        if ``default is None`` and no value was supplied during initialization.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    frame_attr : descriptor</span>
+<span class="sd">        A new data descriptor to hold a frame attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">secondary_attribute</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary_attribute</span> <span class="o">=</span> <span class="n">secondary_attribute</span>
+
+<div class="viewcode-block" id="FrameAttribute.convert_input"><a class="viewcode-back" href="../../../api/astropy.coordinates.FrameAttribute.html#astropy.coordinates.FrameAttribute.convert_input">[docs]</a>    <span class="k">def</span> <span class="nf">convert_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the input ``value`` and convert to expected attribute class.</span>
+
+<span class="sd">        The base method here does nothing, but subclasses can implement this</span>
+<span class="sd">        as needed.  The method should catch any internal exceptions and raise</span>
+<span class="sd">        ValueError with an informative message.</span>
+
+<span class="sd">        The method returns the validated input along with a boolean that indicates</span>
+<span class="sd">        whether the input value was actually converted.  If the input value was</span>
+<span class="sd">        already the correct type then the ``converted`` return value should be</span>
+<span class="sd">        ``False``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : object</span>
+<span class="sd">            Input value to be converted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        output_value</span>
+<span class="sd">            The ``value`` converted to the correct type (or just ``value`` if</span>
+<span class="sd">            ``converted`` is False)</span>
+<span class="sd">        converted : bool</span>
+<span class="sd">            True if the conversion was actually performed, False otherwise.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the input is not valid for this attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="bp">False</span>
+</div>
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">frame_cls</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">):</span>
+            <span class="c"># Find attribute name of self by finding this object in the frame class</span>
+            <span class="c"># which is requesting this attribute or any of its superclasses.</span>
+            <span class="k">for</span> <span class="n">mro_cls</span> <span class="ow">in</span> <span class="n">frame_cls</span><span class="o">.</span><span class="n">__mro__</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">mro_cls</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+                        <span class="k">break</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">):</span>  <span class="c"># Can&#39;t nicely break out of two loops</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Cannot think of a way to actually raise this exception.  This instance</span>
+                <span class="c"># containing this code must be in the class dict in order to get excecuted</span>
+                <span class="c"># by attribute access.  But leave this here just in case...</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Unexpected inability to locate descriptor&#39;</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary_attribute</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default</span>
+
+        <span class="n">out</span><span class="p">,</span> <span class="n">converted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">convert_input</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">instance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">converted</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Cannot set frame attribute&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="TimeFrameAttribute"><a class="viewcode-back" href="../../../api/astropy.coordinates.TimeFrameAttribute.html#astropy.coordinates.TimeFrameAttribute">[docs]</a><span class="k">class</span> <span class="nc">TimeFrameAttribute</span><span class="p">(</span><span class="n">FrameAttribute</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Frame attribute descriptor for quantities that are Time objects.</span>
+<span class="sd">    See the `~astropy.coordinates.FrameAttribute` API doc for further</span>
+<span class="sd">    information.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    default : object</span>
+<span class="sd">        Default value for the attribute if not provided</span>
+<span class="sd">    secondary_attribute : str</span>
+<span class="sd">        Name of a secondary instance attribute which supplies the value</span>
+<span class="sd">        if ``default is None`` and no value was supplied during initialization.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    frame_attr : descriptor</span>
+<span class="sd">        A new data descriptor to hold a frame attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TimeFrameAttribute.convert_input"><a class="viewcode-back" href="../../../api/astropy.coordinates.TimeFrameAttribute.html#astropy.coordinates.TimeFrameAttribute.convert_input">[docs]</a>    <span class="k">def</span> <span class="nf">convert_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert input value to a Time object and validate by running through the</span>
+<span class="sd">        Time constructor.  Also check that the input was a scalar.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : object</span>
+<span class="sd">            Input value to be converted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        out, converted : correctly-typed object, boolean</span>
+<span class="sd">            Tuple consisting of the correctly-typed object and a boolean which</span>
+<span class="sd">            indicates if conversion was actually performed.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the input is not valid for this attribute.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">..time</span> <span class="kn">import</span> <span class="n">Time</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">converted</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid time input {0}={1!r}</span><span class="se">\n</span><span class="s">{2}&#39;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
+            <span class="n">converted</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">out</span><span class="o">.</span><span class="n">isscalar</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Time input {0}={1!r} must be a single (scalar) value&#39;</span>
+                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">converted</span>
+
+</div></div>
+<div class="viewcode-block" id="RepresentationMapping"><a class="viewcode-back" href="../../../api/astropy.coordinates.RepresentationMapping.html#astropy.coordinates.RepresentationMapping">[docs]</a><span class="k">class</span> <span class="nc">RepresentationMapping</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;RepresentationMapping&#39;</span><span class="p">,</span>
+                            <span class="p">[</span><span class="s">&#39;reprname&#39;</span><span class="p">,</span> <span class="s">&#39;framename&#39;</span><span class="p">,</span> <span class="s">&#39;defaultunit&#39;</span><span class="p">])):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This `~collections.namedtuple` is used with the</span>
+<span class="sd">    ``frame_specific_representation_info`` attribute to tell frames what</span>
+<span class="sd">    attribute names (and default units) to use for a particular representation.</span>
+<span class="sd">    ``reprname`` and ``framename`` should be strings, while ``defaultunit`` can</span>
+<span class="sd">    be either an astropy unit, the string ``&#39;recommended&#39;`` (to use whatever the</span>
+<span class="sd">    representation&#39;s ``recommended_units`` is), or None (to indicate that no</span>
+<span class="sd">    unit mapping should be done).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">reprname</span><span class="p">,</span> <span class="n">framename</span><span class="p">,</span> <span class="n">defaultunit</span><span class="o">=</span><span class="s">&#39;recommended&#39;</span><span class="p">):</span>
+        <span class="c"># this trick just provides some defaults</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RepresentationMapping</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">reprname</span><span class="p">,</span>
+                                                         <span class="n">framename</span><span class="p">,</span> <span class="n">defaultunit</span><span class="p">)</span>
+
+</div>
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">FrameMeta</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseCoordinateFrame"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame">[docs]</a><span class="k">class</span> <span class="nc">BaseCoordinateFrame</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The base class for coordinate frames.</span>
+
+<span class="sd">    This class is intended to be subclassed to create instances of specific</span>
+<span class="sd">    systems.  Subclasses can implement the following attributes:</span>
+
+<span class="sd">    * `default_representation`</span>
+<span class="sd">        A subclass of `~astropy.coordinates.BaseRepresentation` that will be</span>
+<span class="sd">        treated as the default representation of this frame.  This is the</span>
+<span class="sd">        representation assumed by default when the frame is created.</span>
+
+<span class="sd">    * `~astropy.coordinates.FrameAttribute` class attributes</span>
+<span class="sd">       Frame attributes such as ``FK4.equinox`` or ``FK4.obstime`` are defined</span>
+<span class="sd">       using a descriptor class.  See the narrative documentation or</span>
+<span class="sd">       built-in classes code for details.</span>
+
+<span class="sd">    * `frame_specific_representation_info`</span>
+<span class="sd">        A dictionary mapping the name or class of a representation to a list</span>
+<span class="sd">        of `~astropy.coordinates.RepresentationMapping` objects that tell what</span>
+<span class="sd">        names and default units should be used on this frame for the components</span>
+<span class="sd">        of that representation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># specifies special names/units for representation attributes</span>
+
+    <span class="c"># This __new__ provides for backward-compatibility with pre-0.4 API.</span>
+    <span class="c"># TODO: remove in 1.0</span>
+    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="c"># Only do backward-compatibility if frame is previously defined one</span>
+        <span class="n">frame_name</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">frame_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;altaz&#39;</span><span class="p">,</span> <span class="s">&#39;fk4&#39;</span><span class="p">,</span> <span class="s">&#39;fk4noeterms&#39;</span><span class="p">,</span> <span class="s">&#39;fk5&#39;</span><span class="p">,</span> <span class="s">&#39;galactic&#39;</span><span class="p">,</span> <span class="s">&#39;icrs&#39;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+
+        <span class="n">use_skycoord</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BaseRepresentation</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">BaseRepresentation</span><span class="p">)):</span>
+                    <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Initializing frame classes like &quot;{0}&quot; using string &#39;</span>
+                           <span class="s">&#39;or other non-Quantity arguments is deprecated, and &#39;</span>
+                           <span class="s">&#39;will be removed in the next version of Astropy.  &#39;</span>
+                           <span class="s">&#39;Instead, you probably want to use the SkyCoord &#39;</span>
+                           <span class="s">&#39;class with the &quot;system={1}&quot; keyword, or if you &#39;</span>
+                           <span class="s">&#39;really want to use the low-level frame classes, &#39;</span>
+                           <span class="s">&#39;create it with an Angle or Quantity.&#39;</span><span class="p">)</span>
+
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                             <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()),</span>
+                                  <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+                    <span class="n">use_skycoord</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">break</span>
+
+        <span class="k">if</span> <span class="s">&#39;unit&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">use_skycoord</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Initializing frames using the ``unit`` argument is &quot;</span>
+                          <span class="s">&quot;now deprecated. Use SkyCoord or pass Quantity &quot;</span>
+                          <span class="s">&quot; instances to frames instead.&quot;</span><span class="p">,</span> <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+            <span class="n">use_skycoord</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">use_skycoord</span><span class="p">:</span>
+            <span class="n">representation</span> <span class="o">=</span> <span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;representation&#39;</span><span class="p">,</span>
+                                                      <span class="n">cls</span><span class="o">.</span><span class="n">_default_representation</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_get_representation_info</span><span class="p">()[</span><span class="n">representation</span><span class="p">][</span><span class="s">&#39;names&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+                        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s">&quot;Initializing frames using non-Quantity &quot;</span>
+                                      <span class="s">&quot;arguments is now deprecated. Use &quot;</span>
+                                      <span class="s">&quot;SkyCoord or pass Quantity instances &quot;</span>
+                                      <span class="s">&quot;instead.&quot;</span><span class="p">,</span> <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+                        <span class="n">use_skycoord</span> <span class="o">=</span> <span class="bp">True</span>
+                        <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">use_skycoord</span><span class="p">:</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;frame&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame_name</span>
+            <span class="kn">from</span> <span class="nn">.sky_coordinate</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+            <span class="k">return</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_attr_names_with_defaults</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="s">&#39;representation&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">representation</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;representation&#39;</span><span class="p">)</span>
+
+        <span class="n">representation_data</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># if not set below, this is a frame with no data</span>
+
+        <span class="k">for</span> <span class="n">fnm</span><span class="p">,</span> <span class="n">fdefault</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frame_attr_names</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c"># Read-only frame attributes are defined as FrameAttribue</span>
+            <span class="c"># descriptors which are not settable, so set &#39;real&#39; attributes as</span>
+            <span class="c"># the name prefaced with an underscore.</span>
+
+            <span class="k">if</span> <span class="n">fnm</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">fnm</span><span class="p">)</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">fnm</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">fnm</span><span class="p">,</span> <span class="n">fdefault</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_attr_names_with_defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fnm</span><span class="p">)</span>
+
+            <span class="c"># Validate input by getting the attribute here.</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fnm</span><span class="p">)</span>
+
+        <span class="n">pref_rep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span>
+
+        <span class="n">args</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>  <span class="c"># need to be able to pop them</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">BaseRepresentation</span><span class="p">)</span> <span class="ow">or</span>
+                                <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="n">representation_data</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Cannot create a frame with both a &#39;</span>
+                                <span class="s">&#39;representation and other positional arguments&#39;</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">:</span>
+            <span class="n">repr_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">nmkw</span><span class="p">,</span> <span class="n">nmrep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="c">#first gather up positional args</span>
+                    <span class="n">repr_kwargs</span><span class="p">[</span><span class="n">nmrep</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">nmkw</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+                    <span class="n">repr_kwargs</span><span class="p">[</span><span class="n">nmrep</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">nmkw</span><span class="p">)</span>
+
+            <span class="c">#special-case the Spherical-&gt;UnitSpherical if no `distance`</span>
+            <span class="c">#TODO: possibly generalize this somehow?</span>
+
+            <span class="k">if</span> <span class="n">repr_kwargs</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">repr_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;distance&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="n">repr_kwargs</span><span class="p">[</span><span class="s">&#39;distance&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">representation</span> <span class="o">==</span> <span class="n">SphericalRepresentation</span> <span class="ow">and</span>
+                        <span class="s">&#39;distance&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">repr_kwargs</span><span class="p">):</span>
+                    <span class="n">representation_data</span> <span class="o">=</span> <span class="n">UnitSphericalRepresentation</span><span class="p">(</span><span class="o">**</span><span class="n">repr_kwargs</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">representation_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">(</span><span class="o">**</span><span class="n">repr_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;.__init__ had {0} &#39;</span>
+                            <span class="s">&#39;remaining unprocessed arguments&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Coordinate frame got unexpected keywords: &#39;</span> <span class="o">+</span>
+                            <span class="nb">str</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="n">representation_data</span>
+
+        <span class="c"># We do ``is not None`` because self._data might evaluate to false for</span>
+        <span class="c"># empty arrays or data == 0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rep_cache</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rep_cache</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">False</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The coordinate data for this object.  If this frame has no data, an</span>
+<span class="sd">        `~.exceptions.ValueError` will be raised.  Use `has_data` to</span>
+<span class="sd">        check if data is present on this frame object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The frame object &quot;{0}&quot; does not have associated &#39;</span>
+                             <span class="s">&#39;data&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">has_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        True if this frame has `data`, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Py 2.x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Py 3.x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isscalar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">isscalar</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseCoordinateFrame.get_frame_attr_names"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.get_frame_attr_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_frame_attr_names</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">mro_cls</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">__mro__</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">mro_cls</span><span class="o">.</span><span class="n">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">FrameAttribute</span><span class="p">)</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out</span><span class="p">:</span>
+                    <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mro_cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">representation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The representation of the data in this frame, as a class that is</span>
+<span class="sd">        subclassed from `~astropy.coordinates.BaseRepresentation`.  Can</span>
+<span class="sd">        also be *set* using the string name of the representation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_representation&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_representation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_representation</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_representation</span>
+
+    <span class="nd">@representation.setter</span>
+    <span class="k">def</span> <span class="nf">representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_representation</span> <span class="o">=</span> <span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">_get_representation_info</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="c"># This exists as a class method only to support handling frame inputs</span>
+        <span class="c"># without units, which are deprecated and will be removed.  This can be</span>
+        <span class="c"># moved into the representation_info property at that time.</span>
+
+        <span class="n">repr_attrs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">repr_cls</span> <span class="ow">in</span> <span class="n">REPRESENTATION_CLASSES</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;names&#39;</span><span class="p">:</span> <span class="p">[],</span> <span class="s">&#39;units&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">repr_cls</span><span class="o">.</span><span class="n">attr_classes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">][</span><span class="s">&#39;names&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+                <span class="n">rec_unit</span> <span class="o">=</span> <span class="n">repr_cls</span><span class="o">.</span><span class="n">recommended_units</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+                <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">][</span><span class="s">&#39;units&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rec_unit</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">repr_cls</span><span class="p">,</span> <span class="n">mappings</span> <span class="ow">in</span> <span class="n">cls</span><span class="o">.</span><span class="n">_frame_specific_representation_info</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c"># keys may be a class object or a name</span>
+            <span class="n">repr_cls</span> <span class="o">=</span> <span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">repr_cls</span><span class="p">)</span>
+
+            <span class="c"># take the &#39;names&#39; and &#39;units&#39; tuples from repr_attrs,</span>
+            <span class="c"># and then use the RepresentationMapping objects</span>
+            <span class="c"># to update as needed for this frame.</span>
+            <span class="n">nms</span> <span class="o">=</span> <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">][</span><span class="s">&#39;names&#39;</span><span class="p">]</span>
+            <span class="n">uns</span> <span class="o">=</span> <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">][</span><span class="s">&#39;units&#39;</span><span class="p">]</span>
+            <span class="n">comptomap</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">m</span><span class="o">.</span><span class="n">reprname</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">mappings</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">repr_cls</span><span class="o">.</span><span class="n">attr_classes</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">comptomap</span><span class="p">:</span>
+                    <span class="n">mapp</span> <span class="o">=</span> <span class="n">comptomap</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+                    <span class="n">nms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapp</span><span class="o">.</span><span class="n">framename</span>
+                    <span class="c"># need the isinstance because otherwise if it&#39;s a unit it</span>
+                    <span class="c"># will try to compare to the unit string representation</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">mapp</span><span class="o">.</span><span class="n">defaultunit</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span> <span class="ow">and</span>
+                            <span class="n">mapp</span><span class="o">.</span><span class="n">defaultunit</span> <span class="o">==</span> <span class="s">&#39;recommended&#39;</span><span class="p">):</span>
+                        <span class="n">uns</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mapp</span><span class="o">.</span><span class="n">defaultunit</span>
+                        <span class="c"># else we just leave it as recommended_units says above</span>
+            <span class="c"># Convert to tuples so that this can&#39;t mess with frame internals</span>
+            <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">][</span><span class="s">&#39;names&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">nms</span><span class="p">)</span>
+            <span class="n">repr_attrs</span><span class="p">[</span><span class="n">repr_cls</span><span class="p">][</span><span class="s">&#39;units&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">uns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">repr_attrs</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">representation_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        A dictionary with the information of what attribute names for this frame</span>
+<span class="sd">        apply to particular representations.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_representation_info</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">representation_component_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">out</span>
+        <span class="n">data_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="o">.</span><span class="n">attr_classes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">repr_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">][</span><span class="s">&#39;names&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">repr_name</span><span class="p">,</span> <span class="n">data_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">repr_names</span><span class="p">,</span> <span class="n">data_names</span><span class="p">):</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">repr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_name</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">representation_component_units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">out</span>
+        <span class="n">repr_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_info</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">]</span>
+        <span class="n">repr_names</span> <span class="o">=</span> <span class="n">repr_attrs</span><span class="p">[</span><span class="s">&#39;names&#39;</span><span class="p">]</span>
+        <span class="n">repr_units</span> <span class="o">=</span> <span class="n">repr_attrs</span><span class="p">[</span><span class="s">&#39;units&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">repr_name</span><span class="p">,</span> <span class="n">repr_unit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">repr_names</span><span class="p">,</span> <span class="n">repr_units</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">repr_unit</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">repr_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">repr_unit</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+
+<div class="viewcode-block" id="BaseCoordinateFrame.realize_frame"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.realize_frame">[docs]</a>    <span class="k">def</span> <span class="nf">realize_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">representation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a new frame *with new data* from another frame (which may or</span>
+<span class="sd">        may not have data).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        representation : BaseRepresentation</span>
+<span class="sd">            The representation to use as the data for the new frame.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        frameobj : same as this frame</span>
+<span class="sd">            A new object with the same frame attributes as this one, but</span>
+<span class="sd">            with the ``representation`` as the data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">frattrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">nm</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nm</span><span class="p">))</span> <span class="k">for</span> <span class="n">nm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frame_attr_names</span><span class="p">()</span>
+                        <span class="k">if</span> <span class="n">nm</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr_names_with_defaults</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">representation</span><span class="p">,</span> <span class="o">**</span><span class="n">frattrs</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseCoordinateFrame.represent_as"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.represent_as">[docs]</a>    <span class="k">def</span> <span class="nf">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_representation</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate and return a new representation of this frame&#39;s `data`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_representation : subclass of BaseRepresentation or string</span>
+<span class="sd">            The type of representation to generate.  May be a *class*</span>
+<span class="sd">            (not an instance), or the string name of the representation</span>
+<span class="sd">            class.</span>
+
+<span class="sd">        in_frame_units : bool</span>
+<span class="sd">            Force the representation units to match the specified units</span>
+<span class="sd">            particular to this frame</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        newrep : whatever ``new_representation`` is</span>
+<span class="sd">            A new representation object of this frame&#39;s `data`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If this object had no `data`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from astropy import units as u</span>
+<span class="sd">        &gt;&gt;&gt; from astropy.coordinates import ICRS, CartesianRepresentation</span>
+<span class="sd">        &gt;&gt;&gt; coord = ICRS(0*u.deg, 0*u.deg)</span>
+<span class="sd">        &gt;&gt;&gt; coord.represent_as(CartesianRepresentation)</span>
+<span class="sd">        &lt;CartesianRepresentation x=1.0 , y=0.0 , z=0.0 &gt;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_representation</span> <span class="o">=</span> <span class="n">_get_repr_cls</span><span class="p">(</span><span class="n">new_representation</span><span class="p">)</span>
+
+        <span class="n">cached_repr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_cache</span><span class="o">.</span><span class="n">get</span><span class="p">((</span><span class="n">new_representation</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cached_repr</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">new_representation</span><span class="p">)</span>
+
+            <span class="c"># If the new representation is known to this frame and has a defined</span>
+            <span class="c"># set of names and units, then use that.</span>
+            <span class="n">new_attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">new_representation</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">new_attrs</span> <span class="ow">and</span> <span class="n">in_frame_units</span><span class="p">:</span>
+                <span class="n">datakwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">comp</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">comp</span><span class="p">))</span> <span class="k">for</span> <span class="n">comp</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">components</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">comp</span><span class="p">,</span> <span class="n">new_attr_unit</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">components</span><span class="p">,</span> <span class="n">new_attrs</span><span class="p">[</span><span class="s">&#39;units&#39;</span><span class="p">]):</span>
+                    <span class="k">if</span> <span class="n">new_attr_unit</span><span class="p">:</span>
+                        <span class="n">datakwargs</span><span class="p">[</span><span class="n">comp</span><span class="p">]</span> <span class="o">=</span> <span class="n">datakwargs</span><span class="p">[</span><span class="n">comp</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">new_attr_unit</span><span class="p">)</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="o">**</span><span class="n">datakwargs</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_rep_cache</span><span class="p">[</span><span class="n">new_representation</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_cache</span><span class="p">[</span><span class="n">new_representation</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="BaseCoordinateFrame.transform_to"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.transform_to">[docs]</a>    <span class="k">def</span> <span class="nf">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Transform this object&#39;s coordinate data to a new frame.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_frame : class or frame object or SkyCoord object</span>
+<span class="sd">            The frame to transform this coordinate frame into.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        transframe</span>
+<span class="sd">            A new object with the coordinate data represented in the</span>
+<span class="sd">            ``newframe`` system.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If there is no possible transformation route.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">ConvertError</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot transform a frame with no data&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">new_frame</span><span class="p">):</span>
+            <span class="c">#means use the defaults for this class</span>
+            <span class="n">new_frame</span> <span class="o">=</span> <span class="n">new_frame</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">new_frame</span><span class="p">,</span> <span class="s">&#39;_sky_coord_frame&#39;</span><span class="p">):</span>
+            <span class="c"># Input new_frame is not a frame instance or class and is most</span>
+            <span class="c"># likely a SkyCoord object.</span>
+            <span class="n">new_frame</span> <span class="o">=</span> <span class="n">new_frame</span><span class="o">.</span><span class="n">_sky_coord_frame</span>
+
+        <span class="n">trans</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span>
+                                                    <span class="n">new_frame</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">trans</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">new_frame</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
+                <span class="c"># no special transform needed, but should update frame info</span>
+                <span class="k">return</span> <span class="n">new_frame</span><span class="o">.</span><span class="n">realize_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Cannot transform from {0} to {1}&#39;</span>
+            <span class="k">raise</span> <span class="n">ConvertError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">new_frame</span><span class="o">.</span><span class="n">__class__</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_frame</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseCoordinateFrame.is_transformable_to"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.is_transformable_to">[docs]</a>    <span class="k">def</span> <span class="nf">is_transformable_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determines if this coordinate frame can be transformed to another</span>
+<span class="sd">        given frame.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        new_frame : class or frame object</span>
+<span class="sd">            The proposed frame to transform into.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        transformable : bool or str</span>
+<span class="sd">            `True` if this can be transformed to ``new_frame``, `False` if</span>
+<span class="sd">            not, or the string &#39;same&#39; if ``new_frame`` is the same system as</span>
+<span class="sd">            this object but no transformation is defined.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        A return value of &#39;same&#39; means the transformation will work, but it will</span>
+<span class="sd">        just give back a copy of this object.  The intended usage is::</span>
+
+<span class="sd">            if coord.is_transformable_to(some_unknown_frame):</span>
+<span class="sd">                coord2 = coord.transform_to(some_unknown_frame)</span>
+
+<span class="sd">        This will work even if ``some_unknown_frame``  turns out to be the same</span>
+<span class="sd">        frame class as ``coord``.  This is intended for cases where the frame is</span>
+<span class="sd">        the same regardless of the frame attributes (e.g. ICRS), but be aware</span>
+<span class="sd">        that it *might* also indicate that someone forgot to define the</span>
+<span class="sd">        transformation between two objects of the same frame class but with</span>
+<span class="sd">        different attributes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">new_frame_cls</span> <span class="o">=</span> <span class="n">new_frame</span> <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">new_frame</span><span class="p">)</span> <span class="k">else</span> <span class="n">new_frame</span><span class="o">.</span><span class="n">__class__</span>
+        <span class="n">trans</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">new_frame_cls</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">trans</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">new_frame_cls</span> <span class="ow">is</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;same&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="BaseCoordinateFrame.is_frame_attr_default"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.is_frame_attr_default">[docs]</a>    <span class="k">def</span> <span class="nf">is_frame_attr_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrnm</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Determine whether or not a frame attribute has its value because it&#39;s</span>
+<span class="sd">        the default value, or because this frame was created with that value</span>
+<span class="sd">        explicitly requested.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        attrnm : str</span>
+<span class="sd">            The name of the attribute to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        isdefault : bool</span>
+<span class="sd">            True if the attribute ``attrnm`` has its value by default, False if it</span>
+<span class="sd">            was specified at creation of this frame.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">attrnm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attr_names_with_defaults</span>
+</div>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">frameattrs</span> <span class="o">=</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">attrnm</span> <span class="o">+</span> <span class="s">&#39;=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attrnm</span><span class="p">))</span>
+                                <span class="k">for</span> <span class="n">attrnm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_frame_attr_names</span><span class="p">()])</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">representation</span> <span class="o">==</span> <span class="n">SphericalRepresentation</span> <span class="ow">and</span>
+                        <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">)):</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+                <span class="n">data_repr</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">nmpref</span><span class="p">,</span> <span class="n">nmrepr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_component_names</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">data_repr</span> <span class="o">=</span> <span class="n">data_repr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">nmrepr</span><span class="p">,</span> <span class="n">nmpref</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+                <span class="n">data_repr</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">data_repr</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;&lt;&#39;</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">):</span>
+                <span class="c"># standard form from BaseRepresentation</span>
+                <span class="k">if</span> <span class="n">frameattrs</span><span class="p">:</span>
+                    <span class="n">frameattrs</span> <span class="o">=</span> <span class="n">frameattrs</span> <span class="o">+</span> <span class="s">&#39;, &#39;</span>
+
+                <span class="c">#remove both the leading &quot;&lt;&quot; and the space after the name</span>
+                <span class="n">data_repr</span> <span class="o">=</span> <span class="n">data_repr</span><span class="p">[(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):]</span>
+
+                <span class="k">return</span> <span class="s">&#39;&lt;{0} Coordinate: {1}{2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                                        <span class="n">frameattrs</span><span class="p">,</span> <span class="n">data_repr</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># should only happen if a representation has a non-standard</span>
+                <span class="c"># __repr__ method, and we just punt to that</span>
+                <span class="k">if</span> <span class="n">frameattrs</span><span class="p">:</span>
+                    <span class="n">frameattrs</span> <span class="o">=</span> <span class="s">&#39;: &#39;</span> <span class="o">+</span> <span class="n">frameattrs</span> <span class="o">+</span> <span class="s">&#39;, &#39;</span>
+                <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;&lt;{0} Coordinate{1}Data:</span><span class="se">\n</span><span class="s">{2}&gt;&#39;</span>
+                <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">frameattrs</span><span class="p">,</span> <span class="n">data_repr</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frameattrs</span><span class="p">:</span>
+                <span class="n">frameattrs</span> <span class="o">=</span> <span class="s">&#39;: &#39;</span> <span class="o">+</span> <span class="n">frameattrs</span>
+            <span class="k">return</span> <span class="s">&#39;&lt;{0} Frame{1}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">frameattrs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_data</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">realize_frame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">view</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Cannot index a frame with no data&#39;</span><span class="p">)</span>
+
+    <span class="nd">@override__dir__</span>
+    <span class="k">def</span> <span class="nf">__dir__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Override the builtin `dir` behavior to include representation</span>
+<span class="sd">        names.</span>
+
+<span class="sd">        TODO: dynamic representation transforms (i.e. include cylindrical et al.).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dir_values</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">representation_component_names</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dir_values</span>
+
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Allow access to attributes defined in self.representation_component_names.</span>
+
+<span class="sd">        TODO: dynamic representation transforms (i.e. include cylindrical et al.).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># attr == &#39;_representation&#39; is likely from the hasattr() test in the</span>
+        <span class="c"># representation property which is used for self.representation_component_names.</span>
+        <span class="c"># Prevent infinite recursion here.</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="o">==</span> <span class="s">&#39;_representation&#39;</span> <span class="ow">or</span> <span class="n">attr</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_component_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;&#39;{0}&#39; object has no attribute &#39;{1}&#39;&quot;</span>
+                                 <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+
+        <span class="n">rep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">representation</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">rep</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_component_names</span><span class="p">[</span><span class="n">attr</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">repr_attr_names</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;representation_info&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">representation_attr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">representation_info</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="n">repr_attr_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">representation_attr</span><span class="p">[</span><span class="s">&#39;names&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">repr_attr_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Cannot set any frame attribute {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseCoordinateFrame.separation"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.separation">[docs]</a>    <span class="k">def</span> <span class="nf">separation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes on-sky separation between this coordinate and another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">            The coordinate to get the separation to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sep : `~astropy.coordinates.Angle`</span>
+<span class="sd">            The on-sky separation between this and the ``other`` coordinate.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The separation is calculated using the Vincenty formula, which</span>
+<span class="sd">        is stable at all locations, including poles and antipodes [1]_.</span>
+
+<span class="sd">        .. [1] http://en.wikipedia.org/wiki/Great-circle_distance</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.angle_utilities</span> <span class="kn">import</span> <span class="n">angular_separation</span>
+        <span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">Angle</span>
+
+        <span class="n">self_unit_sph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+        <span class="n">other_unit_sph</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+
+        <span class="c"># Get the separation as a Quantity, convert to Angle in degrees</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">angular_separation</span><span class="p">(</span><span class="n">self_unit_sph</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">self_unit_sph</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                                 <span class="n">other_unit_sph</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">other_unit_sph</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Angle</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseCoordinateFrame.separation_3d"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.separation_3d">[docs]</a>    <span class="k">def</span> <span class="nf">separation_3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes three dimensional separation between this coordinate</span>
+<span class="sd">        and another.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : `~astropy.coordinates.BaseCoordinateFrame`</span>
+<span class="sd">            The coordinate system to get the distance to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        sep : `~astropy.coordinates.Distance`</span>
+<span class="sd">            The real-space distance between these two coordinates.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If this or the other coordinate do not have distances.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.distances</span> <span class="kn">import</span> <span class="n">Distance</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">UnitSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;This object does not have a distance; cannot &#39;</span>
+                             <span class="s">&#39;compute 3d separation.&#39;</span><span class="p">)</span>
+
+        <span class="c"># do this first just in case the conversion somehow creates a distance</span>
+        <span class="n">other_in_self_system</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">other_in_self_system</span><span class="o">.</span><span class="n">__class__</span> <span class="o">==</span> <span class="n">UnitSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;The other object does not have a distance; &#39;</span>
+                             <span class="s">&#39;cannot compute 3d separation.&#39;</span><span class="p">)</span>
+
+        <span class="n">dx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">other_in_self_system</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">x</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">other_in_self_system</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">y</span>
+        <span class="n">dz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">other_in_self_system</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">z</span>
+
+        <span class="n">distval</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dy</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">dz</span><span class="o">.</span><span class="n">value</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span>
+        <span class="k">return</span> <span class="n">Distance</span><span class="p">(</span><span class="n">distval</span><span class="p">,</span> <span class="n">dx</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shorthand for a cartesian representation of the coordinates in this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO: if representations are updated to use a full transform graph,</span>
+        <span class="c">#       the representation aliases should not be hard-coded like this</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">CartesianRepresentation</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">spherical</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shorthand for a spherical representation of the coordinates in this object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># TODO: if representations are updated to use a full transform graph,</span>
+        <span class="c">#       the representation aliases should not be hard-coded like this</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">SphericalRepresentation</span><span class="p">,</span> <span class="n">in_frame_units</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="GenericFrame"><a class="viewcode-back" href="../../../api/astropy.coordinates.GenericFrame.html#astropy.coordinates.GenericFrame">[docs]</a><span class="k">class</span> <span class="nc">GenericFrame</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A frame object that can&#39;t store data but can hold any arbitrary frame</span>
+<span class="sd">    attributes. Mostly useful as a utility for the high-level class to store</span>
+<span class="sd">    intermediate frame attributes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frame_attrs : dict</span>
+<span class="sd">        A dictionary of attributes to be used as the frame attributes for this</span>
+<span class="sd">        frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># it&#39;s not a &quot;real&quot; frame so it doesn&#39;t have a name</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frame_attrs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GenericFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="s">&#39;_frame_attr_names&#39;</span><span class="p">,</span> <span class="n">frame_attrs</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">GenericFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">attrnm</span><span class="p">,</span> <span class="n">attrval</span> <span class="ow">in</span> <span class="n">frame_attrs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">attrnm</span><span class="p">,</span> <span class="n">attrval</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GenericFrame.get_frame_attr_names"><a class="viewcode-back" href="../../../api/astropy.coordinates.GenericFrame.html#astropy.coordinates.GenericFrame.get_frame_attr_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_frame_attr_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_attr_names</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;no {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_attr_names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;can&#39;t set frame attribute &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">GenericFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setattr__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.vo.validator.exceptions &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../../index.html" />
+    <link rel="up" title="astropy.vo.validator" href="../validator.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+      <li><a href="../../vo.html" >astropy.vo</a> &raquo;</li>
+      <li><a href="../validator.html" accesskey="U">astropy.vo.validator</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.vo.validator.exceptions</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;Exceptions related to Virtual Observatory (VO) validation.&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;BaseVOValidationError&#39;</span><span class="p">,</span> <span class="s">&#39;ValidationMultiprocessingError&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="BaseVOValidationError"><a class="viewcode-back" href="../../../../api/astropy.vo.validator.exceptions.BaseVOValidationError.html#astropy.vo.validator.exceptions.BaseVOValidationError">[docs]</a><span class="k">class</span> <span class="nc">BaseVOValidationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Base class for VO validation exceptions.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="ValidationMultiprocessingError"><a class="viewcode-back" href="../../../../api/astropy.vo.validator.exceptions.ValidationMultiprocessingError.html#astropy.vo.validator.exceptions.ValidationMultiprocessingError">[docs]</a><span class="k">class</span> <span class="nc">ValidationMultiprocessingError</span><span class="p">(</span><span class="n">BaseVOValidationError</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Validation using multiprocessing failed.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<span class="k">class</span> <span class="nc">InvalidValidationAttribute</span><span class="p">(</span><span class="n">BaseVOValidationError</span><span class="p">):</span>  <span class="c"># pragma: no cover</span>
+    <span class="sd">&quot;&quot;&quot;Invalid validation attribute.&quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,135 @@
+
+
+Quantity
+===============================
+
+.. currentmodule:: astropy.units.quantity
+
+.. autoclass:: Quantity
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Quantity.cgs
+      ~Quantity.equivalencies
+      ~Quantity.flat
+      ~Quantity.isscalar
+      ~Quantity.si
+      ~Quantity.unit
+      ~Quantity.value
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Quantity.all
+      ~Quantity.any
+      ~Quantity.argmax
+      ~Quantity.argmin
+      ~Quantity.argsort
+      ~Quantity.choose
+      ~Quantity.clip
+      ~Quantity.cumprod
+      ~Quantity.cumsum
+      ~Quantity.decompose
+      ~Quantity.diff
+      ~Quantity.dot
+      ~Quantity.dump
+      ~Quantity.dumps
+      ~Quantity.ediff1d
+      ~Quantity.fill
+      ~Quantity.item
+      ~Quantity.itemset
+      ~Quantity.list
+      ~Quantity.max
+      ~Quantity.mean
+      ~Quantity.min
+      ~Quantity.nansum
+      ~Quantity.prod
+      ~Quantity.ptp
+      ~Quantity.put
+      ~Quantity.searchsorted
+      ~Quantity.std
+      ~Quantity.sum
+      ~Quantity.to
+      ~Quantity.tofile
+      ~Quantity.tostring
+      ~Quantity.trace
+      ~Quantity.var
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: cgs
+   .. autoattribute:: equivalencies
+   .. autoattribute:: flat
+   .. autoattribute:: isscalar
+   .. autoattribute:: si
+   .. autoattribute:: unit
+   .. autoattribute:: value
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: all
+   .. automethod:: any
+   .. automethod:: argmax
+   .. automethod:: argmin
+   .. automethod:: argsort
+   .. automethod:: choose
+   .. automethod:: clip
+   .. automethod:: cumprod
+   .. automethod:: cumsum
+   .. automethod:: decompose
+   .. automethod:: diff
+   .. automethod:: dot
+   .. automethod:: dump
+   .. automethod:: dumps
+   .. automethod:: ediff1d
+   .. automethod:: fill
+   .. automethod:: item
+   .. automethod:: itemset
+   .. automethod:: list
+   .. automethod:: max
+   .. automethod:: mean
+   .. automethod:: min
+   .. automethod:: nansum
+   .. automethod:: prod
+   .. automethod:: ptp
+   .. automethod:: put
+   .. automethod:: searchsorted
+   .. automethod:: std
+   .. automethod:: sum
+   .. automethod:: to
+   .. automethod:: tofile
+   .. automethod:: tostring
+   .. automethod:: trace
+   .. automethod:: var
+
+   
+   

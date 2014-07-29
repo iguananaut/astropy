@@ -1,0 +1,8 @@
+
+
+add_enabled_units
+===============================
+
+.. currentmodule:: astropy.units
+
+.. autofunction:: add_enabled_units

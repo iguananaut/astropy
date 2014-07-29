@@ -1,0 +1,63 @@
+
+.. include:: ../coordinates/references.txt
+
+
+CartesianPoints
+===================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: CartesianPoints
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~CartesianPoints.x
+      ~CartesianPoints.y
+      ~CartesianPoints.z
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~CartesianPoints.to_spherical
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: x
+   .. autoattribute:: y
+   .. autoattribute:: z
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: to_spherical
+
+   
+   

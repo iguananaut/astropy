@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Models Design Goals &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="index.html" />
+    <link rel="next" title="Fittable1DModel" href="../api/astropy.modeling.Fittable1DModel.html" />
+    <link rel="prev" title="Algorithms" href="algorithms.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astropy.modeling.Fittable1DModel.html" title="Fittable1DModel">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="algorithms.html" title="Algorithms">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Models Design Goals</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="models-design-goals">
+<span id="modeling-design"></span><h1>Models Design Goals<a class="headerlink" href="#models-design-goals" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="index.html#module-astropy.modeling" title="astropy.modeling"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.modeling</span></tt></a> and <a class="reference internal" href="index.html#module-astropy.modeling.fitting" title="astropy.modeling.fitting"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.modeling.fitting</span></tt></a> modules described here
+are designed to work as peers. The goal is to be able to add models without
+explicit reference to fitting algorithms and likewise, add different fitting
+algorithms without changing the existing models.</p>
+<p>Furthermore, the models are designed to be combined in many ways. It is
+possible, for example, to combine models <a class="reference internal" href="../api/astropy.modeling.SerialCompositeModel.html#astropy.modeling.SerialCompositeModel" title="astropy.modeling.SerialCompositeModel"><tt class="xref py py-obj docutils literal"><span class="pre">serially</span></tt></a> so that the output values of one
+model are used as input values to another.  It is also possible to form a new
+model by combining models in <a class="reference internal" href="../api/astropy.modeling.SummedCompositeModel.html#astropy.modeling.SummedCompositeModel" title="astropy.modeling.SummedCompositeModel"><tt class="xref py py-obj docutils literal"><span class="pre">parallel</span></tt></a> (each model is evaluated
+separately with the original input and the deltas are summed).  Since models
+may have multiple input values, machinery is provided that allows assigning
+outputs from one model into the appropriate input of another in a flexible way,
+<a class="reference internal" href="../api/astropy.modeling.LabeledInput.html#astropy.modeling.LabeledInput" title="astropy.modeling.LabeledInput"><tt class="xref py py-obj docutils literal"><span class="pre">LabeledInput</span></tt></a>. Finally, it is permitted to combine any
+number of models using all of these mechanisms simultaneously.  A composite
+model can be used to make further composite models.</p>
+<p>In the future this will support a model language which will allow using models
+in algebraic operations like</p>
+<div class="math">
+<p><img src="../_images/math/ddc85ebc8977e9e397cc591163782542efcc20cc.png" alt="model = (model_1 + model_2) * model_3"/></p>
+</div></div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Models Design Goals</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/modeling/design.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/modeling/design.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

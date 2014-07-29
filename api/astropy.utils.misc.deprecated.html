@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>deprecated &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astropy Core Package Utilities (astropy.utils)" href="../utils/index.html" />
+    <link rel="next" title="deprecated_attribute" href="astropy.utils.misc.deprecated_attribute.html" />
+    <link rel="prev" title="isiterable" href="astropy.utils.misc.isiterable.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.utils.misc.deprecated_attribute.html" title="deprecated_attribute">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.utils.misc.isiterable.html" title="isiterable">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../utils/index.html" accesskey="U">Astropy Core Package Utilities (<tt class="docutils literal"><span class="pre">astropy.utils</span></tt>)</a> &raquo;</li>
+      
+      <li>deprecated</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="deprecated">
+<h1>deprecated<a class="headerlink" href="#deprecated" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.utils.misc.deprecated">
+<tt class="descclassname">astropy.utils.misc.</tt><tt class="descname">deprecated</tt><big>(</big><em>since</em>, <em>message=u''</em>, <em>name=u''</em>, <em>alternative=u''</em>, <em>pending=False</em>, <em>obj_type=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/utils/misc.html#deprecated"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/utils/misc.py#L330" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.utils.misc.deprecated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to mark a function or class as deprecated.</p>
+<p>To mark an attribute as deprecated, use <a class="reference internal" href="astropy.utils.misc.deprecated_attribute.html#astropy.utils.misc.deprecated_attribute" title="astropy.utils.misc.deprecated_attribute"><tt class="xref py py-obj docutils literal"><span class="pre">deprecated_attribute</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>since</strong> : str</p>
+<blockquote>
+<div><p>The release at which this API became deprecated.  This is
+required.</p>
+</div></blockquote>
+<p><strong>message</strong> : str, optional</p>
+<blockquote>
+<div><p>Override the default deprecation message.  The format
+specifier <tt class="docutils literal"><span class="pre">func</span></tt> may be used for the name of the function,
+and <tt class="docutils literal"><span class="pre">alternative</span></tt> may be used in the deprecation message
+to insert the name of an alternative to the deprecated
+function. <tt class="docutils literal"><span class="pre">obj_type</span></tt> may be used to insert a friendly name
+for the type of object being deprecated.</p>
+</div></blockquote>
+<p><strong>name</strong> : str, optional</p>
+<blockquote>
+<div><p>The name of the deprecated function or class; if not provided
+the name is automatically determined from the passed in
+function or class, though this is useful in the case of
+renamed functions, where the new function is just assigned to
+the name of the deprecated function.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">new_function</span><span class="p">():</span>
+    <span class="o">...</span>
+<span class="n">oldFunction</span> <span class="o">=</span> <span class="n">new_function</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p><strong>alternative</strong> : str, optional</p>
+<blockquote>
+<div><p>An alternative function or class name that the user may use in
+place of the deprecated object.  The deprecation warning will
+tell the user about this alternative if provided.</p>
+</div></blockquote>
+<p><strong>pending</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, uses a AstropyPendingDeprecationWarning instead of a
+AstropyDeprecationWarning.</p>
+</div></blockquote>
+<p><strong>obj_type</strong> : str, optional</p>
+<blockquote class="last">
+<div><p>The type of this object, if the automatically determined one
+needs to be overridden.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">deprecated</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.utils.misc.deprecated.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.utils.misc.deprecated.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

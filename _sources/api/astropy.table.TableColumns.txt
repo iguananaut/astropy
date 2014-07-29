@@ -1,0 +1,48 @@
+
+.. include:: ../table/references.txt
+
+
+TableColumns
+==========================
+
+.. currentmodule:: astropy.table
+
+.. autoclass:: TableColumns
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~TableColumns.keys
+      ~TableColumns.values
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: keys
+   .. automethod:: values
+
+   
+   

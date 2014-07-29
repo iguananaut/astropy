@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>WebProfileDialog &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)" href="../vo/samp/index.html" />
+    <link rel="next" title="Configuration system (astropy.config)" href="../config/index.html" />
+    <link rel="prev" title="SAMPWarning" href="astropy.vo.samp.SAMPWarning.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../config/index.html" title="Configuration system (astropy.config)">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPWarning.html" title="SAMPWarning">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/samp/index.html" accesskey="U">SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</a> &raquo;</li>
+      
+      <li>WebProfileDialog</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="webprofiledialog">
+<h1>WebProfileDialog<a class="headerlink" href="#webprofiledialog" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.vo.samp.WebProfileDialog">
+<em class="property">class </em><tt class="descclassname">astropy.vo.samp.</tt><tt class="descname">WebProfileDialog</tt><a class="reference internal" href="../_modules/astropy/vo/samp/hub.html#WebProfileDialog"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub.py#L1474" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.WebProfileDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A base class to make writing Web Profile GUI consent dialogs
+easier.</p>
+<p>The concrete class must:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Poll <tt class="docutils literal"><span class="pre">handle_queue</span></tt> periodically, using the timer services
+of the GUI&#8217;s event loop.  This function will call
+<tt class="docutils literal"><span class="pre">self.show_dialog</span></tt> when a request requires authorization.
+<tt class="docutils literal"><span class="pre">self.show_dialog</span></tt> will be given the arguments:</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="docutils literal"><span class="pre">samp_name</span></tt>: The name of the application making the request.</li>
+<li><tt class="docutils literal"><span class="pre">details</span></tt>: A dictionary of details about the client
+making the request.</li>
+<li><tt class="docutils literal"><span class="pre">client</span></tt>: A hostname, port pair containing the client
+address.</li>
+<li><tt class="docutils literal"><span class="pre">origin</span></tt>: A string containing the origin of the
+request.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Call <tt class="docutils literal"><span class="pre">consent</span></tt> or <tt class="docutils literal"><span class="pre">reject</span></tt> based on the user&#8217;s response to
+the dialog.</p>
+</li>
+</ol>
+</div></blockquote>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.WebProfileDialog.consent" title="astropy.vo.samp.WebProfileDialog.consent"><tt class="xref py py-obj docutils literal"><span class="pre">consent</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.WebProfileDialog.handle_queue" title="astropy.vo.samp.WebProfileDialog.handle_queue"><tt class="xref py py-obj docutils literal"><span class="pre">handle_queue</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.WebProfileDialog.reject" title="astropy.vo.samp.WebProfileDialog.reject"><tt class="xref py py-obj docutils literal"><span class="pre">reject</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.vo.samp.WebProfileDialog.consent">
+<tt class="descname">consent</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub.html#WebProfileDialog.consent"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub.py#L1516" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.WebProfileDialog.consent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.WebProfileDialog.handle_queue">
+<tt class="descname">handle_queue</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub.html#WebProfileDialog.handle_queue"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub.py#L1501" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.WebProfileDialog.handle_queue" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.WebProfileDialog.reject">
+<tt class="descname">reject</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub.html#WebProfileDialog.reject"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub.py#L1519" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.WebProfileDialog.reject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">WebProfileDialog</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.samp.WebProfileDialog.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.samp.WebProfileDialog.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

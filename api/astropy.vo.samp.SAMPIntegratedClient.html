@@ -1,0 +1,1181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SAMPIntegratedClient &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)" href="../vo/samp/index.html" />
+    <link rel="next" title="SAMPMsgReplierWrapper" href="astropy.vo.samp.SAMPMsgReplierWrapper.html" />
+    <link rel="prev" title="SAMPHubServer" href="astropy.vo.samp.SAMPHubServer.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPMsgReplierWrapper.html" title="SAMPMsgReplierWrapper">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPHubServer.html" title="SAMPHubServer">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/samp/index.html" accesskey="U">SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</a> &raquo;</li>
+      
+      <li>SAMPIntegratedClient</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sampintegratedclient">
+<h1>SAMPIntegratedClient<a class="headerlink" href="#sampintegratedclient" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.vo.samp.SAMPIntegratedClient">
+<em class="property">class </em><tt class="descclassname">astropy.vo.samp.</tt><tt class="descname">SAMPIntegratedClient</tt><big>(</big><em>name=None</em>, <em>description=None</em>, <em>metadata=None</em>, <em>addr=None</em>, <em>port=0</em>, <em>https=False</em>, <em>key_file=None</em>, <em>cert_file=None</em>, <em>cert_reqs=0</em>, <em>ca_certs=None</em>, <em>ssl_version=None</em>, <em>callable=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L14" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A Simple SAMP client.</p>
+<p>This class is meant to simplify the client usage providing a proxy class
+that merges the <a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a> and
+<a class="reference internal" href="astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy" title="astropy.vo.samp.SAMPHubProxy"><tt class="xref py py-class docutils literal"><span class="pre">SAMPHubProxy</span></tt></a> functionalities in a
+simplified API.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str, optional</p>
+<blockquote>
+<div><p>Client name (corresponding to <tt class="docutils literal"><span class="pre">samp.name</span></tt> metadata keyword).</p>
+</div></blockquote>
+<p><strong>description</strong> : str, optional</p>
+<blockquote>
+<div><p>Client description (corresponding to <tt class="docutils literal"><span class="pre">samp.description.text</span></tt> metadata
+keyword).</p>
+</div></blockquote>
+<p><strong>metadata</strong> : dict, optional</p>
+<blockquote>
+<div><p>Client application metadata in the standard SAMP format.</p>
+</div></blockquote>
+<p><strong>addr</strong> : str, optional</p>
+<blockquote>
+<div><p>Listening address (or IP). This defaults to 127.0.0.1 if the internet
+is not reachable, otherwise it defaults to the host name.</p>
+</div></blockquote>
+<p><strong>port</strong> : int, optional</p>
+<blockquote>
+<div><p>Listening XML-RPC server socket port. If left set to 0 (the default),
+the operating system will select a free port.</p>
+</div></blockquote>
+<p><strong>https</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, set the callable client running on a Secure Sockets Layer
+(SSL) connection (HTTPS). By default SSL is disabled.</p>
+</div></blockquote>
+<p><strong>key_file</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file containing the private key for SSL connections. If
+the certificate file (<tt class="docutils literal"><span class="pre">cert_file</span></tt>) contains the private key, then
+<tt class="docutils literal"><span class="pre">key_file</span></tt> can be omitted.</p>
+</div></blockquote>
+<p><strong>cert_file</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file which contains a certificate to be used to identify
+the local side of the secure connection.</p>
+</div></blockquote>
+<p><strong>cert_reqs</strong> : int, optional</p>
+<blockquote>
+<div><p>Whether a certificate is required from the server side of the
+connection, and whether it will be validated if provided. It must be
+one of the three values <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_NONE" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_NONE</span></tt></a> (certificates ignored),
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_OPTIONAL" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_OPTIONAL</span></tt></a> (not required, but validated if provided), or
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_REQUIRED" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_REQUIRED</span></tt></a> (required and validated). If the value of this
+parameter is not <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_NONE" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_NONE</span></tt></a>, then the <tt class="docutils literal"><span class="pre">ca_certs</span></tt> parameter must
+point to a file of CA certificates.</p>
+</div></blockquote>
+<p><strong>ca_certs</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file containing a set of concatenated &#8220;Certification
+Authority&#8221; certificates, which are used to validate the certificate
+passed from the Hub end of the connection.</p>
+</div></blockquote>
+<p><strong>ssl_version</strong> : int, optional</p>
+<blockquote>
+<div><p>Which version of the SSL protocol to use. Typically, the server chooses
+a particular protocol version, and the client must adapt to the
+server&#8217;s choice. Most of the versions are not interoperable with the
+other versions. If not specified the default SSL version is
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv23" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv23</span></tt></a>. This version provides the most compatibility
+with other versions Hub side. Other SSL protocol versions are:
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv2" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv2</span></tt></a>, <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv3" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv3</span></tt></a> and <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_TLSv1" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_TLSv1</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>callable</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>Whether the client can receive calls and notifications. If set to
+<a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, then the client can send notifications and calls, but can not
+receive any.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.is_connected" title="astropy.vo.samp.SAMPIntegratedClient.is_connected"><tt class="xref py py-obj docutils literal"><span class="pre">is_connected</span></tt></a></td>
+<td>Testing method to verify the client connection with a running Hub.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_call" title="astropy.vo.samp.SAMPIntegratedClient.bind_receive_call"><tt class="xref py py-obj docutils literal"><span class="pre">bind_receive_call</span></tt></a>(mtype,&nbsp;function[,&nbsp;...])</td>
+<td>Bind a specific MType call to a function or class method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_message" title="astropy.vo.samp.SAMPIntegratedClient.bind_receive_message"><tt class="xref py py-obj docutils literal"><span class="pre">bind_receive_message</span></tt></a>(mtype,&nbsp;function[,&nbsp;...])</td>
+<td>Bind a specific MType to a function or class method, being intended for a call or a notification.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_notification" title="astropy.vo.samp.SAMPIntegratedClient.bind_receive_notification"><tt class="xref py py-obj docutils literal"><span class="pre">bind_receive_notification</span></tt></a>(mtype,&nbsp;function[,&nbsp;...])</td>
+<td>Bind a specific MType notification to a function or class method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_response" title="astropy.vo.samp.SAMPIntegratedClient.bind_receive_response"><tt class="xref py py-obj docutils literal"><span class="pre">bind_receive_response</span></tt></a>(msg_tag,&nbsp;function)</td>
+<td>Bind a specific msg-tag response to a function or class method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call" title="astropy.vo.samp.SAMPIntegratedClient.call"><tt class="xref py py-obj docutils literal"><span class="pre">call</span></tt></a>(recipient_id,&nbsp;msg_tag,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">call</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call_all" title="astropy.vo.samp.SAMPIntegratedClient.call_all"><tt class="xref py py-obj docutils literal"><span class="pre">call_all</span></tt></a>(msg_tag,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">callAll</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call_and_wait" title="astropy.vo.samp.SAMPIntegratedClient.call_and_wait"><tt class="xref py py-obj docutils literal"><span class="pre">call_and_wait</span></tt></a>(recipient_id,&nbsp;message,&nbsp;timeout)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">callAndWait</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.connect" title="astropy.vo.samp.SAMPIntegratedClient.connect"><tt class="xref py py-obj docutils literal"><span class="pre">connect</span></tt></a>([hub,&nbsp;hub_params,&nbsp;key_file,&nbsp;...])</td>
+<td>Connect with the current or specified SAMP Hub, start and register the client.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.declare_metadata" title="astropy.vo.samp.SAMPIntegratedClient.declare_metadata"><tt class="xref py py-obj docutils literal"><span class="pre">declare_metadata</span></tt></a>(metadata)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">declareMetadata</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.declare_subscriptions" title="astropy.vo.samp.SAMPIntegratedClient.declare_subscriptions"><tt class="xref py py-obj docutils literal"><span class="pre">declare_subscriptions</span></tt></a>([subscriptions])</td>
+<td>Declares the MTypes the client wishes to subscribe to, implicitly defined with the MType binding methods <a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_notification" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_notification()</span></tt></a> and <a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_call" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_call()</span></tt></a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.disconnect" title="astropy.vo.samp.SAMPIntegratedClient.disconnect"><tt class="xref py py-obj docutils literal"><span class="pre">disconnect</span></tt></a>()</td>
+<td>Unregister the client from the current SAMP Hub, stop the client and disconnect from the Hub.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.ecall" title="astropy.vo.samp.SAMPIntegratedClient.ecall"><tt class="xref py py-obj docutils literal"><span class="pre">ecall</span></tt></a>(recipient_id,&nbsp;msg_tag,&nbsp;mtype,&nbsp;**params)</td>
+<td>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">call()</span></tt></a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.ecall_all" title="astropy.vo.samp.SAMPIntegratedClient.ecall_all"><tt class="xref py py-obj docutils literal"><span class="pre">ecall_all</span></tt></a>(msg_tag,&nbsp;mtype,&nbsp;**params)</td>
+<td>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call_all" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">call_all()</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.ecall_and_wait" title="astropy.vo.samp.SAMPIntegratedClient.ecall_and_wait"><tt class="xref py py-obj docutils literal"><span class="pre">ecall_and_wait</span></tt></a>(recipient_id,&nbsp;mtype,&nbsp;timeout,&nbsp;...)</td>
+<td>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call_and_wait" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">call_and_wait()</span></tt></a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.enotify" title="astropy.vo.samp.SAMPIntegratedClient.enotify"><tt class="xref py py-obj docutils literal"><span class="pre">enotify</span></tt></a>(recipient_id,&nbsp;mtype,&nbsp;**params)</td>
+<td>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.notify" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">notify()</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.enotify_all" title="astropy.vo.samp.SAMPIntegratedClient.enotify_all"><tt class="xref py py-obj docutils literal"><span class="pre">enotify_all</span></tt></a>(mtype,&nbsp;**params)</td>
+<td>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.notify_all" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">notify_all()</span></tt></a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.ereply" title="astropy.vo.samp.SAMPIntegratedClient.ereply"><tt class="xref py py-obj docutils literal"><span class="pre">ereply</span></tt></a>(msg_id,&nbsp;status[,&nbsp;result,&nbsp;error])</td>
+<td>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.reply" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">reply()</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.get_metadata" title="astropy.vo.samp.SAMPIntegratedClient.get_metadata"><tt class="xref py py-obj docutils literal"><span class="pre">get_metadata</span></tt></a>(client_id)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getMetadata</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.get_private_key" title="astropy.vo.samp.SAMPIntegratedClient.get_private_key"><tt class="xref py py-obj docutils literal"><span class="pre">get_private_key</span></tt></a>()</td>
+<td>Return the client private key used for the Standard Profile communications obtained at registration time (<tt class="docutils literal"><span class="pre">samp.private-key</span></tt>).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.get_public_id" title="astropy.vo.samp.SAMPIntegratedClient.get_public_id"><tt class="xref py py-obj docutils literal"><span class="pre">get_public_id</span></tt></a>()</td>
+<td>Return public client ID obtained at registration time (<tt class="docutils literal"><span class="pre">samp.self-id</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.get_registered_clients" title="astropy.vo.samp.SAMPIntegratedClient.get_registered_clients"><tt class="xref py py-obj docutils literal"><span class="pre">get_registered_clients</span></tt></a>()</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getRegisteredClients</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.get_subscribed_clients" title="astropy.vo.samp.SAMPIntegratedClient.get_subscribed_clients"><tt class="xref py py-obj docutils literal"><span class="pre">get_subscribed_clients</span></tt></a>(mtype)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getSubscribedClients</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.get_subscriptions" title="astropy.vo.samp.SAMPIntegratedClient.get_subscriptions"><tt class="xref py py-obj docutils literal"><span class="pre">get_subscriptions</span></tt></a>(client_id)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getSubscriptions</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.notify" title="astropy.vo.samp.SAMPIntegratedClient.notify"><tt class="xref py py-obj docutils literal"><span class="pre">notify</span></tt></a>(recipient_id,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">notify</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.notify_all" title="astropy.vo.samp.SAMPIntegratedClient.notify_all"><tt class="xref py py-obj docutils literal"><span class="pre">notify_all</span></tt></a>(message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">notifyAll</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.ping" title="astropy.vo.samp.SAMPIntegratedClient.ping"><tt class="xref py py-obj docutils literal"><span class="pre">ping</span></tt></a>()</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">ping</span></tt> SAMP Hub method (Standard Profile only).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.receive_call" title="astropy.vo.samp.SAMPIntegratedClient.receive_call"><tt class="xref py py-obj docutils literal"><span class="pre">receive_call</span></tt></a>(private_key,&nbsp;sender_id,&nbsp;msg_id,&nbsp;...)</td>
+<td>Standard callable client <tt class="docutils literal"><span class="pre">receive_call</span></tt> method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.receive_notification" title="astropy.vo.samp.SAMPIntegratedClient.receive_notification"><tt class="xref py py-obj docutils literal"><span class="pre">receive_notification</span></tt></a>(private_key,&nbsp;sender_id,&nbsp;...)</td>
+<td>Standard callable client <tt class="docutils literal"><span class="pre">receive_notification</span></tt> method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.receive_response" title="astropy.vo.samp.SAMPIntegratedClient.receive_response"><tt class="xref py py-obj docutils literal"><span class="pre">receive_response</span></tt></a>(private_key,&nbsp;responder_id,&nbsp;...)</td>
+<td>Standard callable client <tt class="docutils literal"><span class="pre">receive_response</span></tt> method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.reply" title="astropy.vo.samp.SAMPIntegratedClient.reply"><tt class="xref py py-obj docutils literal"><span class="pre">reply</span></tt></a>(msg_id,&nbsp;response)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">reply</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.unbind_receive_call" title="astropy.vo.samp.SAMPIntegratedClient.unbind_receive_call"><tt class="xref py py-obj docutils literal"><span class="pre">unbind_receive_call</span></tt></a>(mtype[,&nbsp;declare])</td>
+<td>Remove from the calls binding table the specified MType and unsubscribe the client from it (if required).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.unbind_receive_notification" title="astropy.vo.samp.SAMPIntegratedClient.unbind_receive_notification"><tt class="xref py py-obj docutils literal"><span class="pre">unbind_receive_notification</span></tt></a>(mtype[,&nbsp;declare])</td>
+<td>Remove from the notifications binding table the specified MType and unsubscribe the client from it (if required).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.unbind_receive_response" title="astropy.vo.samp.SAMPIntegratedClient.unbind_receive_response"><tt class="xref py py-obj docutils literal"><span class="pre">unbind_receive_response</span></tt></a>(msg_tag)</td>
+<td>Remove from the responses binding table the specified message-tag.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.is_connected">
+<tt class="descname">is_connected</tt><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Testing method to verify the client connection with a running Hub.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>is_connected</strong> : bool</p>
+<blockquote class="last">
+<div><p>True if the client is connected to a Hub, False otherwise.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.bind_receive_call">
+<tt class="descname">bind_receive_call</tt><big>(</big><em>mtype</em>, <em>function</em>, <em>declare=True</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.bind_receive_call"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L511" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind a specific MType call to a function or class method.</p>
+<p>The function must be of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>def my_function_or_method(&lt;self,&gt; private_key, sender_id, msg_id,
+                          mtype, params, extra)
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">private_key</span></tt> is the client private-key, <tt class="docutils literal"><span class="pre">sender_id</span></tt> is the
+notification sender ID, <tt class="docutils literal"><span class="pre">msg_id</span></tt> is the Hub message-id, <tt class="docutils literal"><span class="pre">mtype</span></tt> is
+the message MType, <tt class="docutils literal"><span class="pre">params</span></tt> is the message parameter set (content of
+<tt class="docutils literal"><span class="pre">&quot;samp.params&quot;</span></tt>) and <tt class="docutils literal"><span class="pre">extra</span></tt> is a dictionary containing any extra
+message map entry. The client is automatically declared subscribed to
+the MType by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be catched.</p>
+</div></blockquote>
+<p><strong>function</strong> : callable</p>
+<blockquote>
+<div><p>Application function to be used when <tt class="docutils literal"><span class="pre">mtype</span></tt> is received.</p>
+</div></blockquote>
+<p><strong>declare</strong> : bool, optional</p>
+<blockquote>
+<div><p>Specify whether the client must be automatically declared as
+subscribed to the MType (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+<p><strong>metadata</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>Dictionary containing additional metadata to declare associated
+with the MType subscribed to (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.bind_receive_message">
+<tt class="descname">bind_receive_message</tt><big>(</big><em>mtype</em>, <em>function</em>, <em>declare=True</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.bind_receive_message"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L501" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_message" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind a specific MType to a function or class method, being intended for
+a call or a notification.</p>
+<p>The function must be of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>def my_function_or_method(&lt;self,&gt; private_key, sender_id, msg_id,
+                          mtype, params, extra)
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">private_key</span></tt> is the client private-key, <tt class="docutils literal"><span class="pre">sender_id</span></tt> is the
+notification sender ID, <tt class="docutils literal"><span class="pre">msg_id</span></tt> is the Hub message-id (calls only,
+otherwise is <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>), <tt class="docutils literal"><span class="pre">mtype</span></tt> is the message MType, <tt class="docutils literal"><span class="pre">params</span></tt> is the
+message parameter set (content of <tt class="docutils literal"><span class="pre">&quot;samp.params&quot;</span></tt>) and <tt class="docutils literal"><span class="pre">extra</span></tt> is a
+dictionary containing any extra message map entry. The client is
+automatically declared subscribed to the MType by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be catched.</p>
+</div></blockquote>
+<p><strong>function</strong> : callable</p>
+<blockquote>
+<div><p>Application function to be used when <tt class="docutils literal"><span class="pre">mtype</span></tt> is received.</p>
+</div></blockquote>
+<p><strong>declare</strong> : bool, optional</p>
+<blockquote>
+<div><p>Specify whether the client must be automatically declared as
+subscribed to the MType (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+<p><strong>metadata</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>Dictionary containing additional metadata to declare associated
+with the MType subscribed to (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.bind_receive_notification">
+<tt class="descname">bind_receive_notification</tt><big>(</big><em>mtype</em>, <em>function</em>, <em>declare=True</em>, <em>metadata=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.bind_receive_notification"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L506" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_notification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind a specific MType notification to a function or class method.</p>
+<p>The function must be of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>def my_function_or_method(&lt;self,&gt; private_key, sender_id, mtype,
+                          params, extra)
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">private_key</span></tt> is the client private-key, <tt class="docutils literal"><span class="pre">sender_id</span></tt> is the
+notification sender ID, <tt class="docutils literal"><span class="pre">mtype</span></tt> is the message MType, <tt class="docutils literal"><span class="pre">params</span></tt> is
+the notified message parameter set (content of <tt class="docutils literal"><span class="pre">&quot;samp.params&quot;</span></tt>) and
+<tt class="docutils literal"><span class="pre">extra</span></tt> is a dictionary containing any extra message map entry. The
+client is automatically declared subscribed to the MType by default.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be catched.</p>
+</div></blockquote>
+<p><strong>function</strong> : callable</p>
+<blockquote>
+<div><p>Application function to be used when <tt class="docutils literal"><span class="pre">mtype</span></tt> is received.</p>
+</div></blockquote>
+<p><strong>declare</strong> : bool, optional</p>
+<blockquote>
+<div><p>Specify whether the client must be automatically declared as
+subscribed to the MType (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+<p><strong>metadata</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>Dictionary containing additional metadata to declare associated
+with the MType subscribed to (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.bind_receive_response">
+<tt class="descname">bind_receive_response</tt><big>(</big><em>msg_tag</em>, <em>function</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.bind_receive_response"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L516" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.bind_receive_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind a specific msg-tag response to a function or class method.</p>
+<p>The function must be of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre>def my_function_or_method(&lt;self,&gt; private_key, responder_id,
+                          msg_tag, response)
+</pre></div>
+</div>
+<p>where <tt class="docutils literal"><span class="pre">private_key</span></tt> is the client private-key, <tt class="docutils literal"><span class="pre">responder_id</span></tt> is
+the message responder ID, <tt class="docutils literal"><span class="pre">msg_tag</span></tt> is the message-tag provided at
+call time and <tt class="docutils literal"><span class="pre">response</span></tt> is the response received.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>msg_tag</strong> : str</p>
+<blockquote>
+<div><p>Message-tag to be catched.</p>
+</div></blockquote>
+<p><strong>function</strong> : callable</p>
+<blockquote class="last">
+<div><p>Application function to be used when <tt class="docutils literal"><span class="pre">msg_tag</span></tt> is received.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.call">
+<tt class="descname">call</tt><big>(</big><em>recipient_id</em>, <em>msg_tag</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.call"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L310" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">call</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.call_all">
+<tt class="descname">call_all</tt><big>(</big><em>msg_tag</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.call_all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L354" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.call_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">callAll</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.call_and_wait">
+<tt class="descname">call_and_wait</tt><big>(</big><em>recipient_id</em>, <em>message</em>, <em>timeout</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.call_and_wait"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L394" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.call_and_wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">callAndWait</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.connect">
+<tt class="descname">connect</tt><big>(</big><em>hub=None</em>, <em>hub_params=None</em>, <em>key_file=None</em>, <em>cert_file=None</em>, <em>cert_reqs=0</em>, <em>ca_certs=None</em>, <em>ssl_version=None</em>, <em>pool_size=20</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.connect"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L109" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect with the current or specified SAMP Hub, start and register the
+client.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>hub</strong> : <a class="reference internal" href="astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="astropy.vo.samp.SAMPHubServer"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPHubServer</span></tt></a>, optional</p>
+<blockquote>
+<div><p>The hub to connect to.</p>
+</div></blockquote>
+<p><strong>hub_params</strong> : dict, optional</p>
+<blockquote>
+<div><p>Optional dictionary containing the lock-file content of the Hub
+with which to connect. This dictionary has the form
+<tt class="docutils literal"><span class="pre">{&lt;token-name&gt;:</span> <span class="pre">&lt;token-string&gt;,</span> <span class="pre">...}</span></tt>.</p>
+</div></blockquote>
+<p><strong>key_file</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file containing the private key for SSL connections.
+If the certificate file (<tt class="docutils literal"><span class="pre">cert_file</span></tt>) contains the private key,
+then <tt class="docutils literal"><span class="pre">key_file</span></tt> can be omitted.</p>
+</div></blockquote>
+<p><strong>cert_file</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file which contains a certificate to be used to
+identify the local side of the secure connection.</p>
+</div></blockquote>
+<p><strong>cert_reqs</strong> : int, optional</p>
+<blockquote>
+<div><p>Whether a certificate is required from the server side of the
+connection, and whether it will be validated if provided. It must
+be one of the three values <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_NONE" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_NONE</span></tt></a> (certificates ignored),
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_OPTIONAL" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_OPTIONAL</span></tt></a> (not required, but validated if provided), or
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_REQUIRED" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_REQUIRED</span></tt></a> (required and validated). If the value of this
+parameter is not <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_NONE" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_NONE</span></tt></a>, then the <tt class="docutils literal"><span class="pre">ca_certs</span></tt> parameter
+must point to a file of CA certificates.</p>
+</div></blockquote>
+<p><strong>ca_certs</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file containing a set of concatenated &#8220;Certification
+Authority&#8221; certificates, which are used to validate the
+certificate passed from the Hub end of the connection.</p>
+</div></blockquote>
+<p><strong>ssl_version</strong> : int, optional</p>
+<blockquote>
+<div><p>Which version of the SSL protocol to use. Typically, the server
+chooses a particular protocol version, and the client must adapt
+to the server&#8217;s choice. Most of the versions are not interoperable
+with the other versions. If not specified the default SSL version
+is <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv3" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv3</span></tt></a>. This version provides the most
+compatibility with other versions server side. Other SSL protocol
+versions are: <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv2" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv2</span></tt></a>, <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv3" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv3</span></tt></a> and
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_TLSv1" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_TLSv1</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>pool_size</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of socket connections opened to communicate with the
+Hub.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.declare_metadata">
+<tt class="descname">declare_metadata</tt><big>(</big><em>metadata</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.declare_metadata"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L188" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.declare_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">declareMetadata</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.declare_subscriptions">
+<tt class="descname">declare_subscriptions</tt><big>(</big><em>subscriptions=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.declare_subscriptions"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L536" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.declare_subscriptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Declares the MTypes the client wishes to subscribe to, implicitly
+defined with the MType binding methods
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_notification" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_notification()</span></tt></a>
+and <a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_call" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_call()</span></tt></a>.</p>
+<p>An optional <tt class="docutils literal"><span class="pre">subscriptions</span></tt> map can be added to the final map passed
+to the <a class="reference internal" href="astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy.declare_subscriptions" title="astropy.vo.samp.hub_proxy.SAMPHubProxy"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>
+method.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>subscriptions</strong> : dict, optional</p>
+<blockquote class="last">
+<div><p>Dictionary containing the list of MTypes to subscribe to, with the
+same format of the <tt class="docutils literal"><span class="pre">subscriptions</span></tt> map passed to the
+<a class="reference internal" href="astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy.declare_subscriptions" title="astropy.vo.samp.hub_proxy.SAMPHubProxy"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>
+method.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.disconnect">
+<tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.disconnect"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L168" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unregister the client from the current SAMP Hub, stop the client and
+disconnect from the Hub.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.ecall">
+<tt class="descname">ecall</tt><big>(</big><em>recipient_id</em>, <em>msg_tag</em>, <em>mtype</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.ecall"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L316" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.ecall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">call()</span></tt></a>.</p>
+<p>This is a proxy to <tt class="docutils literal"><span class="pre">call</span></tt> method that allows to send a call message
+in a simplified way.</p>
+<p>Note that reserved <tt class="docutils literal"><span class="pre">extra_kws</span></tt> keyword is a dictionary with the
+special meaning of being used to add extra keywords, in addition to
+the standard <tt class="docutils literal"><span class="pre">samp.mtype</span></tt> and <tt class="docutils literal"><span class="pre">samp.params</span></tt>, to the message sent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>recipient_id</strong> : str</p>
+<blockquote>
+<div><p>Recipient ID</p>
+</div></blockquote>
+<p><strong>msg_tag</strong> : str</p>
+<blockquote>
+<div><p>Message tag to use</p>
+</div></blockquote>
+<p><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be sent</p>
+</div></blockquote>
+<p><strong>params</strong> : dict of set of keywords</p>
+<blockquote class="last">
+<div><p>Variable keyword set which contains the list of parameters for
+the specified MType.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgid</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">ecall</span><span class="p">(</span><span class="s">&quot;abc&quot;</span><span class="p">,</span> <span class="s">&quot;xyz&quot;</span><span class="p">,</span> <span class="s">&quot;samp.msg.progress&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">txt</span> <span class="o">=</span> <span class="s">&quot;initialization&quot;</span><span class="p">,</span> <span class="n">percent</span> <span class="o">=</span> <span class="s">&quot;10&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                  <span class="n">extra_kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;my.extra.info&quot;</span><span class="p">:</span> <span class="s">&quot;just an example&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.ecall_all">
+<tt class="descname">ecall_all</tt><big>(</big><em>msg_tag</em>, <em>mtype</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.ecall_all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L360" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.ecall_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call_all" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">call_all()</span></tt></a>.</p>
+<p>This is a proxy to <tt class="docutils literal"><span class="pre">callAll</span></tt> method that allows to send the call
+message in a simplified way.</p>
+<p>Note that reserved <tt class="docutils literal"><span class="pre">extra_kws</span></tt> keyword is a dictionary with the
+special meaning of being used to add extra keywords, in addition to
+the standard <tt class="docutils literal"><span class="pre">samp.mtype</span></tt> and <tt class="docutils literal"><span class="pre">samp.params</span></tt>, to the message sent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>msg_tag</strong> : str</p>
+<blockquote>
+<div><p>Message tag to use</p>
+</div></blockquote>
+<p><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be sent</p>
+</div></blockquote>
+<p><strong>params</strong> : dict of set of keywords</p>
+<blockquote class="last">
+<div><p>Variable keyword set which contains the list of parameters for
+the specified MType.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgid</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">ecall_all</span><span class="p">(</span><span class="s">&quot;xyz&quot;</span><span class="p">,</span> <span class="s">&quot;samp.msg.progress&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                      <span class="n">txt</span> <span class="o">=</span> <span class="s">&quot;initialization&quot;</span><span class="p">,</span> <span class="n">percent</span> <span class="o">=</span> <span class="s">&quot;10&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                      <span class="n">extra_kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;my.extra.info&quot;</span><span class="p">:</span> <span class="s">&quot;just an example&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.ecall_and_wait">
+<tt class="descname">ecall_and_wait</tt><big>(</big><em>recipient_id</em>, <em>mtype</em>, <em>timeout</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.ecall_and_wait"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L400" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.ecall_and_wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.call_and_wait" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">call_and_wait()</span></tt></a>.</p>
+<p>This is a proxy to <tt class="docutils literal"><span class="pre">callAndWait</span></tt> method that allows to send the call
+message in a simplified way.</p>
+<p>Note that reserved <tt class="docutils literal"><span class="pre">extra_kws</span></tt> keyword is a dictionary with the
+special meaning of being used to add extra keywords, in addition to
+the standard <tt class="docutils literal"><span class="pre">samp.mtype</span></tt> and <tt class="docutils literal"><span class="pre">samp.params</span></tt>, to the message sent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>recipient_id</strong> : str</p>
+<blockquote>
+<div><p>Recipient ID</p>
+</div></blockquote>
+<p><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be sent</p>
+</div></blockquote>
+<p><strong>timeout</strong> : str</p>
+<blockquote>
+<div><p>Call timeout in seconds</p>
+</div></blockquote>
+<p><strong>params</strong> : dict of set of keywords</p>
+<blockquote class="last">
+<div><p>Variable keyword set which contains the list of parameters for
+the specified MType.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span><span class="o">.</span><span class="n">ecall_and_wait</span><span class="p">(</span><span class="s">&quot;xyz&quot;</span><span class="p">,</span> <span class="s">&quot;samp.msg.progress&quot;</span><span class="p">,</span> <span class="s">&quot;5&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="n">txt</span> <span class="o">=</span> <span class="s">&quot;initialization&quot;</span><span class="p">,</span> <span class="n">percent</span> <span class="o">=</span> <span class="s">&quot;10&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="n">extra_kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;my.extra.info&quot;</span><span class="p">:</span> <span class="s">&quot;just an example&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.enotify">
+<tt class="descname">enotify</tt><big>(</big><em>recipient_id</em>, <em>mtype</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.enotify"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L240" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.enotify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.notify" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">notify()</span></tt></a>.</p>
+<p>This is a proxy to <tt class="docutils literal"><span class="pre">notify</span></tt> method that allows to send the
+notification message in a simplified way.</p>
+<p>Note that reserved <tt class="docutils literal"><span class="pre">extra_kws</span></tt> keyword is a dictionary with the
+special meaning of being used to add extra keywords, in addition to
+the standard <tt class="docutils literal"><span class="pre">samp.mtype</span></tt> and <tt class="docutils literal"><span class="pre">samp.params</span></tt>, to the message sent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>recipient_id</strong> : str</p>
+<blockquote>
+<div><p>Recipient ID</p>
+</div></blockquote>
+<p><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>the MType to be notified</p>
+</div></blockquote>
+<p><strong>params</strong> : dict or set of keywords</p>
+<blockquote class="last">
+<div><p>Variable keyword set which contains the list of parameters for the
+specified MType.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span><span class="o">.</span><span class="n">enotify</span><span class="p">(</span><span class="s">&quot;samp.msg.progress&quot;</span><span class="p">,</span> <span class="n">msgid</span> <span class="o">=</span> <span class="s">&quot;xyz&quot;</span><span class="p">,</span> <span class="n">txt</span> <span class="o">=</span> <span class="s">&quot;initialization&quot;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">percent</span> <span class="o">=</span> <span class="s">&quot;10&quot;</span><span class="p">,</span> <span class="n">extra_kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;my.extra.info&quot;</span><span class="p">:</span> <span class="s">&quot;just an example&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.enotify_all">
+<tt class="descname">enotify_all</tt><big>(</big><em>mtype</em>, <em>**params</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.enotify_all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L279" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.enotify_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.notify_all" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">notify_all()</span></tt></a>.</p>
+<p>This is a proxy to <tt class="docutils literal"><span class="pre">notifyAll</span></tt> method that allows to send the
+notification message in a simplified way.</p>
+<p>Note that reserved <tt class="docutils literal"><span class="pre">extra_kws</span></tt> keyword is a dictionary with the
+special meaning of being used to add extra keywords, in addition to
+the standard <tt class="docutils literal"><span class="pre">samp.mtype</span></tt> and <tt class="docutils literal"><span class="pre">samp.params</span></tt>, to the message sent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be notified.</p>
+</div></blockquote>
+<p><strong>params</strong> : dict or set of keywords</p>
+<blockquote class="last">
+<div><p>Variable keyword set which contains the list of parameters for
+the specified MType.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span><span class="o">.</span><span class="n">enotify_all</span><span class="p">(</span><span class="s">&quot;samp.msg.progress&quot;</span><span class="p">,</span> <span class="n">txt</span> <span class="o">=</span> <span class="s">&quot;initialization&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">percent</span> <span class="o">=</span> <span class="s">&quot;10&quot;</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">extra_kws</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;my.extra.info&quot;</span><span class="p">:</span> <span class="s">&quot;just an example&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.ereply">
+<tt class="descname">ereply</tt><big>(</big><em>msg_id</em>, <em>status</em>, <em>result=None</em>, <em>error=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.ereply"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L453" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.ereply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Easy to use version of <a class="reference internal" href="#astropy.vo.samp.SAMPIntegratedClient.reply" title="astropy.vo.samp.integrated_client.SAMPIntegratedClient"><tt class="xref py py-meth docutils literal"><span class="pre">reply()</span></tt></a>.</p>
+<p>This is a proxy to <tt class="docutils literal"><span class="pre">reply</span></tt> method that allows to send a reply
+message in a simplified way.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>msg_id</strong> : str</p>
+<blockquote>
+<div><p>Message ID to which reply.</p>
+</div></blockquote>
+<p><strong>status</strong> : str</p>
+<blockquote>
+<div><p>Content of the <tt class="docutils literal"><span class="pre">samp.status</span></tt> response keyword.</p>
+</div></blockquote>
+<p><strong>result</strong> : dict</p>
+<blockquote>
+<div><p>Content of the <tt class="docutils literal"><span class="pre">samp.result</span></tt> response keyword.</p>
+</div></blockquote>
+<p><strong>error</strong> : dict</p>
+<blockquote class="last">
+<div><p>Content of the <tt class="docutils literal"><span class="pre">samp.error</span></tt> response keyword.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span><span class="p">,</span> <span class="n">SAMP_STATUS_ERROR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cli</span><span class="o">.</span><span class="n">ereply</span><span class="p">(</span><span class="s">&quot;abd&quot;</span><span class="p">,</span> <span class="n">SAMP_STATUS_ERROR</span><span class="p">,</span> <span class="n">result</span><span class="o">=</span><span class="p">{},</span>
+<span class="gp">... </span>           <span class="n">error</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;samp.errortxt&quot;</span><span class="p">:</span> <span class="s">&quot;Test error message&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.get_metadata">
+<tt class="descname">get_metadata</tt><big>(</big><em>client_id</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.get_metadata"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L194" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.get_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getMetadata</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.get_private_key">
+<tt class="descname">get_private_key</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.get_private_key"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L541" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.get_private_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the client private key used for the Standard Profile
+communications obtained at registration time (<tt class="docutils literal"><span class="pre">samp.private-key</span></tt>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>key</strong> : str</p>
+<blockquote class="last">
+<div><p>Client private key.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.get_public_id">
+<tt class="descname">get_public_id</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.get_public_id"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L546" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.get_public_id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return public client ID obtained at registration time
+(<tt class="docutils literal"><span class="pre">samp.self-id</span></tt>).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>id</strong> : str</p>
+<blockquote class="last">
+<div><p>Client public ID.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.get_registered_clients">
+<tt class="descname">get_registered_clients</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.get_registered_clients"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L206" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.get_registered_clients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getRegisteredClients</span></tt> SAMP Hub method.</p>
+<p>This returns all the registered clients, excluding the current client.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.get_subscribed_clients">
+<tt class="descname">get_subscribed_clients</tt><big>(</big><em>mtype</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.get_subscribed_clients"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L214" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.get_subscribed_clients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getSubscribedClients</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.get_subscriptions">
+<tt class="descname">get_subscriptions</tt><big>(</big><em>client_id</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.get_subscriptions"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L200" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.get_subscriptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getSubscriptions</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.notify">
+<tt class="descname">notify</tt><big>(</big><em>recipient_id</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.notify"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L234" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.notify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">notify</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.notify_all">
+<tt class="descname">notify_all</tt><big>(</big><em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.notify_all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L273" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.notify_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">notifyAll</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.ping">
+<tt class="descname">ping</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.ping"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L182" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.ping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">ping</span></tt> SAMP Hub method (Standard Profile only).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.receive_call">
+<tt class="descname">receive_call</tt><big>(</big><em>private_key</em>, <em>sender_id</em>, <em>msg_id</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.receive_call"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L491" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.receive_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard callable client <tt class="docutils literal"><span class="pre">receive_call</span></tt> method.</p>
+<p>This method is automatically handled when the
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_call" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_call()</span></tt></a> method is
+used to bind distinct operations to MTypes. In case of a customized
+callable client implementation that inherits from the
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a> class this method should be
+overwritten.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When overwritten, this method must always return
+a string result (even empty).</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>private_key</strong> : str</p>
+<blockquote>
+<div><p>Client private key.</p>
+</div></blockquote>
+<p><strong>sender_id</strong> : str</p>
+<blockquote>
+<div><p>Sender public ID.</p>
+</div></blockquote>
+<p><strong>msg_id</strong> : str</p>
+<blockquote>
+<div><p>Message ID received.</p>
+</div></blockquote>
+<p><strong>message</strong> : dict</p>
+<blockquote>
+<div><p>Received message.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>confimation</strong> : str</p>
+<blockquote class="last">
+<div><p>Any confirmation string.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.receive_notification">
+<tt class="descname">receive_notification</tt><big>(</big><em>private_key</em>, <em>sender_id</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.receive_notification"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L486" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.receive_notification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard callable client <tt class="docutils literal"><span class="pre">receive_notification</span></tt> method.</p>
+<p>This method is automatically handled when the
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_notification" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_notification()</span></tt></a>
+method is used to bind distinct operations to MTypes. In case of a
+customized callable client implementation that inherits from the
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a> class this method should be
+overwritten.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When overwritten, this method must always return
+a string result (even empty).</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>private_key</strong> : str</p>
+<blockquote>
+<div><p>Client private key.</p>
+</div></blockquote>
+<p><strong>sender_id</strong> : str</p>
+<blockquote>
+<div><p>Sender public ID.</p>
+</div></blockquote>
+<p><strong>message</strong> : dict</p>
+<blockquote>
+<div><p>Received message.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>confirmation</strong> : str</p>
+<blockquote class="last">
+<div><p>Any confirmation string.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.receive_response">
+<tt class="descname">receive_response</tt><big>(</big><em>private_key</em>, <em>responder_id</em>, <em>msg_tag</em>, <em>response</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.receive_response"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L496" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.receive_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Standard callable client <tt class="docutils literal"><span class="pre">receive_response</span></tt> method.</p>
+<p>This method is automatically handled when the
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.bind_receive_response" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">bind_receive_response()</span></tt></a> method
+is used to bind distinct operations to MTypes. In case of a customized
+callable client implementation that inherits from the
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a> class this method should be
+overwritten.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When overwritten, this method must always return
+a string result (even empty).</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>private_key</strong> : str</p>
+<blockquote>
+<div><p>Client private key.</p>
+</div></blockquote>
+<p><strong>responder_id</strong> : str</p>
+<blockquote>
+<div><p>Responder public ID.</p>
+</div></blockquote>
+<p><strong>msg_tag</strong> : str</p>
+<blockquote>
+<div><p>Response message tag.</p>
+</div></blockquote>
+<p><strong>response</strong> : dict</p>
+<blockquote>
+<div><p>Received response.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>confirmation</strong> : str</p>
+<blockquote class="last">
+<div><p>Any confirmation string.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.reply">
+<tt class="descname">reply</tt><big>(</big><em>msg_id</em>, <em>response</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.reply"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L437" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.reply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">reply</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.unbind_receive_call">
+<tt class="descname">unbind_receive_call</tt><big>(</big><em>mtype</em>, <em>declare=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.unbind_receive_call"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L526" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.unbind_receive_call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the calls binding table the specified MType and unsubscribe
+the client from it (if required).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be removed.</p>
+</div></blockquote>
+<p><strong>declare</strong> : bool</p>
+<blockquote class="last">
+<div><p>Specify whether the client must be automatically declared as
+unsubscribed from the MType (see alse
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.unbind_receive_notification">
+<tt class="descname">unbind_receive_notification</tt><big>(</big><em>mtype</em>, <em>declare=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.unbind_receive_notification"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L521" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.unbind_receive_notification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the notifications binding table the specified MType and
+unsubscribe the client from it (if required).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>mtype</strong> : str</p>
+<blockquote>
+<div><p>MType to be removed.</p>
+</div></blockquote>
+<p><strong>declare</strong> : bool</p>
+<blockquote class="last">
+<div><p>Specify whether the client must be automatically declared as
+unsubscribed from the MType (see also
+<a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient.declare_subscriptions" title="astropy.vo.samp.client.SAMPClient"><tt class="xref py py-meth docutils literal"><span class="pre">declare_subscriptions()</span></tt></a>).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPIntegratedClient.unbind_receive_response">
+<tt class="descname">unbind_receive_response</tt><big>(</big><em>msg_tag</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/integrated_client.html#SAMPIntegratedClient.unbind_receive_response"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/integrated_client.py#L531" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPIntegratedClient.unbind_receive_response" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove from the responses binding table the specified message-tag.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>msg_tag</strong> : str</p>
+<blockquote class="last">
+<div><p>Message-tag to be removed.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SAMPIntegratedClient</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.samp.SAMPIntegratedClient.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.samp.SAMPIntegratedClient.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

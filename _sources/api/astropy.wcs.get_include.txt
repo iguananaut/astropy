@@ -1,0 +1,10 @@
+
+.. include:: ../wcs/references.txt
+
+
+get_include
+=======================
+
+.. currentmodule:: astropy.wcs
+
+.. autofunction:: get_include

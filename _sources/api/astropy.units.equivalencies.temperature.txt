@@ -1,0 +1,8 @@
+
+
+temperature
+=======================================
+
+.. currentmodule:: astropy.units.equivalencies
+
+.. autofunction:: temperature

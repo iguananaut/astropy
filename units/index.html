@@ -1,0 +1,2098 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Units and Quantities (astropy.units) &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="Quantity" href="quantity.html" />
+    <link rel="prev" title="EMConstant" href="../api/astropy.constants.EMConstant.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="quantity.html" title="Quantity">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astropy.constants.EMConstant.html" title="EMConstant">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Units and Quantities (<tt class="docutils literal"><span class="pre">astropy.units</span></tt>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="units-and-quantities-astropy-units">
+<span id="astropy-units"></span><h1>Units and Quantities (<a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a>)<a class="headerlink" href="#units-and-quantities-astropy-units" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> handles defining, converting between, and performing
+arithmetic with physical quantities. Examples of physical quantities
+are meters, seconds, Hz, etc.</p>
+<p><a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> does not know spherical geometry or sexagesimal
+(hours, min, sec): if you want to deal with celestial coordinates,
+see the <a class="reference internal" href="../coordinates/index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a> package.</p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>Most users of the <a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> package will work with &#8220;quantities&#8221;:
+the combination of a value and a unit.  The easiest way to create a
+<a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> is to simply multiply or divide a value by one of the
+built-in units.  It works with scalars, sequences and Numpy arrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">42.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span>
+<span class="go">&lt;Quantity 42.0 m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity [ 1., 2., 3.] m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity [ 1., 2., 3.] m&gt;</span>
+</pre></div>
+</div>
+<p>You can get the unit and value from a <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> using the unit and
+value members:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">42.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">value</span>
+<span class="go">42.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">unit</span>
+<span class="go">Unit(&quot;m&quot;)</span>
+</pre></div>
+</div>
+<p>From this simple building block, it&#8217;s easy to start combining
+quantities with different units:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">15.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="p">(</span><span class="mf">32.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="go">&lt;Quantity 0.47187... m / s&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kilometer</span> <span class="o">/</span> <span class="p">(</span><span class="mf">130.51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="go">&lt;Quantity 0.0229867443... km s / m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kilometer</span> <span class="o">/</span> <span class="p">(</span><span class="mf">130.51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">))</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+<span class="go">&lt;Quantity 22.9867443... s&gt;</span>
+</pre></div>
+</div>
+<p>Unit conversion is done using the
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.to" title="astropy.units.quantity.Quantity.to"><tt class="xref py py-meth docutils literal"><span class="pre">to()</span></tt></a> method, which returns a new
+<a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> in the given unit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">parsec</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span>
+<span class="go">&lt;Quantity 30856775814671.9... km&gt;</span>
+</pre></div>
+</div>
+<p>It is also possible to work directly with units at a lower level, for
+example, to create custom units:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">imperial</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cms</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># ...and then use some imperial units</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mph</span> <span class="o">=</span> <span class="n">imperial</span><span class="o">.</span><span class="n">mile</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">hour</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># And do some conversions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">42.0</span> <span class="o">*</span> <span class="n">cms</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">mph</span><span class="p">)</span>
+<span class="go">&lt;Quantity 0.93951324266284... mi / h&gt;</span>
+</pre></div>
+</div>
+<p>Units that &#8220;cancel out&#8221; become a special unit called the
+&#8220;dimensionless unit&#8221;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">Unit(dimensionless)</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> is able to match compound units against the units it already
+knows about:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">**</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">compose</span><span class="p">()</span>  
+<span class="go">[Unit(&quot;Bq&quot;), Unit(&quot;Hz&quot;), Unit(&quot;3.7e+10 Ci&quot;)]</span>
+</pre></div>
+</div>
+<p>And it can convert between unit systems, such as SI or CGS:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Pa</span><span class="p">)</span><span class="o">.</span><span class="n">cgs</span>
+<span class="go">&lt;Quantity 10.0 Ba&gt;</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> also handles equivalencies, such as that between wavelength
+and frequency. To use that feature, equivalence objects are passed to the
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.to" title="astropy.units.quantity.Quantity.to"><tt class="xref py py-meth docutils literal"><span class="pre">to()</span></tt></a> conversion method. For instance, a
+conversion from wavelength to frequency doesn&#8217;t normally work:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">nm</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">UnitsError</span>: <span class="n">&#39;nm&#39; (length) and &#39;Hz&#39; (frequency) are not convertible</span>
+</pre></div>
+</div>
+<p>but by passing an equivalency list, in this case <tt class="docutils literal"><span class="pre">spectral()</span></tt>, it does:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">nm</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">spectral</span><span class="p">())</span>
+<span class="go">&lt;Quantity 299792457999999.94 Hz&gt;</span>
+</pre></div>
+</div>
+<p>Quantities and units can be printed nicely to strings using the
+<a class="reference external" href="http://docs.python.org/library/string.html#format-string-syntax">Format String Syntax</a>,
+the preferred string formatting syntax in recent versions of python.
+Format specifiers (like <tt class="docutils literal"><span class="pre">0.03f</span></tt>) in new-style format
+strings will used to format the quantity value:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">15.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="p">(</span><span class="mf">32.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<span class="go">&lt;Quantity 0.47187... m / s&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;{0:0.03f}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">&#39;0.472 m / s&#39;</span>
+</pre></div>
+</div>
+<p>The value and unit can also be formatted separately. Format specifiers
+used on units can be used to choose the unit formatter:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">15.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">meter</span> <span class="o">/</span> <span class="p">(</span><span class="mf">32.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">second</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span>
+<span class="go">&lt;Quantity 0.47187... m / s&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="s">&quot;{0.value:0.03f} {0.unit:FITS}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">&#39;0.472 m s-1&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="using-astropy-units">
+<h2>Using <a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a><a class="headerlink" href="#using-astropy-units" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quantity.html">Quantity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#creating-quantity-instances">Creating Quantity instances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#converting-to-different-units">Converting to different units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#arithmetic">Arithmetic</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#numpy-functions">Numpy functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#dimensionless-quantities">Dimensionless quantities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#converting-to-plain-python-scalars">Converting to plain Python scalars</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#known-issues-with-conversion-to-numpy-arrays">Known issues with conversion to numpy arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="quantity.html#subclassing-quantity">Subclassing Quantity</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="standard_units.html">Standard units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="standard_units.html#the-dimensionless-unit">The dimensionless unit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="standard_units.html#enabling-other-units">Enabling other units</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="combining_and_defining.html">Combining and defining units</a></li>
+<li class="toctree-l1"><a class="reference internal" href="decomposing_and_composing.html">Decomposing and composing units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="decomposing_and_composing.html#reducing-a-unit-to-its-irreducible-parts">Reducing a unit to its irreducible parts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decomposing_and_composing.html#automatically-composing-a-unit-into-more-complex-units">Automatically composing a unit into more complex units</a></li>
+<li class="toctree-l2"><a class="reference internal" href="decomposing_and_composing.html#converting-between-systems">Converting between systems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="format.html">String representations of units</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="format.html#converting-units-to-string-representations">Converting units to string representations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#creating-units-from-strings">Creating units from strings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#built-in-formats">Built-in formats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="format.html#unrecognized-units">Unrecognized Units</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="equivalencies.html">Equivalencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="equivalencies.html#built-in-equivalencies">Built-in equivalencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="equivalencies.html#writing-new-equivalencies">Writing new equivalencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="equivalencies.html#displaying-available-equivalencies">Displaying available equivalencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="equivalencies.html#using-equivalencies-in-larger-pieces-of-code">Using equivalencies in larger pieces of code</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="conversion.html">Low-level unit conversion</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#direct-conversion">Direct Conversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#obtaining-a-conversion-function">Obtaining a Conversion Function</a></li>
+<li class="toctree-l2"><a class="reference internal" href="conversion.html#incompatible-conversions">Incompatible Conversions</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://fits.gsfc.nasa.gov/fits_standard.html">FITS Standard</a> for
+units in FITS.</li>
+<li>The <a class="reference external" href="http://www.ivoa.net/Documents/VOUnits/">proposed IVOA standard</a> for representing units in
+the VO.</li>
+<li>OGIP Units: A standard for storing units in <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/heasarc/ofwg/docs/general/ogip_93_001/">OGIP FITS files</a>.</li>
+<li><a class="reference external" href="http://cds.u-strasbg.fr/doc/catstd-3.2.htx">Standards for astronomical catalogues units</a>.</li>
+<li><a class="reference external" href="http://www.iau.org/static/publications/stylemanual1989.pdf">IAU Style Manual</a>.</li>
+<li><a class="reference external" href="http://astro.wku.edu/strolger/UNITS.txt">A table of astronomical unit equivalencies</a></li>
+</ul>
+</div>
+<div class="section" id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-astropy.units.quantity">
+<span id="astropy-units-quantity-module"></span><h3>astropy.units.quantity Module<a class="headerlink" href="#module-astropy.units.quantity" title="Permalink to this headline">¶</a></h3>
+<p>This module defines the <a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="astropy.units.quantity.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> object, which represents a number with some
+associated units. <a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="astropy.units.quantity.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> objects support operations like ordinary numbers,
+but will deal with unit conversions internally.</p>
+<div class="section" id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="astropy.units.quantity.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></td>
+<td>A <a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="astropy.units.quantity.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> represents a number with some associated unit.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-inheritance-diagram">
+<h4>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this headline">¶</a></h4>
+<p class="graphviz">
+<img src="../_images/inheritance-505169a098b3fb6bda264158619ded8041aefe47.png" alt="Inheritance diagram of astropy.units.quantity.Quantity" usemap="#inheritancec2fd2636e1" class="inheritance"/>
+<map id="inheritancec2fd2636e1" name="inheritancec2fd2636e1">
+<area shape="rect" id="node1" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="A `Quantity` represents a number with some associated unit." alt="" coords="125,5,208,33"/>
+<area shape="rect" id="node2" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="5,5,77,33"/>
+</map>
+</p>
+</div>
+</div>
+<div class="section" id="module-astropy.units">
+<span id="astropy-units-module"></span><h3>astropy.units Module<a class="headerlink" href="#module-astropy.units" title="Permalink to this headline">¶</a></h3>
+<p>This subpackage contains classes and functions for defining and converting
+between different physical units.</p>
+<p>This code is adapted from the <a class="reference external" href="http://code.google.com/p/pynbody/">pynbody</a> units module written by Andrew
+Pontzen, who has granted the Astropy project permission to use the
+code under a BSD license.</p>
+<div class="section" id="functions">
+<h4>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.add_enabled_equivalencies.html#astropy.units.add_enabled_equivalencies" title="astropy.units.add_enabled_equivalencies"><tt class="xref py py-obj docutils literal"><span class="pre">add_enabled_equivalencies</span></tt></a>(equivalencies)</td>
+<td>Adds to the equivalencies enabled in the unit registry.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.add_enabled_units.html#astropy.units.add_enabled_units" title="astropy.units.add_enabled_units"><tt class="xref py py-obj docutils literal"><span class="pre">add_enabled_units</span></tt></a>(units)</td>
+<td>Adds to the set of units enabled in the unit registry.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.brightness_temperature.html#astropy.units.brightness_temperature" title="astropy.units.brightness_temperature"><tt class="xref py py-obj docutils literal"><span class="pre">brightness_temperature</span></tt></a>(beam_area,&nbsp;disp)</td>
+<td>Defines the conversion between Jy/beam and &#8220;brightness temperature&#8221;, <img class="math" src="../_images/math/0a59534ac29d4e66358a259c3a9c52995453363d.png" alt="T_B"/>, in Kelvins.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.def_physical_type.html#astropy.units.def_physical_type" title="astropy.units.def_physical_type"><tt class="xref py py-obj docutils literal"><span class="pre">def_physical_type</span></tt></a>(unit,&nbsp;name)</td>
+<td>Adds a new physical unit mapping.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.def_unit.html#astropy.units.def_unit" title="astropy.units.def_unit"><tt class="xref py py-obj docutils literal"><span class="pre">def_unit</span></tt></a>(s[,&nbsp;represents,&nbsp;register,&nbsp;doc,&nbsp;...])</td>
+<td>Factory function for defining new units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.dimensionless_angles.html#astropy.units.dimensionless_angles" title="astropy.units.dimensionless_angles"><tt class="xref py py-obj docutils literal"><span class="pre">dimensionless_angles</span></tt></a>()</td>
+<td>Allow angles to be equivalent to dimensionless (with 1 rad = 1 m/m = 1).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.doppler_optical.html#astropy.units.doppler_optical" title="astropy.units.doppler_optical"><tt class="xref py py-obj docutils literal"><span class="pre">doppler_optical</span></tt></a>(rest)</td>
+<td>Return the equivalency pairs for the optical convention for velocity.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.doppler_radio.html#astropy.units.doppler_radio" title="astropy.units.doppler_radio"><tt class="xref py py-obj docutils literal"><span class="pre">doppler_radio</span></tt></a>(rest)</td>
+<td>Return the equivalency pairs for the radio convention for velocity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.doppler_relativistic.html#astropy.units.doppler_relativistic" title="astropy.units.doppler_relativistic"><tt class="xref py py-obj docutils literal"><span class="pre">doppler_relativistic</span></tt></a>(rest)</td>
+<td>Return the equivalency pairs for the relativistic convention for velocity.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.get_current_unit_registry.html#astropy.units.get_current_unit_registry" title="astropy.units.get_current_unit_registry"><tt class="xref py py-obj docutils literal"><span class="pre">get_current_unit_registry</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.get_physical_type.html#astropy.units.get_physical_type" title="astropy.units.get_physical_type"><tt class="xref py py-obj docutils literal"><span class="pre">get_physical_type</span></tt></a>(unit)</td>
+<td>Given a unit, returns the name of the physical quantity it represents.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.logarithmic.html#astropy.units.logarithmic" title="astropy.units.logarithmic"><tt class="xref py py-obj docutils literal"><span class="pre">logarithmic</span></tt></a>()</td>
+<td>Allow logarithmic units to be converted to dimensionless fractions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.mass_energy.html#astropy.units.mass_energy" title="astropy.units.mass_energy"><tt class="xref py py-obj docutils literal"><span class="pre">mass_energy</span></tt></a>()</td>
+<td>Returns a list of equivalence pairs that handle the conversion between mass and energy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.parallax.html#astropy.units.parallax" title="astropy.units.parallax"><tt class="xref py py-obj docutils literal"><span class="pre">parallax</span></tt></a>()</td>
+<td>Returns a list of equivalence pairs that handle the conversion between parallax angle and distance.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.set_enabled_equivalencies.html#astropy.units.set_enabled_equivalencies" title="astropy.units.set_enabled_equivalencies"><tt class="xref py py-obj docutils literal"><span class="pre">set_enabled_equivalencies</span></tt></a>(equivalencies)</td>
+<td>Sets the equivalencies enabled in the unit registry.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.set_enabled_units.html#astropy.units.set_enabled_units" title="astropy.units.set_enabled_units"><tt class="xref py py-obj docutils literal"><span class="pre">set_enabled_units</span></tt></a>(units)</td>
+<td>Sets the units enabled in the unit registry.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.spectral.html#astropy.units.spectral" title="astropy.units.spectral"><tt class="xref py py-obj docutils literal"><span class="pre">spectral</span></tt></a>()</td>
+<td>Returns a list of equivalence pairs that handle spectral wavelength, wave number, frequency, and energy equivalences.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.spectral_density.html#astropy.units.spectral_density" title="astropy.units.spectral_density"><tt class="xref py py-obj docutils literal"><span class="pre">spectral_density</span></tt></a>(wav[,&nbsp;factor])</td>
+<td>Returns a list of equivalence pairs that handle spectral density with regard to wavelength and frequency.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.temperature.html#astropy.units.temperature" title="astropy.units.temperature"><tt class="xref py py-obj docutils literal"><span class="pre">temperature</span></tt></a>()</td>
+<td>Convert between Kelvin, Celsius, and Fahrenheit here because Unit and CompositeUnit cannot do addition or subtraction properly.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.temperature_energy.html#astropy.units.temperature_energy" title="astropy.units.temperature_energy"><tt class="xref py py-obj docutils literal"><span class="pre">temperature_energy</span></tt></a>()</td>
+<td>Convert between Kelvin and keV(eV) to an equivalent amount.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id1">
+<h4>Classes<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.CompositeUnit.html#astropy.units.CompositeUnit" title="astropy.units.CompositeUnit"><tt class="xref py py-obj docutils literal"><span class="pre">CompositeUnit</span></tt></a>(scale,&nbsp;bases,&nbsp;powers[,&nbsp;...])</td>
+<td>Create a composite unit using expressions of previously defined units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.IrreducibleUnit.html#astropy.units.IrreducibleUnit" title="astropy.units.IrreducibleUnit"><tt class="xref py py-obj docutils literal"><span class="pre">IrreducibleUnit</span></tt></a>(st[,&nbsp;register,&nbsp;doc,&nbsp;format,&nbsp;...])</td>
+<td>Irreducible units are the units that all other units are defined in terms of.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.NamedUnit.html#astropy.units.NamedUnit" title="astropy.units.NamedUnit"><tt class="xref py py-obj docutils literal"><span class="pre">NamedUnit</span></tt></a>(st[,&nbsp;register,&nbsp;doc,&nbsp;format,&nbsp;namespace])</td>
+<td>The base class of units that have a name.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><tt class="xref py py-obj docutils literal"><span class="pre">PrefixUnit</span></tt></a>(st[,&nbsp;represents,&nbsp;register,&nbsp;doc,&nbsp;...])</td>
+<td>A unit that is simply a SI-prefixed version of another unit.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></td>
+<td>A <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> represents a number with some associated unit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><tt class="xref py py-obj docutils literal"><span class="pre">Unit</span></tt></a>(st[,&nbsp;represents,&nbsp;register,&nbsp;doc,&nbsp;...])</td>
+<td>The main unit class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a></td>
+<td>Abstract base class for units.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.UnitsError.html#astropy.units.UnitsError" title="astropy.units.UnitsError"><tt class="xref py py-obj docutils literal"><span class="pre">UnitsError</span></tt></a></td>
+<td>The base class for unit-specific exceptions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.UnitsWarning.html#astropy.units.UnitsWarning" title="astropy.units.UnitsWarning"><tt class="xref py py-obj docutils literal"><span class="pre">UnitsWarning</span></tt></a></td>
+<td>The base class for unit-specific exceptions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.UnrecognizedUnit.html#astropy.units.UnrecognizedUnit" title="astropy.units.UnrecognizedUnit"><tt class="xref py py-obj docutils literal"><span class="pre">UnrecognizedUnit</span></tt></a>(st[,&nbsp;register,&nbsp;doc,&nbsp;...])</td>
+<td>A unit that did not parse correctly.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id2">
+<h4>Class Inheritance Diagram<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p class="graphviz">
+<img src="../_images/inheritance-189bab4e6f578f404f3b4485bf7f2b0a9778d338.png" alt="Inheritance diagram of astropy.units.core.CompositeUnit, astropy.units.core.IrreducibleUnit, astropy.units.core.NamedUnit, astropy.units.core.PrefixUnit, astropy.units.quantity.Quantity, astropy.units.core.Unit, astropy.units.core.UnitBase, astropy.units.core.UnitsError, astropy.units.core.UnitsWarning, astropy.units.core.UnrecognizedUnit" usemap="#inheritance3ceb671924" class="inheritance"/>
+<map id="inheritance3ceb671924" name="inheritance3ceb671924">
+<area shape="rect" id="node1" href="../api/astropy.utils.exceptions.AstropyWarning.html#astropy.utils.exceptions.AstropyWarning" title="The base warning class from which all Astropy warnings should inherit." alt="" coords="7,219,132,247"/>
+<area shape="rect" id="node17" href="../api/astropy.units.UnitsWarning.html#astropy.units.UnitsWarning" title="The base class for unit&#45;specific exceptions." alt="" coords="189,219,296,247"/>
+<area shape="rect" id="node2" href="../api/astropy.units.CompositeUnit.html#astropy.units.CompositeUnit" title="Create a composite unit using expressions of previously defined" alt="" coords="181,106,304,134"/>
+<area shape="rect" id="node3" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase" title="Abstract base class for units." alt="" coords="28,143,111,171"/>
+<area shape="rect" id="node6" href="../api/astropy.units.NamedUnit.html#astropy.units.NamedUnit" title="The base class of units that have a name." alt="" coords="195,157,291,185"/>
+<area shape="rect" id="node5" href="../api/astropy.units.IrreducibleUnit.html#astropy.units.IrreducibleUnit" title="Irreducible units are the units that all other units are defined" alt="" coords="353,131,471,159"/>
+<area shape="rect" id="node19" href="../api/astropy.units.UnrecognizedUnit.html#astropy.units.UnrecognizedUnit" title="A unit that did not parse correctly. &#160;This allows for" alt="" coords="521,131,660,159"/>
+<area shape="rect" id="node10" href="../api/astropy.units.Unit.html#astropy.units.Unit" title="The main unit class." alt="" coords="376,182,448,210"/>
+<area shape="rect" id="node9" href="../api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="A unit that is simply a SI&#45;prefixed version of another unit." alt="" coords="547,182,635,210"/>
+<area shape="rect" id="node12" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="A `Quantity` represents a number with some associated unit." alt="" coords="201,55,284,83"/>
+<area shape="rect" id="node13" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="33,55,105,83"/>
+<area shape="rect" id="node16" href="../api/astropy.units.UnitsError.html#astropy.units.UnitsError" title="The base class for unit&#45;specific exceptions." alt="" coords="25,5,113,33"/>
+</map>
+</p>
+</div>
+</div>
+<div class="section" id="module-astropy.units.format">
+<span id="astropy-units-format-module"></span><h3>astropy.units.format Module<a class="headerlink" href="#module-astropy.units.format" title="Permalink to this headline">¶</a></h3>
+<p>A collection of different unit formats.</p>
+<div class="section" id="id3">
+<h4>Functions<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.format.get_format.html#astropy.units.format.get_format" title="astropy.units.format.get_format"><tt class="xref py py-obj docutils literal"><span class="pre">get_format</span></tt></a>([format])</td>
+<td>Get a formatter by name.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id4">
+<h4>Classes<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.format.Base.html#astropy.units.format.Base" title="astropy.units.format.Base"><tt class="xref py py-obj docutils literal"><span class="pre">Base</span></tt></a></td>
+<td>The abstract base class of all unit formats.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.format.Generic.html#astropy.units.format.Generic" title="astropy.units.format.Generic"><tt class="xref py py-obj docutils literal"><span class="pre">Generic</span></tt></a>()</td>
+<td>A &#8220;generic&#8221; format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.format.CDS.html#astropy.units.format.CDS" title="astropy.units.format.CDS"><tt class="xref py py-obj docutils literal"><span class="pre">CDS</span></tt></a>()</td>
+<td>Support the <a class="reference external" href="http://cds.u-strasbg.fr/">Centre de Données astronomiques de Strasbourg</a> <a class="reference external" href="http://cds.u-strasbg.fr/doc/catstd-3.2.htx">Standards for Astronomical Catalogues 2.0</a> format, and the <a class="reference external" href="http://vizier.u-strasbg.fr/cgi-bin/Unit">complete set of supported units</a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.format.Console.html#astropy.units.format.Console" title="astropy.units.format.Console"><tt class="xref py py-obj docutils literal"><span class="pre">Console</span></tt></a>()</td>
+<td>Output-only format for to display pretty formatting at the console.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.format.Fits.html#astropy.units.format.Fits" title="astropy.units.format.Fits"><tt class="xref py py-obj docutils literal"><span class="pre">Fits</span></tt></a>()</td>
+<td>The FITS standard unit format.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.format.Latex.html#astropy.units.format.Latex" title="astropy.units.format.Latex"><tt class="xref py py-obj docutils literal"><span class="pre">Latex</span></tt></a>()</td>
+<td>Output LaTeX to display the unit based on IAU style guidelines.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.format.OGIP.html#astropy.units.format.OGIP" title="astropy.units.format.OGIP"><tt class="xref py py-obj docutils literal"><span class="pre">OGIP</span></tt></a>()</td>
+<td>Support the units in <a class="reference external" href="http://heasarc.gsfc.nasa.gov/docs/heasarc/ofwg/docs/general/ogip_93_001/">Office of Guest Investigator Programs (OGIP) FITS files</a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.format.Unicode.html#astropy.units.format.Unicode" title="astropy.units.format.Unicode"><tt class="xref py py-obj docutils literal"><span class="pre">Unicode</span></tt></a>()</td>
+<td>Output-only format to display pretty formatting at the console using Unicode characters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.format.Unscaled.html#astropy.units.format.Unscaled" title="astropy.units.format.Unscaled"><tt class="xref py py-obj docutils literal"><span class="pre">Unscaled</span></tt></a>()</td>
+<td>A format that doesn&#8217;t display the scale part of the unit, other than that, it is identical to the <a class="reference internal" href="../api/astropy.units.format.Generic.html#astropy.units.format.Generic" title="astropy.units.format.Generic"><tt class="xref py py-obj docutils literal"><span class="pre">Generic</span></tt></a> format.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.format.VOUnit.html#astropy.units.format.VOUnit" title="astropy.units.format.VOUnit"><tt class="xref py py-obj docutils literal"><span class="pre">VOUnit</span></tt></a>()</td>
+<td>The proposed IVOA standard for units used by the VO.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="id5">
+<h4>Class Inheritance Diagram<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<p class="graphviz">
+<img src="../_images/inheritance-9de3723624777ae23fd0764793e451fc1ed4153b.png" alt="Inheritance diagram of astropy.units.format.base.Base, astropy.units.format.generic.Generic, astropy.units.format.cds.CDS, astropy.units.format.console.Console, astropy.units.format.fits.Fits, astropy.units.format.latex.Latex, astropy.units.format.ogip.OGIP, astropy.units.format.unicode_format.Unicode, astropy.units.format.generic.Unscaled, astropy.units.format.vounit.VOUnit" usemap="#inheritance4e9cbd1ff0" class="inheritance"/>
+<map id="inheritance4e9cbd1ff0" name="inheritance4e9cbd1ff0">
+<area shape="rect" id="node1" href="../api/astropy.units.format.Base.html#astropy.units.format.Base" title="The abstract base class of all unit formats." alt="" coords="5,81,77,109"/>
+<area shape="rect" id="node2" href="../api/astropy.units.format.CDS.html#astropy.units.format.CDS" title="Support the `Centre de Données astronomiques de Strasbourg" alt="" coords="127,5,199,33"/>
+<area shape="rect" id="node4" href="../api/astropy.units.format.Console.html#astropy.units.format.Console" title="Output&#45;only format for to display pretty formatting at the" alt="" coords="125,55,200,83"/>
+<area shape="rect" id="node7" href="../api/astropy.units.format.Generic.html#astropy.units.format.Generic" title="A &quot;generic&quot; format." alt="" coords="125,106,200,134"/>
+<area shape="rect" id="node10" href="../api/astropy.units.format.Latex.html#astropy.units.format.Latex" title="Output LaTeX to display the unit based on IAU style guidelines." alt="" coords="127,157,199,185"/>
+<area shape="rect" id="node14" href="../api/astropy.units.format.Unicode.html#astropy.units.format.Unicode" title="Output&#45;only format to display pretty formatting at the console" alt="" coords="252,5,327,33"/>
+<area shape="rect" id="node6" href="../api/astropy.units.format.Fits.html#astropy.units.format.Fits" title="The FITS standard unit format." alt="" coords="253,55,325,83"/>
+<area shape="rect" id="node12" href="../api/astropy.units.format.OGIP.html#astropy.units.format.OGIP" title="Support the units in `Office of Guest Investigator Programs (OGIP)" alt="" coords="253,106,325,134"/>
+<area shape="rect" id="node16" href="../api/astropy.units.format.Unscaled.html#astropy.units.format.Unscaled" title="A format that doesn&#39;t display the scale part of the unit, other" alt="" coords="248,157,331,185"/>
+<area shape="rect" id="node18" href="../api/astropy.units.format.VOUnit.html#astropy.units.format.VOUnit" title="The proposed IVOA standard for units used by the VO." alt="" coords="253,207,325,235"/>
+</map>
+</p>
+</div>
+</div>
+<div class="section" id="module-astropy.units.si">
+<span id="astropy-units-si-module"></span><h3>astropy.units.si Module<a class="headerlink" href="#module-astropy.units.si" title="Permalink to this headline">¶</a></h3>
+<p>This package defines the SI units.  They are also available in the
+<a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> namespace.</p>
+<table border="1" class="docutils">
+<caption>Available Units</caption>
+<colgroup>
+<col width="14%" />
+<col width="28%" />
+<col width="28%" />
+<col width="28%" />
+<col width="1%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unit</th>
+<th class="head">Description</th>
+<th class="head">Represents</th>
+<th class="head">Aliases</th>
+<th class="head">SI Prefixes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">A</span></tt></td>
+<td>ampere: base unit of electric current in SI</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">ampere</span></tt>, <tt class="docutils literal"><span class="pre">amp</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">a</span></tt></td>
+<td>annum (a)</td>
+<td><img class="math" src="../_images/math/3160d56890186612dc6a59a5a08f3837200f9f69.png" alt="\mathrm{365.25\,d}"/></td>
+<td><tt class="docutils literal"><span class="pre">annum</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Angstrom</span></tt></td>
+<td>ångström: 10 ** -10 m</td>
+<td><img class="math" src="../_images/math/781213e6ca965f221a3daa3ca31c53c75bca43c1.png" alt="\mathrm{0.1\,nm}"/></td>
+<td><tt class="docutils literal"><span class="pre">AA</span></tt>, <tt class="docutils literal"><span class="pre">angstrom</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">arcmin</span></tt></td>
+<td>arc minute: angular measurement</td>
+<td><img class="math" src="../_images/math/07d8788f54436f32df7721d9d94a778fe011cd76.png" alt="\mathrm{0.016666667\,{}^{\circ}}"/></td>
+<td><tt class="docutils literal"><span class="pre">arcminute</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">arcsec</span></tt></td>
+<td>arc second: angular measurement</td>
+<td><img class="math" src="../_images/math/e045a1c670a4b964afb12c2f291606dc08cbb1ee.png" alt="\mathrm{0.00027777778\,{}^{\circ}}"/></td>
+<td><tt class="docutils literal"><span class="pre">arcsecond</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bar</span></tt></td>
+<td>bar: pressure</td>
+<td><img class="math" src="../_images/math/b768f6f20d5b48b912d9800cde3d706bbde9cad9.png" alt="\mathrm{100000\,Pa}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Bq</span></tt></td>
+<td>becquerel: unit of radioactivity</td>
+<td><img class="math" src="../_images/math/d724e60a80c5b4c258cce5f0bf3c49a1a78d4e1f.png" alt="\mathrm{Hz}"/></td>
+<td><tt class="docutils literal"><span class="pre">becquerel</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">C</span></tt></td>
+<td>coulomb: electric charge</td>
+<td><img class="math" src="../_images/math/c116691c727103f5409d17524fbd6aeb30f93a71.png" alt="\mathrm{A\,s}"/></td>
+<td><tt class="docutils literal"><span class="pre">coulomb</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">cd</span></tt></td>
+<td>candela: base unit of luminous intensity in SI</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">candela</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Ci</span></tt></td>
+<td>curie: unit of radioactivity</td>
+<td><img class="math" src="../_images/math/ce965fdf9ef6f61b95a475e22f076783c6ce7c20.png" alt="\mathrm{2.7027027 \times 10^{-11}\,Bq}"/></td>
+<td><tt class="docutils literal"><span class="pre">curie</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">d</span></tt></td>
+<td>day (d)</td>
+<td><img class="math" src="../_images/math/0fc2f61216ab1b39e37910d37a545ee2d67cdd59.png" alt="\mathrm{24\,h}"/></td>
+<td><tt class="docutils literal"><span class="pre">day</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">deg</span></tt></td>
+<td>degree: angular measurement 1/360 of full rotation</td>
+<td><img class="math" src="../_images/math/1a3dd318cc00d0db977c0f20ccb8020bbfb76b73.png" alt="\mathrm{0.017453293\,rad}"/></td>
+<td><tt class="docutils literal"><span class="pre">degree</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">deg_C</span></tt></td>
+<td>Degrees Celsius</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">Celsius</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">eV</span></tt></td>
+<td>Electron Volt</td>
+<td><img class="math" src="../_images/math/9f01a8baa1a1eef105ad4eeda9a8e98b51abcd93.png" alt="\mathrm{1.6021766 \times 10^{-19}\,J}"/></td>
+<td><tt class="docutils literal"><span class="pre">electronvolt</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">F</span></tt></td>
+<td>Farad: electrical capacitance</td>
+<td><img class="math" src="../_images/math/7adcaec0f4d1ac39d7214cfb3708fd6dc4b7cb03.png" alt="\mathrm{\frac{C}{V}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Farad</span></tt>, <tt class="docutils literal"><span class="pre">farad</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">fortnight</span></tt></td>
+<td>fortnight</td>
+<td><img class="math" src="../_images/math/94122db3207f29f4beaed31caf277251860387f6.png" alt="\mathrm{2\,wk}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">g</span></tt></td>
+<td>gram (g)</td>
+<td><img class="math" src="../_images/math/33bea16d5d7f4de0f4309a33415caad6b101368a.png" alt="\mathrm{0.001\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">gram</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">H</span></tt></td>
+<td>Henry: inductance</td>
+<td><img class="math" src="../_images/math/c3846a80bca3cf91778d4c6eff078f0f4ed2912c.png" alt="\mathrm{\frac{Wb}{A}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Henry</span></tt>, <tt class="docutils literal"><span class="pre">henry</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">h</span></tt></td>
+<td>hour (h)</td>
+<td><img class="math" src="../_images/math/0e1a9036726c86f6a880f945619a61381368d94b.png" alt="\mathrm{3600\,s}"/></td>
+<td><tt class="docutils literal"><span class="pre">hour</span></tt>, <tt class="docutils literal"><span class="pre">hr</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">hourangle</span></tt></td>
+<td>hour angle: angular measurement with 24 in a full circle</td>
+<td><img class="math" src="../_images/math/db5d0a792262e982424d15a383ad04f85eb79b83.png" alt="\mathrm{15\,{}^{\circ}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Hz</span></tt></td>
+<td>Frequency</td>
+<td><img class="math" src="../_images/math/ef01d552aefe57663fee201a2c6de7490284b71b.png" alt="\mathrm{\frac{1}{s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Hertz</span></tt>, <tt class="docutils literal"><span class="pre">hertz</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">J</span></tt></td>
+<td>Joule: energy</td>
+<td><img class="math" src="../_images/math/5b201955e823e2582cdcfdf44f989b413b671996.png" alt="\mathrm{N\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">Joule</span></tt>, <tt class="docutils literal"><span class="pre">joule</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">K</span></tt></td>
+<td>Kelvin: temperature with a null point at absolute zero.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">Kelvin</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">kg</span></tt></td>
+<td>kilogram: base unit of mass in SI.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">kilogram</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">l</span></tt></td>
+<td>liter: metric unit of volume</td>
+<td><img class="math" src="../_images/math/cf832b509c75a1536103a99f521243f6d971f2c2.png" alt="\mathrm{1000\,cm^{3}}"/></td>
+<td><tt class="docutils literal"><span class="pre">L</span></tt>, <tt class="docutils literal"><span class="pre">liter</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lm</span></tt></td>
+<td>lumen: luminous flux</td>
+<td><img class="math" src="../_images/math/ab872bef739ea88adf55402168734e7862044847.png" alt="\mathrm{cd\,sr}"/></td>
+<td><tt class="docutils literal"><span class="pre">lumen</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lx</span></tt></td>
+<td>lux: luminous emittence</td>
+<td><img class="math" src="../_images/math/993bd630e6808d69293a4d2b6459f730a4e2ea5b.png" alt="\mathrm{\frac{lm}{m^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">lux</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">m</span></tt></td>
+<td>meter: base unit of length in SI</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">meter</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mas</span></tt></td>
+<td>arc second: angular measurement</td>
+<td><img class="math" src="../_images/math/72d15ecd5aa2fd2d6fd4cac0e9b1aefb719b1be6.png" alt="\mathrm{0.001\,{}^{\prime\prime}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">micron</span></tt></td>
+<td>micron: alias for micrometer (um)</td>
+<td><img class="math" src="../_images/math/9e0ed82bcd4014a31af875f66c3a66a3b98a693a.png" alt="\mathrm{\mu m}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">min</span></tt></td>
+<td>minute (min)</td>
+<td><img class="math" src="../_images/math/f3fe5f188d16b74daabf862ef06545511ec44562.png" alt="\mathrm{60\,s}"/></td>
+<td><tt class="docutils literal"><span class="pre">minute</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mol</span></tt></td>
+<td>mole: amount of a chemical substance in SI.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">mole</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">N</span></tt></td>
+<td>Newton: force</td>
+<td><img class="math" src="../_images/math/27365c419f496836d9a93cb138b1941ec96fb5d3.png" alt="\mathrm{\frac{kg\,m}{s^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Newton</span></tt>, <tt class="docutils literal"><span class="pre">newton</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Ohm</span></tt></td>
+<td>Ohm: electrical resistance</td>
+<td><img class="math" src="../_images/math/1ab8ed0b36c7a4d916ae6868637a232c091bd75a.png" alt="\mathrm{\frac{V}{A}}"/></td>
+<td><tt class="docutils literal"><span class="pre">ohm</span></tt>, <tt class="docutils literal"><span class="pre">Ohm</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Pa</span></tt></td>
+<td>Pascal: pressure</td>
+<td><img class="math" src="../_images/math/7c918b639b3815c32d1f1de9a48ce593609e6275.png" alt="\mathrm{\frac{J}{m^{3}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Pascal</span></tt>, <tt class="docutils literal"><span class="pre">pascal</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">%</span></tt></td>
+<td>percent: one hundredth of unity, factor 0.01</td>
+<td><img class="math" src="../_images/math/3794006b3e00f60b8985af6feb042e6f50c79dd6.png" alt="\mathrm{0.01\,}"/></td>
+<td><tt class="docutils literal"><span class="pre">pct</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">rad</span></tt></td>
+<td>radian: angular measurement of the ratio between the length on an arc and its radius</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">radian</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">S</span></tt></td>
+<td>Siemens: electrical conductance</td>
+<td><img class="math" src="../_images/math/5f83b6270622bb683370ff440d5ba967d298d431.png" alt="\mathrm{\frac{A}{V}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Siemens</span></tt>, <tt class="docutils literal"><span class="pre">siemens</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">s</span></tt></td>
+<td>second: base unit of time in SI.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">second</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">sday</span></tt></td>
+<td>Sidereal day (sday) is the time of one rotation of the Earth.</td>
+<td><img class="math" src="../_images/math/e0b63c720b13f311685b5f6b4d35a366540f4b9e.png" alt="\mathrm{86164.091\,s}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sr</span></tt></td>
+<td>steradian: unit of solid angle in SI</td>
+<td><img class="math" src="../_images/math/ce8c7d9c8b04d5bdb391f355b57cf82bdac60018.png" alt="\mathrm{rad^{2}}"/></td>
+<td><tt class="docutils literal"><span class="pre">steradian</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">t</span></tt></td>
+<td>Metric tonne</td>
+<td><img class="math" src="../_images/math/80cb11c2b0072332d3534cabe5973a0f764ddafc.png" alt="\mathrm{1000\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">tonne</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">T</span></tt></td>
+<td>Tesla: magnetic flux density</td>
+<td><img class="math" src="../_images/math/290246c9c2837b04d84b91c370b4f5a4e3a6d8b2.png" alt="\mathrm{\frac{Wb}{m^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Tesla</span></tt>, <tt class="docutils literal"><span class="pre">tesla</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">uas</span></tt></td>
+<td>arc second: angular measurement</td>
+<td><img class="math" src="../_images/math/61ccdb2db27a957932cc04c4352b4e198e221bf5.png" alt="\mathrm{1 \times 10^{-6}\,{}^{\prime\prime}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">V</span></tt></td>
+<td>Volt: electric potential or electromotive force</td>
+<td><img class="math" src="../_images/math/7f7cac1d549bb043b0a90076348c68e719dc6a54.png" alt="\mathrm{\frac{J}{C}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Volt</span></tt>, <tt class="docutils literal"><span class="pre">volt</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">W</span></tt></td>
+<td>Watt: power</td>
+<td><img class="math" src="../_images/math/e3d5b697c1d72469bcb1d98684b372b6ca619547.png" alt="\mathrm{\frac{J}{s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Watt</span></tt>, <tt class="docutils literal"><span class="pre">watt</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Wb</span></tt></td>
+<td>Weber: magnetic flux</td>
+<td><img class="math" src="../_images/math/d19c5f60477218bfaef609c852c5979e49295a13.png" alt="\mathrm{V\,s}"/></td>
+<td><tt class="docutils literal"><span class="pre">Weber</span></tt>, <tt class="docutils literal"><span class="pre">weber</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">wk</span></tt></td>
+<td>week (wk)</td>
+<td><img class="math" src="../_images/math/c5c4b795baa1196e6512c9cbdccdcc174705c65d.png" alt="\mathrm{7\,d}"/></td>
+<td><tt class="docutils literal"><span class="pre">week</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">yr</span></tt></td>
+<td>year (yr)</td>
+<td><img class="math" src="../_images/math/3160d56890186612dc6a59a5a08f3837200f9f69.png" alt="\mathrm{365.25\,d}"/></td>
+<td><tt class="docutils literal"><span class="pre">year</span></tt></td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-astropy.units.cgs">
+<span id="astropy-units-cgs-module"></span><h3>astropy.units.cgs Module<a class="headerlink" href="#module-astropy.units.cgs" title="Permalink to this headline">¶</a></h3>
+<p>This package defines the CGS units.  They are also available in the
+top-level <a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> namespace.</p>
+<table border="1" class="docutils">
+<caption>Available Units</caption>
+<colgroup>
+<col width="14%" />
+<col width="28%" />
+<col width="28%" />
+<col width="28%" />
+<col width="1%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unit</th>
+<th class="head">Description</th>
+<th class="head">Represents</th>
+<th class="head">Aliases</th>
+<th class="head">SI Prefixes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">abC</span></tt></td>
+<td>abcoulomb: CGS (EMU) of charge</td>
+<td><img class="math" src="../_images/math/72bc4e47839cab7cb02e5c1f4d570bc72eaae11e.png" alt="\mathrm{Bi\,s}"/></td>
+<td><tt class="docutils literal"><span class="pre">abcoulomb</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Ba</span></tt></td>
+<td>Barye: CGS unit of pressure</td>
+<td><img class="math" src="../_images/math/e310d0d3dfb73c26c621bc5e2a5170c289c9c540.png" alt="\mathrm{\frac{g}{cm\,s^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Barye</span></tt>, <tt class="docutils literal"><span class="pre">barye</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Bi</span></tt></td>
+<td>Biot: CGS (EMU) unit of current</td>
+<td><img class="math" src="../_images/math/a68cc637c9ffd53cfd6ab617f41095657aff9bd1.png" alt="\mathrm{\frac{cm^{1/2}\,g^{1/2}}{s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Biot</span></tt>, <tt class="docutils literal"><span class="pre">abA</span></tt>, <tt class="docutils literal"><span class="pre">abampere</span></tt>, <tt class="docutils literal"><span class="pre">emu</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">C</span></tt></td>
+<td>coulomb: electric charge</td>
+<td><img class="math" src="../_images/math/c116691c727103f5409d17524fbd6aeb30f93a71.png" alt="\mathrm{A\,s}"/></td>
+<td><tt class="docutils literal"><span class="pre">coulomb</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">cd</span></tt></td>
+<td>candela: base unit of luminous intensity in SI</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">candela</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cm</span></tt></td>
+<td>centimeter (cm)</td>
+<td><img class="math" src="../_images/math/d87eb8a529919bb9a0cce2f651be07b56104274d.png" alt="\mathrm{cm}"/></td>
+<td><tt class="docutils literal"><span class="pre">centimeter</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">D</span></tt></td>
+<td>Debye: CGS unit of electric dipole moment</td>
+<td><img class="math" src="../_images/math/d5f580bf25a88fe2b2fe0bc446263d214ec89f43.png" alt="\mathrm{3.3333333 \times 10^{-30}\,C\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">Debye</span></tt>, <tt class="docutils literal"><span class="pre">debye</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">deg_C</span></tt></td>
+<td>Degrees Celsius</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">Celsius</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dyn</span></tt></td>
+<td>dyne: CGS unit of force</td>
+<td><img class="math" src="../_images/math/6018dd0b87cd59f039a61e7b2ec687035fa40deb.png" alt="\mathrm{\frac{cm\,g}{s^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">dyne</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">erg</span></tt></td>
+<td>erg: CGS unit of energy</td>
+<td><img class="math" src="../_images/math/b53052190e091755d17bdf68d7713bad1c22c3a0.png" alt="\mathrm{\frac{cm^{2}\,g}{s^{2}}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Fr</span></tt></td>
+<td>Franklin: CGS (ESU) unit of charge</td>
+<td><img class="math" src="../_images/math/50e999dd3c5c4cd20cf3edd8e4192d200ccf07e6.png" alt="\mathrm{\frac{cm^{3/2}\,g^{1/2}}{s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Franklin</span></tt>, <tt class="docutils literal"><span class="pre">statcoulomb</span></tt>, <tt class="docutils literal"><span class="pre">statC</span></tt>, <tt class="docutils literal"><span class="pre">esu</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">G</span></tt></td>
+<td>Gauss: CGS unit for magnetic field</td>
+<td><img class="math" src="../_images/math/d0118c27a5f6134fd5dd6252c0629b943905d007.png" alt="\mathrm{0.0001\,T}"/></td>
+<td><tt class="docutils literal"><span class="pre">Gauss</span></tt>, <tt class="docutils literal"><span class="pre">gauss</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">g</span></tt></td>
+<td>gram (g)</td>
+<td><img class="math" src="../_images/math/33bea16d5d7f4de0f4309a33415caad6b101368a.png" alt="\mathrm{0.001\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">gram</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Gal</span></tt></td>
+<td>Gal: CGS unit of acceleration</td>
+<td><img class="math" src="../_images/math/a371b8268d0d12fca1bd5436b145558c0ed68f8a.png" alt="\mathrm{\frac{cm}{s^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">gal</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">K</span></tt></td>
+<td>Kelvin: temperature with a null point at absolute zero.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">Kelvin</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">k</span></tt></td>
+<td>kayser: CGS unit of wavenumber</td>
+<td><img class="math" src="../_images/math/a6f1803406806ffdc49f322e4453c020aff21534.png" alt="\mathrm{\frac{1}{cm}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Kayser</span></tt>, <tt class="docutils literal"><span class="pre">kayser</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mol</span></tt></td>
+<td>mole: amount of a chemical substance in SI.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">mole</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">P</span></tt></td>
+<td>poise: CGS unit of dynamic viscosity</td>
+<td><img class="math" src="../_images/math/cda864d7fae7a385fc27a1d6a34aabcba9c1b8d0.png" alt="\mathrm{\frac{g}{cm\,s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">poise</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">rad</span></tt></td>
+<td>radian: angular measurement of the ratio between the length on an arc and its radius</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">radian</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">s</span></tt></td>
+<td>second: base unit of time in SI.</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">second</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sr</span></tt></td>
+<td>steradian: unit of solid angle in SI</td>
+<td><img class="math" src="../_images/math/ce8c7d9c8b04d5bdb391f355b57cf82bdac60018.png" alt="\mathrm{rad^{2}}"/></td>
+<td><tt class="docutils literal"><span class="pre">steradian</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">St</span></tt></td>
+<td>stokes: CGS unit of kinematic viscosity</td>
+<td><img class="math" src="../_images/math/9602015009a167ff91e60dfe1b5c97cd512a0274.png" alt="\mathrm{\frac{cm^{2}}{s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">stokes</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">statA</span></tt></td>
+<td>statampere: CGS (ESU) unit of current</td>
+<td><img class="math" src="../_images/math/03a1942a9914c34fe34bf2fb8e857e5c2c7b63e0.png" alt="\mathrm{\frac{Fr}{s}}"/></td>
+<td><tt class="docutils literal"><span class="pre">statampere</span></tt></td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-astropy.units.astrophys">
+<span id="astropy-units-astrophys-module"></span><h3>astropy.units.astrophys Module<a class="headerlink" href="#module-astropy.units.astrophys" title="Permalink to this headline">¶</a></h3>
+<p>This package defines the astrophysics-specific units.  They are also
+available in the <a class="reference internal" href="#module-astropy.units" title="astropy.units"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units</span></tt></a> namespace.</p>
+<p>The <tt class="docutils literal"><span class="pre">mag</span></tt> unit is provided for compatibility with the FITS unit string
+standard.  However, it is not very useful as-is since it is &#8220;orphaned&#8221;
+and can not be converted to any other unit.  A future astropy
+magnitudes library is planned to address this shortcoming.</p>
+<table border="1" class="docutils">
+<caption>Available Units</caption>
+<colgroup>
+<col width="14%" />
+<col width="28%" />
+<col width="28%" />
+<col width="28%" />
+<col width="1%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unit</th>
+<th class="head">Description</th>
+<th class="head">Represents</th>
+<th class="head">Aliases</th>
+<th class="head">SI Prefixes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">adu</span></tt></td>
+<td>adu</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">AU</span></tt></td>
+<td>astronomical unit: approximately the mean Earth&#8211;Sun distance.</td>
+<td><img class="math" src="../_images/math/65044e1cb2a0a32b78b47a2481255257529da90d.png" alt="\mathrm{1.4959787 \times 10^{11}\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">au</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">barn</span></tt></td>
+<td>barn: unit of area used in HEP</td>
+<td><img class="math" src="../_images/math/ca531bbb22c3641bf7622a59860fee3400498e52.png" alt="\mathrm{1 \times 10^{-28}\,m^{2}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">beam</span></tt></td>
+<td>beam</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">bin</span></tt></td>
+<td>bin</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bit</span></tt></td>
+<td>b (bit)</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">b</span></tt>, <tt class="docutils literal"><span class="pre">bit</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">byte</span></tt></td>
+<td>B (byte)</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">B</span></tt>, <tt class="docutils literal"><span class="pre">byte</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">chan</span></tt></td>
+<td>chan</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ct</span></tt></td>
+<td>count (ct)</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">count</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cycle</span></tt></td>
+<td>cycle: angular measurement, a full turn or rotation</td>
+<td><img class="math" src="../_images/math/f10fc43d2fe7cb766b7de6b975f17af8746b78a9.png" alt="\mathrm{6.2831853\,rad}"/></td>
+<td><tt class="docutils literal"><span class="pre">cy</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dB</span></tt></td>
+<td>Decibel: ten per base 10 logarithmic unit</td>
+<td><img class="math" src="../_images/math/f6ac0bc0797ae5c4db1a5267337a6a805299e74a.png" alt="\mathrm{0.1\,dex}"/></td>
+<td><tt class="docutils literal"><span class="pre">decibel</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">dex</span></tt></td>
+<td>Dex: Base 10 logarithmic unit</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">electron</span></tt></td>
+<td>Number of electrons</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Jy</span></tt></td>
+<td>Jansky: spectral flux density</td>
+<td><img class="math" src="../_images/math/64519f27c283719beec304a213890cb338ddba7f.png" alt="\mathrm{1 \times 10^{-26}\,\frac{W}{Hz\,m^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Jansky</span></tt>, <tt class="docutils literal"><span class="pre">jansky</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lyr</span></tt></td>
+<td>Light year</td>
+<td><img class="math" src="../_images/math/fb811f0d8b587488817974cf2a2a1f8ba6c9396d.png" alt="\mathrm{9.4607305 \times 10^{15}\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">lightyear</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">M_e</span></tt></td>
+<td>Electron mass</td>
+<td><img class="math" src="../_images/math/21712dabb3a2a25aa9252eaa56c3c9a74894c1df.png" alt="\mathrm{9.1093829 \times 10^{-31}\,kg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">M_p</span></tt></td>
+<td>Proton mass</td>
+<td><img class="math" src="../_images/math/82acd6cf11af97dc19930a164fca7ef77b1d7a76.png" alt="\mathrm{1.6726218 \times 10^{-27}\,kg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mag</span></tt></td>
+<td>Astronomical magnitude: -2.5 per base 10 logarithmic unit</td>
+<td><img class="math" src="../_images/math/6ce3dec72a08ad72bd5362d0630b43701422a2eb.png" alt="\mathrm{-0.4\,dex}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">pc</span></tt></td>
+<td>parsec: approximately 3.26 light-years.</td>
+<td><img class="math" src="../_images/math/288afb18521dbf6e45a0d1c83b245b05061e76eb.png" alt="\mathrm{3.0856776 \times 10^{16}\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">parsec</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ph</span></tt></td>
+<td>photon (ph)</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">photon</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">pix</span></tt></td>
+<td>pixel (pix)</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">pixel</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">R</span></tt></td>
+<td>Rayleigh: photon flux</td>
+<td><img class="math" src="../_images/math/ab100c71a194ac931b9dc80de027a995992e74aa.png" alt="\mathrm{7.9577472 \times 10^{8}\,\frac{ph}{s\,sr\,m^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Rayleigh</span></tt>, <tt class="docutils literal"><span class="pre">rayleigh</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Ry</span></tt></td>
+<td>Rydberg: Energy of a photon whose wavenumber is the Rydberg constant</td>
+<td><img class="math" src="../_images/math/5ca588cfbc4096d110295b492c76185baf36d4de.png" alt="\mathrm{13.605692\,eV}"/></td>
+<td><tt class="docutils literal"><span class="pre">rydberg</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">solLum</span></tt></td>
+<td>Solar luminance</td>
+<td><img class="math" src="../_images/math/d7cf9f5c86647ad9fb7e82226b36f9bfa90caf66.png" alt="\mathrm{3.846 \times 10^{26}\,W}"/></td>
+<td><tt class="docutils literal"><span class="pre">L_sun</span></tt>, <tt class="docutils literal"><span class="pre">Lsun</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">solMass</span></tt></td>
+<td>Solar mass</td>
+<td><img class="math" src="../_images/math/ca18bbae9b4921776650d8e464dbafbf83315cf5.png" alt="\mathrm{1.9891 \times 10^{30}\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">M_sun</span></tt>, <tt class="docutils literal"><span class="pre">Msun</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">solRad</span></tt></td>
+<td>Solar radius</td>
+<td><img class="math" src="../_images/math/cfeb1e150c657d2761f6cff4c0790737dba931c0.png" alt="\mathrm{6.95508 \times 10^{8}\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">R_sun</span></tt>, <tt class="docutils literal"><span class="pre">Rsun</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Sun</span></tt></td>
+<td>Sun</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">u</span></tt></td>
+<td>Unified atomic mass unit</td>
+<td><img class="math" src="../_images/math/54fb40bf343c364049b31ff5e83da6f0446f8afb.png" alt="\mathrm{1.6605387 \times 10^{-27}\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">Da</span></tt>, <tt class="docutils literal"><span class="pre">Dalton</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">vox</span></tt></td>
+<td>voxel (vox)</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">voxel</span></tt></td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-astropy.units.imperial">
+<span id="astropy-units-imperial-module"></span><h3>astropy.units.imperial Module<a class="headerlink" href="#module-astropy.units.imperial" title="Permalink to this headline">¶</a></h3>
+<p>This package defines colloquially used Imperial units.  By default, they
+are not enabled.  To enable them, do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">imperial</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">imperial</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>  
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Available Units</caption>
+<colgroup>
+<col width="14%" />
+<col width="28%" />
+<col width="28%" />
+<col width="28%" />
+<col width="1%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unit</th>
+<th class="head">Description</th>
+<th class="head">Represents</th>
+<th class="head">Aliases</th>
+<th class="head">SI Prefixes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ac</span></tt></td>
+<td>International acre</td>
+<td><img class="math" src="../_images/math/d93e7d277cd61f5ee217feaede487c78072bbf25.png" alt="\mathrm{43560\,ft^{2}}"/></td>
+<td><tt class="docutils literal"><span class="pre">acre</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">BTU</span></tt></td>
+<td>British thermal unit</td>
+<td><img class="math" src="../_images/math/d9a8a3c8bc387bb896ae158864b7fbb8deac1916.png" alt="\mathrm{1.0550559\,kJ}"/></td>
+<td><tt class="docutils literal"><span class="pre">btu</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">cal</span></tt></td>
+<td>Thermochemical calorie: pre-SI metric unit of energy</td>
+<td><img class="math" src="../_images/math/51c76ea13abe2e6f793d08b8c802fc6e3be1b216.png" alt="\mathrm{4.184\,J}"/></td>
+<td><tt class="docutils literal"><span class="pre">calorie</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cup</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/90e1cd690e559bd925621ab60b7a05fdff7a03cf.png" alt="\mathrm{0.5\,pint}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">deg_F</span></tt></td>
+<td>Degrees Fahrenheit</td>
+<td>&nbsp;</td>
+<td><tt class="docutils literal"><span class="pre">Fahrenheit</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">foz</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/4badb9ed23cdfd41c2980a7943f6b67572aa8451.png" alt="\mathrm{0.125\,cup}"/></td>
+<td><tt class="docutils literal"><span class="pre">fluid_oz</span></tt>, <tt class="docutils literal"><span class="pre">fluid_ounce</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ft</span></tt></td>
+<td>International foot</td>
+<td><img class="math" src="../_images/math/8895d1c84269fc5c515ae8cccaec156b5745fc3e.png" alt="\mathrm{12\,inch}"/></td>
+<td><tt class="docutils literal"><span class="pre">foot</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">gallon</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/04064f7a09f520b532cdd41582792aaaf553c40a.png" alt="\mathrm{3.7854118\,\mathcal{l}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">hp</span></tt></td>
+<td>Electrical horsepower</td>
+<td><img class="math" src="../_images/math/b6e4ed3b9abff911bf7eced5cbec9e38386f35ae.png" alt="\mathrm{745.69987\,W}"/></td>
+<td><tt class="docutils literal"><span class="pre">horsepower</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">inch</span></tt></td>
+<td>International inch</td>
+<td><img class="math" src="../_images/math/473a5857756578dd8e96b85fdc96ba76ce4e9fe8.png" alt="\mathrm{2.54\,cm}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">kcal</span></tt></td>
+<td>Calorie: colloquial definition of Calorie</td>
+<td><img class="math" src="../_images/math/e3b1eaf4e542b3c84d9ff498136f0838cfb53b69.png" alt="\mathrm{1000\,cal}"/></td>
+<td><tt class="docutils literal"><span class="pre">Cal</span></tt>, <tt class="docutils literal"><span class="pre">Calorie</span></tt>, <tt class="docutils literal"><span class="pre">kilocal</span></tt>, <tt class="docutils literal"><span class="pre">kilocalorie</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">kn</span></tt></td>
+<td>nautical unit of speed: 1 nmi per hour</td>
+<td><img class="math" src="../_images/math/9a736df46ef8e19a74e8391fabc47c3512b3b2be.png" alt="\mathrm{\frac{nmi}{h}}"/></td>
+<td><tt class="docutils literal"><span class="pre">kt</span></tt>, <tt class="docutils literal"><span class="pre">knot</span></tt>, <tt class="docutils literal"><span class="pre">NMPH</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lb</span></tt></td>
+<td>International avoirdupois pound</td>
+<td><img class="math" src="../_images/math/63f7896cb584bf51fe0bf1976ac74f0dc976b4ef.png" alt="\mathrm{16\,oz}"/></td>
+<td><tt class="docutils literal"><span class="pre">pound</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mi</span></tt></td>
+<td>International mile</td>
+<td><img class="math" src="../_images/math/1dc143d069346b90b7c50ea9030d143f8e525bb2.png" alt="\mathrm{5280\,ft}"/></td>
+<td><tt class="docutils literal"><span class="pre">mile</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">nmi</span></tt></td>
+<td>Nautical mile</td>
+<td><img class="math" src="../_images/math/3248aa2ced2fca04e8ccad92364d313377a1d1e2.png" alt="\mathrm{1852\,m}"/></td>
+<td><tt class="docutils literal"><span class="pre">nauticalmile</span></tt>, <tt class="docutils literal"><span class="pre">NM</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">oz</span></tt></td>
+<td>International avoirdupois ounce</td>
+<td><img class="math" src="../_images/math/c3438cc25ff4df3df33d0fb36bdd6f42d6f5741c.png" alt="\mathrm{28.349523\,g}"/></td>
+<td><tt class="docutils literal"><span class="pre">ounce</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">pint</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/097c270b5b262d0c41b54c2081621139157be555.png" alt="\mathrm{0.5\,quart}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">quart</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/4958fe0f3883c17e78e6dab855db06c0e24d8d2c.png" alt="\mathrm{0.25\,gallon}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">tbsp</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/8334a1564d3a0f2872e2dc5ae806f90a92337cd3.png" alt="\mathrm{0.5\,foz}"/></td>
+<td><tt class="docutils literal"><span class="pre">tablespoon</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ton</span></tt></td>
+<td>International avoirdupois ton</td>
+<td><img class="math" src="../_images/math/ce606b88747e87e34958eb250c5d3ce649e5db92.png" alt="\mathrm{2000\,lb}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">tsp</span></tt></td>
+<td>U.S.</td>
+<td><img class="math" src="../_images/math/8d3de5c59aaebc76d37d43f769cddd4d8a12a4b9.png" alt="\mathrm{0.33333333\,tbsp}"/></td>
+<td><tt class="docutils literal"><span class="pre">teaspoon</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">yd</span></tt></td>
+<td>International yard</td>
+<td><img class="math" src="../_images/math/0174f7001edf7e82543ee46227ee31bf6b255101.png" alt="\mathrm{3\,ft}"/></td>
+<td><tt class="docutils literal"><span class="pre">yard</span></tt></td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="id6">
+<h4>Functions<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.imperial.enable.html#astropy.units.imperial.enable" title="astropy.units.imperial.enable"><tt class="xref py py-obj docutils literal"><span class="pre">enable</span></tt></a>()</td>
+<td>Enable Imperial units so they appear in results of <a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase.find_equivalent_units" title="astropy.units.UnitBase.find_equivalent_units"><tt class="xref py py-obj docutils literal"><span class="pre">find_equivalent_units</span></tt></a> and <a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase.compose" title="astropy.units.UnitBase.compose"><tt class="xref py py-obj docutils literal"><span class="pre">compose</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="module-astropy.units.cds">
+<span id="astropy-units-cds-module"></span><h3>astropy.units.cds Module<a class="headerlink" href="#module-astropy.units.cds" title="Permalink to this headline">¶</a></h3>
+<p>This package defines units used in the CDS format.</p>
+<p>Contains the units defined in <a class="reference external" href="http://cds.u-strasbg.fr/">Centre de Données astronomiques de
+Strasbourg</a> <a class="reference external" href="http://cds.u-strasbg.fr/doc/catstd-3.2.htx">Standards for Astronomical
+Catalogues 2.0</a> format,
+and the <a class="reference external" href="http://vizier.u-strasbg.fr/cgi-bin/Unit">complete set of supported units</a>.  This format is used by
+VOTable up to version 1.2.</p>
+<p>To include them in <a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase.compose" title="astropy.units.UnitBase.compose"><tt class="xref py py-obj docutils literal"><span class="pre">compose</span></tt></a> and the results
+of <a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase.find_equivalent_units" title="astropy.units.UnitBase.find_equivalent_units"><tt class="xref py py-obj docutils literal"><span class="pre">find_equivalent_units</span></tt></a>, do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.units</span> <span class="kn">import</span> <span class="n">cds</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cds</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>  
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<caption>Available Units</caption>
+<colgroup>
+<col width="14%" />
+<col width="28%" />
+<col width="28%" />
+<col width="28%" />
+<col width="1%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Unit</th>
+<th class="head">Description</th>
+<th class="head">Represents</th>
+<th class="head">Aliases</th>
+<th class="head">SI Prefixes</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">%</span></tt></td>
+<td>percent</td>
+<td><img class="math" src="../_images/math/a04dfc4c99043a0f3170a1bc003871509b4f77bb.png" alt="\mathrm{\%}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">---</span></tt></td>
+<td>dimensionless and unscaled</td>
+<td><img class="math" src="../_images/math/83f6db076e55346253b11be91939a15b0b8e48d3.png" alt="\mathrm{}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">\h</span></tt></td>
+<td>Planck constant</td>
+<td><img class="math" src="../_images/math/7984c41abbd50c749cc45836f833c47293c64410.png" alt="\mathrm{6.6260696 \times 10^{-34}\,J\,s}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">A</span></tt></td>
+<td>Ampere</td>
+<td><img class="math" src="../_images/math/8ada065803b9820fccf12da08171ae49788ca42f.png" alt="\mathrm{A}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">a</span></tt></td>
+<td>year</td>
+<td><img class="math" src="../_images/math/be52b46722577475b3a2d254fd4610ae825eecd6.png" alt="\mathrm{a}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">a0</span></tt></td>
+<td>Bohr radius</td>
+<td><img class="math" src="../_images/math/430888c254a807ed01abc4e979fd1dabaaaea9ee.png" alt="\mathrm{5.2917721 \times 10^{-11}\,m}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">AA</span></tt></td>
+<td>Angstrom</td>
+<td><img class="math" src="../_images/math/5ed75cf32b814d80419cedb4b823923b4f0ab708.png" alt="\mathrm{\overset{\circ}{A}}"/></td>
+<td><tt class="docutils literal"><span class="pre">Å</span></tt>, <tt class="docutils literal"><span class="pre">Angstrom</span></tt>, <tt class="docutils literal"><span class="pre">Angstroem</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">al</span></tt></td>
+<td>Light year</td>
+<td><img class="math" src="../_images/math/3be8838883f586553c690ae26ee4c4bcfbacdd84.png" alt="\mathrm{lyr}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">alpha</span></tt></td>
+<td>Fine structure constant</td>
+<td><img class="math" src="../_images/math/7e93689cb7f5c8381daf8212cc3da8e3a1d0f53b.png" alt="\mathrm{0.0072973526\,}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">arcm</span></tt></td>
+<td>minute of arc</td>
+<td><img class="math" src="../_images/math/c1f3c24dc0b09215993db8af5fbbf6748f40024a.png" alt="\mathrm{{}^{\prime}}"/></td>
+<td><tt class="docutils literal"><span class="pre">arcmin</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">arcs</span></tt></td>
+<td>second of arc</td>
+<td><img class="math" src="../_images/math/decaf9f1f3b2c49cea14558aa514e153dd2c8cd9.png" alt="\mathrm{{}^{\prime\prime}}"/></td>
+<td><tt class="docutils literal"><span class="pre">arcsec</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">atm</span></tt></td>
+<td>atmosphere</td>
+<td><img class="math" src="../_images/math/ac01c50e94afcbeaed2d0389417a1c103df4c967.png" alt="\mathrm{101325\,Pa}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">AU</span></tt></td>
+<td>astronomical unit</td>
+<td><img class="math" src="../_images/math/8cbb0b71462748b5b77e8c54292928bde67f6641.png" alt="\mathrm{AU}"/></td>
+<td><tt class="docutils literal"><span class="pre">au</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bar</span></tt></td>
+<td>bar</td>
+<td><img class="math" src="../_images/math/e5ae8597e4e2714b6c4b482ab742a71b1a462f9b.png" alt="\mathrm{bar}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">barn</span></tt></td>
+<td>barn</td>
+<td><img class="math" src="../_images/math/ea22ead3f3d70b53e8cf005e68bf45651785f4be.png" alt="\mathrm{barn}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">bit</span></tt></td>
+<td>bit</td>
+<td><img class="math" src="../_images/math/15c6b3818a0dc238b1bb6d3277c975e353df3f70.png" alt="\mathrm{bit}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">byte</span></tt></td>
+<td>byte</td>
+<td><img class="math" src="../_images/math/03b85356b0e6f994b58b14a939d6256343f21207.png" alt="\mathrm{byte}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">C</span></tt></td>
+<td>Coulomb</td>
+<td><img class="math" src="../_images/math/ba7932216c5d641eaa9bebd9e4552ebbbc6c8072.png" alt="\mathrm{C}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">c</span></tt></td>
+<td>speed of light</td>
+<td><img class="math" src="../_images/math/40751430f97612a73ee2c8e63b7eebdddf04dff2.png" alt="\mathrm{2.9979246 \times 10^{8}\,\frac{m}{s}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">cal</span></tt></td>
+<td>calorie</td>
+<td><img class="math" src="../_images/math/86d53af95d7e567935010376e9fc0d411fdbb576.png" alt="\mathrm{4.1854\,J}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">cd</span></tt></td>
+<td>candela</td>
+<td><img class="math" src="../_images/math/acaea097731b127c96605559475d9e8282a43d48.png" alt="\mathrm{cd}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Crab</span></tt></td>
+<td>Crab (X-ray) flux</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ct</span></tt></td>
+<td>count</td>
+<td><img class="math" src="../_images/math/43f6b9ede4746b8ea04c5106b6cd4d67486f0ac2.png" alt="\mathrm{ct}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">D</span></tt></td>
+<td>Debye (dipole)</td>
+<td><img class="math" src="../_images/math/7ab4f6c5b72b54a7ef17d498ae16dfc7cf10bcce.png" alt="\mathrm{D}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">d</span></tt></td>
+<td>Julian day</td>
+<td><img class="math" src="../_images/math/3d7b6454e90738d77732f08e3b23e22219522d95.png" alt="\mathrm{d}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">deg</span></tt></td>
+<td>degree</td>
+<td><img class="math" src="../_images/math/e50d29c836f0eea2c8b97e0de8410c2ab86528b4.png" alt="\mathrm{{}^{\circ}}"/></td>
+<td><tt class="docutils literal"><span class="pre">°</span></tt>, <tt class="docutils literal"><span class="pre">degree</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">dyn</span></tt></td>
+<td>dyne</td>
+<td><img class="math" src="../_images/math/b2e5df1fd5801e7cbe80e569bb707ecf76483ec6.png" alt="\mathrm{dyn}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">e</span></tt></td>
+<td>electron charge</td>
+<td><img class="math" src="../_images/math/c689923323055b1509a876a5884d71f301e7e409.png" alt="\mathrm{1.6021766 \times 10^{-19}\,C}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">eps0</span></tt></td>
+<td>electric constant</td>
+<td><img class="math" src="../_images/math/0a04f5f8b868924659ac4e3718474e8d2fa9dfc7.png" alt="\mathrm{8.8541878 \times 10^{-12}\,\frac{F}{m}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">erg</span></tt></td>
+<td>erg</td>
+<td><img class="math" src="../_images/math/379c907fb5ecccfbae6620fa935c98c5c603ca5e.png" alt="\mathrm{erg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">eV</span></tt></td>
+<td>electron volt</td>
+<td><img class="math" src="../_images/math/a3b8b12b9e82f8e339165c28eede0d06d96cfadd.png" alt="\mathrm{eV}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">F</span></tt></td>
+<td>Farad</td>
+<td><img class="math" src="../_images/math/49639a99caaf0f776994f37afec1e986b1ea0a85.png" alt="\mathrm{F}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">G</span></tt></td>
+<td>Gravitation constant</td>
+<td><img class="math" src="../_images/math/5067ae01cb8ee13a32186b63ecc7e156d072a537.png" alt="\mathrm{6.67384 \times 10^{-11}\,\frac{m^{3}}{kg\,s^{2}}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">g</span></tt></td>
+<td>gram</td>
+<td><img class="math" src="../_images/math/a9cbeedaf0b8fc77cba84b248f61c5819aa23bc7.png" alt="\mathrm{g}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">gauss</span></tt></td>
+<td>Gauss</td>
+<td><img class="math" src="../_images/math/330a96ca8f7e10573a23ab852983f8e8629456cf.png" alt="\mathrm{G}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">geoMass</span></tt></td>
+<td>Earth mass</td>
+<td><img class="math" src="../_images/math/7256226a216b7ad6f407a1cc708ad813bad9cad0.png" alt="\mathrm{5.9742 \times 10^{24}\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">Mgeo</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">H</span></tt></td>
+<td>Henry</td>
+<td><img class="math" src="../_images/math/56c59b6812c864369dae8739a366478f7970af2d.png" alt="\mathrm{H}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">h</span></tt></td>
+<td>hour</td>
+<td><img class="math" src="../_images/math/26e7c3a4c8f99ad5740834f6fc09b3361a8a93a5.png" alt="\mathrm{h}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">hr</span></tt></td>
+<td>hour</td>
+<td><img class="math" src="../_images/math/26e7c3a4c8f99ad5740834f6fc09b3361a8a93a5.png" alt="\mathrm{h}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Hz</span></tt></td>
+<td>Hertz</td>
+<td><img class="math" src="../_images/math/d724e60a80c5b4c258cce5f0bf3c49a1a78d4e1f.png" alt="\mathrm{Hz}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">inch</span></tt></td>
+<td>inch</td>
+<td><img class="math" src="../_images/math/715523ef64f267fd1ecc1d4ee7b7d993dd19b91e.png" alt="\mathrm{0.0254\,m}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">J</span></tt></td>
+<td>Joule</td>
+<td><img class="math" src="../_images/math/7f18f9b6c0c0a1d06733ace569546177973d9959.png" alt="\mathrm{J}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">JD</span></tt></td>
+<td>Julian day</td>
+<td><img class="math" src="../_images/math/3d7b6454e90738d77732f08e3b23e22219522d95.png" alt="\mathrm{d}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">jovMass</span></tt></td>
+<td>Jupiter mass</td>
+<td><img class="math" src="../_images/math/b402ba44dd503517944f877fa03cbc97c5f3c695.png" alt="\mathrm{1.8987 \times 10^{27}\,kg}"/></td>
+<td><tt class="docutils literal"><span class="pre">Mjup</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Jy</span></tt></td>
+<td>Jansky</td>
+<td><img class="math" src="../_images/math/88eff75147a341e92d2857f1c2fa87734857f17a.png" alt="\mathrm{Jy}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">k</span></tt></td>
+<td>Boltzmann</td>
+<td><img class="math" src="../_images/math/e5d22f34393824b648a82969924e2be4b338aed2.png" alt="\mathrm{1.3806488 \times 10^{-23}\,\frac{J}{K}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">K</span></tt></td>
+<td>Kelvin</td>
+<td><img class="math" src="../_images/math/9f88e30a53d2a4e5b17ca45bc836c308f77d0a8d.png" alt="\mathrm{K}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">l</span></tt></td>
+<td>litre</td>
+<td><img class="math" src="../_images/math/8d0690c0ad76435d42275ab3fff9edd94c6df4d7.png" alt="\mathrm{\mathcal{l}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lm</span></tt></td>
+<td>lumen</td>
+<td><img class="math" src="../_images/math/ba2c2644923d64258e771d5c30be92a5dafada62.png" alt="\mathrm{lm}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Lsun</span></tt></td>
+<td>solar luminosity</td>
+<td><img class="math" src="../_images/math/7105138fdbf0c47e146ec3f4267bf6899c491dc2.png" alt="\mathrm{L_{\odot}}"/></td>
+<td><tt class="docutils literal"><span class="pre">solLum</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">lx</span></tt></td>
+<td>lux</td>
+<td><img class="math" src="../_images/math/b5b5f9758d047c8ae75a5e617822a97b52c407d1.png" alt="\mathrm{lx}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">lyr</span></tt></td>
+<td>Light year</td>
+<td><img class="math" src="../_images/math/3be8838883f586553c690ae26ee4c4bcfbacdd84.png" alt="\mathrm{lyr}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">m</span></tt></td>
+<td>meter</td>
+<td><img class="math" src="../_images/math/358afe432f649713a63f187f2f25fab626df362a.png" alt="\mathrm{m}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mag</span></tt></td>
+<td>magnitude</td>
+<td><img class="math" src="../_images/math/14b39f8439c8eed83425218b8e76a605750b4327.png" alt="\mathrm{mag}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mas</span></tt></td>
+<td>millisecond of arc</td>
+<td><img class="math" src="../_images/math/8a0a3bcf8d532062c2d94ad8bf30207bfebdad0a.png" alt="\mathrm{marcsec}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">me</span></tt></td>
+<td>electron mass</td>
+<td><img class="math" src="../_images/math/21712dabb3a2a25aa9252eaa56c3c9a74894c1df.png" alt="\mathrm{9.1093829 \times 10^{-31}\,kg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">min</span></tt></td>
+<td>minute</td>
+<td><img class="math" src="../_images/math/be56f19e6e6d183b4ee4e77e3e4e6e1a71355dc9.png" alt="\mathrm{min}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">MJD</span></tt></td>
+<td>Julian day</td>
+<td><img class="math" src="../_images/math/3d7b6454e90738d77732f08e3b23e22219522d95.png" alt="\mathrm{d}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mmHg</span></tt></td>
+<td>millimeter of mercury</td>
+<td><img class="math" src="../_images/math/835dd17c4a657a8ac789650bb2687ade54eca647.png" alt="\mathrm{133.32239\,Pa}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">mol</span></tt></td>
+<td>mole</td>
+<td><img class="math" src="../_images/math/1c67f9cc75526e0b643cef826bffca343628610e.png" alt="\mathrm{mol}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mp</span></tt></td>
+<td>proton mass</td>
+<td><img class="math" src="../_images/math/82acd6cf11af97dc19930a164fca7ef77b1d7a76.png" alt="\mathrm{1.6726218 \times 10^{-27}\,kg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Msun</span></tt></td>
+<td>solar mass</td>
+<td><img class="math" src="../_images/math/3a289375c81f0e8c6d39608b341cd5ec8b090ce0.png" alt="\mathrm{M_{\odot}}"/></td>
+<td><tt class="docutils literal"><span class="pre">solMass</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">mu0</span></tt></td>
+<td>magnetic constant</td>
+<td><img class="math" src="../_images/math/b5d75d27dcd41dc35ded53ca6d02ddfcede7269a.png" alt="\mathrm{1.2566371 \times 10^{-6}\,\frac{N}{A^{2}}}"/></td>
+<td><tt class="docutils literal"><span class="pre">µ0</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">muB</span></tt></td>
+<td>Bohr magneton</td>
+<td><img class="math" src="../_images/math/2252446081cc2a8a50de6b4df565c27f1d4ac296.png" alt="\mathrm{9.2740097 \times 10^{-24}\,\frac{J}{T}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">N</span></tt></td>
+<td>Newton</td>
+<td><img class="math" src="../_images/math/20e827a0be3a55a3c2bf0470fbf0198bfdcfe442.png" alt="\mathrm{N}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Ohm</span></tt></td>
+<td>Ohm</td>
+<td><img class="math" src="../_images/math/091263285f217254cc6af7ff5232f23b41ffe45a.png" alt="\mathrm{\Omega}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Pa</span></tt></td>
+<td>Pascal</td>
+<td><img class="math" src="../_images/math/fb2647cc42b6da24a2b81945f0f855aa8e2baa8c.png" alt="\mathrm{Pa}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">pc</span></tt></td>
+<td>parsec</td>
+<td><img class="math" src="../_images/math/07230570065bfe94514679c40f8e8bbb8f6af344.png" alt="\mathrm{pc}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ph</span></tt></td>
+<td>photon</td>
+<td><img class="math" src="../_images/math/3048d8040f5e1ef1305f23e0fcb0684fd2904c91.png" alt="\mathrm{ph}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">pi</span></tt></td>
+<td>π</td>
+<td><img class="math" src="../_images/math/c4af8acf215f5cc87e651702aac0dd3b18620007.png" alt="\mathrm{3.1415927\,}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">pix</span></tt></td>
+<td>pixel</td>
+<td><img class="math" src="../_images/math/117d6502f1a46e4106bea6b6b101520d6837fa86.png" alt="\mathrm{pix}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ppm</span></tt></td>
+<td>parts per million</td>
+<td><img class="math" src="../_images/math/516a2d0612bc9617cc413d8fcf3d4582a7f63881.png" alt="\mathrm{1 \times 10^{-6}\,}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">R</span></tt></td>
+<td>gas constant</td>
+<td><img class="math" src="../_images/math/e5337089283f3c639cb2f2dfe9bcbf6dad981701.png" alt="\mathrm{8.3144621\,\frac{J}{K\,mol}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">rad</span></tt></td>
+<td>radian</td>
+<td><img class="math" src="../_images/math/4668297f4c92f9ff0db5bd9edd5eefb029f072be.png" alt="\mathrm{rad}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Rgeo</span></tt></td>
+<td>Earth equatorial radius</td>
+<td><img class="math" src="../_images/math/16c725c2b34bea68eeb0a9fe7392a8291062e752.png" alt="\mathrm{6378136\,m}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Rjup</span></tt></td>
+<td>Jupiter equatorial radius</td>
+<td><img class="math" src="../_images/math/6cb4814143e93054d2403255e678b41e87f87c1c.png" alt="\mathrm{71492000\,m}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">Rsun</span></tt></td>
+<td>solar radius</td>
+<td><img class="math" src="../_images/math/f336df089f036824886724b8741ded58dfa15d54.png" alt="\mathrm{R_{\odot}}"/></td>
+<td><tt class="docutils literal"><span class="pre">solRad</span></tt></td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Ry</span></tt></td>
+<td>Rydberg</td>
+<td><img class="math" src="../_images/math/a47e557d99f55c24718eb77a74221bd6170a07e3.png" alt="\mathrm{R_{\infty}}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">s</span></tt></td>
+<td>second</td>
+<td><img class="math" src="../_images/math/4fd3d40a58b85e9987344f6411f0011211f7dabb.png" alt="\mathrm{s}"/></td>
+<td><tt class="docutils literal"><span class="pre">sec</span></tt></td>
+<td>Y</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">S</span></tt></td>
+<td>Siemens</td>
+<td><img class="math" src="../_images/math/fc9ee772e7463c22a44fef4d8997d9eecc417747.png" alt="\mathrm{S}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">sr</span></tt></td>
+<td>steradian</td>
+<td><img class="math" src="../_images/math/6724031af682f4ebdfcd8d536315f5b5e49a8229.png" alt="\mathrm{sr}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Sun</span></tt></td>
+<td>solar unit</td>
+<td><img class="math" src="../_images/math/57807257a5fcecdab0948d5e7880f119aa0034e3.png" alt="\mathrm{Sun}"/></td>
+<td>&nbsp;</td>
+<td>Y</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">T</span></tt></td>
+<td>Tesla</td>
+<td><img class="math" src="../_images/math/9c6b80fdfc4cd03af6a93fcd4908afa89c0de4a2.png" alt="\mathrm{T}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">t</span></tt></td>
+<td>metric tonne</td>
+<td><img class="math" src="../_images/math/80cb11c2b0072332d3534cabe5973a0f764ddafc.png" alt="\mathrm{1000\,kg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">u</span></tt></td>
+<td>atomic mass</td>
+<td><img class="math" src="../_images/math/5a161131ebc6963f7c1ad5ec414480d477730cd9.png" alt="\mathrm{1.6605389 \times 10^{-27}\,kg}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">V</span></tt></td>
+<td>Volt</td>
+<td><img class="math" src="../_images/math/a1560ada97a1d1f5a08a2242c9c89b03f7d4b900.png" alt="\mathrm{V}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">W</span></tt></td>
+<td>Watt</td>
+<td><img class="math" src="../_images/math/cac4d00d6682f66df9ec47ddd43bc4a723660857.png" alt="\mathrm{W}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">Wb</span></tt></td>
+<td>Weber</td>
+<td><img class="math" src="../_images/math/50a5b105af4d201837186b2590025dbb7dc5fa4c.png" alt="\mathrm{Wb}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">yr</span></tt></td>
+<td>year</td>
+<td><img class="math" src="../_images/math/be52b46722577475b3a2d254fd4610ae825eecd6.png" alt="\mathrm{a}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">µas</span></tt></td>
+<td>microsecond of arc</td>
+<td><img class="math" src="../_images/math/ff8fdd0473502c6115b868881cd74dfea057be01.png" alt="\mathrm{\mu arcsec}"/></td>
+<td>&nbsp;</td>
+<td>N</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="id10">
+<h4>Functions<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.cds.enable.html#astropy.units.cds.enable" title="astropy.units.cds.enable"><tt class="xref py py-obj docutils literal"><span class="pre">enable</span></tt></a>()</td>
+<td>Enable CDS units so they appear in results of <a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase.find_equivalent_units" title="astropy.units.UnitBase.find_equivalent_units"><tt class="xref py py-obj docutils literal"><span class="pre">find_equivalent_units</span></tt></a> and <a class="reference internal" href="../api/astropy.units.UnitBase.html#astropy.units.UnitBase.compose" title="astropy.units.UnitBase.compose"><tt class="xref py py-obj docutils literal"><span class="pre">compose</span></tt></a>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="module-astropy.units.equivalencies">
+<span id="astropy-units-equivalencies-module"></span><h3>astropy.units.equivalencies Module<a class="headerlink" href="#module-astropy.units.equivalencies" title="Permalink to this headline">¶</a></h3>
+<p>A set of standard astronomical equivalencies.</p>
+<div class="section" id="id11">
+<h4>Functions<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.equivalencies.parallax.html#astropy.units.equivalencies.parallax" title="astropy.units.equivalencies.parallax"><tt class="xref py py-obj docutils literal"><span class="pre">parallax</span></tt></a>()</td>
+<td>Returns a list of equivalence pairs that handle the conversion between parallax angle and distance.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.equivalencies.spectral.html#astropy.units.equivalencies.spectral" title="astropy.units.equivalencies.spectral"><tt class="xref py py-obj docutils literal"><span class="pre">spectral</span></tt></a>()</td>
+<td>Returns a list of equivalence pairs that handle spectral wavelength, wave number, frequency, and energy equivalences.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.equivalencies.spectral_density.html#astropy.units.equivalencies.spectral_density" title="astropy.units.equivalencies.spectral_density"><tt class="xref py py-obj docutils literal"><span class="pre">spectral_density</span></tt></a>(wav[,&nbsp;factor])</td>
+<td>Returns a list of equivalence pairs that handle spectral density with regard to wavelength and frequency.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.equivalencies.doppler_radio.html#astropy.units.equivalencies.doppler_radio" title="astropy.units.equivalencies.doppler_radio"><tt class="xref py py-obj docutils literal"><span class="pre">doppler_radio</span></tt></a>(rest)</td>
+<td>Return the equivalency pairs for the radio convention for velocity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.equivalencies.doppler_optical.html#astropy.units.equivalencies.doppler_optical" title="astropy.units.equivalencies.doppler_optical"><tt class="xref py py-obj docutils literal"><span class="pre">doppler_optical</span></tt></a>(rest)</td>
+<td>Return the equivalency pairs for the optical convention for velocity.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.equivalencies.doppler_relativistic.html#astropy.units.equivalencies.doppler_relativistic" title="astropy.units.equivalencies.doppler_relativistic"><tt class="xref py py-obj docutils literal"><span class="pre">doppler_relativistic</span></tt></a>(rest)</td>
+<td>Return the equivalency pairs for the relativistic convention for velocity.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.equivalencies.mass_energy.html#astropy.units.equivalencies.mass_energy" title="astropy.units.equivalencies.mass_energy"><tt class="xref py py-obj docutils literal"><span class="pre">mass_energy</span></tt></a>()</td>
+<td>Returns a list of equivalence pairs that handle the conversion between mass and energy.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.equivalencies.brightness_temperature.html#astropy.units.equivalencies.brightness_temperature" title="astropy.units.equivalencies.brightness_temperature"><tt class="xref py py-obj docutils literal"><span class="pre">brightness_temperature</span></tt></a>(beam_area,&nbsp;disp)</td>
+<td>Defines the conversion between Jy/beam and &#8220;brightness temperature&#8221;, <img class="math" src="../_images/math/0a59534ac29d4e66358a259c3a9c52995453363d.png" alt="T_B"/>, in Kelvins.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.equivalencies.dimensionless_angles.html#astropy.units.equivalencies.dimensionless_angles" title="astropy.units.equivalencies.dimensionless_angles"><tt class="xref py py-obj docutils literal"><span class="pre">dimensionless_angles</span></tt></a>()</td>
+<td>Allow angles to be equivalent to dimensionless (with 1 rad = 1 m/m = 1).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.equivalencies.logarithmic.html#astropy.units.equivalencies.logarithmic" title="astropy.units.equivalencies.logarithmic"><tt class="xref py py-obj docutils literal"><span class="pre">logarithmic</span></tt></a>()</td>
+<td>Allow logarithmic units to be converted to dimensionless fractions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.units.equivalencies.temperature.html#astropy.units.equivalencies.temperature" title="astropy.units.equivalencies.temperature"><tt class="xref py py-obj docutils literal"><span class="pre">temperature</span></tt></a>()</td>
+<td>Convert between Kelvin, Celsius, and Fahrenheit here because Unit and CompositeUnit cannot do addition or subtraction properly.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.units.equivalencies.temperature_energy.html#astropy.units.equivalencies.temperature_energy" title="astropy.units.equivalencies.temperature_energy"><tt class="xref py py-obj docutils literal"><span class="pre">temperature_energy</span></tt></a>()</td>
+<td>Convert between Kelvin and keV(eV) to an equivalent amount.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="section" id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
+<p>This code is adapted from the <a class="reference external" href="https://github.com/pynbody/pynbody">pynbody</a> units module written by Andrew
+Pontzen, who has granted the Astropy project permission to use the code
+under a BSD license.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Units and Quantities (<tt class="docutils literal"><span class="pre">astropy.units</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#using-astropy-units">Using <tt class="docutils literal"><span class="pre">astropy.units</span></tt></a></li>
+<li><a class="reference internal" href="#see-also">See Also</a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astropy.units.quantity">astropy.units.quantity Module</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy.units">astropy.units Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+<li><a class="reference internal" href="#id1">Classes</a></li>
+<li><a class="reference internal" href="#id2">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy.units.format">astropy.units.format Module</a><ul>
+<li><a class="reference internal" href="#id3">Functions</a></li>
+<li><a class="reference internal" href="#id4">Classes</a></li>
+<li><a class="reference internal" href="#id5">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy.units.si">astropy.units.si Module</a></li>
+<li><a class="reference internal" href="#module-astropy.units.cgs">astropy.units.cgs Module</a></li>
+<li><a class="reference internal" href="#module-astropy.units.astrophys">astropy.units.astrophys Module</a></li>
+<li><a class="reference internal" href="#module-astropy.units.imperial">astropy.units.imperial Module</a><ul>
+<li><a class="reference internal" href="#id6">Functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy.units.cds">astropy.units.cds Module</a><ul>
+<li><a class="reference internal" href="#id10">Functions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-astropy.units.equivalencies">astropy.units.equivalencies Module</a><ul>
+<li><a class="reference internal" href="#id11">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/units/index.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/units/index.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

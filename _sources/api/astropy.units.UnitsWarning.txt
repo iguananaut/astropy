@@ -1,0 +1,8 @@
+
+
+UnitsWarning
+==========================
+
+.. currentmodule:: astropy.units
+
+.. autoexception:: UnitsWarning

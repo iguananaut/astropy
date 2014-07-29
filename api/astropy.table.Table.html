@@ -1,0 +1,1664 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Table &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Data Tables (astropy.table)" href="../table/index.html" />
+    <link rel="next" title="TableColumns" href="astropy.table.TableColumns.html" />
+    <link rel="prev" title="Row" href="astropy.table.Row.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.table.TableColumns.html" title="TableColumns">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.table.Row.html" title="Row">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../table/index.html" accesskey="U">Data Tables (<tt class="docutils literal"><span class="pre">astropy.table</span></tt>)</a> &raquo;</li>
+      
+      <li>Table</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="table">
+<h1>Table<a class="headerlink" href="#table" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.table.Table">
+<em class="property">class </em><tt class="descclassname">astropy.table.</tt><tt class="descname">Table</tt><big>(</big><em>data=None</em>, <em>masked=None</em>, <em>names=None</em>, <em>dtype=None</em>, <em>meta=None</em>, <em>copy=True</em>, <em>rows=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L237" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A class to represent tables of heterogeneous data.</p>
+<p><a class="reference internal" href="#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> provides a class for heterogeneous tabular data, making use of a
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy</span></tt></a> structured array internally to store the data values.  A key
+enhancement provided by the <a class="reference internal" href="#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> class is the ability to easily modify
+the structure of the table by adding or removing columns, or adding new
+rows of data.  In addition table and column metadata are fully supported.</p>
+<p><a class="reference internal" href="#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> differs from <a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> by the assumption that the
+input data consists of columns of homogeneous data, where each column
+has a unique identifier and may contain additional metadata such as the
+data unit, format, and description.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : numpy ndarray, dict, list, or Table, optional</p>
+<blockquote>
+<div><p>Data to initialize table.</p>
+</div></blockquote>
+<p><strong>masked</strong> : bool, optional</p>
+<blockquote>
+<div><p>Specify whether the table is masked.</p>
+</div></blockquote>
+<p><strong>names</strong> : list, optional</p>
+<blockquote>
+<div><p>Specify column names</p>
+</div></blockquote>
+<p><strong>dtype</strong> : list, optional</p>
+<blockquote>
+<div><p>Specify column data types</p>
+</div></blockquote>
+<p><strong>meta</strong> : dict, optional</p>
+<blockquote>
+<div><p>Metadata associated with the table.</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool, optional</p>
+<blockquote>
+<div><p>Copy the input data (default=True).</p>
+</div></blockquote>
+<p><strong>rows</strong> : numpy ndarray, list of lists, optional</p>
+<blockquote class="last">
+<div><p>Row-oriented data for table instead of <tt class="docutils literal"><span class="pre">data</span></tt> argument</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.ColumnClass" title="astropy.table.Table.ColumnClass"><tt class="xref py py-obj docutils literal"><span class="pre">ColumnClass</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.colnames" title="astropy.table.Table.colnames"><tt class="xref py py-obj docutils literal"><span class="pre">colnames</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.dtype" title="astropy.table.Table.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">dtype</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.groups" title="astropy.table.Table.groups"><tt class="xref py py-obj docutils literal"><span class="pre">groups</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.mask" title="astropy.table.Table.mask"><tt class="xref py py-obj docutils literal"><span class="pre">mask</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.masked" title="astropy.table.Table.masked"><tt class="xref py py-obj docutils literal"><span class="pre">masked</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.add_column" title="astropy.table.Table.add_column"><tt class="xref py py-obj docutils literal"><span class="pre">add_column</span></tt></a>(col[,&nbsp;index])</td>
+<td>Add a new Column object <tt class="docutils literal"><span class="pre">col</span></tt> to the table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.add_columns" title="astropy.table.Table.add_columns"><tt class="xref py py-obj docutils literal"><span class="pre">add_columns</span></tt></a>(cols[,&nbsp;indexes])</td>
+<td>Add a list of new Column objects <tt class="docutils literal"><span class="pre">cols</span></tt> to the table.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.add_row" title="astropy.table.Table.add_row"><tt class="xref py py-obj docutils literal"><span class="pre">add_row</span></tt></a>([vals,&nbsp;mask])</td>
+<td>Add a new row to the end of the table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.argsort" title="astropy.table.Table.argsort"><tt class="xref py py-obj docutils literal"><span class="pre">argsort</span></tt></a>([keys,&nbsp;kind])</td>
+<td>Return the indices which would sort the table according to one or more key columns.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.convert_bytestring_to_unicode" title="astropy.table.Table.convert_bytestring_to_unicode"><tt class="xref py py-obj docutils literal"><span class="pre">convert_bytestring_to_unicode</span></tt></a>([python3_only])</td>
+<td>Convert bytestring columns (dtype.kind=&#8217;S&#8217;) to unicode (dtype.kind=&#8217;U&#8217;) assuming ASCII encoding.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.convert_unicode_to_bytestring" title="astropy.table.Table.convert_unicode_to_bytestring"><tt class="xref py py-obj docutils literal"><span class="pre">convert_unicode_to_bytestring</span></tt></a>([python3_only])</td>
+<td>Convert ASCII-only unicode columns (dtype.kind=&#8217;U&#8217;) to bytestring (dtype.kind=&#8217;S&#8217;).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.copy" title="astropy.table.Table.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>([copy_data])</td>
+<td>Return a copy of the table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.create_mask" title="astropy.table.Table.create_mask"><tt class="xref py py-obj docutils literal"><span class="pre">create_mask</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.field" title="astropy.table.Table.field"><tt class="xref py py-obj docutils literal"><span class="pre">field</span></tt></a>(item)</td>
+<td>Return column[item] for recarray compatibility.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.filled" title="astropy.table.Table.filled"><tt class="xref py py-obj docutils literal"><span class="pre">filled</span></tt></a>([fill_value])</td>
+<td>Return a copy of self, with masked values filled.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.group_by" title="astropy.table.Table.group_by"><tt class="xref py py-obj docutils literal"><span class="pre">group_by</span></tt></a>(keys)</td>
+<td>Group this table by the specified <tt class="docutils literal"><span class="pre">keys</span></tt>  This effectively splits the table into groups which correspond to unique values of the <tt class="docutils literal"><span class="pre">keys</span></tt> grouping object.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.index_column" title="astropy.table.Table.index_column"><tt class="xref py py-obj docutils literal"><span class="pre">index_column</span></tt></a>(name)</td>
+<td>Return the positional index of column <tt class="docutils literal"><span class="pre">name</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.keep_columns" title="astropy.table.Table.keep_columns"><tt class="xref py py-obj docutils literal"><span class="pre">keep_columns</span></tt></a>(names)</td>
+<td>Keep only the columns specified (remove the others).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.keys" title="astropy.table.Table.keys"><tt class="xref py py-obj docutils literal"><span class="pre">keys</span></tt></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.more" title="astropy.table.Table.more"><tt class="xref py py-obj docutils literal"><span class="pre">more</span></tt></a>([max_lines,&nbsp;max_width,&nbsp;show_name,&nbsp;...])</td>
+<td>Interactively browse table with a paging interface.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.next" title="astropy.table.Table.next"><tt class="xref py py-obj docutils literal"><span class="pre">next</span></tt></a>()</td>
+<td>Python 3 iterator</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.pformat" title="astropy.table.Table.pformat"><tt class="xref py py-obj docutils literal"><span class="pre">pformat</span></tt></a>([max_lines,&nbsp;max_width,&nbsp;show_name,&nbsp;...])</td>
+<td>Return a list of lines for the formatted string representation of the table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.pprint" title="astropy.table.Table.pprint"><tt class="xref py py-obj docutils literal"><span class="pre">pprint</span></tt></a>([max_lines,&nbsp;max_width,&nbsp;show_name,&nbsp;...])</td>
+<td>Print a formatted string representation of the table.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.read" title="astropy.table.Table.read"><tt class="xref py py-obj docutils literal"><span class="pre">read</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td>Read and parse a data table and return as a Table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.remove_column" title="astropy.table.Table.remove_column"><tt class="xref py py-obj docutils literal"><span class="pre">remove_column</span></tt></a>(name)</td>
+<td>Remove a column from the table.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.remove_columns" title="astropy.table.Table.remove_columns"><tt class="xref py py-obj docutils literal"><span class="pre">remove_columns</span></tt></a>(names)</td>
+<td>Remove several columns from the table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.remove_row" title="astropy.table.Table.remove_row"><tt class="xref py py-obj docutils literal"><span class="pre">remove_row</span></tt></a>(index)</td>
+<td>Remove a row from the table.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.remove_rows" title="astropy.table.Table.remove_rows"><tt class="xref py py-obj docutils literal"><span class="pre">remove_rows</span></tt></a>(row_specifier)</td>
+<td>Remove rows from the table.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.rename_column" title="astropy.table.Table.rename_column"><tt class="xref py py-obj docutils literal"><span class="pre">rename_column</span></tt></a>(name,&nbsp;new_name)</td>
+<td>Rename a column.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.reverse" title="astropy.table.Table.reverse"><tt class="xref py py-obj docutils literal"><span class="pre">reverse</span></tt></a>()</td>
+<td>Reverse the row order of table rows.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.show_in_browser" title="astropy.table.Table.show_in_browser"><tt class="xref py py-obj docutils literal"><span class="pre">show_in_browser</span></tt></a>([css,&nbsp;max_lines,&nbsp;jsviewer,&nbsp;...])</td>
+<td>Render the table in HTML and show it in a web browser.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.table.Table.sort" title="astropy.table.Table.sort"><tt class="xref py py-obj docutils literal"><span class="pre">sort</span></tt></a>(keys)</td>
+<td>Sort the table according to one or more keys.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.table.Table.write" title="astropy.table.Table.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td>Write this Table object out in the specified format.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.table.Table.ColumnClass">
+<tt class="descname">ColumnClass</tt><a class="headerlink" href="#astropy.table.Table.ColumnClass" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.Table.colnames">
+<tt class="descname">colnames</tt><a class="headerlink" href="#astropy.table.Table.colnames" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.Table.dtype">
+<tt class="descname">dtype</tt><a class="headerlink" href="#astropy.table.Table.dtype" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.Table.groups">
+<tt class="descname">groups</tt><a class="headerlink" href="#astropy.table.Table.groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.Table.mask">
+<tt class="descname">mask</tt><a class="headerlink" href="#astropy.table.Table.mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.table.Table.masked">
+<tt class="descname">masked</tt><a class="headerlink" href="#astropy.table.Table.masked" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.table.Table.add_column">
+<tt class="descname">add_column</tt><big>(</big><em>col</em>, <em>index=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.add_column"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1072" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.add_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new Column object <tt class="docutils literal"><span class="pre">col</span></tt> to the table.  If <tt class="docutils literal"><span class="pre">index</span></tt>
+is supplied then insert column before <tt class="docutils literal"><span class="pre">index</span></tt> position
+in the list of columns, otherwise append column to the end
+of the list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>col</strong> : Column</p>
+<blockquote>
+<div><p>Column object to add.</p>
+</div></blockquote>
+<p><strong>index</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote class="last">
+<div><p>Insert column before this position or at end (default)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with two columns &#8216;a&#8217; and &#8216;b&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b</span>
+<span class="go">--- ---</span>
+<span class="go">  1 0.1</span>
+<span class="go">  2 0.2</span>
+<span class="go">  3 0.3</span>
+</pre></div>
+</div>
+<p>Create a third column &#8216;c&#8217; and append it to the end of the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">col_c</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">col_c</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Add column &#8216;d&#8217; at position 1. Note that the column is inserted
+before the given index:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">col_d</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">col_d</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   d   b   c</span>
+<span class="go">--- --- --- ---</span>
+<span class="go">  1   a 0.1   x</span>
+<span class="go">  2   b 0.2   y</span>
+<span class="go">  3   c 0.3   z</span>
+</pre></div>
+</div>
+<p>To add several columns use add_columns.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.add_columns">
+<tt class="descname">add_columns</tt><big>(</big><em>cols</em>, <em>indexes=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.add_columns"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1127" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.add_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a list of new Column objects <tt class="docutils literal"><span class="pre">cols</span></tt> to the table.  If a
+corresponding list of <tt class="docutils literal"><span class="pre">indexes</span></tt> is supplied then insert column before
+each <tt class="docutils literal"><span class="pre">index</span></tt> position in the <em>original</em> list of columns, otherwise
+append columns to the end of the list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cols</strong> : list of Columns</p>
+<blockquote>
+<div><p>Column objects to add.</p>
+</div></blockquote>
+<p><strong>indexes</strong> : list of ints or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote class="last">
+<div><p>Insert column before this position or at end (default)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with two columns &#8216;a&#8217; and &#8216;b&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b</span>
+<span class="go">--- ---</span>
+<span class="go">  1 0.1</span>
+<span class="go">  2 0.2</span>
+<span class="go">  3 0.3</span>
+</pre></div>
+</div>
+<p>Create column &#8216;c&#8217; and &#8216;d&#8217; and append them to the end of the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">col_c</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col_d</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;v&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">add_columns</span><span class="p">([</span><span class="n">col_c</span><span class="p">,</span> <span class="n">col_d</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c   d</span>
+<span class="go">--- --- --- ---</span>
+<span class="go">  1 0.1   x   u</span>
+<span class="go">  2 0.2   y   v</span>
+<span class="go">  3 0.3   z   w</span>
+</pre></div>
+</div>
+<p>Add column &#8216;c&#8217; at position 0 and column &#8216;d&#8217; at position 1. Note that
+the columns are inserted before the given position:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col_c</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;c&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">col_d</span> <span class="o">=</span> <span class="n">Column</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;d&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;u&#39;</span><span class="p">,</span> <span class="s">&#39;v&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">add_columns</span><span class="p">([</span><span class="n">col_c</span><span class="p">,</span> <span class="n">col_d</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> c   a   d   b</span>
+<span class="go">--- --- --- ---</span>
+<span class="go">  x   1   u 0.1</span>
+<span class="go">  y   2   v 0.2</span>
+<span class="go">  z   3   w 0.3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.add_row">
+<tt class="descname">add_row</tt><big>(</big><em>vals=None</em>, <em>mask=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.add_row"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1587" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.add_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a new row to the end of the table.</p>
+<p>The <tt class="docutils literal"><span class="pre">vals</span></tt> argument can be:</p>
+<dl class="docutils">
+<dt>sequence (e.g. tuple or list)</dt>
+<dd>Column values in the same order as table columns.</dd>
+<dt>mapping (e.g. dict)</dt>
+<dd>Keys corresponding to column names.  Missing values will be
+filled with np.zeros for the column dtype.</dd>
+<dt><a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></dt>
+<dd>All values filled with np.zeros for the column dtype.</dd>
+</dl>
+<p>This method requires that the Table object &#8220;owns&#8221; the underlying array
+data.  In particular one cannot add a row to a Table that was
+initialized with copy=False from an existing array.</p>
+<p>The <tt class="docutils literal"><span class="pre">mask</span></tt> attribute should give (if desired) the mask for the
+values. The type of the mask should match that of the values, i.e. if
+<tt class="docutils literal"><span class="pre">vals</span></tt> is an iterable, then <tt class="docutils literal"><span class="pre">mask</span></tt> should also be an iterable
+with the same length, and if <tt class="docutils literal"><span class="pre">vals</span></tt> is a mapping, then <tt class="docutils literal"><span class="pre">mask</span></tt>
+should be a dictionary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>vals</strong> : tuple, list, dict or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>Use the specified values in the new row</p>
+</div></blockquote>
+<p><strong>mask</strong> : tuple, list, dict or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote class="last">
+<div><p>Use the specified mask values in the new row</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],[</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1   4   7</span>
+<span class="go">  2   5   8</span>
+</pre></div>
+</div>
+<p>Adding a new row with entries &#8216;3&#8217; in &#8216;a&#8217;, &#8216;6&#8217; in &#8216;b&#8217; and &#8216;9&#8217; in &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">add_row</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">9</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">  a   b   c</span>
+<span class="go">  --- --- ---</span>
+<span class="go">  1   4   7</span>
+<span class="go">  2   5   8</span>
+<span class="go">  3   6   9</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.argsort">
+<tt class="descname">argsort</tt><big>(</big><em>keys=None</em>, <em>kind=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.argsort"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1724" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.argsort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the indices which would sort the table according to one or
+more key columns.  This simply calls the <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.argsort.html#numpy.argsort" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.argsort</span></tt></a> function on
+the table with the <tt class="docutils literal"><span class="pre">order</span></tt> parameter set to <tt class="docutils literal"><span class="pre">keys</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keys</strong> : str or list of str</p>
+<blockquote>
+<div><p>The column name(s) to order the table by</p>
+</div></blockquote>
+<p><strong>kind</strong> : {&#8216;quicksort&#8217;, &#8216;mergesort&#8217;, &#8216;heapsort&#8217;}, optional</p>
+<blockquote>
+<div><p>Sorting algorithm.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>index_array</strong> : ndarray, int</p>
+<blockquote class="last">
+<div><p>Array of indices that sorts the table by the specified key
+column(s).</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.convert_bytestring_to_unicode">
+<tt class="descname">convert_bytestring_to_unicode</tt><big>(</big><em>python3_only=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.convert_bytestring_to_unicode"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1443" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.convert_bytestring_to_unicode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert bytestring columns (dtype.kind=&#8217;S&#8217;) to unicode (dtype.kind=&#8217;U&#8217;) assuming
+ASCII encoding.</p>
+<p>Internally this changes string columns to represent each character in the string
+with a 4-byte UCS-4 equivalent, so it is inefficient for memory but allows Python
+3 scripts to manipulate string arrays with natural syntax.</p>
+<p>The <tt class="docutils literal"><span class="pre">python3_only</span></tt> parameter is provided as a convenience so that code can
+be written in a Python 2 / 3 compatible way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;my_data.fits&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">convert_bytestring_to_unicode</span><span class="p">(</span><span class="n">python3_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>python3_only</strong> : bool</p>
+<blockquote class="last">
+<div><p>Only do this operation for Python 3</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.convert_unicode_to_bytestring">
+<tt class="descname">convert_unicode_to_bytestring</tt><big>(</big><em>python3_only=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.convert_unicode_to_bytestring"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1465" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.convert_unicode_to_bytestring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert ASCII-only unicode columns (dtype.kind=&#8217;U&#8217;) to bytestring (dtype.kind=&#8217;S&#8217;).</p>
+<p>When exporting a unicode string array to a file in Python 3, it may be desirable
+to encode unicode columns as bytestrings.  This routine takes advantage of numpy
+automated conversion which works for strings that are pure ASCII.</p>
+<p>The <tt class="docutils literal"><span class="pre">python3_only</span></tt> parameter is provided as a convenience so that code can
+be written in a Python 2 / 3 compatible way:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">convert_unicode_to_bytestring</span><span class="p">(</span><span class="n">python3_only</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;my_data.fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>python3_only</strong> : bool</p>
+<blockquote class="last">
+<div><p>Only do this operation for Python 3</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.copy">
+<tt class="descname">copy</tt><big>(</big><em>copy_data=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.copy"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1873" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>copy_data</strong> : bool</p>
+<blockquote class="last">
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> (the default), copy the underlying data array.
+Otherwise, use the same data array</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.create_mask">
+<tt class="descname">create_mask</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.create_mask"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1029" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.create_mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.field">
+<tt class="descname">field</tt><big>(</big><em>item</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.field"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L961" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.field" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return column[item] for recarray compatibility.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.filled">
+<tt class="descname">filled</tt><big>(</big><em>fill_value=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.filled"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L397" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.filled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of self, with masked values filled.</p>
+<p>If input <tt class="docutils literal"><span class="pre">fill_value</span></tt> supplied then that value is used for all
+masked entries in the table.  Otherwise the individual
+<tt class="docutils literal"><span class="pre">fill_value</span></tt> defined for each table column is used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fill_value</strong> : str</p>
+<blockquote>
+<div><p>If supplied, this <tt class="docutils literal"><span class="pre">fill_value</span></tt> is used for all masked entries
+in the entire table.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>filled_table</strong> : Table</p>
+<blockquote class="last">
+<div><p>New table with masked values filled</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.group_by">
+<tt class="descname">group_by</tt><big>(</big><em>keys</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.group_by"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1959" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.group_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Group this table by the specified <tt class="docutils literal"><span class="pre">keys</span></tt></p>
+<p>This effectively splits the table into groups which correspond to
+unique values of the <tt class="docutils literal"><span class="pre">keys</span></tt> grouping object.  The output is a new
+<a class="reference internal" href="astropy.table.TableGroups.html#astropy.table.TableGroups" title="astropy.table.TableGroups"><tt class="xref py py-obj docutils literal"><span class="pre">TableGroups</span></tt></a> which contains a copy of this table but sorted by row
+according to <tt class="docutils literal"><span class="pre">keys</span></tt>.</p>
+<p>The <tt class="docutils literal"><span class="pre">keys</span></tt> input to <a class="reference internal" href="#astropy.table.Table.group_by" title="astropy.table.Table.group_by"><tt class="xref py py-obj docutils literal"><span class="pre">group_by</span></tt></a> can be specified in different ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li>String or list of strings corresponding to table column name(s)</li>
+<li>Numpy array (homogeneous or structured) with same length as this table</li>
+<li><a class="reference internal" href="#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> with same length as this table</li>
+</ul>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keys</strong> : str, list of str, numpy array, or <a class="reference internal" href="#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a></p>
+<blockquote>
+<div><p>Key grouping object</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out</strong> : <a class="reference internal" href="#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a></p>
+<blockquote class="last">
+<div><p>New table with groups set</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.index_column">
+<tt class="descname">index_column</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.index_column"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1035" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.index_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the positional index of column <tt class="docutils literal"><span class="pre">name</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>column name</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote class="last">
+<div><p>Positional index of column <tt class="docutils literal"><span class="pre">name</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Get index of column &#8216;b&#8217; of the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">index_column</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+<span class="go">1</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.keep_columns">
+<tt class="descname">keep_columns</tt><big>(</big><em>names</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.keep_columns"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1486" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.keep_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keep only the columns specified (remove the others).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>names</strong> : list</p>
+<blockquote class="last">
+<div><p>A list containing the names of the columns to keep. All other
+columns will be removed.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Specifying only a single column name keeps only this column.
+Keep only column &#8216;a&#8217; of the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">keep_columns</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a</span>
+<span class="go">---</span>
+<span class="go">  1</span>
+<span class="go">  2</span>
+<span class="go">  3</span>
+</pre></div>
+</div>
+<p>Specifying a list of column names is keeps is also possible.
+Keep columns &#8216;a&#8217; and &#8216;c&#8217; of the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">keep_columns</span><span class="p">([</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   c</span>
+<span class="go">--- ---</span>
+<span class="go">  1   x</span>
+<span class="go">  2   y</span>
+<span class="go">  3   z</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.keys"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1020" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.more">
+<tt class="descname">more</tt><big>(</big><em>max_lines=None</em>, <em>max_width=None</em>, <em>show_name=True</em>, <em>show_unit=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.more"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L830" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.more" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interactively browse table with a paging interface.</p>
+<p>Supported keys:</p>
+<div class="highlight-python"><div class="highlight"><pre>f, &lt;space&gt; : forward one page
+b : back one page
+r : refresh same page
+n : next row
+p : previous row
+&lt; : go to beginning
+&gt; : go to end
+q : quit browsing
+h : print this help
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_lines</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of lines in table output</p>
+</div></blockquote>
+<p><strong>max_width</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>Maximum character width of output</p>
+</div></blockquote>
+<p><strong>show_name</strong> : bool</p>
+<blockquote>
+<div><p>Include a header row for column names (default=True)</p>
+</div></blockquote>
+<p><strong>show_unit</strong> : bool</p>
+<blockquote class="last">
+<div><p>Include a header row for unit.  Default is to show a row
+for units only if one or more columns has a defined value
+for the unit.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L949" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Python 3 iterator</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.pformat">
+<tt class="descname">pformat</tt><big>(</big><em>max_lines=None</em>, <em>max_width=None</em>, <em>show_name=True</em>, <em>show_unit=None</em>, <em>html=False</em>, <em>tableid=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.pformat"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L780" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.pformat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of lines for the formatted string representation of
+the table.</p>
+<p>If no value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then the height of the
+screen terminal is used to set <tt class="docutils literal"><span class="pre">max_lines</span></tt>.  If the terminal
+height cannot be determined then the default is taken from the
+configuration item <tt class="docutils literal"><span class="pre">astropy.conf.max_lines</span></tt>.  If a negative
+value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then there is no line limit
+applied.</p>
+<p>The same applies for <tt class="docutils literal"><span class="pre">max_width</span></tt> except the configuration item  is
+<tt class="docutils literal"><span class="pre">astropy.conf.max_width</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_lines</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>Maximum number of rows to output</p>
+</div></blockquote>
+<p><strong>max_width</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>Maximum character width of output</p>
+</div></blockquote>
+<p><strong>show_name</strong> : bool</p>
+<blockquote>
+<div><p>Include a header row for column names (default=True)</p>
+</div></blockquote>
+<p><strong>show_unit</strong> : bool</p>
+<blockquote>
+<div><p>Include a header row for unit.  Default is to show a row
+for units only if one or more columns has a defined value
+for the unit.</p>
+</div></blockquote>
+<p><strong>html</strong> : bool</p>
+<blockquote>
+<div><p>Format the output as an HTML table (default=False)</p>
+</div></blockquote>
+<p><strong>tableid</strong> : str or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>An ID tag for the table; only used if html is set.  Default is
+&#8220;table{id}&#8221;, where id is the unique integer id of the table object,
+id(self)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>lines</strong> : list</p>
+<blockquote class="last">
+<div><p>Formatted table as a list of strings</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.pprint">
+<tt class="descname">pprint</tt><big>(</big><em>max_lines=None</em>, <em>max_width=None</em>, <em>show_name=True</em>, <em>show_unit=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.pprint"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L664" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.pprint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print a formatted string representation of the table.</p>
+<p>If no value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then the height of the
+screen terminal is used to set <tt class="docutils literal"><span class="pre">max_lines</span></tt>.  If the terminal
+height cannot be determined then the default is taken from the
+configuration item <tt class="docutils literal"><span class="pre">astropy.conf.max_lines</span></tt>.  If a negative
+value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> is supplied then there is no line limit
+applied.</p>
+<p>The same applies for max_width except the configuration item is
+<tt class="docutils literal"><span class="pre">astropy.conf.max_width</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>max_lines</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of lines in table output</p>
+</div></blockquote>
+<p><strong>max_width</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>Maximum character width of output</p>
+</div></blockquote>
+<p><strong>show_name</strong> : bool</p>
+<blockquote>
+<div><p>Include a header row for column names (default=True)</p>
+</div></blockquote>
+<p><strong>show_unit</strong> : bool</p>
+<blockquote class="last">
+<div><p>Include a header row for unit.  Default is to show a row
+for units only if one or more columns has a defined value
+for the unit.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.table.Table.read">
+<em class="property">classmethod </em><tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.read"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1838" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read and parse a data table and return as a Table.</p>
+<p>This function provides the Table interface to the astropy unified I/O
+layer.  This allows easily reading a file in many supported data formats
+using syntax such as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;table.dat&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">events</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;events.fits&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The arguments and keywords (other than <tt class="docutils literal"><span class="pre">format</span></tt>) provided to this function are
+passed through to the underlying data reader (e.g. <a class="reference internal" href="astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-obj docutils literal"><span class="pre">read</span></tt></a>).</p>
+<p>The available built-in formats are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="7%" />
+<col width="8%" />
+<col width="22%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Format</th>
+<th class="head">Read</th>
+<th class="head">Write</th>
+<th class="head">Auto-identify</th>
+<th class="head">Deprecated</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ascii</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.aastex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.basic</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.cds</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.commented_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.csv</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.daophot</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.fixed_width</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.fixed_width_no_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.fixed_width_two_line</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.html</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.ipac</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.latex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.no_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.rdb</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.sextractor</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.tab</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>fits</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>hdf5</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>votable</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>aastex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>cds</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>daophot</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>html</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>ipac</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>latex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>rdb</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>Deprecated format names like <tt class="docutils literal"><span class="pre">aastex</span></tt> will be removed in a future version.
+Use the full name (e.g. <tt class="docutils literal"><span class="pre">ascii.aastex</span></tt>) instead.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.remove_column">
+<tt class="descname">remove_column</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.remove_column"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1295" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.remove_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a column from the table.</p>
+<p>This can also be done with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">del</span> <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote class="last">
+<div><p>Name of column to remove</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Remove column &#8216;b&#8217; from the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   c</span>
+<span class="go">--- ---</span>
+<span class="go">  1   x</span>
+<span class="go">  2   y</span>
+<span class="go">  3   z</span>
+</pre></div>
+</div>
+<p>To remove several columns at the same time use remove_columns.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.remove_columns">
+<tt class="descname">remove_columns</tt><big>(</big><em>names</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.remove_columns"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1336" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.remove_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove several columns from the table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>names</strong> : list</p>
+<blockquote class="last">
+<div><p>A list containing the names of the columns to remove</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>    <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Remove columns &#8216;b&#8217; and &#8216;c&#8217; from the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">([</span><span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a</span>
+<span class="go">---</span>
+<span class="go">  1</span>
+<span class="go">  2</span>
+<span class="go">  3</span>
+</pre></div>
+</div>
+<p>Specifying only a single column also works. Remove column &#8216;b&#8217; from the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>    <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">(</span><span class="s">&#39;b&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   c</span>
+<span class="go">--- ---</span>
+<span class="go">  1   x</span>
+<span class="go">  2   y</span>
+<span class="go">  3   z</span>
+</pre></div>
+</div>
+<p>This gives the same as using remove_column.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.remove_row">
+<tt class="descname">remove_row</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.remove_row"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1197" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.remove_row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove a row from the table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>index</strong> : int</p>
+<blockquote class="last">
+<div><p>Index of row to remove</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Remove row 1 from the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">remove_row</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>To remove several rows at the same time use remove_rows.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.remove_rows">
+<tt class="descname">remove_rows</tt><big>(</big><em>row_specifier</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.remove_rows"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1235" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.remove_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove rows from the table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>row_specifier</strong> : slice, int, or array of ints</p>
+<blockquote class="last">
+<div><p>Specification for rows to remove</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+<p>Remove rows 0 and 2 from the table:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  2 0.2   y</span>
+</pre></div>
+</div>
+<p>Note that there are no warnings if the slice operator extends
+outside the data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">]],</span>
+<span class="gp">... </span>          <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">,</span> <span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">remove_rows</span><span class="p">(</span><span class="nb">slice</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1 0.1   x</span>
+<span class="go">  2 0.2   y</span>
+<span class="go">  3 0.3   z</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.rename_column">
+<tt class="descname">rename_column</tt><big>(</big><em>name</em>, <em>new_name</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.rename_column"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1545" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.rename_column" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename a column.</p>
+<p>This can also be done directly with by setting the <tt class="docutils literal"><span class="pre">name</span></tt> attribute
+for a column:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">new_name</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>The current name of the column.</p>
+</div></blockquote>
+<p><strong>new_name</strong> : str</p>
+<blockquote class="last">
+<div><p>The new name for the column</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns &#8216;a&#8217;, &#8216;b&#8217; and &#8216;c&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;b&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> a   b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1   3   5</span>
+<span class="go">  2   4   6</span>
+</pre></div>
+</div>
+<p>Renaming column &#8216;a&#8217; to &#8216;aa&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">rename_column</span><span class="p">(</span><span class="s">&#39;a&#39;</span> <span class="p">,</span> <span class="s">&#39;aa&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go"> aa  b   c</span>
+<span class="go">--- --- ---</span>
+<span class="go">  1   3   5</span>
+<span class="go">  2   4   6</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.reverse">
+<tt class="descname">reverse</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.reverse"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1807" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.reverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reverse the row order of table rows.  The table is reversed
+in place and there are no function arguments.</p>
+<p class="rubric">Examples</p>
+<p>Create a table with three columns:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="s">&#39;Max&#39;</span><span class="p">,</span> <span class="s">&#39;Jo&#39;</span><span class="p">,</span> <span class="s">&#39;John&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Miller&#39;</span><span class="p">,</span><span class="s">&#39;Miller&#39;</span><span class="p">,</span><span class="s">&#39;Jackson&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">18</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;firstname&#39;</span><span class="p">,</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="s">&#39;tel&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">firstname   name  tel</span>
+<span class="go">--------- ------- ---</span>
+<span class="go">      Max  Miller  12</span>
+<span class="go">       Jo  Miller  15</span>
+<span class="go">     John Jackson  18</span>
+</pre></div>
+</div>
+<p>Reversing order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">firstname   name  tel</span>
+<span class="go">--------- ------- ---</span>
+<span class="go">     John Jackson  18</span>
+<span class="go">       Jo  Miller  15</span>
+<span class="go">      Max  Miller  12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.show_in_browser">
+<tt class="descname">show_in_browser</tt><big>(</big><em>css=u'table</em>, <em>th</em>, <em>td</em>, <em>tr</em>, <em>tbody {border: 1px solid black; border-collapse: collapse;}'</em>, <em>max_lines=5000</em>, <em>jsviewer=False</em>, <em>jskwargs={}</em>, <em>tableid=None</em>, <em>browser=u'default'</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.show_in_browser"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L704" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.show_in_browser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Render the table in HTML and show it in a web browser.  In order to
+make a persistent html file, i.e. one that survives refresh, the
+returned file object must be kept in memory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>css</strong> : string</p>
+<blockquote>
+<div><p>A valid CSS string declaring the formatting for the table</p>
+</div></blockquote>
+<p><strong>max_lines</strong> : int</p>
+<blockquote>
+<div><p>Maximum number of rows to export to the table (set low by default
+to avoid memory issues, since the browser view requires duplicating
+the table in memory).  A negative value of <tt class="docutils literal"><span class="pre">max_lines</span></tt> indicates
+no row limit</p>
+</div></blockquote>
+<p><strong>jsviewer</strong> : bool</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, prepends some javascript headers so that the table is
+rendered as a <a class="reference external" href="https://datatables.net">https://datatables.net</a> data table.  This allows
+in-browser searching &amp; sorting.  See <a class="reference external" href="http://www.jsviewer.com/">JSViewer</a></p>
+</div></blockquote>
+<p><strong>jskwargs</strong> : dict</p>
+<blockquote>
+<div><p>Passed to the <a class="reference external" href="http://www.jsviewer.com/">JSViewer</a> init.</p>
+</div></blockquote>
+<p><strong>tableid</strong> : str or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>An html ID tag for the table.  Default is &#8220;table{id}&#8221;, where id is
+the unique integer id of the table object, id(self).</p>
+</div></blockquote>
+<p><strong>browser</strong> : str</p>
+<blockquote>
+<div><p>Any legal browser name, e.g. <tt class="docutils literal"><span class="pre">'firefox'</span></tt>, <tt class="docutils literal"><span class="pre">'chrome'</span></tt>,
+<tt class="docutils literal"><span class="pre">'safari'</span></tt> (for mac, you may need to use <tt class="docutils literal"><span class="pre">'open</span> <span class="pre">-a</span>
+<span class="pre">&quot;/Applications/Google</span> <span class="pre">Chrome.app&quot;</span> <span class="pre">%s'</span></tt> for Chrome).  If
+<tt class="docutils literal"><span class="pre">'default'</span></tt>, will use the system default browser.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">file :</p>
+<blockquote class="last">
+<div><p>A <a class="reference external" href="http://docs.python.org/library/tempfile.html#tempfile.NamedTemporaryFile" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">NamedTemporaryFile</span></tt></a> object pointing to the
+html file on disk.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.sort">
+<tt class="descname">sort</tt><big>(</big><em>keys</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.sort"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1759" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.sort" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sort the table according to one or more keys. This operates
+on the existing table and does not return a new table.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keys</strong> : str or list of str</p>
+<blockquote class="last">
+<div><p>The key(s) to order the table by</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<p>Create a table with 3 columns:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="s">&#39;Max&#39;</span><span class="p">,</span> <span class="s">&#39;Jo&#39;</span><span class="p">,</span> <span class="s">&#39;John&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;Miller&#39;</span><span class="p">,</span><span class="s">&#39;Miller&#39;</span><span class="p">,</span><span class="s">&#39;Jackson&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">18</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;firstname&#39;</span><span class="p">,</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="s">&#39;tel&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">firstname   name  tel</span>
+<span class="go">--------- ------- ---</span>
+<span class="go">      Max  Miller  12</span>
+<span class="go">       Jo  Miller  15</span>
+<span class="go">     John Jackson  18</span>
+</pre></div>
+</div>
+<p>Sorting according to standard sorting rules, first &#8216;name&#8217; then &#8216;firstname&#8217;:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="s">&#39;firstname&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="go">firstname   name  tel</span>
+<span class="go">--------- ------- ---</span>
+<span class="go">     John Jackson  18</span>
+<span class="go">       Jo  Miller  15</span>
+<span class="go">      Max  Miller  12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.table.Table.write">
+<tt class="descname">write</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/table/table.html#Table.write"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/table/table.py#L1856" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.table.Table.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write this Table object out in the specified format.</p>
+<p>This function provides the Table interface to the astropy unified I/O
+layer.  This allows easily writing a file in many supported data formats
+using syntax such as:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span> <span class="o">=</span> <span class="n">Table</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]],</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;a&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;table.dat&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The arguments and keywords (other than <tt class="docutils literal"><span class="pre">format</span></tt>) provided to this function are
+passed through to the underlying data reader (e.g. <a class="reference internal" href="astropy.io.ascii.write.html#astropy.io.ascii.write" title="astropy.io.ascii.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>).</p>
+<p>The available built-in formats are:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="7%" />
+<col width="8%" />
+<col width="22%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Format</th>
+<th class="head">Read</th>
+<th class="head">Write</th>
+<th class="head">Auto-identify</th>
+<th class="head">Deprecated</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>ascii</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.aastex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.basic</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.commented_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.csv</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.fixed_width</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.fixed_width_no_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.fixed_width_two_line</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.html</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.ipac</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.latex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.no_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.rdb</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.tab</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>fits</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>hdf5</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>votable</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>aastex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>html</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>ipac</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>latex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>rdb</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<p>Deprecated format names like <tt class="docutils literal"><span class="pre">aastex</span></tt> will be removed in a future version.
+Use the full name (e.g. <tt class="docutils literal"><span class="pre">ascii.aastex</span></tt>) instead.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Table</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.table.Table.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.table.Table.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

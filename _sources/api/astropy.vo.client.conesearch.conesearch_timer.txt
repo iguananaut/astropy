@@ -1,0 +1,8 @@
+
+
+conesearch_timer
+=============================================
+
+.. currentmodule:: astropy.vo.client.conesearch
+
+.. autofunction:: conesearch_timer

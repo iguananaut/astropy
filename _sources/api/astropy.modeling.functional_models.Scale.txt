@@ -1,0 +1,67 @@
+
+
+Scale
+========================================
+
+.. currentmodule:: astropy.modeling.functional_models
+
+.. autoclass:: Scale
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Scale.factors
+      ~Scale.input_names
+      ~Scale.linear
+      ~Scale.param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Scale.evaluate
+      ~Scale.inverse
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: factors
+   .. autoattribute:: input_names
+   .. autoattribute:: linear
+   .. autoattribute:: param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+   .. automethod:: inverse
+
+   
+   

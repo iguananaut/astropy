@@ -1,0 +1,44 @@
+
+.. include:: ../table/references.txt
+
+
+Conf
+==================
+
+.. currentmodule:: astropy.table
+
+.. autoclass:: Conf
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Conf.auto_colname
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: auto_colname
+
+   
+   
+
+   
+   
+   

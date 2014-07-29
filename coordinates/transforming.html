@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Transforming Between Systems &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="index.html" />
+    <link rel="next" title="Formatting Coordinate Strings" href="formatting.html" />
+    <link rel="prev" title="Using the SkyCoord High-level Class" href="skycoord.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="formatting.html" title="Formatting Coordinate Strings">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="skycoord.html" title="Using the SkyCoord High-level Class">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>Transforming Between Systems</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="transforming-between-systems">
+<span id="astropy-coordinates-transforming"></span><h1>Transforming Between Systems<a class="headerlink" href="#transforming-between-systems" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a> supports a rich system for transforming
+coordinates from one system to another.  While common astronomy frames
+are  built into Astropy, the transformation infrastructure is dynamic.
+This means it allows users to define new coordinate frames and their
+transformations.  The topic of writing your own coordinate frame or
+transforms is detailed in <a class="reference internal" href="frames.html#astropy-coordinates-design"><em>Defining a New Frame</em></a>, and this
+section is focused on how to <em>use</em> transformations.</p>
+<p>The simplest method of transformation is shown below:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="mi">0</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">45</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s">&#39;galactic&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="o">.</span><span class="n">fk5</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J2000.000, ra=229.27250215 deg, dec=-1.12841764184 deg&gt;</span>
+</pre></div>
+</div>
+<p>While this appears to be simple attribute-style access, it is actually
+syntactic sugar for the more general
+<a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.transform_to" title="astropy.coordinates.SkyCoord.transform_to"><tt class="xref py py-meth docutils literal"><span class="pre">transform_to()</span></tt></a> method, which can
+accept either a frame name, class or instance:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">FK5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="s">&#39;fk5&#39;</span><span class="p">)</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J2000.000, ra=229.27250215 deg, dec=-1.12841764184 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">FK5</span><span class="p">)</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J2000.000, ra=229.27250215 deg, dec=-1.12841764184 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">FK5</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="s">&#39;J1980.0&#39;</span><span class="p">))</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J1980.000, ra=229.014681064 deg, dec=-1.05557823687 deg&gt;</span>
+</pre></div>
+</div>
+<p>As a convenience it is also possible to use a <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a> object as the frame in
+<a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.transform_to" title="astropy.coordinates.SkyCoord.transform_to"><tt class="xref py py-meth docutils literal"><span class="pre">transform_to()</span></tt></a>.  This allows easily putting one
+coordinate object into the frame of another:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sc</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="s">&#39;deg&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="n">FK5</span><span class="p">,</span> <span class="n">equinox</span><span class="o">=</span><span class="s">&#39;J1980.0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gc</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">sc</span><span class="p">)</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J1980.000, ra=229.014681064 deg, dec=-1.05557823687 deg&gt;</span>
+</pre></div>
+</div>
+<p>The table below summarizes the built-in coordinate frames.  For details of
+these frames and the transformations between them see the <a class="reference internal" href="index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a>
+API documentation and the <a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="astropy.coordinates.BaseCoordinateFrame"><tt class="xref py py-obj docutils literal"><span class="pre">BaseCoordinateFrame</span></tt></a> class
+which forms the basis for all <a class="reference internal" href="index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a> coordinate frames.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="68%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Frame class</th>
+<th class="head">Frame name</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.coordinates.ICRS.html#astropy.coordinates.ICRS" title="astropy.coordinates.ICRS"><tt class="xref py py-obj docutils literal"><span class="pre">ICRS</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">icrs</span></tt></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.coordinates.FK5.html#astropy.coordinates.FK5" title="astropy.coordinates.FK5"><tt class="xref py py-obj docutils literal"><span class="pre">FK5</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">fk5</span></tt></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.coordinates.FK4.html#astropy.coordinates.FK4" title="astropy.coordinates.FK4"><tt class="xref py py-obj docutils literal"><span class="pre">FK4</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">fk4</span></tt></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.coordinates.FK4NoETerms.html#astropy.coordinates.FK4NoETerms" title="astropy.coordinates.FK4NoETerms"><tt class="xref py py-obj docutils literal"><span class="pre">FK4NoETerms</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">fk4noeterms</span></tt></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.coordinates.Galactic.html#astropy.coordinates.Galactic" title="astropy.coordinates.Galactic"><tt class="xref py py-obj docutils literal"><span class="pre">Galactic</span></tt></a></td>
+<td><tt class="docutils literal"><span class="pre">galactic</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Additionally, some coordinate frames (including <a class="reference internal" href="../api/astropy.coordinates.FK5.html#astropy.coordinates.FK5" title="astropy.coordinates.FK5"><tt class="xref py py-obj docutils literal"><span class="pre">FK5</span></tt></a>,
+<a class="reference internal" href="../api/astropy.coordinates.FK4.html#astropy.coordinates.FK4" title="astropy.coordinates.FK4"><tt class="xref py py-obj docutils literal"><span class="pre">FK4</span></tt></a>, and <a class="reference internal" href="../api/astropy.coordinates.FK4NoETerms.html#astropy.coordinates.FK4NoETerms" title="astropy.coordinates.FK4NoETerms"><tt class="xref py py-obj docutils literal"><span class="pre">FK4NoETerms</span></tt></a>) support
+&#8220;self transformations&#8221;, meaning the <em>type</em> of frame doesn&#8217;t change, but the
+frame attributes do.  Any example is precessing a coordinate from one equinox
+to another in an equatorial system. This is done by passing <tt class="docutils literal"><span class="pre">transform_to</span></tt> a
+frame class with the relevant attributes, as shown below. Note that these
+systems use a default equinox if you don&#8217;t specify one:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fk5c</span> <span class="o">=</span> <span class="n">FK5</span><span class="p">(</span><span class="s">&#39;02h31m49.09s&#39;</span><span class="p">,</span> <span class="s">&#39;+89d15m50.8s&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5c</span><span class="o">.</span><span class="n">equinox</span>
+<span class="go">&lt;Time object: scale=&#39;utc&#39; format=&#39;jyear_str&#39; value=J2000.000&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5c</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J2000.000, ra=37.9545416667 deg, dec=89.2641111111 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5_2005</span> <span class="o">=</span> <span class="n">FK5</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="s">&#39;J2005&#39;</span><span class="p">)</span>  <span class="c"># String initializes an astropy.time.Time object</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5c</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">fk5_2005</span><span class="p">)</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=J2005.000, ra=39.3931763878 deg, dec=89.2858442155 deg&gt;</span>
+</pre></div>
+</div>
+<p>You can also specify the equinox when you create a coordinate using an
+<a class="reference internal" href="../api/astropy.time.Time.html#astropy.time.Time" title="astropy.time.Time"><tt class="xref py py-obj docutils literal"><span class="pre">Time</span></tt></a> object:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.time</span> <span class="kn">import</span> <span class="n">Time</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5c</span> <span class="o">=</span> <span class="n">FK5</span><span class="p">(</span><span class="s">&#39;02h31m49.09s&#39;</span><span class="p">,</span> <span class="s">&#39;+89d15m50.8s&#39;</span><span class="p">,</span>
+<span class="gp">... </span>           <span class="n">equinox</span><span class="o">=</span><span class="n">Time</span><span class="p">(</span><span class="s">&#39;J1970&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s">&#39;utc&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5_2000</span> <span class="o">=</span> <span class="n">FK5</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="n">Time</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;jyear&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s">&#39;utc&#39;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fk5c</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">fk5_2000</span><span class="p">)</span>  
+<span class="go">&lt;SkyCoord (FK5): equinox=2000.0, ra=48.0231710002 deg, dec=89.386724854 deg&gt;</span>
+</pre></div>
+</div>
+<p>The same lower-level frame classes also have a
+<a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.transform_to" title="astropy.coordinates.BaseCoordinateFrame.transform_to"><tt class="xref py py-meth docutils literal"><span class="pre">transform_to()</span></tt></a> method
+that works the same as above, but they do not support attribute-style
+access. They are also subtly different in that they only use frame
+attributes present in the initial or final frame, while <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a>
+objects use any frame attributes they have for all transformation
+steps.  So <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a> can always transform from one frame to another and
+back again without change, while low-level classes may lose information
+and hence often do not round-trip.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Transforming Between Systems</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/coordinates/transforming.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/coordinates/transforming.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

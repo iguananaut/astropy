@@ -1,0 +1,8 @@
+
+
+list_catalogs
+===========================================
+
+.. currentmodule:: astropy.vo.client.vos_catalog
+
+.. autofunction:: list_catalogs

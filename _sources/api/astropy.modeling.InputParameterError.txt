@@ -1,0 +1,8 @@
+
+
+InputParameterError
+====================================
+
+.. currentmodule:: astropy.modeling
+
+.. autoexception:: InputParameterError

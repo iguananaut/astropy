@@ -1,0 +1,71 @@
+
+
+Sky2Pix_AZP
+========================================
+
+.. currentmodule:: astropy.modeling.projections
+
+.. autoclass:: Sky2Pix_AZP
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Sky2Pix_AZP.gamma
+      ~Sky2Pix_AZP.input_names
+      ~Sky2Pix_AZP.mu
+      ~Sky2Pix_AZP.param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Sky2Pix_AZP.__call__
+      ~Sky2Pix_AZP.check_mu
+      ~Sky2Pix_AZP.evaluate
+      ~Sky2Pix_AZP.inverse
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: gamma
+   .. autoattribute:: input_names
+   .. autoattribute:: mu
+   .. autoattribute:: param_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __call__
+   .. automethod:: check_mu
+   .. automethod:: evaluate
+   .. automethod:: inverse
+
+   
+   

@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.nddata.nddata &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="astropy.nddata" href="../nddata.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" >Module code</a> &raquo;</li>
+      <li><a href="../nddata.html" accesskey="U">astropy.nddata</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.nddata.nddata</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="c"># This module implements the base NDData class.</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">unicode_literals</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..units</span> <span class="kn">import</span> <span class="n">Unit</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">,</span> <span class="n">UnitsError</span><span class="p">,</span> <span class="n">dimensionless_unscaled</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">log</span>
+
+<span class="kn">from</span> <span class="nn">.flag_collection</span> <span class="kn">import</span> <span class="n">FlagCollection</span>
+<span class="kn">from</span> <span class="nn">.nduncertainty</span> <span class="kn">import</span> <span class="n">IncompatibleUncertaintiesException</span><span class="p">,</span> <span class="n">NDUncertainty</span>
+<span class="kn">from</span> <span class="nn">..io</span> <span class="kn">import</span> <span class="n">registry</span> <span class="k">as</span> <span class="n">io_registry</span>
+<span class="kn">from</span> <span class="nn">..config</span> <span class="kn">import</span> <span class="n">ConfigAlias</span>
+<span class="kn">from</span> <span class="nn">..utils.metadata</span> <span class="kn">import</span> <span class="n">MetaData</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;NDData&#39;</span><span class="p">]</span>
+
+
+<span class="n">__doctest_skip__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;NDData&#39;</span><span class="p">]</span>
+
+
+<span class="n">WARN_UNSUPPORTED_CORRELATED</span> <span class="o">=</span> <span class="n">ConfigAlias</span><span class="p">(</span>
+    <span class="s">&#39;0.4&#39;</span><span class="p">,</span> <span class="s">&#39;WARN_UNSUPPORTED_CORRELATED&#39;</span><span class="p">,</span> <span class="s">&#39;warn_unsupported_correlated&#39;</span><span class="p">,</span>
+    <span class="s">&#39;astropy.nddata.nddata&#39;</span><span class="p">,</span> <span class="s">&#39;astropy.nddata&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NDData"><a class="viewcode-back" href="../../../api/astropy.nddata.NDData.html#astropy.nddata.NDData">[docs]</a><span class="k">class</span> <span class="nc">NDData</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A Superclass for array-based data in Astropy.</span>
+
+<span class="sd">    The key distinction from raw numpy arrays is the presence of</span>
+<span class="sd">    additional metadata such as uncertainties, a mask, units, flags,</span>
+<span class="sd">    and/or a coordinate system.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    data : `~numpy.ndarray` or `NDData`</span>
+<span class="sd">        The actual data contained in this `NDData` object. Not that this</span>
+<span class="sd">        will always be copies by *reference* , so you should make copy</span>
+<span class="sd">        the ``data`` before passing it in if that&#39;s the  desired behavior.</span>
+
+<span class="sd">    uncertainty : `~astropy.nddata.NDUncertainty`, optional</span>
+<span class="sd">        Uncertainties on the data.</span>
+
+<span class="sd">    mask : `~numpy.ndarray`-like, optional</span>
+<span class="sd">        Mask for the data, given as a boolean Numpy array or any object that</span>
+<span class="sd">        can be converted to a boolean Numpy array with a shape</span>
+<span class="sd">        matching that of the data. The values must be ``False`` where</span>
+<span class="sd">        the data is *valid* and ``True`` when it is not (like Numpy</span>
+<span class="sd">        masked arrays). If ``data`` is a numpy masked array, providing</span>
+<span class="sd">        ``mask`` here will causes the mask from the masked array to be</span>
+<span class="sd">        ignored.</span>
+
+<span class="sd">    flags : `~numpy.ndarray`-like or `~astropy.nddata.FlagCollection`, optional</span>
+<span class="sd">        Flags giving information about each pixel. These can be specified</span>
+<span class="sd">        either as a Numpy array of any type (or an object which can be converted</span>
+<span class="sd">        to a Numpy array) with a shape matching that of the</span>
+<span class="sd">        data, or as a `~astropy.nddata.FlagCollection` instance which has a</span>
+<span class="sd">        shape matching that of the data.</span>
+
+<span class="sd">    wcs : undefined, optional</span>
+<span class="sd">        WCS-object containing the world coordinate system for the data.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            This is not yet defind because the discussion of how best to</span>
+<span class="sd">            represent this class&#39;s WCS system generically is still under</span>
+<span class="sd">            consideration. For now just leave it as None</span>
+
+<span class="sd">    meta : `dict`-like object, optional</span>
+<span class="sd">        Metadata for this object.  &quot;Metadata&quot; here means all information that</span>
+<span class="sd">        is included with this object but not part of any other attribute</span>
+<span class="sd">        of this particular object.  e.g., creation date, unique identifier,</span>
+<span class="sd">        simulation parameters, exposure time, telescope name, etc.</span>
+
+<span class="sd">    unit : `~astropy.units.UnitBase` instance or str, optional</span>
+<span class="sd">        The units of the data.</span>
+
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError :</span>
+<span class="sd">        If the `uncertainty` or `mask` inputs cannot be broadcast (e.g., match</span>
+<span class="sd">        shape) onto ``data``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    `NDData` objects can be easily converted to a regular Numpy array</span>
+<span class="sd">    using `numpy.asarray`</span>
+
+<span class="sd">    For example::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.nddata import NDData</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">        &gt;&gt;&gt; x = NDData([1,2,3])</span>
+<span class="sd">        &gt;&gt;&gt; np.asarray(x)</span>
+<span class="sd">        array([1, 2, 3])</span>
+
+<span class="sd">    If the `NDData` object has a `mask`, `numpy.asarray` will return a</span>
+<span class="sd">    Numpy masked array.</span>
+
+<span class="sd">    This is useful, for example, when plotting a 2D image using</span>
+<span class="sd">    matplotlib::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.nddata import NDData</span>
+<span class="sd">        &gt;&gt;&gt; from matplotlib import pyplot as plt</span>
+<span class="sd">        &gt;&gt;&gt; x = NDData([[1,2,3], [4,5,6]])</span>
+<span class="sd">        &gt;&gt;&gt; plt.imshow(x)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">MetaData</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">meta</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">uncertainty</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">flags</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wcs</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">wcs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">meta</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">unit</span>
+
+            <span class="k">if</span> <span class="n">uncertainty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">uncertainty</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Overwriting NDData&#39;s current uncertainty being&quot;</span>
+                         <span class="s">&quot; overwritten with specified uncertainty&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Overwriting NDData&#39;s current mask with specified mask&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">flags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Overwriting NDData&#39;s current flags with specified flag&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">wcs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Overwriting NDData&#39;s current wcs with specified wcs&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">meta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Overwriting NDData&#39;s current meta with specified meta&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;To convert to different unit please use .to&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;NDData was created with a masked array, and a &quot;</span>
+                             <span class="s">&quot;mask was explictly provided to NDData. The explicitly &quot;</span>
+                             <span class="s">&quot;passed-in mask will be used and the masked array&#39;s &quot;</span>
+                             <span class="s">&quot;mask will be ignored.&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">mask</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">subok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wcs</span> <span class="o">=</span> <span class="n">wcs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Quantity</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot use the unit argument when data &quot;</span>
+                                     <span class="s">&quot;is a Quantity&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">unit</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">unit</span>
+            <span class="c"># This must come after self&#39;s unit has been set so that the unit</span>
+            <span class="c"># of the uncertainty, if any, can be converted to the unit of the</span>
+            <span class="c"># unit of self.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">uncertainty</span>
+
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;(&#39;</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s">&#39;, &#39;</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="s">&#39;)&#39;</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">nomask</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span>
+
+    <span class="nd">@mask.setter</span>
+    <span class="k">def</span> <span class="nf">mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;dimensions of mask do not match data&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">mask</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># internal representation should be one numpy understands</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">nomask</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span>
+
+    <span class="nd">@flags.setter</span>
+    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">FlagCollection</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;dimensions of FlagCollection does not match data&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">flags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">flags</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;dimensions of flags do not match data&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="n">flags</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_flags</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_uncertainty</span>
+
+    <span class="nd">@uncertainty.setter</span>
+    <span class="k">def</span> <span class="nf">uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">NDUncertainty</span><span class="p">):</span>
+                <span class="n">class_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">_unit</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">scaling</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">value</span><span class="o">.</span><span class="n">_unit</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="n">UnitsError</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="n">UnitsError</span><span class="p">(</span><span class="s">&#39;Cannot convert unit of uncertainty &#39;</span>
+                                         <span class="s">&#39;to unit of &#39;</span>
+                                         <span class="s">&#39;{0} object.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">))</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">array</span> <span class="o">*=</span> <span class="n">scaling</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">_unit</span><span class="p">:</span>
+                    <span class="c"># Raise an error if uncertainty has unit and data does not</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Cannot assign an uncertainty with unit &quot;</span>
+                                     <span class="s">&quot;to {0} without &quot;</span>
+                                     <span class="s">&quot;a unit&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_uncertainty</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_uncertainty</span><span class="o">.</span><span class="n">parent_nddata</span> <span class="o">=</span> <span class="bp">self</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;Uncertainty must be an instance of a NDUncertainty object&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_uncertainty</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span>
+
+    <span class="nd">@unit.setter</span>
+    <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">conf</span><span class="o">.</span><span class="n">warn_setting_unit_directly</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Setting the unit directly changes the unit without &#39;</span>
+                         <span class="s">&#39;updating the data or uncertainty. Use the &#39;</span>
+                         <span class="s">&#39;.convert_unit_to() method to change the unit and &#39;</span>
+                         <span class="s">&#39;scale values appropriately.&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="c"># raised if self._unit has not been set yet, in which case the</span>
+            <span class="c"># warning is irrelevant</span>
+            <span class="k">pass</span>
+
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_unit</span> <span class="o">=</span> <span class="n">Unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        shape tuple of this object&#39;s data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        integer size of this object&#39;s data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">dtype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        `numpy.dtype` of this object&#39;s data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">ndim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        integer dimensions of this object&#39;s data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span>
+
+    <span class="k">def</span> <span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This allows code that requests a Numpy array to use an NDData</span>
+<span class="sd">        object as a Numpy array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__array_prepare__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This ensures that a masked array is returned if self is masked.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_array</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">array</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+
+        <span class="n">new_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_uncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_uncertainty</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+            <span class="c"># mask setter expects an array, always</span>
+            <span class="k">if</span> <span class="n">new_mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+                <span class="n">new_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_mask</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_mask</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+                <span class="n">new_flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+                <span class="c"># flags setter expects an array, always</span>
+                <span class="k">if</span> <span class="n">new_flags</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+                    <span class="n">new_flags</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">new_flags</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span> <span class="n">FlagCollection</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Slicing complex Flags is currently not implemented&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_flags</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wcs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Slicing for WCS is not currently implemented&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_wcs</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">new_data</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="n">new_uncertainty</span><span class="p">,</span>
+                              <span class="n">mask</span><span class="o">=</span><span class="n">new_mask</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="n">new_flags</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">new_wcs</span><span class="p">,</span>
+                              <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_arithmetic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">operation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        {name} another dataset (``operand``) to this dataset.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        operand : `~astropy.nddata.NDData`</span>
+<span class="sd">            The second operand in the operation a {operator} b</span>
+<span class="sd">        propagate_uncertainties : bool</span>
+<span class="sd">            Whether to propagate uncertainties following the propagation rules</span>
+<span class="sd">            defined by the class used for the `uncertainty` attribute.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : `~astropy.nddata.NDData`</span>
+<span class="sd">            The resulting dataset</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method requires the datasets to have identical WCS</span>
+<span class="sd">        properties, equivalent units, and identical shapes. Flags and</span>
+<span class="sd">        meta-data get set to None in the resulting dataset. The unit</span>
+<span class="sd">        in the result is the same as the unit in ``self``. Uncertainties</span>
+<span class="sd">        are propagated, although correlated errors are not supported</span>
+<span class="sd">        by any of the built-in uncertainty classes.  If uncertainties</span>
+<span class="sd">        are assumed to be correlated, a warning is issued by default</span>
+<span class="sd">        (though this can be disabled via the</span>
+<span class="sd">        ``astropy.nddata.conf.warn_unsupported_correlated``</span>
+<span class="sd">        configuration item). Values masked in either dataset before</span>
+<span class="sd">        the operation are masked in the resulting dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">conf</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wcs</span> <span class="o">!=</span> <span class="n">operand</span><span class="o">.</span><span class="n">wcs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;WCS properties do not match&quot;</span><span class="p">)</span>
+
+        <span class="c"># get a sensible placeholder if .unit is None</span>
+        <span class="n">self_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="ow">or</span> <span class="n">dimensionless_unscaled</span>
+        <span class="n">operand_unit</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">unit</span> <span class="ow">or</span> <span class="n">dimensionless_unscaled</span>
+
+        <span class="c"># This check could be rolled into the calculation of the result</span>
+        <span class="c"># but checking now avoids a potentially expensive calculation that</span>
+        <span class="c"># would fail anyway.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c"># Quantity is designed to work with numpy ufuncs, but plain</span>
+            <span class="c"># Unit is not, so convert units to quantities</span>
+            <span class="n">result_unit</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="mi">1</span> <span class="o">*</span> <span class="n">self_unit</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">operand_unit</span><span class="p">)</span><span class="o">.</span><span class="n">unit</span>
+        <span class="k">except</span> <span class="n">UnitsError</span><span class="p">:</span>
+            <span class="c"># current API raises ValueError in this case, not UnitError</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;operand units do not match&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">operand</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;operand shapes do not match&quot;</span><span class="p">)</span>
+
+        <span class="c"># Instead of manually scaling the operand data just let Quantity</span>
+        <span class="c"># handle it.</span>
+        <span class="c"># Order of the arguments is important here if the operation is</span>
+        <span class="c"># addition or subtraction and the units of the operands are different</span>
+        <span class="c"># but compatible. NDData follows the convention that Quantity follows</span>
+        <span class="c"># in that case, with the units of the first operand (i.e. self)</span>
+        <span class="c"># determining the units of the result.</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">operation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">self_unit</span><span class="p">,</span> <span class="n">operand</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span> <span class="n">operand_unit</span><span class="p">)</span>
+
+        <span class="n">result_unit</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">unit</span>
+        <span class="c"># If neither self nor operand had units then should return a result</span>
+        <span class="c"># that has no unit. A check that the result_unit is dimensionless</span>
+        <span class="c"># should not be necessary, but also does no harm.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">operand</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">result_unit</span> <span class="ow">is</span> <span class="n">dimensionless_unscaled</span><span class="p">:</span>
+                <span class="n">result_unit</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;arithmetic result was not unitless even &quot;</span>
+                                 <span class="s">&quot;though operands were unitless&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">new_wcs</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wcs</span><span class="p">)</span>
+
+        <span class="c"># Call __class__ in case we are dealing with an inherited type</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                                <span class="n">mask</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">wcs</span><span class="o">=</span><span class="n">new_wcs</span><span class="p">,</span>
+                                <span class="n">meta</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">result_unit</span><span class="p">)</span>
+
+        <span class="c"># Prepare to scale uncertainty if it is needed</span>
+        <span class="k">if</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">:</span>
+            <span class="n">operand_uncert_value</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span>
+
+        <span class="c"># By this point the arithmetic has succeeded, so the input units were</span>
+        <span class="c"># consistent with each other given the operation.</span>
+        <span class="c">#</span>
+        <span class="c"># If the operation is addition or subtraction then need to ensure that</span>
+        <span class="c"># the uncertainty of the operand is the same units as the result</span>
+        <span class="c"># (which will be the same as self.unit).</span>
+
+        <span class="c"># The data ought to also be scaled in this case -- for addition of</span>
+        <span class="c"># a StdDevUncertainty this isn&#39;t really necessary but other</span>
+        <span class="c"># uncertainties when added/subtracted may depend on both the operand</span>
+        <span class="c"># uncertainty and the operand data.</span>
+
+        <span class="c"># Since the .unit.to methods create a copy, avoid the conversion</span>
+        <span class="c"># unless it is necessary.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">operation</span> <span class="ow">in</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">]</span> <span class="ow">and</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="o">!=</span> <span class="n">operand</span><span class="o">.</span><span class="n">unit</span><span class="p">):</span>
+            <span class="n">operand_data</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">operand</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">:</span>
+                <span class="n">operand_uncert_value</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                                                       <span class="n">operand_uncert_value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">operand_data</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="k">if</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">:</span>
+            <span class="c"># Create a copy here in case this is returned as the uncertainty</span>
+            <span class="c"># of the result.</span>
+            <span class="n">operand_uncertainty</span> <span class="o">=</span> \
+                <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">operand_uncert_value</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">operand_uncertainty</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="k">if</span> <span class="n">propagate_uncertainties</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">operand_uncertainty</span>
+        <span class="k">elif</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span>
+                                                            <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># both self and operand have uncertainties</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">conf</span><span class="o">.</span><span class="n">warn_unsupported_correlated</span> <span class="ow">and</span>
+                <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">support_correlated</span> <span class="ow">or</span>
+                 <span class="ow">not</span> <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">support_correlated</span><span class="p">)):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;The uncertainty classes used do not support the &quot;</span>
+                         <span class="s">&quot;propagation of correlated errors, so uncertainties&quot;</span>
+                         <span class="s">&quot; will be propagated assuming they are uncorrelated&quot;</span><span class="p">)</span>
+            <span class="n">operand_scaled</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">operand_data</span><span class="p">,</span>
+                                               <span class="n">uncertainty</span><span class="o">=</span><span class="n">operand_uncertainty</span><span class="p">,</span>
+                                               <span class="n">unit</span><span class="o">=</span><span class="n">operand</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span>
+                                               <span class="n">wcs</span><span class="o">=</span><span class="n">operand</span><span class="o">.</span><span class="n">wcs</span><span class="p">,</span>
+                                               <span class="n">mask</span><span class="o">=</span><span class="n">operand</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span>
+                                               <span class="n">flags</span><span class="o">=</span><span class="n">operand</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
+                                               <span class="n">meta</span><span class="o">=</span><span class="n">operand</span><span class="o">.</span><span class="n">meta</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="p">)</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">uncertainty</span> <span class="o">=</span> <span class="n">method</span><span class="p">(</span><span class="n">operand_scaled</span><span class="p">,</span> <span class="n">result</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">IncompatibleUncertaintiesException</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">IncompatibleUncertaintiesException</span><span class="p">(</span>
+                    <span class="s">&quot;Cannot propagate uncertainties of type {0:s} with &quot;</span>
+                    <span class="s">&quot;uncertainties of type {1:s} for {2:s}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                        <span class="n">operand</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                        <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">operand</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">operand</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">operand</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># combine masks as for Numpy masked arrays</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="o">|</span> <span class="n">operand</span><span class="o">.</span><span class="n">mask</span>  <span class="c"># copy implied by operator</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="NDData.add"><a class="viewcode-back" href="../../../api/astropy.nddata.NDData.html#astropy.nddata.NDData.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">propagate_uncertainties</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="s">&quot;propagate_add&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arithmetic</span><span class="p">(</span>
+            <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="p">,</span> <span class="s">&quot;addition&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">add</span><span class="p">)</span></div>
+    <span class="n">add</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">_arithmetic</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Add&quot;</span><span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="s">&quot;+&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NDData.subtract"><a class="viewcode-back" href="../../../api/astropy.nddata.NDData.html#astropy.nddata.NDData.subtract">[docs]</a>    <span class="k">def</span> <span class="nf">subtract</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">propagate_uncertainties</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="s">&quot;propagate_subtract&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arithmetic</span><span class="p">(</span>
+            <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="p">,</span> <span class="s">&quot;subtraction&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">subtract</span><span class="p">)</span></div>
+    <span class="n">subtract</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">_arithmetic</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Subtract&quot;</span><span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="s">&quot;-&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NDData.multiply"><a class="viewcode-back" href="../../../api/astropy.nddata.NDData.html#astropy.nddata.NDData.multiply">[docs]</a>    <span class="k">def</span> <span class="nf">multiply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">propagate_uncertainties</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="s">&quot;propagate_multiply&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arithmetic</span><span class="p">(</span>
+            <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="p">,</span> <span class="s">&quot;multiplication&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="p">)</span></div>
+    <span class="n">multiply</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">_arithmetic</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Multiply&quot;</span><span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NDData.divide"><a class="viewcode-back" href="../../../api/astropy.nddata.NDData.html#astropy.nddata.NDData.divide">[docs]</a>    <span class="k">def</span> <span class="nf">divide</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">propagate_uncertainties</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="s">&quot;propagate_divide&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">propagate_uncertainties</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_arithmetic</span><span class="p">(</span>
+            <span class="n">operand</span><span class="p">,</span> <span class="n">propagate_uncertainties</span><span class="p">,</span> <span class="s">&quot;division&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">divide</span><span class="p">)</span></div>
+    <span class="n">divide</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">_arithmetic</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&quot;Divide&quot;</span><span class="p">,</span> <span class="n">operator</span><span class="o">=</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NDData.convert_unit_to"><a class="viewcode-back" href="../../../api/astropy.nddata.NDData.html#astropy.nddata.NDData.convert_unit_to">[docs]</a>    <span class="k">def</span> <span class="nf">convert_unit_to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a new `NDData` object whose values have been converted</span>
+<span class="sd">        to a new unit.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        unit : `astropy.units.UnitBase` instance or str</span>
+<span class="sd">            The unit to convert to.</span>
+
+<span class="sd">        equivalencies : list of equivalence pairs, optional</span>
+<span class="sd">           A list of equivalence pairs to try if the units are not</span>
+<span class="sd">           directly convertible.  See :ref:`unit_equivalencies`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : `~astropy.nddata.NDData`</span>
+<span class="sd">            The resulting dataset</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        UnitsError</span>
+<span class="sd">            If units are inconsistent.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Flags are set to None in the result.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;No unit specified on source data&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">equivalencies</span><span class="o">=</span><span class="n">equivalencies</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">uncertainty_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">unit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+                                              <span class="n">equivalencies</span><span class="o">=</span><span class="n">equivalencies</span><span class="p">)</span>
+            <span class="c"># should work for any uncertainty class</span>
+            <span class="n">uncertainty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uncertainty</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">uncertainty_values</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">uncertainty</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_mask</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c"># Call __class__ in case we are dealing with an inherited type</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">uncertainty</span><span class="o">=</span><span class="n">uncertainty</span><span class="p">,</span>
+                                <span class="n">mask</span><span class="o">=</span><span class="n">new_mask</span><span class="p">,</span> <span class="n">flags</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flags</span><span class="p">,</span>
+                                <span class="n">wcs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">wcs</span><span class="p">,</span>
+                                <span class="n">meta</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">unit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+</div>
+    <span class="n">read</span> <span class="o">=</span> <span class="nb">classmethod</span><span class="p">(</span><span class="n">io_registry</span><span class="o">.</span><span class="n">read</span><span class="p">)</span>
+    <span class="n">write</span> <span class="o">=</span> <span class="n">io_registry</span><span class="o">.</span><span class="n">write</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

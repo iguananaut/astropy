@@ -1,0 +1,1152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.config.configuration &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.config.configuration</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;This module contains classes and functions to standardize access to</span>
+<span class="sd">configuration files for Astropy and affiliated packages.</span>
+
+<span class="sd">.. note::</span>
+<span class="sd">    The configuration system makes use of the &#39;configobj&#39; package, which stores</span>
+<span class="sd">    configuration in a text format like that used in the standard library</span>
+<span class="sd">    `ConfigParser`. More information and documentation for configobj can be</span>
+<span class="sd">    found at http://www.voidspace.org.uk/python/configobj.html.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">os</span> <span class="kn">import</span> <span class="n">path</span>
+<span class="kn">import</span> <span class="nn">pkgutil</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">types</span>
+<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+<span class="kn">from</span> <span class="nn">..extern.configobj</span> <span class="kn">import</span> <span class="n">configobj</span><span class="p">,</span> <span class="n">validate</span>
+<span class="kn">from</span> <span class="nn">..utils.exceptions</span> <span class="kn">import</span> <span class="n">AstropyWarning</span><span class="p">,</span> <span class="n">AstropyDeprecationWarning</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_current_module</span>
+<span class="kn">from</span> <span class="nn">..utils.misc</span> <span class="kn">import</span> <span class="n">InheritDocstrings</span>
+<span class="kn">from</span> <span class="nn">.paths</span> <span class="kn">import</span> <span class="n">get_config_dir</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ConfigurationItem&#39;</span><span class="p">,</span> <span class="s">&#39;InvalidConfigurationItemWarning&#39;</span><span class="p">,</span>
+           <span class="s">&#39;ConfigurationMissingWarning&#39;</span><span class="p">,</span> <span class="s">&#39;get_config&#39;</span><span class="p">,</span> <span class="s">&#39;save_config&#39;</span><span class="p">,</span>
+           <span class="s">&#39;reload_config&#39;</span><span class="p">,</span> <span class="s">&#39;ConfigNamespace&#39;</span><span class="p">,</span> <span class="s">&#39;ConfigItem&#39;</span><span class="p">,</span> <span class="s">&#39;ConfigAlias&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="InvalidConfigurationItemWarning"><a class="viewcode-back" href="../../../api/astropy.config.InvalidConfigurationItemWarning.html#astropy.InvalidConfigurationItemWarning">[docs]</a><span class="k">class</span> <span class="nc">InvalidConfigurationItemWarning</span><span class="p">(</span><span class="n">AstropyWarning</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Warning that is issued when the configuration value specified in the</span>
+<span class="sd">    astropy configuration file does not match the type expected for that</span>
+<span class="sd">    configuration value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+</div>
+<div class="viewcode-block" id="ConfigurationMissingWarning"><a class="viewcode-back" href="../../../api/astropy.config.ConfigurationMissingWarning.html#astropy.ConfigurationMissingWarning">[docs]</a><span class="k">class</span> <span class="nc">ConfigurationMissingWarning</span><span class="p">(</span><span class="n">AstropyWarning</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Warning that is issued when the configuration directory cannot be</span>
+<span class="sd">    accessed (usually due to a permissions problem). If this warning appears,</span>
+<span class="sd">    configuration items will be set to their defaults rather than read from the</span>
+<span class="sd">    configuration file, and no configuration will persist across sessions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="c"># these are not in __all__ because it&#39;s not intended that a user ever see them</span></div>
+<span class="k">class</span> <span class="nc">ConfigurationDefaultMissingError</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An exception that is raised when the configuration defaults (which</span>
+<span class="sd">    should be generated at build-time) are missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="c"># this is used in astropy/__init__.py</span>
+<span class="k">class</span> <span class="nc">ConfigurationDefaultMissingWarning</span><span class="p">(</span><span class="n">AstropyWarning</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A warning that is issued when the configuration defaults (which</span>
+<span class="sd">    should be generated at build-time) are missing.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">ConfigurationChangedWarning</span><span class="p">(</span><span class="n">AstropyWarning</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A warning that the configuration options have changed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<span class="k">class</span> <span class="nc">_ConfigNamespaceMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">__bases__</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="nb">object</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">ConfigItem</span><span class="p">):</span>
+                <span class="n">val</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">key</span>
+
+
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">_ConfigNamespaceMeta</span><span class="p">)</span>
+<div class="viewcode-block" id="ConfigNamespace"><a class="viewcode-back" href="../../../api/astropy.config.ConfigNamespace.html#astropy.ConfigNamespace">[docs]</a><span class="k">class</span> <span class="nc">ConfigNamespace</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A namespace of configuration items.  Each subpackage with</span>
+<span class="sd">    configuration items should define a subclass of this class,</span>
+<span class="sd">    containing `ConfigItem` instances as members.</span>
+
+<span class="sd">    For example::</span>
+
+<span class="sd">        class Conf(_config.ConfigNamespace):</span>
+<span class="sd">            unicode_output = _config.ConfigItem(</span>
+<span class="sd">                False,</span>
+<span class="sd">                &#39;Use Unicode characters when outputting values, ...&#39;)</span>
+<span class="sd">            use_color = _config.ConfigItem(</span>
+<span class="sd">                sys.platform != &#39;win32&#39;,</span>
+<span class="sd">                &#39;When True, use ANSI color escape sequences when ...&#39;,</span>
+<span class="sd">                aliases=[&#39;astropy.utils.console.USE_COLOR&#39;])</span>
+<span class="sd">        conf = Conf()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ConfigNamespace.set_temp"><a class="viewcode-back" href="../../../api/astropy.config.ConfigNamespace.html#astropy.ConfigNamespace.set_temp">[docs]</a>    <span class="k">def</span> <span class="nf">set_temp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Temporarily set a configuration value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        attr : str</span>
+<span class="sd">            Configuration item name</span>
+
+<span class="sd">        value : object</span>
+<span class="sd">            The value to set temporarily.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; import astropy</span>
+<span class="sd">        &gt;&gt;&gt; with astropy.conf.set_temp(&#39;use_color&#39;, False):</span>
+<span class="sd">        ...     pass</span>
+<span class="sd">        ...     # console output will not contain color</span>
+<span class="sd">        &gt;&gt;&gt; # console output contains color again...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">set_temp</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;No configuration parameter &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ConfigNamespace.reload"><a class="viewcode-back" href="../../../api/astropy.config.ConfigNamespace.html#astropy.ConfigNamespace.reload">[docs]</a>    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reload a configuration item from the configuration file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        attr : str, optional</span>
+<span class="sd">            The name of the configuration parameter to reload.  If not</span>
+<span class="sd">            provided, reload all configuration parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;No configuration parameter &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ConfigItem</span><span class="p">):</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="ConfigNamespace.reset"><a class="viewcode-back" href="../../../api/astropy.config.ConfigNamespace.html#astropy.ConfigNamespace.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset a configuration item to its default.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        attr : str, optional</span>
+<span class="sd">            The name of the configuration parameter to reload.  If not</span>
+<span class="sd">            provided, reset all configuration parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+                <span class="n">prop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+                <span class="n">prop</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">prop</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&quot;No configuration parameter &#39;{0}&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">attr</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__dict__</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ConfigItem</span><span class="p">):</span>
+                <span class="n">item</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">)</span>
+
+</div></div>
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">InheritDocstrings</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">ConfigItem</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A setting and associated value stored in a configuration file.</span>
+
+<span class="sd">    These objects should be created as members of</span>
+<span class="sd">    `ConfigNamespace` subclasses, for example::</span>
+
+<span class="sd">        class _Conf(config.ConfigNamespace):</span>
+<span class="sd">            unicode_output = config.ConfigItem(</span>
+<span class="sd">                False,</span>
+<span class="sd">                &#39;Use Unicode characters when outputting values, and writing widgets &#39;</span>
+<span class="sd">                &#39;to the console.&#39;)</span>
+<span class="sd">        conf = _Conf()</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    defaultvalue : object, optional</span>
+<span class="sd">        The default value for this item. If this is a list of strings, this</span>
+<span class="sd">        item will be interpreted as an &#39;options&#39; value - this item must be one</span>
+<span class="sd">        of those values, and the first in the list will be taken as the default</span>
+<span class="sd">        value.</span>
+
+<span class="sd">    description : str or None, optional</span>
+<span class="sd">        A description of this item (will be shown as a comment in the</span>
+<span class="sd">        configuration file)</span>
+
+<span class="sd">    cfgtype : str or None, optional</span>
+<span class="sd">        A type specifier like those used as the *values* of a particular key</span>
+<span class="sd">        in a ``configspec`` file of ``configobj``. If None, the type will be</span>
+<span class="sd">        inferred from the default value.</span>
+
+<span class="sd">    module : str or None, optional</span>
+<span class="sd">        The full module name that this item is associated with. The first</span>
+<span class="sd">        element (e.g. &#39;astropy&#39; if this is &#39;astropy.config.configuration&#39;)</span>
+<span class="sd">        will be used to determine the name of the configuration file, while</span>
+<span class="sd">        the remaining items determine the section. If None, the package will be</span>
+<span class="sd">        inferred from the package within whiich this object&#39;s initializer is</span>
+<span class="sd">        called.</span>
+
+<span class="sd">    aliases : str, or list of str, optional</span>
+<span class="sd">        The deprecated location(s) of this configuration item.  If the</span>
+<span class="sd">        config item is not found at the new location, it will be</span>
+<span class="sd">        searched for at all of the old locations.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``module`` is `None`, but the module this item is created from</span>
+<span class="sd">        cannot be determined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># this is used to make validation faster so a Validator object doesn&#39;t</span>
+    <span class="c"># have to be created every time</span>
+    <span class="n">_validator</span> <span class="o">=</span> <span class="n">validate</span><span class="o">.</span><span class="n">Validator</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">defaultvalue</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">module</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">isiterable</span>
+
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">msg1</span> <span class="o">=</span> <span class="s">&#39;Cannot automatically determine get_config module, &#39;</span>
+                <span class="n">msg2</span> <span class="o">=</span> <span class="s">&#39;because it is not called from inside a valid module&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg1</span> <span class="o">+</span> <span class="n">msg2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">module</span> <span class="o">=</span> <span class="n">module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">description</span>
+
+        <span class="c"># now determine cfgtype if it is not given</span>
+        <span class="k">if</span> <span class="n">cfgtype</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">isiterable</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)):</span>
+                <span class="c"># it is an options list</span>
+                <span class="n">dvstr</span> <span class="o">=</span> <span class="p">[</span><span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">defaultvalue</span><span class="p">]</span>
+                <span class="n">cfgtype</span> <span class="o">=</span> <span class="s">&#39;option(&#39;</span> <span class="o">+</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dvstr</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span>
+                <span class="n">defaultvalue</span> <span class="o">=</span> <span class="n">dvstr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+                <span class="n">cfgtype</span> <span class="o">=</span> <span class="s">&#39;boolean&#39;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="n">cfgtype</span> <span class="o">=</span> <span class="s">&#39;integer&#39;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">cfgtype</span> <span class="o">=</span> <span class="s">&#39;float&#39;</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">cfgtype</span> <span class="o">=</span> <span class="s">&#39;string&#39;</span>
+                <span class="n">defaultvalue</span> <span class="o">=</span> <span class="n">six</span><span class="o">.</span><span class="n">text_type</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cfgtype</span> <span class="o">=</span> <span class="n">cfgtype</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_val</span><span class="p">(</span><span class="n">defaultvalue</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">defaultvalue</span> <span class="o">=</span> <span class="n">defaultvalue</span>
+
+        <span class="k">if</span> <span class="n">aliases</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aliases</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="p">[</span><span class="n">aliases</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span> <span class="o">=</span> <span class="n">aliases</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">objtype</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the current value of this `ConfigItem`.</span>
+
+<span class="sd">        This also updates the comments that give the description and type</span>
+<span class="sd">        information.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value</span>
+<span class="sd">            The value this item should be set to.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If the provided ``value`` is not valid for this `ConfigItem`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_val</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">validate</span><span class="o">.</span><span class="n">ValidateError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Provided value for configuration item {0} not valid: {1}&#39;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+        <span class="n">sec</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">)</span>
+
+        <span class="n">sec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">set_temp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets this item to a specified value only inside a with block.</span>
+
+<span class="sd">        Use as::</span>
+<span class="sd">            ITEM = ConfigItem(&#39;ITEM&#39;, &#39;default&#39;, &#39;description&#39;)</span>
+
+<span class="sd">            with ITEM.set_temp(&#39;newval&#39;):</span>
+<span class="sd">                ... do something that wants ITEM&#39;s value to be &#39;newval&#39; ...</span>
+
+<span class="sd">             # ITEM is now &#39;default&#39; after the with block</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value</span>
+<span class="sd">            The value to set this item to inside the with block.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">initval</span> <span class="o">=</span> <span class="bp">self</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">yield</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">initval</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reloads the value of this `ConfigItem` from the relevant</span>
+<span class="sd">        configuration file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        val</span>
+<span class="sd">            The new value loaded from the configuration file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">)</span>
+        <span class="n">baseobj</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">secname</span> <span class="o">=</span> <span class="n">baseobj</span><span class="o">.</span><span class="n">name</span>
+
+        <span class="n">cobj</span> <span class="o">=</span> <span class="n">baseobj</span>
+        <span class="c"># a ConfigObj&#39;s parent is itself, so we look for the parent with that</span>
+        <span class="k">while</span> <span class="n">cobj</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">cobj</span><span class="p">:</span>
+            <span class="n">cobj</span> <span class="o">=</span> <span class="n">cobj</span><span class="o">.</span><span class="n">parent</span>
+
+        <span class="n">newobj</span> <span class="o">=</span> <span class="n">configobj</span><span class="o">.</span><span class="n">ConfigObj</span><span class="p">(</span><span class="n">cobj</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">secname</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">secname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">newobj</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">baseobj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">newobj</span> <span class="o">=</span> <span class="n">newobj</span><span class="p">[</span><span class="n">secname</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">newobj</span><span class="p">:</span>
+            <span class="n">baseobj</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">newobj</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">baseobj</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s">&#39;&lt;{0}: name={1!r} value={2!r} at 0x{3:x}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="p">(),</span> <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&#39;{0}: {1}&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;  cfgtype={2!r}&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;  defaultvalue={3!r}&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;  description={4!r}&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;  module={5}&#39;</span><span class="p">,</span>
+                         <span class="s">&#39;  value={6!r}&#39;</span><span class="p">))</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cfgtype</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span>
+                         <span class="bp">self</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">out</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the value of this `ConfigItem`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        val</span>
+<span class="sd">            This item&#39;s value, with a type determined by the `cfgtype`</span>
+<span class="sd">            attribute.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If the configuration value as stored is not this item&#39;s type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">section_name</span><span class="p">(</span><span class="n">section</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;at the top-level&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s">&#39;in section [{0}]&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+
+        <span class="n">options</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sec</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="ow">in</span> <span class="n">sec</span><span class="p">:</span>
+            <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sec</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">aliases</span><span class="p">:</span>
+            <span class="n">module</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">alias</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">sec</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s">&#39;.&#39;</span> <span class="ow">in</span> <span class="n">module</span><span class="p">:</span>
+                <span class="n">filename</span><span class="p">,</span> <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">filename</span> <span class="o">=</span> <span class="n">module</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">sec</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s">&#39;.&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">:</span>
+                    <span class="n">new_module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">new_module</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s">&quot;Config parameter &#39;{0}&#39; {1} of the file &#39;{2}&#39; &quot;</span>
+                    <span class="s">&quot;is deprecated. Use &#39;{3}&#39; {4} instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">name</span><span class="p">,</span> <span class="n">section_name</span><span class="p">(</span><span class="n">module</span><span class="p">),</span> <span class="n">get_config_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">section_name</span><span class="p">(</span><span class="n">new_module</span><span class="p">)),</span>
+                    <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+                <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">sec</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">)</span>
+            <span class="n">options</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">options</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">filename</span><span class="p">,</span> <span class="n">sec</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s">&quot;Config parameter &#39;{0}&#39; {1} of the file &#39;{2}&#39; is &quot;</span>
+                <span class="s">&quot;given by more than one alias ({3}). Using the first.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">section_name</span><span class="p">(</span><span class="n">sec</span><span class="p">),</span> <span class="n">get_config_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span>
+                    <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+                        <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">options</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">])),</span>
+                <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_val</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">validate</span><span class="o">.</span><span class="n">ValidateError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Configuration value not valid:&#39;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">_validate_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Validates the provided value based on cfgtype and returns the</span>
+<span class="sd">        type-cast value</span>
+
+<span class="sd">        throws the underlying configobj exception if it fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># note that this will normally use the *class* attribute `_validator`,</span>
+        <span class="c"># but if some arcane reason is needed for making a special one for an</span>
+        <span class="c"># instance or sub-class, it will be used</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validator</span><span class="o">.</span><span class="n">check</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cfgtype</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ConfigurationItem</span><span class="p">(</span><span class="n">ConfigItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A backward-compatibility layer to support the old</span>
+<span class="sd">    `ConfigurationItem` API.  The only difference between this and</span>
+<span class="sd">    `ConfigItem` is that this requires an explicit name to be set as</span>
+<span class="sd">    the first argument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># REMOVE in astropy 0.5</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">defaultvalue</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">cfgtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">module</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">aliases</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">warn</span><span class="p">(</span>
+            <span class="s">&quot;ConfigurationItem has been deprecated in astropy 0.4. &quot;</span>
+            <span class="s">&quot;Use ConfigItem objects as members of ConfigNamespace subclasses &quot;</span>
+            <span class="s">&quot;instead.  See ConfigNamespace for an example.&quot;</span><span class="p">,</span>
+            <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+
+        <span class="c"># We have to do the automatic module determination here, not</span>
+        <span class="c"># just in ConfigItem, otherwise the extra stack frame will</span>
+        <span class="c"># make it come up with the wrong answer.</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">msg1</span> <span class="o">=</span> <span class="s">&#39;Cannot automatically determine get_config module, &#39;</span>
+                <span class="n">msg2</span> <span class="o">=</span> <span class="s">&#39;because it is not called from inside a valid module&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg1</span> <span class="o">+</span> <span class="n">msg2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConfigurationItem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">defaultvalue</span><span class="o">=</span><span class="n">defaultvalue</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="n">description</span><span class="p">,</span>
+            <span class="n">cfgtype</span><span class="o">=</span><span class="n">cfgtype</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">,</span>
+            <span class="n">aliases</span><span class="o">=</span><span class="n">aliases</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Removed in astropy 0.4.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s">&quot;The ability to save config options was removed in astropy 0.4. &quot;</span>
+            <span class="s">&quot;To change config settings, edit &#39;{0}&#39; directly.&quot;</span><span class="o">.</span>
+            <span class="n">format</span><span class="p">(</span><span class="n">get_config_filename</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">)))</span>
+
+
+<span class="k">class</span> <span class="nc">ConfigAlias</span><span class="p">(</span><span class="n">ConfigItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class that exists to support backward compatibility only.</span>
+
+<span class="sd">    This is an alias for a `ConfigItem` that has been moved elsewhere.</span>
+<span class="sd">    It inherits from `ConfigItem` only because it implements the same</span>
+<span class="sd">    interface, not because any of the methods are reused.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    since : str</span>
+<span class="sd">        The version in which the configuration item was moved.</span>
+
+<span class="sd">    old_name : str</span>
+<span class="sd">        The old name of the configuration item.  This should be the</span>
+<span class="sd">        name of the variable in Python, not in the configuration file.</span>
+
+<span class="sd">    new_name : str</span>
+<span class="sd">        The new name of the configuration item.  This is both the name</span>
+<span class="sd">        of the item in Python and in the configuration file (since as of</span>
+<span class="sd">        astropy 0.4, those are always the same thing).</span>
+
+<span class="sd">    old_module : str, optional</span>
+<span class="sd">        A fully-qualified, dot-separated path to the module in which</span>
+<span class="sd">        the configuration item used to be defined.  If not provided, it</span>
+<span class="sd">        is the name of the module in which `ConfigAlias` is called.</span>
+
+<span class="sd">    new_module : str, optional</span>
+<span class="sd">        A fully-qualified, dot-separated path to the module in which</span>
+<span class="sd">        the configuration item is now defined.  If not provided, it is</span>
+<span class="sd">        the name of the module in which `ConfigAlias` is called.  This</span>
+<span class="sd">        string should not contain the ``.conf`` object.  For example, if</span>
+<span class="sd">        the new configuration item is in ``astropy.conf.use_unicode``, this</span>
+<span class="sd">        value only needs to be ``&#39;astropy&#39;``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># REMOVE in astropy 0.5</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span> <span class="n">old_name</span><span class="p">,</span> <span class="n">new_name</span><span class="p">,</span> <span class="n">old_module</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">new_module</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">old_module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">old_module</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">old_module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">msg1</span> <span class="o">=</span> <span class="s">&#39;Cannot automatically determine get_config module, &#39;</span>
+                <span class="n">msg2</span> <span class="o">=</span> <span class="s">&#39;because it is not called from inside a valid module&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg1</span> <span class="o">+</span> <span class="n">msg2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">old_module</span> <span class="o">=</span> <span class="n">old_module</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="k">if</span> <span class="n">new_module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">new_module</span> <span class="o">=</span> <span class="n">old_module</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_since</span> <span class="o">=</span> <span class="n">since</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_name</span> <span class="o">=</span> <span class="n">old_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span> <span class="o">=</span> <span class="n">new_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_module</span> <span class="o">=</span> <span class="n">old_module</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_new_module</span> <span class="o">=</span> <span class="n">new_module</span>
+
+    <span class="k">def</span> <span class="nf">_deprecation_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">warn</span><span class="p">(</span>
+            <span class="s">&quot;Since {0}, config parameter &#39;{1}.{2}&#39; is deprecated. &quot;</span>
+            <span class="s">&quot;Use &#39;{3}.conf.{4}&#39; instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_since</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_old_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_old_name</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_new_module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">),</span>
+            <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_target</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_module</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">:</span>
+            <span class="nb">__import__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new_module</span><span class="p">)</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_new_module</span><span class="p">]</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s">&#39;conf&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cfg</span>
+
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">()</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_temp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">()</span><span class="o">.</span><span class="n">set_temp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">()</span><span class="o">.</span><span class="n">reload</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">()</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_target</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_name</span><span class="p">)</span>
+
+
+<span class="c"># this dictionary stores the master copy of the ConfigObj&#39;s for each</span>
+<span class="c"># root package</span>
+<span class="n">_cfgobjs</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">get_config_filename</span><span class="p">(</span><span class="n">packageormod</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the filename of the config file associated with the given</span>
+<span class="sd">    package or module.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cfg</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">packageormod</span><span class="p">)</span>
+    <span class="k">while</span> <span class="n">cfg</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">cfg</span><span class="p">:</span>
+        <span class="n">cfg</span> <span class="o">=</span> <span class="n">cfg</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">return</span> <span class="n">cfg</span><span class="o">.</span><span class="n">filename</span>
+
+
+<span class="c"># This is used by testing to override the config file, so we can test</span>
+<span class="c"># with various config files that exercise different features of the</span>
+<span class="c"># config system.</span>
+<span class="n">_override_config_file</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<div class="viewcode-block" id="get_config"><a class="viewcode-back" href="../../../api/astropy.config.get_config.html#astropy.get_config">[docs]</a><span class="k">def</span> <span class="nf">get_config</span><span class="p">(</span><span class="n">packageormod</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="nb">reload</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gets the configuration object or section associated with a particular</span>
+<span class="sd">    package or module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    packageormod : str or None</span>
+<span class="sd">        The package for which to retrieve the configuration object. If a</span>
+<span class="sd">        string, it must be a valid package name, or if `None`, the package from</span>
+<span class="sd">        which this function is called will be used.</span>
+
+<span class="sd">    reload : bool, optional</span>
+<span class="sd">        Reload the file, even if we have it cached.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cfgobj : ``configobj.ConfigObj`` or ``configobj.Section``</span>
+<span class="sd">        If the requested package is a base package, this will be the</span>
+<span class="sd">        ``configobj.ConfigObj`` for that package, or if it is a subpackage or</span>
+<span class="sd">        module, it will return the relevant ``configobj.Section`` object.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``packageormod`` is `None`, but the package this item is created</span>
+<span class="sd">        from cannot be determined.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">packageormod</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">packageormod</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">packageormod</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg1</span> <span class="o">=</span> <span class="s">&#39;Cannot automatically determine get_config module, &#39;</span>
+            <span class="n">msg2</span> <span class="o">=</span> <span class="s">&#39;because it is not called from inside a valid module&#39;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg1</span> <span class="o">+</span> <span class="n">msg2</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">packageormod</span> <span class="o">=</span> <span class="n">packageormod</span><span class="o">.</span><span class="n">__name__</span>
+
+    <span class="n">packageormodspl</span> <span class="o">=</span> <span class="n">packageormod</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)</span>
+    <span class="n">rootname</span> <span class="o">=</span> <span class="n">packageormodspl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">secname</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">packageormodspl</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+
+    <span class="n">cobj</span> <span class="o">=</span> <span class="n">_cfgobjs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">rootname</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cobj</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="nb">reload</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_ASTROPY_SETUP_</span><span class="p">:</span>
+            <span class="c"># There&#39;s no reason to use anything but the default config</span>
+            <span class="n">cobj</span> <span class="o">=</span> <span class="n">configobj</span><span class="o">.</span><span class="n">ConfigObj</span><span class="p">(</span><span class="n">interpolation</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cfgfn</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="c"># This feature is intended only for use by the unit tests</span>
+                <span class="k">if</span> <span class="n">_override_config_file</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">cfgfn</span> <span class="o">=</span> <span class="n">_override_config_file</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">cfgfn</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">get_config_dir</span><span class="p">(),</span> <span class="n">rootname</span> <span class="o">+</span> <span class="s">&#39;.cfg&#39;</span><span class="p">)</span>
+                <span class="n">cobj</span> <span class="o">=</span> <span class="n">configobj</span><span class="o">.</span><span class="n">ConfigObj</span><span class="p">(</span><span class="n">cfgfn</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">IOError</span><span class="p">,</span> <span class="ne">OSError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Configuration defaults will be used due to &#39;</span><span class="p">)</span>
+                <span class="n">errstr</span> <span class="o">=</span> <span class="s">&#39;&#39;</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="p">(</span><span class="s">&#39;:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="n">e</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="n">errstr</span>
+                <span class="n">msg</span> <span class="o">+=</span> <span class="s">&#39; on {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cfgfn</span><span class="p">)</span>
+                <span class="n">warn</span><span class="p">(</span><span class="n">ConfigurationMissingWarning</span><span class="p">(</span><span class="n">msg</span><span class="p">))</span>
+
+                <span class="c"># This caches the object, so if the file becomes accessible, this</span>
+                <span class="c"># function won&#39;t see it unless the module is reloaded</span>
+                <span class="n">cobj</span> <span class="o">=</span> <span class="n">configobj</span><span class="o">.</span><span class="n">ConfigObj</span><span class="p">(</span><span class="n">interpolation</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+        <span class="n">_cfgobjs</span><span class="p">[</span><span class="n">rootname</span><span class="p">]</span> <span class="o">=</span> <span class="n">cobj</span>
+
+    <span class="k">if</span> <span class="n">secname</span><span class="p">:</span>  <span class="c"># not the root package</span>
+        <span class="k">if</span> <span class="n">secname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cobj</span><span class="p">:</span>
+            <span class="n">cobj</span><span class="p">[</span><span class="n">secname</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">return</span> <span class="n">cobj</span><span class="p">[</span><span class="n">secname</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">cobj</span>
+
+</div>
+<div class="viewcode-block" id="save_config"><a class="viewcode-back" href="../../../api/astropy.config.save_config.html#astropy.save_config">[docs]</a><span class="k">def</span> <span class="nf">save_config</span><span class="p">(</span><span class="n">packageormod</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Removed in astropy 0.4.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s">&quot;The ability to save config options was removed in astropy 0.4. &quot;</span>
+        <span class="s">&quot;To change config settings, edit &#39;{0}&#39; directly.&quot;</span><span class="o">.</span>
+        <span class="n">format</span><span class="p">(</span><span class="n">get_config_filename</span><span class="p">(</span><span class="n">packageormod</span><span class="p">)))</span>
+
+</div>
+<div class="viewcode-block" id="reload_config"><a class="viewcode-back" href="../../../api/astropy.config.reload_config.html#astropy.reload_config">[docs]</a><span class="k">def</span> <span class="nf">reload_config</span><span class="p">(</span><span class="n">packageormod</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Reloads configuration settings from a configuration file for the root</span>
+<span class="sd">    package of the requested package/module.</span>
+
+<span class="sd">    This overwrites any changes that may have been made in `ConfigItem`</span>
+<span class="sd">    objects.  This applies for any items that are based on this file, which</span>
+<span class="sd">    is determined by the *root* package of ``packageormod``</span>
+<span class="sd">    (e.g. ``&#39;astropy.cfg&#39;`` for the ``&#39;astropy.config.configuration&#39;``</span>
+<span class="sd">    module).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    packageormod : str or None</span>
+<span class="sd">        The package or module name - see `get_config` for details.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sec</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">packageormod</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="c"># look for the section that is its own parent - that&#39;s the base object</span>
+    <span class="k">while</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">sec</span><span class="p">:</span>
+        <span class="n">sec</span> <span class="o">=</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">sec</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
+
+</div>
+<span class="k">def</span> <span class="nf">is_unedited_config_file</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determines if a config file can be safely replaced because it doesn&#39;t</span>
+<span class="sd">    actually contain any meaningful content.</span>
+
+<span class="sd">    To meet this criteria, the config file must be either:</span>
+
+<span class="sd">    - All comments or completely empty</span>
+
+<span class="sd">    - An exact match to a &quot;legacy&quot; version of the config file prior to</span>
+<span class="sd">      Astropy 0.4, when APE3 was implemented and the config file</span>
+<span class="sd">      contained commented-out values by default.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># We want to calculate the md5sum using universal line endings, so</span>
+    <span class="c"># that even if the files had their line endings converted to \r\n</span>
+    <span class="c"># on Windows, this will still work.</span>
+
+    <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;rt&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;latin-1&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fd</span><span class="p">:</span>
+        <span class="n">content</span> <span class="o">=</span> <span class="n">fd</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+    <span class="n">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;latin-1&#39;</span><span class="p">)</span>
+
+    <span class="c"># First determine if the config file has any effective content</span>
+    <span class="nb">buffer</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="nb">buffer</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">raw_cfg</span> <span class="o">=</span> <span class="n">configobj</span><span class="o">.</span><span class="n">ConfigObj</span><span class="p">(</span><span class="nb">buffer</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="n">raw_cfg</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="c"># Now determine if it matches the md5sum of a known, unedited</span>
+    <span class="c"># config file.</span>
+    <span class="n">known_configs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span>
+        <span class="s">&#39;5df7e409425e5bfe7ed041513fda3288&#39;</span><span class="p">,</span>  <span class="c"># v0.3</span>
+        <span class="s">&#39;8355f99a01b3bdfd8761ef45d5d8b7e5&#39;</span><span class="p">,</span>  <span class="c"># v0.2</span>
+        <span class="s">&#39;4ea5a84de146dc3fcea2a5b93735e634&#39;</span>   <span class="c"># v0.2.1, v0.2.2, v0.2.3, v0.2.4, v0.2.5</span>
+    <span class="p">])</span>
+
+    <span class="n">md5</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">md5</span><span class="p">()</span>
+    <span class="n">md5</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+    <span class="n">digest</span> <span class="o">=</span> <span class="n">md5</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">digest</span> <span class="ow">in</span> <span class="n">known_configs</span>
+
+
+<span class="c"># this is not in __all__ because it&#39;s not intended that a user uses it</span>
+<span class="k">def</span> <span class="nf">update_default_config</span><span class="p">(</span><span class="n">pkg</span><span class="p">,</span> <span class="n">default_cfg_dir_or_fn</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the configuration file for the specified package exists,</span>
+<span class="sd">    and if not, copy over the default configuration.  If the</span>
+<span class="sd">    configuration file looks like it has already been edited, we do</span>
+<span class="sd">    not write over it, but instead write a file alongside it named</span>
+<span class="sd">    ``pkg.version.cfg`` as a &quot;template&quot; for the user.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pkg : str</span>
+<span class="sd">        The package to be updated.</span>
+<span class="sd">    default_cfg_dir_or_fn : str</span>
+<span class="sd">        The filename or directory name where the default configuration file is.</span>
+<span class="sd">        If a directory name, ``&#39;pkg.cfg&#39;`` will be used in that directory.</span>
+<span class="sd">    version : str, optional</span>
+<span class="sd">        The current version of the given package.  If not provided, it will</span>
+<span class="sd">        be obtained from ``pkg.__version__``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    updated : bool</span>
+<span class="sd">        If the profile was updated, `True`, otherwise `False`.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ConfigurationDefaultMissingError</span>
+<span class="sd">        If the default configuration could not be found.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">default_cfg_dir_or_fn</span><span class="p">):</span>
+        <span class="n">default_cfgfn</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">default_cfg_dir_or_fn</span><span class="p">,</span> <span class="n">pkg</span> <span class="o">+</span> <span class="s">&#39;.cfg&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">default_cfgfn</span> <span class="o">=</span> <span class="n">default_cfg_dir_or_fn</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">default_cfgfn</span><span class="p">):</span>
+        <span class="c"># There is no template configuration file, which basically</span>
+        <span class="c"># means the affiliated package is not using the configuration</span>
+        <span class="c"># system, so just return.</span>
+        <span class="k">return</span>
+
+    <span class="n">cfgfn</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span><span class="o">.</span><span class="n">filename</span>
+
+    <span class="n">doupdate</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">cfgfn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">cfgfn</span><span class="p">):</span>
+            <span class="n">doupdate</span> <span class="o">=</span> <span class="n">is_unedited_config_file</span><span class="p">(</span><span class="n">cfgfn</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">cfgfn</span><span class="p">)):</span>
+            <span class="n">doupdate</span> <span class="o">=</span> <span class="bp">True</span>
+
+    <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">pkg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s">&#39;__version__&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">ConfigurationDefaultMissingError</span><span class="p">(</span>
+                <span class="s">&#39;Could not determine version of package {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg</span><span class="p">))</span>
+        <span class="n">version</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">__version__</span>
+
+    <span class="c"># Don&#39;t install template files for dev versions, or we&#39;ll end up</span>
+    <span class="c"># spamming `~/.astropy/config`.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="s">&#39;dev&#39;</span> <span class="ow">in</span> <span class="n">version</span><span class="p">:</span>
+        <span class="n">template_path</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="n">get_config_dir</span><span class="p">(),</span> <span class="s">&#39;{0}.{1}.cfg&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pkg</span><span class="p">,</span> <span class="n">version</span><span class="p">))</span>
+        <span class="n">needs_template</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">template_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">needs_template</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="k">if</span> <span class="n">doupdate</span> <span class="ow">or</span> <span class="n">needs_template</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">default_cfgfn</span><span class="p">,</span> <span class="s">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fr</span><span class="p">:</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">fr</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">needs_template</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">template_path</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fw</span><span class="p">:</span>
+                <span class="n">fw</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="c"># If we just installed a new template file and we can&#39;t</span>
+            <span class="c"># update the main configuration file because it has user</span>
+            <span class="c"># changes, display a warning.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">doupdate</span><span class="p">:</span>
+                <span class="n">warn</span><span class="p">(</span>
+                    <span class="s">&quot;The configuration options in {0} {1} may have changed, &quot;</span>
+                    <span class="s">&quot;your configuration file was not updated in order to &quot;</span>
+                    <span class="s">&quot;preserve local changes.  A new configuration template &quot;</span>
+                    <span class="s">&quot;has been saved to &#39;{2}&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">pkg</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">template_path</span><span class="p">),</span>
+                    <span class="n">ConfigurationChangedWarning</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">doupdate</span><span class="p">:</span>
+            <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">cfgfn</span><span class="p">,</span> <span class="s">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fw</span><span class="p">:</span>
+                <span class="n">fw</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="c"># DEPRECATED FUNCTIONALITY ----------------------------------------</span>
+<span class="c"># Everything below this point should be removed in astropy 0.5</span>
+
+<span class="k">def</span> <span class="nf">get_config_items</span><span class="p">(</span><span class="n">packageormod</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns the `ConfigurationItem` objects associated with a particular</span>
+<span class="sd">    module.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    packageormod : str or None</span>
+<span class="sd">        The package or module name or None to get the current module&#39;s items.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    configitems : dict</span>
+<span class="sd">        A dictionary where the keys are the name of the items as the are named</span>
+<span class="sd">        in the module, and the values are the associated `ConfigurationItem`</span>
+<span class="sd">        objects.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_current_module</span>
+
+    <span class="k">if</span> <span class="n">packageormod</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">packageormod</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">packageormod</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg1</span> <span class="o">=</span> <span class="s">&#39;Cannot automatically determine get_config module, &#39;</span>
+            <span class="n">msg2</span> <span class="o">=</span> <span class="s">&#39;because it is not called from inside a valid module&#39;</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg1</span> <span class="o">+</span> <span class="n">msg2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">packageormod</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="nb">__import__</span><span class="p">(</span><span class="n">packageormod</span><span class="p">)</span>
+        <span class="n">packageormod</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="n">packageormod</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">inspect</span><span class="o">.</span><span class="n">ismodule</span><span class="p">(</span><span class="n">packageormod</span><span class="p">):</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;packageormod in get_config_items is invalid&#39;</span><span class="p">)</span>
+
+    <span class="n">configitems</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">n</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">iteritems</span><span class="p">(</span><span class="n">packageormod</span><span class="o">.</span><span class="n">__dict__</span><span class="p">):</span>
+        <span class="c"># if it&#39;s not a new-style object, it&#39;s certainly not a ConfigurationItem</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;__class__&#39;</span><span class="p">):</span>
+            <span class="n">fqn</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span> <span class="o">+</span> <span class="n">obj</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span>
+            <span class="k">if</span> <span class="n">fqn</span> <span class="o">==</span> <span class="s">&#39;astropy.config.configuration.ConfigurationItem&#39;</span><span class="p">:</span>
+                <span class="n">configitems</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">obj</span>
+
+    <span class="k">return</span> <span class="n">configitems</span>
+
+
+<span class="k">def</span> <span class="nf">_fix_section_blank_lines</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">gotoroot</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Adds a blank line to the comments of any sections in the requested sections,</span>
+<span class="sd">    recursing into subsections if `recurse` is True. If `gotoroot` is True,</span>
+<span class="sd">    this first goes to the root of the requested section, just like</span>
+<span class="sd">    `save_config` and `reload_config` - this does nothing if `sec` is a</span>
+<span class="sd">    configobj already.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sec</span><span class="p">,</span> <span class="s">&#39;sections&#39;</span><span class="p">):</span>
+        <span class="n">sec</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">sec</span><span class="p">)</span>
+
+        <span class="c"># look for the section that is its own parent - that&#39;s the base object</span>
+        <span class="k">if</span> <span class="n">gotoroot</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">sec</span><span class="p">:</span>
+                <span class="n">sec</span> <span class="o">=</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span>
+
+    <span class="k">for</span> <span class="n">isec</span><span class="p">,</span> <span class="n">snm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sec</span><span class="o">.</span><span class="n">sections</span><span class="p">):</span>
+        <span class="n">comm</span> <span class="o">=</span> <span class="n">sec</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="n">snm</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">comm</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">comm</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="n">sec</span> <span class="ow">and</span> <span class="n">isec</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c"># don&#39;t do it for first section</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">comm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">recurse</span><span class="p">:</span>
+            <span class="n">_fix_section_blank_lines</span><span class="p">(</span><span class="n">sec</span><span class="p">[</span><span class="n">snm</span><span class="p">],</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_save_config</span><span class="p">(</span><span class="n">packageormod</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Saves all configuration settings to the configuration file for the</span>
+<span class="sd">    root package of the requested package/module.</span>
+
+<span class="sd">    This overwrites any configuration items that have been changed in</span>
+<span class="sd">    `ConfigurationItem` objects that are based on the configuration file</span>
+<span class="sd">    determined by the *root* package of ``packageormod`` (e.g. &#39;astropy.cfg&#39;</span>
+<span class="sd">    for the &#39;astropy.config.configuration&#39; module).</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        To save only a single item, use the `ConfigurationItem.save` method -</span>
+<span class="sd">        this will save all options in the current session that may have been</span>
+<span class="sd">        changed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    packageormod : str or None</span>
+<span class="sd">        The package or module name - see `get_config` for details.</span>
+
+<span class="sd">    filename : str, optional</span>
+<span class="sd">        Save the config to a given filename instead of to the default location.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">sec</span> <span class="o">=</span> <span class="n">get_config</span><span class="p">(</span><span class="n">packageormod</span><span class="p">)</span>
+    <span class="c"># look for the section that is its own parent - that&#39;s the base object</span>
+    <span class="k">while</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">sec</span><span class="p">:</span>
+        <span class="n">sec</span> <span class="o">=</span> <span class="n">sec</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">with</span> <span class="n">io</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">sec</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">outfile</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sec</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+
+
+<span class="n">_unsafe_import_regex</span> <span class="o">=</span> <span class="p">[</span><span class="s">r&#39;.*.setup_package&#39;</span><span class="p">]</span>
+<span class="n">_unsafe_import_regex</span> <span class="o">=</span> <span class="p">[(</span><span class="s">&#39;(&#39;</span> <span class="o">+</span> <span class="n">pat</span> <span class="o">+</span> <span class="s">&#39;)&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">pat</span> <span class="ow">in</span> <span class="n">_unsafe_import_regex</span><span class="p">]</span>
+<span class="n">_unsafe_import_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">_unsafe_import_regex</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">generate_all_config_items</span><span class="p">(</span><span class="n">pkgornm</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reset_to_default</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                              <span class="n">filename</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Given a root package name or package, this function walks</span>
+<span class="sd">    through all the subpackages and modules, which should populate any</span>
+<span class="sd">    ConfigurationItem objects defined at the module level. If</span>
+<span class="sd">    `reset_to_default` is True, it also sets all of the items to their default</span>
+<span class="sd">    values, regardless of what the file&#39;s value currently is. It then saves the</span>
+<span class="sd">    `ConfigObj`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pkgname : str, module, or None</span>
+<span class="sd">        The package for which to generate configuration items.  If None,</span>
+<span class="sd">        the package of the function that calls this one will be used.</span>
+
+<span class="sd">    reset_to_default : bool</span>
+<span class="sd">        If True, the configuration items will all be set to their defaults.</span>
+
+<span class="sd">    filename : str, optional</span>
+<span class="sd">        Save the generated config items to the given filename instead of to</span>
+<span class="sd">        the default config file path.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cfgfn : str</span>
+<span class="sd">        The filename of the generated configuration item.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_current_module</span>
+
+    <span class="k">if</span> <span class="n">pkgornm</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">pkgornm</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pkgornm</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">get_loader</span><span class="p">(</span><span class="n">pkgornm</span><span class="p">)</span><span class="o">.</span><span class="n">load_module</span><span class="p">(</span><span class="n">pkgornm</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">pkgornm</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">ModuleType</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="s">&#39;__init__&#39;</span> <span class="ow">in</span> <span class="n">pkgornm</span><span class="o">.</span><span class="n">__file__</span><span class="p">):</span>
+        <span class="n">package</span> <span class="o">=</span> <span class="n">pkgornm</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;generate_all_config_items was not given a package/package name&#39;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="s">&#39;__path__&#39;</span><span class="p">):</span>
+        <span class="n">pkgpath</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">__path__</span>
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">package</span><span class="p">,</span> <span class="s">&#39;__file__&#39;</span><span class="p">):</span>
+        <span class="n">pkgpath</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">__file__</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;package to generate config items for does not &#39;</span>
+                             <span class="s">&#39;have __file__ or __path__&#39;</span><span class="p">)</span>
+
+    <span class="n">prefix</span> <span class="o">=</span> <span class="n">package</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;.&#39;</span>
+    <span class="k">for</span> <span class="n">imper</span><span class="p">,</span> <span class="n">nm</span><span class="p">,</span> <span class="n">ispkg</span> <span class="ow">in</span> <span class="n">pkgutil</span><span class="o">.</span><span class="n">walk_packages</span><span class="p">(</span><span class="n">pkgpath</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">nm</span> <span class="o">==</span> <span class="s">&#39;astropy.config.tests.test_configs&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_unsafe_import_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">nm</span><span class="p">):</span>
+            <span class="n">imper</span><span class="o">.</span><span class="n">find_module</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">reset_to_default</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">cfgitem</span> <span class="ow">in</span> <span class="n">six</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="n">get_config_items</span><span class="p">(</span><span class="n">nm</span><span class="p">)):</span>
+                    <span class="n">cfgitem</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">cfgitem</span><span class="o">.</span><span class="n">defaultvalue</span><span class="p">)</span>
+
+    <span class="n">_fix_section_blank_lines</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+
+    <span class="n">_save_config</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">get_config</span><span class="p">(</span><span class="n">package</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span><span class="o">.</span><span class="n">filename</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">filename</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

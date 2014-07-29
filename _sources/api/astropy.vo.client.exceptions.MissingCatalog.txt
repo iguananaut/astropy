@@ -1,0 +1,8 @@
+
+
+MissingCatalog
+===========================================
+
+.. currentmodule:: astropy.vo.client.exceptions
+
+.. autoexception:: MissingCatalog

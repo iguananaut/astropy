@@ -1,0 +1,14 @@
+<map id="inheritance0f2ce7df59" name="inheritance0f2ce7df59">
+<area shape="rect" id="node1" title="Placeholder for when a more general Cosmology class is" alt="" coords="16,106,109,134"/>
+<area shape="rect" id="node2" href="../api/astropy.cosmology.FLRW.html#astropy.cosmology.FLRW" title="A class describing an isotropic and homogeneous" alt="" coords="207,106,279,134"/>
+<area shape="rect" id="node5" href="../api/astropy.cosmology.LambdaCDM.html#astropy.cosmology.LambdaCDM" title="FLRW cosmology with a cosmological constant and curvature." alt="" coords="367,5,473,33"/>
+<area shape="rect" id="node8" href="../api/astropy.cosmology.w0waCDM.html#astropy.cosmology.w0waCDM" title="FLRW cosmology with a CPL dark energy equation of state and curvature." alt="" coords="373,55,467,83"/>
+<area shape="rect" id="node11" href="../api/astropy.cosmology.wCDM.html#astropy.cosmology.wCDM" title="FLRW cosmology with a constant dark energy equation of state" alt="" coords="384,106,456,134"/>
+<area shape="rect" id="node18" href="../api/astropy.cosmology.w0wzCDM.html#astropy.cosmology.w0wzCDM" title="FLRW cosmology with a variable dark energy equation of state" alt="" coords="373,157,467,185"/>
+<area shape="rect" id="node21" href="../api/astropy.cosmology.wpwaCDM.html#astropy.cosmology.wpwaCDM" title="FLRW cosmology with a CPL dark energy equation of state, a pivot" alt="" coords="373,207,467,235"/>
+<area shape="rect" id="node4" href="../api/astropy.cosmology.FlatLambdaCDM.html#astropy.cosmology.FlatLambdaCDM" title="FLRW cosmology with a cosmological constant and no curvature." alt="" coords="524,5,657,33"/>
+<area shape="rect" id="node7" href="../api/astropy.cosmology.Flatw0waCDM.html#astropy.cosmology.Flatw0waCDM" title="FLRW cosmology with a CPL dark energy equation of state and no curvature." alt="" coords="532,55,649,83"/>
+<area shape="rect" id="node10" href="../api/astropy.cosmology.FlatwCDM.html#astropy.cosmology.FlatwCDM" title="FLRW cosmology with a constant dark energy equation of state" alt="" coords="545,106,636,134"/>
+<area shape="rect" id="node14" href="../api/astropy.utils.state.ScienceState.html#astropy.utils.state.ScienceState" title="Science state subclasses are used to manage global items that can" alt="" coords="5,55,120,83"/>
+<area shape="rect" id="node15" href="../api/astropy.cosmology.default_cosmology.html#astropy.cosmology.default_cosmology" title="The default cosmology to use. &#160;To change it::" alt="" coords="169,55,316,83"/>
+</map>

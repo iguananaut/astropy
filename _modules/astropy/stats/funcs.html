@@ -1,0 +1,960 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.stats.funcs &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.stats.funcs</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains simple statistical algorithms that are straightforwardly</span>
+<span class="sd">implemented as a single python function (or family of functions).</span>
+
+<span class="sd">This module should generally not be used directly.  Everything in `__all__` is</span>
+<span class="sd">imported into `astropy.stats`, and hence that package should be used for</span>
+<span class="sd">access.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..extern.six.moves</span> <span class="kn">import</span> <span class="nb">xrange</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;sigma_clip&#39;</span><span class="p">,</span> <span class="s">&#39;binom_conf_interval&#39;</span><span class="p">,</span> <span class="s">&#39;binned_binom_proportion&#39;</span><span class="p">,</span>
+           <span class="s">&#39;median_absolute_deviation&#39;</span><span class="p">,</span> <span class="s">&#39;biweight_location&#39;</span><span class="p">,</span>
+           <span class="s">&#39;biweight_midvariance&#39;</span><span class="p">,</span> <span class="s">&#39;signal_to_noise_oir_ccd&#39;</span><span class="p">,</span> <span class="s">&#39;bootstrap&#39;</span><span class="p">]</span>
+
+
+<span class="n">__doctest_skip__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;binned_binom_proportion&#39;</span><span class="p">]</span>
+<span class="n">__doctest_requires__</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;binom_conf_interval&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;scipy.special&#39;</span><span class="p">]}</span>
+
+
+<div class="viewcode-block" id="sigma_clip"><a class="viewcode-back" href="../../../api/astropy.stats.sigma_clip.html#astropy.stats.sigma_clip">[docs]</a><span class="k">def</span> <span class="nf">sigma_clip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">sig</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">iters</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">cenfunc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">median</span><span class="p">,</span> <span class="n">varfunc</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">,</span>
+               <span class="n">axis</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Perform sigma-clipping on the provided data.</span>
+
+<span class="sd">    This performs the sigma clipping algorithm - i.e. the data will be iterated</span>
+<span class="sd">    over, each time rejecting points that are more than a specified number of</span>
+<span class="sd">    standard deviations discrepant.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        `scipy.stats.sigmaclip</span>
+<span class="sd">        &lt;http://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sigmaclip.html&gt;`_</span>
+<span class="sd">        provides a subset of the functionality in this function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array-like</span>
+<span class="sd">        The data to be sigma-clipped (any shape).</span>
+<span class="sd">    sig : float</span>
+<span class="sd">        The number of standard deviations (*not* variances) to use as the</span>
+<span class="sd">        clipping limit.</span>
+<span class="sd">    iters : int or `None`</span>
+<span class="sd">        The number of iterations to perform clipping for, or `None` to clip</span>
+<span class="sd">        until convergence is achieved (i.e. continue until the last</span>
+<span class="sd">        iteration clips nothing).</span>
+<span class="sd">    cenfunc : callable</span>
+<span class="sd">        The technique to compute the center for the clipping. Must be a</span>
+<span class="sd">        callable that takes in a masked array and outputs the central value.</span>
+<span class="sd">        Defaults to the median (numpy.median).</span>
+<span class="sd">    varfunc : callable</span>
+<span class="sd">        The technique to compute the standard deviation about the center. Must</span>
+<span class="sd">        be a callable that takes in a masked array and outputs a width</span>
+<span class="sd">        estimator::</span>
+
+<span class="sd">             deviation**2 &gt; sig**2 * varfunc(deviation)</span>
+
+<span class="sd">        Defaults to the variance (numpy.var).</span>
+
+<span class="sd">    axis : int or `None`</span>
+<span class="sd">        If not `None`, clip along the given axis.  For this case, axis=int will</span>
+<span class="sd">        be passed on to cenfunc and varfunc, which are expected to return an</span>
+<span class="sd">        array with the axis dimension removed (like the numpy functions).</span>
+<span class="sd">        If `None`, clip over all values.  Defaults to `None`.</span>
+<span class="sd">    copy : bool</span>
+<span class="sd">        If `True`, the data array will be copied.  If `False`, the masked array</span>
+<span class="sd">        data will contain the same array as ``data``.  Defaults to `True`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filtered_data : `numpy.ma.MaskedArray`</span>
+<span class="sd">        A masked array with the same shape as ``data`` input, where the points</span>
+<span class="sd">        rejected by the algorithm have been masked.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">     1. The routine works by calculating::</span>
+
+<span class="sd">            deviation = data - cenfunc(data [,axis=int])</span>
+
+<span class="sd">        and then setting a mask for points outside the range::</span>
+
+<span class="sd">            data.mask = deviation**2 &gt; sig**2 * varfunc(deviation)</span>
+
+<span class="sd">        It will iterate a given number of times, or until no further points are</span>
+<span class="sd">        rejected.</span>
+
+<span class="sd">     2. Most numpy functions deal well with masked arrays, but if one would</span>
+<span class="sd">        like to have an array with just the good (or bad) values, one can use::</span>
+
+<span class="sd">            good_only = filtered_data.data[~filtered_data.mask]</span>
+<span class="sd">            bad_only = filtered_data.data[filtered_data.mask]</span>
+
+<span class="sd">        However, for multidimensional data, this flattens the array, which may</span>
+<span class="sd">        not be what one wants (especially is filtering was done along an axis).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    This will generate random variates from a Gaussian distribution and return</span>
+<span class="sd">    a masked array in which all points that are more than 2 *sample* standard</span>
+<span class="sd">    deviation from the median are masked::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.stats import sigma_clip</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.random import randn</span>
+<span class="sd">        &gt;&gt;&gt; randvar = randn(10000)</span>
+<span class="sd">        &gt;&gt;&gt; filtered_data = sigma_clip(randvar, 2, 1)</span>
+
+<span class="sd">    This will clipping on a similar distribution, but for 3 sigma relative to</span>
+<span class="sd">    the sample *mean*, will clip until converged, and does not copy the data::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.stats import sigma_clip</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.random import randn</span>
+<span class="sd">        &gt;&gt;&gt; from numpy import mean</span>
+<span class="sd">        &gt;&gt;&gt; randvar = randn(10000)</span>
+<span class="sd">        &gt;&gt;&gt; filtered_data = sigma_clip(randvar, 3, None, mean, copy=False)</span>
+
+<span class="sd">    This will clip along one axis on a similar distribution with bad points</span>
+<span class="sd">    inserted::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.stats import sigma_clip</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.random import normal</span>
+<span class="sd">        &gt;&gt;&gt; from numpy import arange, diag, ones</span>
+<span class="sd">        &gt;&gt;&gt; data = arange(5)+normal(0.,0.05,(5,5))+diag(ones(5))</span>
+<span class="sd">        &gt;&gt;&gt; filtered_data = sigma_clip(data, axis=0, sig=2.3)</span>
+
+<span class="sd">    Note that along the other axis, no points would be masked, as the variance</span>
+<span class="sd">    is higher.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">cenfunc_in</span> <span class="o">=</span> <span class="n">cenfunc</span>
+        <span class="n">varfunc_in</span> <span class="o">=</span> <span class="n">varfunc</span>
+        <span class="n">cenfunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">cenfunc_in</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+        <span class="n">varfunc</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">d</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">varfunc_in</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="n">filtered_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ma</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">iters</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">lastrej</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">while</span><span class="p">(</span><span class="n">filtered_data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span> <span class="o">!=</span> <span class="n">lastrej</span><span class="p">):</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">lastrej</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
+            <span class="n">do</span> <span class="o">=</span> <span class="n">filtered_data</span> <span class="o">-</span> <span class="n">cenfunc</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">)</span>
+            <span class="n">filtered_data</span><span class="o">.</span><span class="n">mask</span> <span class="o">|=</span> <span class="n">do</span> <span class="o">*</span> <span class="n">do</span> <span class="o">&gt;</span> <span class="n">varfunc</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">iters</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iters</span><span class="p">):</span>
+            <span class="n">do</span> <span class="o">=</span> <span class="n">filtered_data</span> <span class="o">-</span> <span class="n">cenfunc</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">)</span>
+            <span class="n">filtered_data</span><span class="o">.</span><span class="n">mask</span> <span class="o">|=</span> <span class="n">do</span> <span class="o">*</span> <span class="n">do</span> <span class="o">&gt;</span> <span class="n">varfunc</span><span class="p">(</span><span class="n">filtered_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig</span> <span class="o">**</span> <span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">filtered_data</span>
+
+
+<span class="c"># TODO Note scipy dependency</span></div>
+<div class="viewcode-block" id="binom_conf_interval"><a class="viewcode-back" href="../../../api/astropy.stats.binom_conf_interval.html#astropy.stats.binom_conf_interval">[docs]</a><span class="k">def</span> <span class="nf">binom_conf_interval</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mf">0.68269</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="s">&#39;wilson&#39;</span><span class="p">):</span>
+    <span class="sd">r&quot;&quot;&quot;Binomial proportion confidence interval given k successes,</span>
+<span class="sd">    n trials.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k : int or numpy.ndarray</span>
+<span class="sd">        Number of successes (0 &lt;= ``k`` &lt;= ``n``).</span>
+<span class="sd">    n : int or numpy.ndarray</span>
+<span class="sd">        Number of trials (``n`` &gt; 0).  If both ``k`` and ``n`` are arrays,</span>
+<span class="sd">        they must have the same shape.</span>
+<span class="sd">    conf : float in [0, 1], optional</span>
+<span class="sd">        Desired probability content of interval. Default is 0.68269,</span>
+<span class="sd">        corresponding to 1 sigma in a 1-dimensional Gaussian distribution.</span>
+<span class="sd">    interval : {&#39;wilson&#39;, &#39;jeffreys&#39;, &#39;flat&#39;, &#39;wald&#39;}, optional</span>
+<span class="sd">        Formula used for confidence interval. See notes for details.  The</span>
+<span class="sd">        ``&#39;wilson&#39;`` and ``&#39;jeffreys&#39;`` intervals generally give similar</span>
+<span class="sd">        results, while &#39;flat&#39; is somewhat different, especially for small</span>
+<span class="sd">        values of ``n``.  ``&#39;wilson&#39;`` should be somewhat faster than</span>
+<span class="sd">        ``&#39;flat&#39;`` or ``&#39;jeffreys&#39;``.  The &#39;wald&#39; interval is generally not</span>
+<span class="sd">        recommended.  It is provided for comparison purposes.  Default is</span>
+<span class="sd">        ``&#39;wilson&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    conf_interval : numpy.ndarray</span>
+<span class="sd">        ``conf_interval[0]`` and ``conf_interval[1]`` correspond to the lower</span>
+<span class="sd">        and upper limits, respectively, for each element in ``k``, ``n``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    In situations where a probability of success is not known, it can</span>
+<span class="sd">    be estimated from a number of trials (N) and number of</span>
+<span class="sd">    observed successes (k). For example, this is done in Monte</span>
+<span class="sd">    Carlo experiments designed to estimate a detection efficiency. It</span>
+<span class="sd">    is simple to take the sample proportion of successes (k/N)</span>
+<span class="sd">    as a reasonable best estimate of the true probability</span>
+<span class="sd">    :math:`\epsilon`. However, deriving an accurate confidence</span>
+<span class="sd">    interval on :math:`\epsilon` is non-trivial. There are several</span>
+<span class="sd">    formulas for this interval (see [1]_). Four intervals are implemented</span>
+<span class="sd">    here:</span>
+
+<span class="sd">    **1. The Wilson Interval.** This interval, attributed to Wilson [2]_,</span>
+<span class="sd">    is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        CI_{\rm Wilson} = \frac{k + \kappa^2/2}{N + \kappa^2}</span>
+<span class="sd">        \pm \frac{\kappa n^{1/2}}{n + \kappa^2}</span>
+<span class="sd">        ((\hat{\epsilon}(1 - \hat{\epsilon}) + \kappa^2/(4n))^{1/2}</span>
+
+<span class="sd">    where :math:`\hat{\epsilon} = k / N` and :math:`\kappa` is the</span>
+<span class="sd">    number of standard deviations corresponding to the desired</span>
+<span class="sd">    confidence interval for a *normal* distribution (for example,</span>
+<span class="sd">    1.0 for a confidence interval of 68.269%). For a</span>
+<span class="sd">    confidence interval of 100(1 - :math:`\alpha`)%,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa = \Phi^{-1}(1-\alpha/2) = \sqrt{2}{\rm erf}^{-1}(1-\alpha).</span>
+
+<span class="sd">    **2. The Jeffreys Interval.** This interval is derived by applying</span>
+<span class="sd">    Bayes&#39; theorem to the binomial distribution with the</span>
+<span class="sd">    noninformative Jeffreys prior [3]_, [4]_. The noninformative Jeffreys</span>
+<span class="sd">    prior is the Beta distribution, Beta(1/2, 1/2), which has the density</span>
+<span class="sd">    function</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f(\epsilon) = \pi^{-1} \epsilon^{-1/2}(1-\epsilon)^{-1/2}.</span>
+
+<span class="sd">    The justification for this prior is that it is invariant under</span>
+<span class="sd">    reparameterizations of the binomial proportion.</span>
+<span class="sd">    The posterior density function is also a Beta distribution: Beta(k</span>
+<span class="sd">    + 1/2, N - k + 1/2). The interval is then chosen so that it is</span>
+<span class="sd">    *equal-tailed*: Each tail (outside the interval) contains</span>
+<span class="sd">    :math:`\alpha`/2 of the posterior probability, and the interval</span>
+<span class="sd">    itself contains 1 - :math:`\alpha`. This interval must be</span>
+<span class="sd">    calculated numerically. Additionally, when k = 0 the lower limit</span>
+<span class="sd">    is set to 0 and when k = N the upper limit is set to 1, so that in</span>
+<span class="sd">    these cases, there is only one tail containing :math:`\alpha`/2</span>
+<span class="sd">    and the interval itself contains 1 - :math:`\alpha`/2 rather than</span>
+<span class="sd">    the nominal 1 - :math:`\alpha`.</span>
+
+<span class="sd">    **3. A Flat prior.** This is similar to the Jeffreys interval,</span>
+<span class="sd">    but uses a flat (uniform) prior on the binomial proportion</span>
+<span class="sd">    over the range 0 to 1 rather than the reparametrization-invariant</span>
+<span class="sd">    Jeffreys prior.  The posterior density function is a Beta distribution:</span>
+<span class="sd">    Beta(k + 1, N - k + 1).  The same comments about the nature of the</span>
+<span class="sd">    interval (equal-tailed, etc.) also apply to this option.</span>
+
+<span class="sd">    **4. The Wald Interval.** This interval is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       CI_{\rm Wald} = \hat{\epsilon} \pm</span>
+<span class="sd">       \kappa \sqrt{\frac{\hat{\epsilon}(1-\hat{\epsilon})}{N}}</span>
+
+<span class="sd">    The Wald interval gives acceptable results in some limiting</span>
+<span class="sd">    cases. Particularly, when N is very large, and the true proportion</span>
+<span class="sd">    :math:`\epsilon` is not &quot;too close&quot; to 0 or 1. However, as the</span>
+<span class="sd">    later is not verifiable when trying to estimate :math:`\epsilon`,</span>
+<span class="sd">    this is not very helpful. Its use is not recommended, but it is</span>
+<span class="sd">    provided here for comparison purposes due to its prevalence in</span>
+<span class="sd">    everyday practical statistics.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Brown, Lawrence D.; Cai, T. Tony; DasGupta, Anirban (2001).</span>
+<span class="sd">       &quot;Interval Estimation for a Binomial Proportion&quot;. Statistical</span>
+<span class="sd">       Science 16 (2): 101-133. doi:10.1214/ss/1009213286</span>
+
+<span class="sd">    .. [2] Wilson, E. B. (1927). &quot;Probable inference, the law of</span>
+<span class="sd">       succession, and statistical inference&quot;. Journal of the American</span>
+<span class="sd">       Statistical Association 22: 209-212.</span>
+
+<span class="sd">    .. [3] Jeffreys, Harold (1946). &quot;An Invariant Form for the Prior</span>
+<span class="sd">       Probability in Estimation Problems&quot;. Proc. R. Soc. Lond.. A 24 186</span>
+<span class="sd">       (1007): 453-461. doi:10.1098/rspa.1946.0056</span>
+
+<span class="sd">    .. [4] Jeffreys, Harold (1998). Theory of Probability. Oxford</span>
+<span class="sd">       University Press, 3rd edition. ISBN 978-0198503682</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Integer inputs return an array with shape (2,):</span>
+
+<span class="sd">    &gt;&gt;&gt; binom_conf_interval(4, 5, interval=&#39;wilson&#39;)</span>
+<span class="sd">    array([ 0.57921724,  0.92078259])</span>
+
+<span class="sd">    Arrays of arbitrary dimension are supported. The Wilson and Jeffreys</span>
+<span class="sd">    intervals give similar results, even for small k, N:</span>
+
+<span class="sd">    &gt;&gt;&gt; binom_conf_interval([0, 1, 2, 5], 5, interval=&#39;wilson&#39;)</span>
+<span class="sd">    array([[ 0.        ,  0.07921741,  0.21597328,  0.83333304],</span>
+<span class="sd">           [ 0.16666696,  0.42078276,  0.61736012,  1.        ]])</span>
+
+<span class="sd">    &gt;&gt;&gt; binom_conf_interval([0, 1, 2, 5], 5, interval=&#39;jeffreys&#39;)</span>
+<span class="sd">    array([[ 0.        ,  0.0842525 ,  0.21789949,  0.82788246],</span>
+<span class="sd">           [ 0.17211754,  0.42218001,  0.61753691,  1.        ]])</span>
+
+<span class="sd">    &gt;&gt;&gt; binom_conf_interval([0, 1, 2, 5], 5, interval=&#39;flat&#39;)</span>
+<span class="sd">    array([[ 0.        ,  0.12139799,  0.24309021,  0.73577037],</span>
+<span class="sd">           [ 0.26422963,  0.45401727,  0.61535699,  1.        ]])</span>
+
+<span class="sd">    In contrast, the Wald interval gives poor results for small k, N.</span>
+<span class="sd">    For k = 0 or k = N, the interval always has zero length.</span>
+
+<span class="sd">    &gt;&gt;&gt; binom_conf_interval([0, 1, 2, 5], 5, interval=&#39;wald&#39;)</span>
+<span class="sd">    array([[ 0.        ,  0.02111437,  0.18091075,  1.        ],</span>
+<span class="sd">           [ 0.        ,  0.37888563,  0.61908925,  1.        ]])</span>
+
+<span class="sd">    For confidence intervals approaching 1, the Wald interval for</span>
+<span class="sd">    0 &lt; k &lt; N can give intervals that extend outside [0, 1]:</span>
+
+<span class="sd">    &gt;&gt;&gt; binom_conf_interval([0, 1, 2, 5], 5, interval=&#39;wald&#39;, conf=0.99)</span>
+<span class="sd">    array([[ 0.        , -0.26077835, -0.16433593,  1.        ],</span>
+<span class="sd">           [ 0.        ,  0.66077835,  0.96433593,  1.        ]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">conf</span> <span class="o">&lt;</span> <span class="mf">0.</span> <span class="ow">or</span> <span class="n">conf</span> <span class="o">&gt;</span> <span class="mf">1.</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;conf must be between 0. and 1.&#39;</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">-</span> <span class="n">conf</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;n must be positive&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">k</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;k must be in {0, 1, .., n}&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">interval</span> <span class="o">==</span> <span class="s">&#39;wilson&#39;</span> <span class="ow">or</span> <span class="n">interval</span> <span class="o">==</span> <span class="s">&#39;wald&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">erfinv</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">erfinv</span><span class="p">(</span><span class="n">conf</span><span class="p">),</span> <span class="mf">1.e10</span><span class="p">)</span>  <span class="c"># Avoid overflows.</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">k</span> <span class="o">/</span> <span class="n">n</span>
+
+        <span class="k">if</span> <span class="n">interval</span> <span class="o">==</span> <span class="s">&#39;wilson&#39;</span><span class="p">:</span>
+            <span class="n">midpoint</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="n">kappa</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">kappa</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">halflength</span> <span class="o">=</span> <span class="p">(</span><span class="n">kappa</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">kappa</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> \
+                <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">+</span> <span class="n">kappa</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">n</span><span class="p">))</span>
+            <span class="n">conf_interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">midpoint</span> <span class="o">-</span> <span class="n">halflength</span><span class="p">,</span>
+                                      <span class="n">midpoint</span> <span class="o">+</span> <span class="n">halflength</span><span class="p">])</span>
+
+            <span class="c"># Correct intervals out of range due to floating point errors.</span>
+            <span class="n">conf_interval</span><span class="p">[</span><span class="n">conf_interval</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="n">conf_interval</span><span class="p">[</span><span class="n">conf_interval</span> <span class="o">&gt;</span> <span class="mf">1.</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">midpoint</span> <span class="o">=</span> <span class="n">p</span>
+            <span class="n">halflength</span> <span class="o">=</span> <span class="n">kappa</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span><span class="p">)</span>
+            <span class="n">conf_interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">midpoint</span> <span class="o">-</span> <span class="n">halflength</span><span class="p">,</span>
+                                      <span class="n">midpoint</span> <span class="o">+</span> <span class="n">halflength</span><span class="p">])</span>
+
+    <span class="k">elif</span> <span class="n">interval</span> <span class="o">==</span> <span class="s">&#39;jeffreys&#39;</span> <span class="ow">or</span> <span class="n">interval</span> <span class="o">==</span> <span class="s">&#39;flat&#39;</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="kn">import</span> <span class="n">betaincinv</span>
+
+        <span class="k">if</span> <span class="n">interval</span> <span class="o">==</span> <span class="s">&#39;jeffreys&#39;</span><span class="p">:</span>
+            <span class="n">lowerbound</span> <span class="o">=</span> <span class="n">betaincinv</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+            <span class="n">upperbound</span> <span class="o">=</span> <span class="n">betaincinv</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lowerbound</span> <span class="o">=</span> <span class="n">betaincinv</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+            <span class="n">upperbound</span> <span class="o">=</span> <span class="n">betaincinv</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="c"># Set lower or upper bound to k/n when k/n = 0 or 1</span>
+        <span class="c">#  We have to treat the special case of k/n being scalars,</span>
+        <span class="c">#  which is an ugly kludge</span>
+        <span class="k">if</span> <span class="n">lowerbound</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">lowerbound</span> <span class="o">=</span> <span class="mf">0.</span>
+            <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="n">n</span><span class="p">:</span>
+                <span class="n">upperbound</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lowerbound</span><span class="p">[</span><span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">upperbound</span><span class="p">[</span><span class="n">k</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">conf_interval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lowerbound</span><span class="p">,</span> <span class="n">upperbound</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Unrecognized interval: {0:s}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">interval</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">conf_interval</span>
+
+
+<span class="c"># TODO Note scipy dependency (needed in binom_conf_interval)</span></div>
+<div class="viewcode-block" id="binned_binom_proportion"><a class="viewcode-back" href="../../../api/astropy.stats.binned_binom_proportion.html#astropy.stats.binned_binom_proportion">[docs]</a><span class="k">def</span> <span class="nf">binned_binom_proportion</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">success</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="mf">0.68269</span><span class="p">,</span>
+                            <span class="n">interval</span><span class="o">=</span><span class="s">&#39;wilson&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Binomial proportion and confidence interval in bins of a continuous</span>
+<span class="sd">    variable ``x``.</span>
+
+<span class="sd">    Given a set of datapoint pairs where the ``x`` values are</span>
+<span class="sd">    continuously distributed and the ``success`` values are binomial</span>
+<span class="sd">    (&quot;success / failure&quot; or &quot;true / false&quot;), place the pairs into</span>
+<span class="sd">    bins according to ``x`` value and calculate the binomial proportion</span>
+<span class="sd">    (fraction of successes) and confidence interval in each bin.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : list_like</span>
+<span class="sd">        Values.</span>
+<span class="sd">    success : list_like (bool)</span>
+<span class="sd">        Success (`True`) or failure (`False`) corresponding to each value</span>
+<span class="sd">        in ``x``.  Must be same length as ``x``.</span>
+<span class="sd">    bins : int or sequence of scalars, optional</span>
+<span class="sd">        If bins is an int, it defines the number of equal-width bins</span>
+<span class="sd">        in the given range (10, by default). If bins is a sequence, it</span>
+<span class="sd">        defines the bin edges, including the rightmost edge, allowing</span>
+<span class="sd">        for non-uniform bin widths (in this case, &#39;range&#39; is ignored).</span>
+<span class="sd">    range : (float, float), optional</span>
+<span class="sd">        The lower and upper range of the bins. If `None` (default),</span>
+<span class="sd">        the range is set to ``(x.min(), x.max())``. Values outside the</span>
+<span class="sd">        range are ignored.</span>
+<span class="sd">    conf : float in [0, 1], optional</span>
+<span class="sd">        Desired probability content in the confidence</span>
+<span class="sd">        interval ``(p - perr[0], p + perr[1])`` in each bin. Default is</span>
+<span class="sd">        0.68269.</span>
+<span class="sd">    interval : {&#39;wilson&#39;, &#39;jeffreys&#39;, &#39;flat&#39;, &#39;wald&#39;}, optional</span>
+<span class="sd">        Formula used to calculate confidence interval on the</span>
+<span class="sd">        binomial proportion in each bin. See `binom_conf_interval` for</span>
+<span class="sd">        definition of the intervals.  The &#39;wilson&#39;, &#39;jeffreys&#39;,</span>
+<span class="sd">        and &#39;flat&#39; intervals generally give similar results.  &#39;wilson&#39;</span>
+<span class="sd">        should be somewhat faster, while &#39;jeffreys&#39; and &#39;flat&#39; are</span>
+<span class="sd">        marginally superior, but differ in the assumed prior.</span>
+<span class="sd">        The &#39;wald&#39; interval is generally not recommended.</span>
+<span class="sd">        It is provided for comparison purposes. Default is &#39;wilson&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bin_ctr : numpy.ndarray</span>
+<span class="sd">        Central value of bins. Bins without any entries are not returned.</span>
+<span class="sd">    bin_halfwidth : numpy.ndarray</span>
+<span class="sd">        Half-width of each bin such that ``bin_ctr - bin_halfwidth`` and</span>
+<span class="sd">        ``bin_ctr + bins_halfwidth`` give the left and right side of each bin,</span>
+<span class="sd">        respectively.</span>
+<span class="sd">    p : numpy.ndarray</span>
+<span class="sd">        Efficiency in each bin.</span>
+<span class="sd">    perr : numpy.ndarray</span>
+<span class="sd">        2-d array of shape (2, len(p)) representing the upper and lower</span>
+<span class="sd">        uncertainty on p in each bin.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    binom_conf_interval : Function used to estimate confidence interval in</span>
+<span class="sd">                          each bin.</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Suppose we wish to estimate the efficiency of a survey in</span>
+<span class="sd">    detecting astronomical sources as a function of magnitude (i.e.,</span>
+<span class="sd">    the probability of detecting a source given its magnitude). In a</span>
+<span class="sd">    realistic case, we might prepare a large number of sources with</span>
+<span class="sd">    randomly selected magnitudes, inject them into simulated images,</span>
+<span class="sd">    and then record which were detected at the end of the reduction</span>
+<span class="sd">    pipeline. As a toy example, we generate 100 data points with</span>
+<span class="sd">    randomly selected magnitudes between 20 and 30 and &quot;observe&quot; them</span>
+<span class="sd">    with a known detection function (here, the error function, with</span>
+<span class="sd">    50% detection probability at magnitude 25):</span>
+
+<span class="sd">    &gt;&gt;&gt; from scipy.special import erf</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.stats.distributions import binom</span>
+<span class="sd">    &gt;&gt;&gt; def true_efficiency(x):</span>
+<span class="sd">    ...     return 0.5 - 0.5 * erf((x - 25.) / 2.)</span>
+<span class="sd">    &gt;&gt;&gt; mag = 20. + 10. * np.random.rand(100)</span>
+<span class="sd">    &gt;&gt;&gt; detected = binom.rvs(1, true_efficiency(mag))</span>
+<span class="sd">    &gt;&gt;&gt; bins, binshw, p, perr = binned_binom_proportion(mag, detected, bins=20)</span>
+<span class="sd">    &gt;&gt;&gt; plt.errorbar(bins, p, xerr=binshw, yerr=perr, ls=&#39;none&#39;, marker=&#39;o&#39;,</span>
+<span class="sd">    ...              label=&#39;estimate&#39;)</span>
+
+<span class="sd">    .. plot::</span>
+
+<span class="sd">       import numpy as np</span>
+<span class="sd">       from scipy.special import erf</span>
+<span class="sd">       from scipy.stats.distributions import binom</span>
+<span class="sd">       import matplotlib.pyplot as plt</span>
+<span class="sd">       from astropy.stats import binned_binom_proportion</span>
+<span class="sd">       def true_efficiency(x):</span>
+<span class="sd">           return 0.5 - 0.5 * erf((x - 25.) / 2.)</span>
+<span class="sd">       np.random.seed(400)</span>
+<span class="sd">       mag = 20. + 10. * np.random.rand(100)</span>
+<span class="sd">       np.random.seed(600)</span>
+<span class="sd">       detected = binom.rvs(1, true_efficiency(mag))</span>
+<span class="sd">       bins, binshw, p, perr = binned_binom_proportion(mag, detected, bins=20)</span>
+<span class="sd">       plt.errorbar(bins, p, xerr=binshw, yerr=perr, ls=&#39;none&#39;, marker=&#39;o&#39;,</span>
+<span class="sd">                    label=&#39;estimate&#39;)</span>
+<span class="sd">       X = np.linspace(20., 30., 1000)</span>
+<span class="sd">       plt.plot(X, true_efficiency(X), ls=&#39;-&#39;, color=&#39;r&#39;,</span>
+<span class="sd">                label=&#39;true efficiency&#39;)</span>
+<span class="sd">       plt.ylim(0., 1.)</span>
+<span class="sd">       plt.title(&#39;Detection efficiency vs magnitude&#39;)</span>
+<span class="sd">       plt.xlabel(&#39;Magnitude&#39;)</span>
+<span class="sd">       plt.ylabel(&#39;Detection efficiency&#39;)</span>
+<span class="sd">       plt.legend()</span>
+<span class="sd">       plt.show()</span>
+
+<span class="sd">    The above example uses the Wilson confidence interval to calculate</span>
+<span class="sd">    the uncertainty ``perr`` in each bin (see the definition of various</span>
+<span class="sd">    confidence intervals in `binom_conf_interval`). A commonly used</span>
+<span class="sd">    alternative is the Wald interval. However, the Wald interval can</span>
+<span class="sd">    give nonsensical uncertainties when the efficiency is near 0 or 1,</span>
+<span class="sd">    and is therefore **not** recommended. As an illustration, the</span>
+<span class="sd">    following example shows the same data as above but uses the Wald</span>
+<span class="sd">    interval rather than the Wilson interval to calculate ``perr``:</span>
+
+<span class="sd">    &gt;&gt;&gt; bins, binshw, p, perr = binned_binom_proportion(mag, detected, bins=20,</span>
+<span class="sd">    ...                                                 interval=&#39;wald&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; plt.errorbar(bins, p, xerr=binshw, yerr=perr, ls=&#39;none&#39;, marker=&#39;o&#39;,</span>
+<span class="sd">    ...              label=&#39;estimate&#39;)</span>
+
+<span class="sd">    .. plot::</span>
+
+<span class="sd">       import numpy as np</span>
+<span class="sd">       from scipy.special import erf</span>
+<span class="sd">       from scipy.stats.distributions import binom</span>
+<span class="sd">       import matplotlib.pyplot as plt</span>
+<span class="sd">       from astropy.stats import binned_binom_proportion</span>
+<span class="sd">       def true_efficiency(x):</span>
+<span class="sd">           return 0.5 - 0.5 * erf((x - 25.) / 2.)</span>
+<span class="sd">       np.random.seed(400)</span>
+<span class="sd">       mag = 20. + 10. * np.random.rand(100)</span>
+<span class="sd">       np.random.seed(600)</span>
+<span class="sd">       detected = binom.rvs(1, true_efficiency(mag))</span>
+<span class="sd">       bins, binshw, p, perr = binned_binom_proportion(mag, detected, bins=20,</span>
+<span class="sd">                                                       interval=&#39;wald&#39;)</span>
+<span class="sd">       plt.errorbar(bins, p, xerr=binshw, yerr=perr, ls=&#39;none&#39;, marker=&#39;o&#39;,</span>
+<span class="sd">                    label=&#39;estimate&#39;)</span>
+<span class="sd">       X = np.linspace(20., 30., 1000)</span>
+<span class="sd">       plt.plot(X, true_efficiency(X), ls=&#39;-&#39;, color=&#39;r&#39;,</span>
+<span class="sd">                label=&#39;true efficiency&#39;)</span>
+<span class="sd">       plt.ylim(0., 1.)</span>
+<span class="sd">       plt.title(&#39;The Wald interval can give nonsensical uncertainties&#39;)</span>
+<span class="sd">       plt.xlabel(&#39;Magnitude&#39;)</span>
+<span class="sd">       plt.ylabel(&#39;Detection efficiency&#39;)</span>
+<span class="sd">       plt.legend()</span>
+<span class="sd">       plt.show()</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">success</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">success</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;sizes of x and success must match&#39;</span><span class="p">)</span>
+
+    <span class="c"># Put values into a histogram (`n`). Put &quot;successful&quot; values</span>
+    <span class="c"># into a second histogram (`k`) with identical binning.</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="nb">range</span><span class="o">=</span><span class="nb">range</span><span class="p">)</span>
+    <span class="n">k</span><span class="p">,</span> <span class="n">bin_edges</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">success</span><span class="p">],</span> <span class="n">bins</span><span class="o">=</span><span class="n">bin_edges</span><span class="p">)</span>
+    <span class="n">bin_ctr</span> <span class="o">=</span> <span class="p">(</span><span class="n">bin_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bin_edges</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">/</span> <span class="mf">2.</span>
+    <span class="n">bin_halfwidth</span> <span class="o">=</span> <span class="n">bin_ctr</span> <span class="o">-</span> <span class="n">bin_edges</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c"># Remove bins with zero entries.</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">bin_ctr</span> <span class="o">=</span> <span class="n">bin_ctr</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+    <span class="n">bin_halfwidth</span> <span class="o">=</span> <span class="n">bin_halfwidth</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">n</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span><span class="n">valid</span><span class="p">]</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">k</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">bounds</span> <span class="o">=</span> <span class="n">binom_conf_interval</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">conf</span><span class="o">=</span><span class="n">conf</span><span class="p">,</span> <span class="n">interval</span><span class="o">=</span><span class="n">interval</span><span class="p">)</span>
+    <span class="n">perr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">bounds</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">bin_ctr</span><span class="p">,</span> <span class="n">bin_halfwidth</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">perr</span>
+
+</div>
+<div class="viewcode-block" id="median_absolute_deviation"><a class="viewcode-back" href="../../../api/astropy.stats.median_absolute_deviation.html#astropy.stats.median_absolute_deviation">[docs]</a><span class="k">def</span> <span class="nf">median_absolute_deviation</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the median absolute deviation.</span>
+
+<span class="sd">    Returns the median absolute deviation (MAD) of the array elements.</span>
+<span class="sd">    The MAD is defined as ``median(abs(a - median(a)))``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : array_like</span>
+<span class="sd">        Input array or object that can be converted to an array.</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which the medians are computed. The default (axis=None)</span>
+<span class="sd">        is to compute the median along a flattened version of the array.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    median_absolute_deviation : ndarray</span>
+<span class="sd">        A new array holding the result. If the input contains</span>
+<span class="sd">        integers, or floats of smaller precision than 64, then the output</span>
+<span class="sd">        data-type is float64.  Otherwise, the output data-type is the same</span>
+<span class="sd">        as that of the input.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    This will generate random variates from a Gaussian distribution and return</span>
+<span class="sd">    the median absolute deviation for that distribution::</span>
+
+<span class="sd">        &gt;&gt;&gt; from astropy.stats import median_absolute_deviation</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.random import randn</span>
+<span class="sd">        &gt;&gt;&gt; randvar = randn(10000)</span>
+<span class="sd">        &gt;&gt;&gt; mad = median_absolute_deviation(randvar)</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    numpy.median</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">a_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c"># re-broadcast the output median array to subtract it</span>
+    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">a_median</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">a_median</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="c"># calculated the median average deviation</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">a_median</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="biweight_location"><a class="viewcode-back" href="../../../api/astropy.stats.biweight_location.html#astropy.stats.biweight_location">[docs]</a><span class="k">def</span> <span class="nf">biweight_location</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the biweight location for an array.</span>
+
+<span class="sd">    Returns the biweight location for the array elements.</span>
+<span class="sd">    The biweight is a robust statistic for determining the central</span>
+<span class="sd">    location of a distribution.</span>
+
+<span class="sd">    The biweight location is given by the following equation</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        C_{bl}= M+\\frac{\Sigma_{\|u_i\|&lt;1} (x_i-M)(1-u_i^2)^2}</span>
+<span class="sd">        {\Sigma_{\|u_i\|&lt;1} (1-u_i^2)^2}</span>
+
+<span class="sd">    where M is the sample mean or if run iterative the initial guess,</span>
+<span class="sd">    and u_i is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">      u_{i} = \\frac{(x_i-M)}{cMAD}</span>
+
+<span class="sd">    where MAD is the median absolute deviation.</span>
+
+<span class="sd">    For more details, see Beers, Flynn, and Gebhardt, 1990, AJ, 100, 32B</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : array_like</span>
+<span class="sd">        Input array or object that can be converted to an array.</span>
+<span class="sd">    c : float</span>
+<span class="sd">        Tuning constant for the biweight estimator.  Default value is 6.0.</span>
+<span class="sd">    M : float, optional</span>
+<span class="sd">        Initial gues for the biweight location.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    biweight_location: float</span>
+<span class="sd">        Returns the biweight location for the array elements.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    This will generate random variates from a Gaussian distribution and return</span>
+<span class="sd">    the median absolute deviation for that distribution::</span>
+
+<span class="sd">    &gt;&gt;&gt; from astropy.stats.funcs import biweight_location</span>
+<span class="sd">    &gt;&gt;&gt; from numpy.random import randn</span>
+<span class="sd">    &gt;&gt;&gt; randvar = randn(10000)</span>
+<span class="sd">    &gt;&gt;&gt; cbl = biweight_location(randvar)</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    median_absolute_deviation, biweight_midvariance</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="c"># set up the difference</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">M</span>
+
+    <span class="c"># set up the weighting</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">c</span> <span class="o">/</span> <span class="n">median_absolute_deviation</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="c"># now remove the outlier points</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span>
+
+    <span class="n">u</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">M</span><span class="o">+</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">u</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+</div>
+<div class="viewcode-block" id="biweight_midvariance"><a class="viewcode-back" href="../../../api/astropy.stats.biweight_midvariance.html#astropy.stats.biweight_midvariance">[docs]</a><span class="k">def</span> <span class="nf">biweight_midvariance</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mf">9.0</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute the biweight midvariance for an array.</span>
+
+<span class="sd">    Returns the biweight midvariance for the array elements.</span>
+<span class="sd">    The biweight midvariance is a robust statistic for determining</span>
+<span class="sd">    the midvariance (i.e. the standard deviation) of a distribution.</span>
+
+<span class="sd">    The biweight location is given by the following equation</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">      C_{bl}= n^{1/2} \\frac{[\Sigma_{|u_i|&lt;1} (x_i-M)**2(1-u_i^2)^4]^{0.5}}</span>
+<span class="sd">      {|\Sigma_{|u_i|&lt;1} (1-u_i^2)(1-5u_i^2)|}</span>
+
+<span class="sd">    where :math:`u_i` is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">      u_{i} = \\frac{(x_i-M)}{cMAD}</span>
+
+<span class="sd">    where MAD is the median absolute deviation.  For the midvariance</span>
+<span class="sd">    parameter, c is typically uses a value of 9.0.</span>
+
+<span class="sd">    For more details, see Beers, Flynn, and Gebhardt, 1990, AJ, 100, 32B</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : array_like</span>
+<span class="sd">        Input array or object that can be converted to an array.</span>
+<span class="sd">    c : float</span>
+<span class="sd">        Tuning constant for the biweight estimator.  Default value is 9.0.</span>
+<span class="sd">    M : float, optional</span>
+<span class="sd">        Initial gues for the biweight location.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    biweight_midvariance : float</span>
+<span class="sd">        Returns the biweight midvariance for the array elements.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    This will generate random variates from a Gaussian distribution and return</span>
+<span class="sd">    the median absolute deviation for that distribution::</span>
+
+<span class="sd">    &gt;&gt;&gt; from astropy.stats.funcs import biweight_midvariance</span>
+<span class="sd">    &gt;&gt;&gt; from numpy.random import randn</span>
+<span class="sd">    &gt;&gt;&gt; randvar = randn(10000)</span>
+<span class="sd">    &gt;&gt;&gt; scl = biweight_midvariance(randvar)</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    median_absolute_deviation, biweight_location</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">M</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="c"># set up the difference</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">M</span>
+
+    <span class="c"># set up the weighting</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">d</span> <span class="o">/</span> <span class="n">c</span> <span class="o">/</span> <span class="n">median_absolute_deviation</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+
+    <span class="c"># now remove the outlier points</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">u</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span>
+
+    <span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">n</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span><span class="o">**</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">**</span><span class="mf">0.5</span>\
+        <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">u</span><span class="p">[</span><span class="n">mask</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">u</span><span class="p">[</span><span class="n">mask</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+</div>
+<div class="viewcode-block" id="signal_to_noise_oir_ccd"><a class="viewcode-back" href="../../../api/astropy.stats.signal_to_noise_oir_ccd.html#astropy.stats.signal_to_noise_oir_ccd">[docs]</a><span class="k">def</span> <span class="nf">signal_to_noise_oir_ccd</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">source_eps</span><span class="p">,</span> <span class="n">sky_eps</span><span class="p">,</span> <span class="n">dark_eps</span><span class="p">,</span> <span class="n">rd</span><span class="p">,</span> <span class="n">npix</span><span class="p">,</span>
+                            <span class="n">gain</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Computes the signal to noise ratio for source being observed in the</span>
+<span class="sd">    optical/IR using a CCD.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : float or numpy.ndarray</span>
+<span class="sd">        CCD integration time in seconds</span>
+<span class="sd">    source_eps : float</span>
+<span class="sd">        Number of electrons (photons) or DN per second in the aperture from the</span>
+<span class="sd">        source. Note that this should already have been scaled by the filter</span>
+<span class="sd">        transmission and the quantum efficiency of the CCD. If the input is in</span>
+<span class="sd">        DN, then be sure to set the gain to the proper value for the CCD.</span>
+<span class="sd">        If the input is in electrons per second, then keep the gain as its</span>
+<span class="sd">        default of 1.0.</span>
+<span class="sd">    sky_eps : float</span>
+<span class="sd">        Number of electrons (photons) or DN per second per pixel from the sky</span>
+<span class="sd">        background. Should already be scaled by filter transmission and QE.</span>
+<span class="sd">        This must be in the same units as source_eps for the calculation to</span>
+<span class="sd">        make sense.</span>
+<span class="sd">    dark_eps : float</span>
+<span class="sd">        Number of thermal electrons per second per pixel. If this is given in</span>
+<span class="sd">        DN or ADU, then multipy by the gain to get the value in electrons.</span>
+<span class="sd">    rd : float</span>
+<span class="sd">        Read noise of the CCD in electrons. If this is given in</span>
+<span class="sd">        DN or ADU, then multipy by the gain to get the value in electrons.</span>
+<span class="sd">    npix : float</span>
+<span class="sd">        Size of the aperture in pixels</span>
+<span class="sd">    gain : float</span>
+<span class="sd">        Gain of the CCD. In units of electrons per DN.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SNR : float or numpy.ndarray</span>
+<span class="sd">        Signal to noise ratio calculated from the inputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">signal</span> <span class="o">=</span> <span class="n">t</span><span class="o">*</span><span class="n">source_eps</span><span class="o">*</span><span class="n">gain</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">source_eps</span> <span class="o">*</span> <span class="n">gain</span> <span class="o">+</span> <span class="n">npix</span> <span class="o">*</span>
+                         <span class="p">(</span><span class="n">sky_eps</span> <span class="o">*</span> <span class="n">gain</span> <span class="o">+</span> <span class="n">dark_eps</span><span class="p">))</span> <span class="o">+</span> <span class="n">npix</span> <span class="o">*</span> <span class="n">rd</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">signal</span> <span class="o">/</span> <span class="n">noise</span>
+
+</div>
+<div class="viewcode-block" id="bootstrap"><a class="viewcode-back" href="../../../api/astropy.stats.bootstrap.html#astropy.stats.bootstrap">[docs]</a><span class="k">def</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bootnum</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">samples</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">bootfunc</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Performs bootstrap resampling on numpy arrays.</span>
+
+<span class="sd">    Bootstrap resampling is used to understand confidence intervals of sample</span>
+<span class="sd">    estimates. This function returns versions of the dataset resampled with</span>
+<span class="sd">    replacement (&quot;case bootstrapping&quot;). These can all be run through a function</span>
+<span class="sd">    or statistic to produce a distribution of values which can then be used to</span>
+<span class="sd">    find the confidence intervals.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : numpy.ndarray</span>
+<span class="sd">        N-D array. The boostrap resampling will be performed on the first</span>
+<span class="sd">        index, so the first index should access the relevant information</span>
+<span class="sd">        to be bootstrapped.</span>
+<span class="sd">    bootnum : int</span>
+<span class="sd">        Number of bootstrap resamples</span>
+<span class="sd">    samples : int</span>
+<span class="sd">        Number of samples in each resample. The default `None` sets samples to</span>
+<span class="sd">        the number of datapoints</span>
+<span class="sd">    bootfunc : function</span>
+<span class="sd">        Function to reduce the resampled data. Each bootstrap resample will</span>
+<span class="sd">        be put through this function and the results returned. If `None`, the</span>
+<span class="sd">        bootstrapped data will be returned</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    boot : numpy.ndarray</span>
+<span class="sd">        Bootstrapped data. Each row is a bootstrap resample of the data.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">samples</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c"># make sure the input is sane</span>
+    <span class="k">assert</span> <span class="n">samples</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;samples cannot be less than one&quot;</span>
+    <span class="k">assert</span> <span class="n">bootnum</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&quot;bootnum cannot be less than one&quot;</span>
+
+    <span class="k">if</span> <span class="n">bootfunc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">resultdims</span> <span class="o">=</span> <span class="p">(</span><span class="n">bootnum</span><span class="p">,)</span> <span class="o">+</span> <span class="p">(</span><span class="n">samples</span><span class="p">,)</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">resultdims</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">resultdims</span> <span class="o">=</span> <span class="p">(</span><span class="n">bootnum</span><span class="p">,)</span>
+        <span class="n">boot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">resultdims</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">bootnum</span><span class="p">):</span>
+        <span class="n">bootarr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">samples</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">bootfunc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">boot</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">bootarr</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">boot</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">bootfunc</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">bootarr</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">boot</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

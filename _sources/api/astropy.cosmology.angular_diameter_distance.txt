@@ -1,0 +1,8 @@
+
+
+angular_diameter_distance
+===========================================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: angular_diameter_distance

@@ -1,0 +1,154 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Conf &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="N-dimensional datasets (astropy.nddata)" href="../nddata/index.html" />
+    <link rel="next" title="FlagCollection" href="astropy.nddata.FlagCollection.html" />
+    <link rel="prev" title="StdDevUncertainty" href="astropy.nddata.StdDevUncertainty.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.nddata.FlagCollection.html" title="FlagCollection">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.nddata.StdDevUncertainty.html" title="StdDevUncertainty">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../nddata/index.html" accesskey="U">N-dimensional datasets (<tt class="docutils literal"><span class="pre">astropy.nddata</span></tt>)</a> &raquo;</li>
+      
+      <li>Conf</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="conf">
+<h1>Conf<a class="headerlink" href="#conf" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.nddata.Conf">
+<em class="property">class </em><tt class="descclassname">astropy.nddata.</tt><tt class="descname">Conf</tt><a class="reference internal" href="../_modules/astropy/nddata.html#Conf"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata.py#L18" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.Conf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.config.ConfigNamespace.html#astropy.config.ConfigNamespace" title="astropy.config.configuration.ConfigNamespace"><tt class="docutils literal"><span class="pre">astropy.config.ConfigNamespace</span></tt></a></p>
+<p>Configuration parameters for <a class="reference internal" href="../nddata/index.html#module-astropy.nddata" title="astropy.nddata"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.nddata</span></tt></a>.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.Conf.warn_setting_unit_directly" title="astropy.nddata.Conf.warn_setting_unit_directly"><tt class="xref py py-obj docutils literal"><span class="pre">warn_setting_unit_directly</span></tt></a></td>
+<td>Whether to issue a warning when the <a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> unit attribute is changed from a non-<tt class="docutils literal"><span class="pre">None</span></tt> value to another value that data values/uncertainties are not scaled with the unit change.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.Conf.warn_unsupported_correlated" title="astropy.nddata.Conf.warn_unsupported_correlated"><tt class="xref py py-obj docutils literal"><span class="pre">warn_unsupported_correlated</span></tt></a></td>
+<td>Whether to issue a warning if <a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> arithmetic is performed with uncertainties and the uncertainties do not support the propagation of correlated uncertainties.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.nddata.Conf.warn_setting_unit_directly">
+<tt class="descname">warn_setting_unit_directly</tt><a class="headerlink" href="#astropy.nddata.Conf.warn_setting_unit_directly" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to issue a warning when the <a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> unit attribute is changed from a non-<tt class="docutils literal"><span class="pre">None</span></tt> value to another value that data values/uncertainties are not scaled with the unit change.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.Conf.warn_unsupported_correlated">
+<tt class="descname">warn_unsupported_correlated</tt><a class="headerlink" href="#astropy.nddata.Conf.warn_unsupported_correlated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to issue a warning if <a class="reference internal" href="astropy.nddata.NDData.html#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> arithmetic is performed with uncertainties and the uncertainties do not support the propagation of correlated uncertainties.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Conf</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.nddata.Conf.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.nddata.Conf.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

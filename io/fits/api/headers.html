@@ -1,0 +1,1121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Headers &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="FITS File handling (astropy.io.fits)" href="../index.html" />
+    <link rel="next" title="Cards" href="cards.html" />
+    <link rel="prev" title="Header Data Units" href="hdus.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="cards.html" title="Cards">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="hdus.html" title="Header Data Units">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" accesskey="U">FITS File handling (<tt class="docutils literal"><span class="pre">astropy.io.fits</span></tt>)</a> &raquo;</li>
+      
+      <li>Headers</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="headers">
+<h1>Headers<a class="headerlink" href="#headers" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="header">
+<h2><a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-class docutils literal"><span class="pre">Header</span></tt></a><a class="headerlink" href="#header" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="astropy.io.fits.Header">
+<em class="property">class </em><tt class="descclassname">astropy.io.fits.</tt><tt class="descname">Header</tt><big>(</big><em>cards=</em>, <span class="optional">[</span><span class="optional">]</span><em>txtfile=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L48" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>FITS header class.  This class exposes both a dict-like interface and a
+list-like interface to FITS headers.</p>
+<p>The header may be indexed by keyword and, like a dict, the associated value
+will be returned.  When the header contains cards with duplicate keywords,
+only the value of the first card with the given keyword will be returned.
+It is also possible to use a 2-tuple as the index in the form (keyword,
+n)&#8211;this returns the n-th value with that keyword, in the case where there
+are duplicate keywords.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="p">[</span><span class="s">&#39;NAXIS&#39;</span><span class="p">]</span>
+<span class="go">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="p">[(</span><span class="s">&#39;FOO&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]</span>  <span class="c"># Return the value of the second FOO keyword</span>
+<span class="go">&#39;foo&#39;</span>
+</pre></div>
+</div>
+<p>The header may also be indexed by card number:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># Return the value of the first card in the header</span>
+<span class="go">&#39;T&#39;</span>
+</pre></div>
+</div>
+<p>Commentary keywords such as HISTORY and COMMENT are special cases: When
+indexing the Header object with either &#8216;HISTORY&#8217; or &#8216;COMMENT&#8217; a list of all
+the HISTORY/COMMENT values is returned:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="p">[</span><span class="s">&#39;HISTORY&#39;</span><span class="p">]</span>
+<span class="go">This is the first history entry in this header.</span>
+<span class="go">This is the second history entry in this header.</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+<p>See the Astropy documentation for more details on working with headers.</p>
+<p>Construct a <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> from an iterable and/or text file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cards</strong> : A list of <a class="reference internal" href="cards.html#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> objects, optional</p>
+<blockquote>
+<div><p>The cards to initialize the header with.</p>
+</div></blockquote>
+<p><strong>txtfile</strong> : file path, file object or file-like object, optional</p>
+<blockquote class="last">
+<div><p>Input ASCII header parameters file <strong>(Deprecated)</strong>
+Use the Header.fromfile classmethod instead.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="astropy.io.fits.Header.add_blank">
+<tt class="descname">add_blank</tt><big>(</big><em>value=''</em>, <em>before=None</em>, <em>after=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.add_blank"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1621" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.add_blank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a blank card.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> : str, optional</p>
+<blockquote>
+<div><p>Text to be added.</p>
+</div></blockquote>
+<p><strong>before</strong> : str or int, optional</p>
+<blockquote>
+<div><p>Same as in <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-obj docutils literal"><span class="pre">Header.update</span></tt></a></p>
+</div></blockquote>
+<p><strong>after</strong> : str or int, optional</p>
+<blockquote class="last">
+<div><p>Same as in <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-obj docutils literal"><span class="pre">Header.update</span></tt></a></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.add_comment">
+<tt class="descname">add_comment</tt><big>(</big><em>value</em>, <em>before=None</em>, <em>after=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.add_comment"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1603" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.add_comment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a <tt class="docutils literal"><span class="pre">COMMENT</span></tt> card.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> : str</p>
+<blockquote>
+<div><p>Text to be added.</p>
+</div></blockquote>
+<p><strong>before</strong> : str or int, optional</p>
+<blockquote>
+<div><p>Same as in <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-obj docutils literal"><span class="pre">Header.update</span></tt></a></p>
+</div></blockquote>
+<p><strong>after</strong> : str or int, optional</p>
+<blockquote class="last">
+<div><p>Same as in <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-obj docutils literal"><span class="pre">Header.update</span></tt></a></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.add_history">
+<tt class="descname">add_history</tt><big>(</big><em>value</em>, <em>before=None</em>, <em>after=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.add_history"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1585" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.add_history" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a <tt class="docutils literal"><span class="pre">HISTORY</span></tt> card.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>value</strong> : str</p>
+<blockquote>
+<div><p>History text to be added.</p>
+</div></blockquote>
+<p><strong>before</strong> : str or int, optional</p>
+<blockquote>
+<div><p>Same as in <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-obj docutils literal"><span class="pre">Header.update</span></tt></a></p>
+</div></blockquote>
+<p><strong>after</strong> : str or int, optional</p>
+<blockquote class="last">
+<div><p>Same as in <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-obj docutils literal"><span class="pre">Header.update</span></tt></a></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.append">
+<tt class="descname">append</tt><big>(</big><em>card=None</em>, <em>useblanks=True</em>, <em>bottom=False</em>, <em>end=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.append"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1190" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends a new keyword+value card to the end of the Header, similar
+to <tt class="xref py py-obj docutils literal"><span class="pre">list.append</span></tt>.</p>
+<p>By default if the last cards in the Header have commentary keywords,
+this will append the new keyword before the commentary (unless the new
+keyword is also commentary).</p>
+<p>Also differs from <tt class="xref py py-obj docutils literal"><span class="pre">list.append</span></tt> in that it can be called with no
+arguments: In this case a blank card is appended to the end of the
+Header.  In the case all the keyword arguments are ignored.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>card</strong> : str, tuple</p>
+<blockquote>
+<div><p>A keyword or a (keyword, value, [comment]) tuple representing a
+single header card; the comment is optional in which case a
+2-tuple may be used</p>
+</div></blockquote>
+<p><strong>useblanks</strong> : bool, optional</p>
+<blockquote>
+<div><p>If there are blank cards at the end of the Header, replace the
+first blank card so that the total number of cards in the Header
+does not increase.  Otherwise preserve the number of blank cards.</p>
+</div></blockquote>
+<p><strong>bottom</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True, instead of appending after the last non-commentary card,
+append after the last non-blank card.</p>
+</div></blockquote>
+<p><strong>end</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If True, ignore the useblanks and bottom options, and append at the
+very end of the Header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Header.ascard">
+<tt class="descname">ascard</tt><a class="headerlink" href="#astropy.io.fits.Header.ascard" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use the <a class="reference internal" href="#astropy.io.fits.Header.cards" title="astropy.io.fits.Header.cards"><tt class="xref py py-obj docutils literal"><span class="pre">cards</span></tt></a> attribute instead.</p>
+</div>
+<p>Returns a <tt class="docutils literal"><span class="pre">CardList</span></tt> object wrapping this Header; provided for
+backwards compatibility for the old API (where Headers had an
+underlying <tt class="docutils literal"><span class="pre">CardList</span></tt>).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Header.cards">
+<tt class="descname">cards</tt><a class="headerlink" href="#astropy.io.fits.Header.cards" title="Permalink to this definition">¶</a></dt>
+<dd><p>The underlying physical cards that make up this Header; it can be
+looked at, but it should not be modified directly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.clear">
+<tt class="descname">clear</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.clear"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L735" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove all cards from the header.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.fits.Header.comments">
+<tt class="descname">comments</tt><a class="headerlink" href="#astropy.io.fits.Header.comments" title="Permalink to this definition">¶</a></dt>
+<dd><p>View the comments associated with each keyword, if any.</p>
+<p>For example, to see the comment on the NAXIS keyword:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s">&#39;NAXIS&#39;</span><span class="p">]</span>
+<span class="go">number of data axes</span>
+</pre></div>
+</div>
+<p>Comments can also be updated through this interface:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">comments</span><span class="p">[</span><span class="s">&#39;NAXIS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Number of data axes&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.copy">
+<tt class="descname">copy</tt><big>(</big><em>strip=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.copy"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L744" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a copy of the <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-class docutils literal"><span class="pre">Header</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>strip</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, strip any headers that are specific to one of the
+standard HDU types, so that this header can be used in a different
+HDU.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">header</p>
+<blockquote class="last">
+<div><p>A new <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-class docutils literal"><span class="pre">Header</span></tt></a> instance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.count">
+<tt class="descname">count</tt><big>(</big><em>keyword</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.count"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1380" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the count of the given keyword in the header, similar to
+<tt class="xref py py-obj docutils literal"><span class="pre">list.count</span></tt> if the Header object is treated as a list of keywords.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keyword</strong> : str</p>
+<blockquote class="last">
+<div><p>The keyword to count instances of in the header</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.extend">
+<tt class="descname">extend</tt><big>(</big><em>cards</em>, <em>strip=True</em>, <em>unique=False</em>, <em>update=False</em>, <em>update_first=False</em>, <em>useblanks=True</em>, <em>bottom=False</em>, <em>end=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.extend"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1280" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.extend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends multiple keyword+value cards to the end of the header, similar
+to <tt class="xref py py-obj docutils literal"><span class="pre">list.extend</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cards</strong> : iterable</p>
+<blockquote>
+<div><p>An iterable of (keyword, value, [comment]) tuples; see
+<a class="reference internal" href="#astropy.io.fits.Header.append" title="astropy.io.fits.Header.append"><tt class="xref py py-obj docutils literal"><span class="pre">Header.append</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>strip</strong> : bool, optional</p>
+<blockquote>
+<div><p>Remove any keywords that have meaning only to specific types of
+HDUs, so that only more general keywords are added from extension
+Header or Card list (default: <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>).</p>
+</div></blockquote>
+<p><strong>unique</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, ensures that no duplicate keywords are appended;
+keywords already in this header are simply discarded.  The
+exception is commentary keywords (COMMENT, HISTORY, etc.): they are
+only treated as duplicates if their values match.</p>
+</div></blockquote>
+<p><strong>update</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, update the current header with the values and comments
+from duplicate keywords in the input header.  This supercedes the
+<tt class="docutils literal"><span class="pre">unique</span></tt> argument.  Commentary keywords are treated the same as
+if <tt class="docutils literal"><span class="pre">unique=True</span></tt>.</p>
+</div></blockquote>
+<p><strong>update_first</strong> : bool, optional</p>
+<blockquote>
+<div><p>If the first keyword in the header is &#8216;SIMPLE&#8217;, and the first
+keyword in the input header is &#8216;XTENSION&#8217;, the &#8216;SIMPLE&#8217; keyword is
+replaced by the &#8216;XTENSION&#8217; keyword.  Likewise if the first keyword
+in the header is &#8216;XTENSION&#8217; and the first keyword in the input
+header is &#8216;SIMPLE&#8217;, the &#8216;XTENSION&#8217; keyword is replaced by the
+&#8216;SIMPLE&#8217; keyword.  This behavior is otherwise dumb as to whether or
+not the resulting header is a valid primary or extension header.
+This is mostly provided to support backwards compatibility with the
+old <a class="reference internal" href="#astropy.io.fits.Header.fromTxtFile" title="astropy.io.fits.Header.fromTxtFile"><tt class="xref py py-meth docutils literal"><span class="pre">Header.fromTxtFile()</span></tt></a> method, and only applies if
+<tt class="docutils literal"><span class="pre">update=True</span></tt>.</p>
+</div></blockquote>
+<p><strong>useblanks, bottom, end</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>These arguments are passed to <a class="reference internal" href="#astropy.io.fits.Header.append" title="astropy.io.fits.Header.append"><tt class="xref py py-meth docutils literal"><span class="pre">Header.append()</span></tt></a> while appending
+new cards to the header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.fromTxtFile">
+<tt class="descname">fromTxtFile</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.fromTxtFile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.fromTxtFile" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>This is equivalent to <tt class="docutils literal"><span class="pre">self.extend(Header.fromtextfile(fileobj),</span> <span class="pre">update=True,</span> <span class="pre">update_first=True)</span></tt>.  Note that there there is no direct equivalent to the <tt class="docutils literal"><span class="pre">replace=True</span></tt> option since <a class="reference internal" href="#astropy.io.fits.Header.fromtextfile" title="astropy.io.fits.Header.fromtextfile"><tt class="xref py py-meth docutils literal"><span class="pre">Header.fromtextfile()</span></tt></a> returns a new <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-class docutils literal"><span class="pre">Header</span></tt></a> instance.</p>
+</div>
+<p>Input the header parameters from an ASCII file.</p>
+<p>The input header cards will be used to update the current
+header.  Therefore, when an input card key matches a card key
+that already exists in the header, that card will be updated
+in place.  Any input cards that do not already exist in the
+header will be added.  Cards will not be deleted from the
+header.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fileobj</strong> : file path, file object or file-like object</p>
+<blockquote>
+<div><p>Input header parameters file.</p>
+</div></blockquote>
+<p><strong>replace</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, indicates that the entire header should be
+replaced with the contents of the ASCII file instead of
+just updating the current header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.Header.fromfile">
+<em class="property">classmethod </em><tt class="descname">fromfile</tt><big>(</big><em>fileobj</em>, <em>sep=''</em>, <em>endcard=True</em>, <em>padding=True</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.fromfile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L407" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.fromfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference internal" href="#astropy.io.fits.Header.fromstring" title="astropy.io.fits.Header.fromstring"><tt class="xref py py-meth docutils literal"><span class="pre">Header.fromstring()</span></tt></a>, but reads the header string from
+a given file-like object or filename.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fileobj</strong> : str, file-like</p>
+<blockquote>
+<div><p>A filename or an open file-like object from which a FITS header is
+to be read.  For open file handles the file pointer must be at the
+beginning of the header.</p>
+</div></blockquote>
+<p><strong>sep</strong> : str, optional</p>
+<blockquote>
+<div><p>The string separating cards from each other, such as a newline.  By
+default there is no card separator (as is the case in a raw FITS
+file).</p>
+</div></blockquote>
+<p><strong>endcard</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True (the default) the header must end with an END card in order
+to be considered valid.  If an END card is not found an
+<a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.IOError" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">IOError</span></tt></a> is raised.</p>
+</div></blockquote>
+<p><strong>padding</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True (the default) the header will be required to be padded out
+to a multiple of 2880, the FITS header block size.  Otherwise any
+padding, or lack thereof, is ignored.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">header</p>
+<blockquote class="last">
+<div><p>A new <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> instance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.Header.fromkeys">
+<em class="property">classmethod </em><tt class="descname">fromkeys</tt><big>(</big><em>iterable</em>, <em>value=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.fromkeys"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L766" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.fromkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.fromkeys" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.fromkeys()</span></tt></a>&#8211;creates a new <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> from an
+iterable of keywords and an optional default value.</p>
+<p>This method is not likely to be particularly useful for creating real
+world FITS headers, but it is useful for testing.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>iterable</strong></p>
+<blockquote>
+<div><p>Any iterable that returns strings representing FITS keywords.</p>
+</div></blockquote>
+<p><strong>value</strong> : optional</p>
+<blockquote>
+<div><p>A default value to assign to each keyword; must be a valid type for
+FITS keywords.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">header</p>
+<blockquote class="last">
+<div><p>A new <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> instance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.Header.fromstring">
+<em class="property">classmethod </em><tt class="descname">fromstring</tt><big>(</big><em>data</em>, <em>sep=''</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.fromstring"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L337" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.fromstring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an HDU header from a byte string containing the entire header
+data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : str</p>
+<blockquote>
+<div><p>String containing the entire header.</p>
+</div></blockquote>
+<p><strong>sep</strong> : str, optional</p>
+<blockquote>
+<div><p>The string separating cards from each other, such as a newline.  By
+default there is no card separator (as is the case in a raw FITS
+file).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">header</p>
+<blockquote class="last">
+<div><p>A new <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a> instance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.io.fits.Header.fromtextfile">
+<em class="property">classmethod </em><tt class="descname">fromtextfile</tt><big>(</big><em>fileobj</em>, <em>endcard=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.fromtextfile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L713" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.fromtextfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Header</span><span class="o">.</span><span class="n">fromfile</span><span class="p">(</span><span class="n">fileobj</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">endcard</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">... </span>                <span class="n">padding</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.get">
+<tt class="descname">get</tt><big>(</big><em>key</em>, <em>default=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.get"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L797" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.get" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.get()</span></tt></a>&#8211;returns the value associated with keyword
+in the header, or a default value if the keyword is not found.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : str</p>
+<blockquote>
+<div><p>A keyword that may or may not be in the header.</p>
+</div></blockquote>
+<p><strong>default</strong> : optional</p>
+<blockquote>
+<div><p>A default value to return if the keyword is not found in the
+header.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">value</p>
+<blockquote class="last">
+<div><p>The value associated with the given keyword, or the default value
+if the keyword is not in the header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.get_comment">
+<tt class="descname">get_comment</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.get_comment"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.get_comment" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <tt class="docutils literal"><span class="pre">header['COMMENT']</span></tt> instead.</p>
+</div>
+<p>Get all comment cards as a list of string texts.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.get_history">
+<tt class="descname">get_history</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.get_history"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.get_history" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <tt class="docutils literal"><span class="pre">header['HISTORY']</span></tt> instead.</p>
+</div>
+<p>Get all history cards as a list of string texts.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.index">
+<tt class="descname">index</tt><big>(</big><em>keyword</em>, <em>start=None</em>, <em>stop=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.index"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1401" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the index if the first instance of the given keyword in the
+header, similar to <tt class="xref py py-obj docutils literal"><span class="pre">list.index</span></tt> if the Header object is treated as a
+list of keywords.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keyword</strong> : str</p>
+<blockquote>
+<div><p>The keyword to look up in the list of all keywords in the header</p>
+</div></blockquote>
+<p><strong>start</strong> : int, optional</p>
+<blockquote>
+<div><p>The lower bound for the index</p>
+</div></blockquote>
+<p><strong>stop</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The upper bound for the index</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.insert">
+<tt class="descname">insert</tt><big>(</big><em>key</em>, <em>card</em>, <em>useblanks=True</em>, <em>after=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.insert"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1439" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inserts a new keyword+value card into the Header at a given location,
+similar to <tt class="xref py py-obj docutils literal"><span class="pre">list.insert</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : int, str, or tuple</p>
+<blockquote>
+<div><p>The index into the the list of header keywords before which the
+new keyword should be inserted, or the name of a keyword before
+which the new keyword should be inserted.  Can also accept a
+(keyword, index) tuple for inserting around duplicate keywords.</p>
+</div></blockquote>
+<p><strong>card</strong> : str, tuple</p>
+<blockquote>
+<div><p>A keyword or a (keyword, value, [comment]) tuple; see
+<a class="reference internal" href="#astropy.io.fits.Header.append" title="astropy.io.fits.Header.append"><tt class="xref py py-obj docutils literal"><span class="pre">Header.append</span></tt></a></p>
+</div></blockquote>
+<p><strong>useblanks</strong> : bool, optional</p>
+<blockquote>
+<div><p>If there are blank cards at the end of the Header, replace the
+first blank card so that the total number of cards in the Header
+does not increase.  Otherwise preserve the number of blank cards.</p>
+</div></blockquote>
+<p><strong>after</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If set to <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, insert <em>after</em> the specified index or keyword,
+rather than before it.  Defaults to <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.items">
+<tt class="descname">items</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.items"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L911" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.items" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.items()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.iteritems">
+<tt class="descname">iteritems</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.iteritems"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L916" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.iteritems" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.iteritems" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.iteritems()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.iterkeys">
+<tt class="descname">iterkeys</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.iterkeys"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L922" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.iterkeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.iterkeys" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.iterkeys()</span></tt></a>&#8211;iterating directly over the <a class="reference internal" href="#astropy.io.fits.Header" title="astropy.io.fits.Header"><tt class="xref py py-obj docutils literal"><span class="pre">Header</span></tt></a>
+instance has the same behavior.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.itervalues">
+<tt class="descname">itervalues</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.itervalues"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L930" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.itervalues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.itervalues" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.itervalues()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.keys">
+<tt class="descname">keys</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.keys"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L936" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of keywords in the header in the order they
+appear&#8211;like <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.keys" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.keys()</span></tt></a> but ordered.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.pop">
+<tt class="descname">pop</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.pop"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L944" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.pop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Works like <tt class="xref py py-meth docutils literal"><span class="pre">list.pop()</span></tt> if no arguments or an index argument are
+supplied; otherwise works like <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.pop" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.pop()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.popitem">
+<tt class="descname">popitem</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.popitem"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L969" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.popitem" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.popitem" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.popitem()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.remove">
+<tt class="descname">remove</tt><big>(</big><em>keyword</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.remove"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1532" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.remove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removes the first instance of the given keyword from the header similar
+to <tt class="xref py py-obj docutils literal"><span class="pre">list.remove</span></tt> if the Header object is treated as a list of keywords.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keyword</strong> : str</p>
+<blockquote class="last">
+<div><p>The keyword of which to remove the first instance in the header</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.rename_key">
+<tt class="descname">rename_key</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.rename_key"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.rename_key" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="#astropy.io.fits.Header.rename_keyword" title="astropy.io.fits.Header.rename_keyword"><tt class="xref py py-meth docutils literal"><span class="pre">Header.rename_keyword()</span></tt></a> instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.rename_keyword">
+<tt class="descname">rename_keyword</tt><big>(</big><em>oldkeyword</em>, <em>newkeyword</em>, <em>force=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.rename_keyword"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1546" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.rename_keyword" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rename a card&#8217;s keyword in the header.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>oldkeyword</strong> : str or int</p>
+<blockquote>
+<div><p>Old keyword or card index</p>
+</div></blockquote>
+<p><strong>newkeyword</strong> : str</p>
+<blockquote>
+<div><p>New keyword</p>
+</div></blockquote>
+<p><strong>force</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, if the new keyword already exists in the header, force
+the creation of a duplicate keyword. Otherwise a
+<a class="reference external" href="http://docs.python.org/library/exceptions.html#exceptions.ValueError" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ValueError</span></tt></a> is raised.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.set">
+<tt class="descname">set</tt><big>(</big><em>keyword</em>, <em>value=None</em>, <em>comment=None</em>, <em>before=None</em>, <em>after=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.set"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L823" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value and/or comment and/or position of a specified keyword.</p>
+<p>If the keyword does not already exist in the header, a new keyword is
+created in the specified position, or appended to the end of the header
+if no position is specified.</p>
+<p>This method is similar to <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-meth docutils literal"><span class="pre">Header.update()</span></tt></a> prior to PyFITS 3.1.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>It should be noted that <tt class="docutils literal"><span class="pre">header.set(keyword,</span> <span class="pre">value)</span></tt> and
+<tt class="docutils literal"><span class="pre">header.set(keyword,</span> <span class="pre">value,</span> <span class="pre">comment)</span></tt> are equivalent to
+<tt class="docutils literal"><span class="pre">header[keyword]</span> <span class="pre">=</span> <span class="pre">value</span></tt> and
+<tt class="docutils literal"><span class="pre">header[keyword]</span> <span class="pre">=</span> <span class="pre">(value,</span> <span class="pre">comment)</span></tt> respectfully.</p>
+<p>New keywords can also be inserted relative to existing keywords
+using, for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s">&#39;NAXIS1&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;NAXIS&#39;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Number of axes&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>to insert before an existing keyword, or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="s">&#39;NAXIS&#39;</span><span class="p">,</span> <span class="p">(</span><span class="s">&#39;NAXIS1&#39;</span><span class="p">,</span> <span class="mi">4096</span><span class="p">),</span> <span class="n">after</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>to insert after an existing keyword.</p>
+<p class="last">The the only advantage of using <a class="reference internal" href="#astropy.io.fits.Header.set" title="astropy.io.fits.Header.set"><tt class="xref py py-meth docutils literal"><span class="pre">Header.set()</span></tt></a> is that it
+easily replaces the old usage of <a class="reference internal" href="#astropy.io.fits.Header.update" title="astropy.io.fits.Header.update"><tt class="xref py py-meth docutils literal"><span class="pre">Header.update()</span></tt></a> both
+conceptually and in terms of function signature.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>keyword</strong> : str</p>
+<blockquote>
+<div><p>A header keyword</p>
+</div></blockquote>
+<p><strong>value</strong> : str, optional</p>
+<blockquote>
+<div><p>The value to set for the given keyword; if None the existing value
+is kept, but &#8216;&#8217; may be used to set a blank value</p>
+</div></blockquote>
+<p><strong>comment</strong> : str, optional</p>
+<blockquote>
+<div><p>The comment to set for the given keyword; if None the existing
+comment is kept, but <tt class="docutils literal"><span class="pre">''</span></tt> may be used to set a blank comment</p>
+</div></blockquote>
+<p><strong>before</strong> : str, int, optional</p>
+<blockquote>
+<div><p>Name of the keyword, or index of the <a class="reference internal" href="cards.html#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> before which this card
+should be located in the header.  The argument <tt class="docutils literal"><span class="pre">before</span></tt> takes
+precedence over <tt class="docutils literal"><span class="pre">after</span></tt> if both specified.</p>
+</div></blockquote>
+<p><strong>after</strong> : str, int, optional</p>
+<blockquote class="last">
+<div><p>Name of the keyword, or index of the <a class="reference internal" href="cards.html#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> after which this card
+should be located in the header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.setdefault">
+<tt class="descname">setdefault</tt><big>(</big><em>key</em>, <em>default=None</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.setdefault"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L979" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.setdefault" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.setdefault" title="(in Python v2.7)"><tt class="xref py py-meth docutils literal"><span class="pre">dict.setdefault()</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.toTxtFile">
+<tt class="descname">toTxtFile</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.toTxtFile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L421" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.toTxtFile" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.1: </span>Use <a class="reference internal" href="#astropy.io.fits.Header.totextfile" title="astropy.io.fits.Header.totextfile"><tt class="xref py py-meth docutils literal"><span class="pre">Header.totextfile()</span></tt></a> instead.</p>
+</div>
+<p>Output the header parameters to a file in ASCII format.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fileobj</strong> : file path, file object or file-like object</p>
+<blockquote>
+<div><p>Output header parameters file.</p>
+</div></blockquote>
+<p><strong>clobber</strong> : bool</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, overwrite the output file if it exists.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.tofile">
+<tt class="descname">tofile</tt><big>(</big><em>fileobj</em>, <em>sep=''</em>, <em>endcard=True</em>, <em>padding=True</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.tofile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L655" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.tofile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes the header to file or file-like object.</p>
+<p>By default this writes the header exactly as it would be written to a
+FITS file, with the END card included and padding to the next multiple
+of 2880 bytes.  However, aspects of this may be controlled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fileobj</strong> : str, file, optional</p>
+<blockquote>
+<div><p>Either the pathname of a file, or an open file handle or file-like
+object</p>
+</div></blockquote>
+<p><strong>sep</strong> : str, optional</p>
+<blockquote>
+<div><p>The character or string with which to separate cards.  By default
+there is no separator, but one could use <tt class="docutils literal"><span class="pre">'\\n'</span></tt>, for example, to
+separate each card with a new line</p>
+</div></blockquote>
+<p><strong>endcard</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> (default) adds the END card to the end of the header
+string</p>
+</div></blockquote>
+<p><strong>padding</strong> : bool, optional</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> (default) pads the string with spaces out to the next
+multiple of 2880 characters</p>
+</div></blockquote>
+<p><strong>clobber</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, overwrites the output file if it already exists</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.tostring">
+<tt class="descname">tostring</tt><big>(</big><em>sep=''</em>, <em>endcard=True</em>, <em>padding=True</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.tostring"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L610" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.tostring" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a string representation of the header.</p>
+<p>By default this uses no separator between cards, adds the END card, and
+pads the string with spaces to the next multiple of 2880 bytes.  That
+is, it returns the header exactly as it would appear in a FITS file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>sep</strong> : str, optional</p>
+<blockquote>
+<div><p>The character or string with which to separate cards.  By default
+there is no separator, but one could use <tt class="docutils literal"><span class="pre">'\\n'</span></tt>, for example, to
+separate each card with a new line</p>
+</div></blockquote>
+<p><strong>endcard</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True (default) adds the END card to the end of the header
+string</p>
+</div></blockquote>
+<p><strong>padding</strong> : bool, optional</p>
+<blockquote>
+<div><p>If True (default) pads the string with spaces out to the next
+multiple of 2880 characters</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>s</strong> : str</p>
+<blockquote class="last">
+<div><p>A string representing a FITS header.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.totextfile">
+<tt class="descname">totextfile</tt><big>(</big><em>fileobj</em>, <em>endcard=False</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.totextfile"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L724" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.totextfile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Header</span><span class="o">.</span><span class="n">tofile</span><span class="p">(</span><span class="n">fileobj</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">endcard</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">padding</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="n">clobber</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.update">
+<tt class="descname">update</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.update"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L988" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the Header with new keyword values, updating the values of
+existing keywords and appending new keywords otherwise; similar to
+<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.update" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict.update</span></tt></a>.</p>
+<p><a class="reference internal" href="files.html#astropy.io.fits.update" title="astropy.io.fits.update"><tt class="xref py py-obj docutils literal"><span class="pre">update</span></tt></a> accepts either a dict-like object or an iterable.  In the
+former case the keys must be header keywords and the values may be
+either scalar values or (value, comment) tuples.  In the case of an
+iterable the items must be (keyword, value) tuples or (keyword, value,
+comment) tuples.</p>
+<p>Arbitrary arguments are also accepted, in which case the update() is
+called again with the kwargs dict as its only argument.  That is,</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">NAXIS1</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">NAXIS2</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s">&#39;NAXIS1&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span> <span class="s">&#39;NAXIS2&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>As this method works similarly to <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict.update" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict.update</span></tt></a> it is very
+different from the <tt class="docutils literal"><span class="pre">Header.update()</span></tt> method in PyFITS versions
+prior to 3.1.0.  However, support for the old API is also
+maintained for backwards compatibility.  If update() is called with
+at least two positional arguments then it can be assumed that the
+old API is being used.  Use of the old API should be considered
+<strong>deprecated</strong>.  Most uses of the old API can be replaced as
+follows:</p>
+<ul>
+<li><p class="first">Replace</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="p">[</span><span class="n">keyword</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Replace</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="p">[</span><span class="n">keyword</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">comment</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Replace</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">before</span><span class="o">=</span><span class="n">before_keyword</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">before_keyword</span><span class="p">,</span> <span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Replace</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">after</span><span class="o">=</span><span class="n">after_keyword</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>with</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">header</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">after_keyword</span><span class="p">,</span> <span class="p">(</span><span class="n">keyword</span><span class="p">,</span> <span class="n">value</span><span class="p">),</span>
+              <span class="n">after</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>See also <a class="reference internal" href="#astropy.io.fits.Header.set" title="astropy.io.fits.Header.set"><tt class="xref py py-meth docutils literal"><span class="pre">Header.set()</span></tt></a> which is a new method that provides an
+interface similar to the old <tt class="docutils literal"><span class="pre">Header.update()</span></tt> and may help make
+transition a little easier.</p>
+<p class="last">For reference, the old documentation for the old
+<tt class="docutils literal"><span class="pre">Header.update()</span></tt> is provided below:</p>
+</div>
+<p>Update one header card.</p>
+<p>If the keyword already exists, it&#8217;s value and/or comment will be
+updated.  If it does not exist, a new card will be created and it will
+be placed before or after the specified location.  If no <tt class="docutils literal"><span class="pre">before</span></tt> or
+<tt class="docutils literal"><span class="pre">after</span></tt> is specified, it will be appended at the end.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>key</strong> : str</p>
+<blockquote>
+<div><p>keyword</p>
+</div></blockquote>
+<p><strong>value</strong> : str</p>
+<blockquote>
+<div><p>value to be used for updating</p>
+</div></blockquote>
+<p><strong>comment</strong> : str, optional</p>
+<blockquote>
+<div><p>to be used for updating, default=None.</p>
+</div></blockquote>
+<p><strong>before</strong> : str, int, optional</p>
+<blockquote>
+<div><p>name of the keyword, or index of the <a class="reference internal" href="cards.html#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> before which
+the new card will be placed.  The argument <tt class="docutils literal"><span class="pre">before</span></tt> takes
+precedence over <tt class="docutils literal"><span class="pre">after</span></tt> if both specified.</p>
+</div></blockquote>
+<p><strong>after</strong> : str, int, optional</p>
+<blockquote>
+<div><p>name of the keyword, or index of the <a class="reference internal" href="cards.html#astropy.io.fits.Card" title="astropy.io.fits.Card"><tt class="xref py py-obj docutils literal"><span class="pre">Card</span></tt></a> after which
+the new card will be placed.</p>
+</div></blockquote>
+<p><strong>savecomment</strong> : bool, optional</p>
+<blockquote class="last">
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, preserve the current comment for an existing
+keyword.  The argument <tt class="docutils literal"><span class="pre">savecomment</span></tt> takes precedence over
+<tt class="docutils literal"><span class="pre">comment</span></tt> if both specified.  If <tt class="docutils literal"><span class="pre">comment</span></tt> is not
+specified then the current comment will automatically be
+preserved.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.fits.Header.values">
+<tt class="descname">values</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/astropy/io/fits/header.html#Header.values"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/fits/header.py#L1185" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.fits.Header.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list of the values of all cards in the header.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Headers</a><ul>
+<li><a class="reference internal" href="#header"><tt class="docutils literal"><span class="pre">Header</span></tt></a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/fits/api/headers.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../../_sources/io/fits/api/headers.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

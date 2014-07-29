@@ -1,0 +1,10 @@
+
+.. include:: ../vo/samp/references.txt
+
+
+SAMPClientError
+===============================
+
+.. currentmodule:: astropy.vo.samp
+
+.. autoexception:: SAMPClientError

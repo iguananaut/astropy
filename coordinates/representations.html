@@ -1,0 +1,279 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using and Designing Coordinate Representations &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="index.html" />
+    <link rel="next" title="Using and Designing Coordinate Frames" href="frames.html" />
+    <link rel="prev" title="Separations, Catalog Matching, and Related Functionality" href="matchsep.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="frames.html" title="Using and Designing Coordinate Frames">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="matchsep.html" title="Separations, Catalog Matching, and Related Functionality">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>Using and Designing Coordinate Representations</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-and-designing-coordinate-representations">
+<span id="astropy-coordinates-representations"></span><h1>Using and Designing Coordinate Representations<a class="headerlink" href="#using-and-designing-coordinate-representations" title="Permalink to this headline">¶</a></h1>
+<p>As described in the <a class="reference internal" href="index.html#astropy-coordinates-overview"><em>Overview of astropy.coordinates concepts</em></a>, the actual coordinate
+data in <a class="reference internal" href="index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a> frames is represented via
+&#8220;Representation classes&#8221;. These can be used to store 3-d coordinates in
+various representations, such as cartesian, spherical polar, cylindrical, and
+so on. The built-in representation classes are:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../api/astropy.coordinates.CartesianRepresentation.html#astropy.coordinates.CartesianRepresentation" title="astropy.coordinates.CartesianRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">CartesianRepresentation</span></tt></a>: cartesian
+coordinates <tt class="docutils literal"><span class="pre">x</span></tt>, <tt class="docutils literal"><span class="pre">y</span></tt>, and <tt class="docutils literal"><span class="pre">z</span></tt></li>
+<li><a class="reference internal" href="../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation" title="astropy.coordinates.SphericalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">SphericalRepresentation</span></tt></a>: spherical
+polar coordinates represented by a longitude (<tt class="docutils literal"><span class="pre">lon</span></tt>), a latitude
+(<tt class="docutils literal"><span class="pre">lat</span></tt>), and a distance (<tt class="docutils literal"><span class="pre">distance</span></tt>). The latitude is a value ranging
+from -90 to 90 degrees.</li>
+<li><a class="reference internal" href="../api/astropy.coordinates.UnitSphericalRepresentation.html#astropy.coordinates.UnitSphericalRepresentation" title="astropy.coordinates.UnitSphericalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">UnitSphericalRepresentation</span></tt></a>:
+spherical polar coordinates on a unit sphere, represented by a longitude
+(<tt class="docutils literal"><span class="pre">lon</span></tt>) and latitude (<tt class="docutils literal"><span class="pre">lat</span></tt>)</li>
+<li><a class="reference internal" href="../api/astropy.coordinates.PhysicsSphericalRepresentation.html#astropy.coordinates.PhysicsSphericalRepresentation" title="astropy.coordinates.PhysicsSphericalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">PhysicsSphericalRepresentation</span></tt></a>:
+spherical polar coordinates, represented by an inclination (<tt class="docutils literal"><span class="pre">theta</span></tt>) and
+azimuthal angle (<tt class="docutils literal"><span class="pre">phi</span></tt>), and radius <tt class="docutils literal"><span class="pre">r</span></tt>. The inclination goes from 0 to
+180 degrees, and is related to the latitude in the
+<a class="reference internal" href="../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation" title="astropy.coordinates.SphericalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">SphericalRepresentation</span></tt></a> by
+<tt class="docutils literal"><span class="pre">theta</span> <span class="pre">=</span> <span class="pre">90</span> <span class="pre">deg</span> <span class="pre">-</span> <span class="pre">lat</span></tt>.</li>
+<li><a class="reference internal" href="../api/astropy.coordinates.CylindricalRepresentation.html#astropy.coordinates.CylindricalRepresentation" title="astropy.coordinates.CylindricalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">CylindricalRepresentation</span></tt></a>:
+cylindrical polar coordinates, represented by a cylindrical radius
+(<tt class="docutils literal"><span class="pre">rho</span></tt>), azimuthal angle (<tt class="docutils literal"><span class="pre">phi</span></tt>), and height (<tt class="docutils literal"><span class="pre">z</span></tt>).</li>
+</ul>
+<div class="section" id="instantiating-and-converting">
+<h2>Instantiating and converting<a class="headerlink" href="#instantiating-and-converting" title="Permalink to this headline">¶</a></h2>
+<p>Representation classes should be instantiated with <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a>
+objects:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates.representation</span> <span class="kn">import</span> <span class="n">CartesianRepresentation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kpc</span><span class="p">,</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kpc</span><span class="p">,</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kpc</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car</span>
+<span class="go">&lt;CartesianRepresentation x=3.0 kpc, y=5.0 kpc, z=4.0 kpc&gt;</span>
+</pre></div>
+</div>
+<p>Representations can be converted to other representations using the
+<tt class="docutils literal"><span class="pre">represent_as</span></tt> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates.representation</span> <span class="kn">import</span> <span class="n">SphericalRepresentation</span><span class="p">,</span> <span class="n">CylindricalRepresentation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sph</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">SphericalRepresentation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sph</span>  
+<span class="go">&lt;SphericalRepresentation lon=1.03037682652 rad, lat=0.601264216679 rad, distance=7.07106781187 kpc&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cyl</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">CylindricalRepresentation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cyl</span>  
+<span class="go">&lt;CylindricalRepresentation rho=5.83095189485 kpc, phi=1.03037682652 rad, z=4.0 kpc&gt;</span>
+</pre></div>
+</div>
+<p>All representations can be converted to each other without loss of
+information, with the exception of
+<a class="reference internal" href="../api/astropy.coordinates.UnitSphericalRepresentation.html#astropy.coordinates.UnitSphericalRepresentation" title="astropy.coordinates.UnitSphericalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">UnitSphericalRepresentation</span></tt></a>. This class
+is used to store the longitude and latitude of points but does not contain
+any distance to the points, and assumes that they are located on a unit and
+dimensionless sphere:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates.representation</span> <span class="kn">import</span> <span class="n">UnitSphericalRepresentation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sph_unit</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sph_unit</span>  
+<span class="go">&lt;UnitSphericalRepresentation lon=1.03037682652 rad, lat=0.601264216679 rad&gt;</span>
+</pre></div>
+</div>
+<p>Converting back to cartesian, the absolute scaling information has been
+removed, and the points are still located on a unit sphere:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sph_unit</span> <span class="o">=</span> <span class="n">car</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sph_unit</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">CartesianRepresentation</span><span class="p">)</span>
+<span class="go">&lt;CartesianRepresentation x=0.4242... , y=0.7071... , z=0.5656... &gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="array-values">
+<h2>Array values<a class="headerlink" href="#array-values" title="Permalink to this headline">¶</a></h2>
+<p>Array <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> objects can also be passed to
+representations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car_array</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">z</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">car_array</span>  
+<span class="go">&lt;CartesianRepresentation (x, y, z) in m</span>
+<span class="go">    [(0.7093..., 0.7788..., 0.3842...),</span>
+<span class="go">     (0.8434..., 0.4543..., 0.9579...),</span>
+<span class="go">     ...</span>
+<span class="go">     (0.0179..., 0.8587..., 0.4916...),</span>
+<span class="go">     (0.0207..., 0.3355..., 0.2799...)]&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="creating-your-own-representations">
+<span id="astropy-coordinates-create-repr"></span><h2>Creating your own representations<a class="headerlink" href="#creating-your-own-representations" title="Permalink to this headline">¶</a></h2>
+<p>To create your own representation class, your class must inherit from the
+<tt class="docutils literal"><span class="pre">BaseRepresentation</span></tt> class.  In addition the following must be defined:</p>
+<ul>
+<li><p class="first"><tt class="docutils literal"><span class="pre">__init__</span></tt> method:</p>
+<p>Has a signature like <tt class="docutils literal"><span class="pre">__init__(self,</span> <span class="pre">comp1,</span> <span class="pre">comp2,</span> <span class="pre">comp3,</span> <span class="pre">copy=True)</span></tt>
+for inputting the representation component values.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">from_cartesian</span></tt> class method:</p>
+<p>Takes a <a class="reference internal" href="../api/astropy.coordinates.CartesianRepresentation.html#astropy.coordinates.CartesianRepresentation" title="astropy.coordinates.CartesianRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">CartesianRepresentation</span></tt></a> object and
+returns an instance of your class.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">to_cartesian</span></tt> method:</p>
+<p>Returns a <a class="reference internal" href="../api/astropy.coordinates.CartesianRepresentation.html#astropy.coordinates.CartesianRepresentation" title="astropy.coordinates.CartesianRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">CartesianRepresentation</span></tt></a> object.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">components</span></tt> property:</p>
+<p>Returns a tuple of the names of the coordinate components (such as <tt class="docutils literal"><span class="pre">x</span></tt>,
+<tt class="docutils literal"><span class="pre">lon</span></tt>, and so on).</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">attr_classes</span></tt> class attribute (<tt class="docutils literal"><span class="pre">OrderedDict</span></tt>):</p>
+<p>Defines the initializer class for each component.In most cases this
+class should be derived from <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a>. In particular
+these class initializers must take the value as the first argument and
+accept a <tt class="docutils literal"><span class="pre">unit</span></tt> keyword which takes a <a class="reference internal" href="../api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><tt class="xref py py-obj docutils literal"><span class="pre">Unit</span></tt></a>
+initializer or <tt class="docutils literal"><span class="pre">None</span></tt> to indicate no unit. Also not that the keys of
+this dictionary are treated as the names of the components for this
+representation, with the default ordered given in the order they
+appear as keys.</p>
+</li>
+<li><p class="first"><tt class="docutils literal"><span class="pre">recommended_units</span></tt> dictionary (optional):</p>
+<p>Maps component names to the recommended unit to convert the values of
+that component to.  Can be <tt class="docutils literal"><span class="pre">None</span></tt> (or missing) to indicate there is
+no preferred unit.  If this dictionary is not defined, no conversion
+of components to particular units will occur.</p>
+</li>
+</ul>
+<p>In pseudo-code, this means that your class will look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">MyRepresentation</span><span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">):</span>
+
+    <span class="n">attr_classes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;comp1&#39;</span><span class="p">,</span> <span class="n">ComponentClass1</span><span class="p">),</span>
+                                 <span class="p">(</span><span class="s">&#39;comp2&#39;</span><span class="p">,</span> <span class="n">ComponentClass2</span><span class="p">),</span>
+                                 <span class="p">(</span><span class="s">&#39;comp3&#39;</span><span class="p">,</span> <span class="n">ComponentClass3</span><span class="p">)])</span>
+
+    <span class="c"># recommended_units is optional</span>
+    <span class="n">recommended_units</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;comp1&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">unit1</span><span class="p">,</span> <span class="s">&#39;comp2&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">unit2</span><span class="p">,</span> <span class="s">&#39;comp3&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">unit3</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">...</span><span class="p">):</span>
+        <span class="o">...</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cartesian</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">MyRepresentation</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;comp1&#39;</span><span class="p">,</span> <span class="s">&#39;comp2&#39;</span><span class="p">,</span> <span class="s">&#39;comp3&#39;</span>
+</pre></div>
+</div>
+<p>Once you do this, you will then automatically be able to call
+<tt class="docutils literal"><span class="pre">represent_as</span></tt> to convert other representations to/from your representation
+class.  Your representation will also be available for use in <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a>
+and all frame classes.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Using and Designing Coordinate Representations</a><ul>
+<li><a class="reference internal" href="#instantiating-and-converting">Instantiating and converting</a></li>
+<li><a class="reference internal" href="#array-values">Array values</a></li>
+<li><a class="reference internal" href="#creating-your-own-representations">Creating your own representations</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/coordinates/representations.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/coordinates/representations.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

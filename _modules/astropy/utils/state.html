@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.utils.state &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.utils.state</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">A simple class to manage a piece of global science state.  See</span>
+<span class="sd">:ref:`config-developer` for more details.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">contextmanager</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">..config</span> <span class="kn">import</span> <span class="n">ConfigItem</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">AstropyDeprecationWarning</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">find_current_module</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ScienceState&#39;</span><span class="p">,</span> <span class="s">&#39;ScienceStateAlias&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="ScienceState"><a class="viewcode-back" href="../../../api/astropy.utils.state.ScienceState.html#astropy.utils.state.ScienceState">[docs]</a><span class="k">class</span> <span class="nc">ScienceState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Science state subclasses are used to manage global items that can</span>
+<span class="sd">    affect science results.  Subclasses will generally override</span>
+<span class="sd">    `validate` to convert from any of the acceptable inputs (such as</span>
+<span class="sd">    strings) to the appropriate internal objects, and set an initial</span>
+<span class="sd">    value to the ``_value`` member so it has a default.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    ::</span>
+
+<span class="sd">        class MyState(ScienceState):</span>
+<span class="sd">            @classmethod</span>
+<span class="sd">            def validate(cls, value):</span>
+<span class="sd">                if value not in (&#39;A&#39;, &#39;B&#39;, &#39;C&#39;):</span>
+<span class="sd">                    raise ValueError(&quot;Must be one of A, B, C&quot;)</span>
+<span class="sd">                return value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s">&quot;This class is a singleton.  Do not instantiate.&quot;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ScienceState.get"><a class="viewcode-back" href="../../../api/astropy.utils.state.ScienceState.html#astropy.utils.state.ScienceState.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the current science state value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ScienceState.set"><a class="viewcode-back" href="../../../api/astropy.utils.state.ScienceState.html#astropy.utils.state.ScienceState.set">[docs]</a>    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the current science state value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">class</span> <span class="nc">_Context</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">parent</span>
+
+            <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                <span class="k">pass</span>
+
+            <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_value</span>
+
+        <span class="n">ctx</span> <span class="o">=</span> <span class="n">_Context</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">ctx</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ScienceState.validate"><a class="viewcode-back" href="../../../api/astropy.utils.state.ScienceState.html#astropy.utils.state.ScienceState.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate the value and convert it to its native type, if</span>
+<span class="sd">        necessary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+</div></div>
+<span class="k">class</span> <span class="nc">ScienceStateAlias</span><span class="p">(</span><span class="n">ConfigItem</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is a backward compatibility layer for configuration items</span>
+<span class="sd">    that moved to ScienceState classes in astropy 0.4.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    since : str</span>
+<span class="sd">        The version in which the configuration item was converted into</span>
+<span class="sd">        science state.</span>
+
+<span class="sd">    python_name : str</span>
+<span class="sd">        The old name of the Python variable for the configuration item.</span>
+
+<span class="sd">    config_name : str</span>
+<span class="sd">        The old name of the configuration item in the configuration file.</span>
+
+<span class="sd">    science_state : ScienceState subclass</span>
+<span class="sd">        The science state class that now manages this information.</span>
+
+<span class="sd">    cfgtype : str or `None`, optional</span>
+<span class="sd">        A type specifier like those used as the *values* of a particular key</span>
+<span class="sd">        in a ``configspec`` file of ``configobj``. If `None`, the type will</span>
+<span class="sd">        be inferred from the default value.</span>
+
+<span class="sd">    module : str, optional</span>
+<span class="sd">        The module containing the old configuration item.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># REMOVE in astropy 0.5</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">since</span><span class="p">,</span> <span class="n">python_name</span><span class="p">,</span> <span class="n">config_name</span><span class="p">,</span> <span class="n">science_state</span><span class="p">,</span>
+                 <span class="n">cfgtype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">module</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="c"># We have to do the automatic module determination here, not</span>
+        <span class="c"># just in ConfigItem, otherwise the extra stack frame will</span>
+        <span class="c"># make it come up with the wrong answer.</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">find_current_module</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">module</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">msg1</span> <span class="o">=</span> <span class="s">&#39;Cannot automatically determine get_config module, &#39;</span>
+                <span class="n">msg2</span> <span class="o">=</span> <span class="s">&#39;because it is not called from inside a valid module&#39;</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg1</span> <span class="o">+</span> <span class="n">msg2</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">module</span><span class="o">.</span><span class="n">__name__</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dont_warn</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_since</span> <span class="o">=</span> <span class="n">since</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_python_name</span> <span class="o">=</span> <span class="n">python_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config_name</span> <span class="o">=</span> <span class="n">config_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span> <span class="o">=</span> <span class="n">science_state</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ScienceStateAlias</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">science_state</span><span class="o">.</span><span class="n">_value</span><span class="p">,</span>
+            <span class="n">science_state</span><span class="o">.</span><span class="n">__doc__</span><span class="p">,</span>
+            <span class="n">cfgtype</span><span class="o">=</span><span class="n">cfgtype</span><span class="p">,</span>
+            <span class="n">module</span><span class="o">=</span><span class="n">module</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">config_name</span>
+
+        <span class="c"># Set the default value of the science state from the config</span>
+        <span class="c"># file, if defined.  This is what pulls any old values in the</span>
+        <span class="c"># config file and applies them to the science state.</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ScienceStateAlias</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">()</span>
+
+        <span class="c"># We got a value in the config file</span>
+        <span class="k">if</span> <span class="n">science_state</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="n">science_state</span><span class="o">.</span><span class="n">_value</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s">&quot;Config parameter &#39;{0}&#39; in section [{1}] is deprecated. &quot;</span>
+                <span class="s">&quot;Use science state {2}.{3} instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">__name__</span><span class="p">),</span>
+                <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dont_warn</span>
+
+    <span class="k">def</span> <span class="nf">_deprecation_warning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_dont_warn&#39;</span><span class="p">):</span>
+            <span class="k">return</span>
+
+        <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;&#39;{0}.{1}&#39; is deprecated, and is no longer defined &quot;</span>
+                   <span class="s">&quot;as a configuration item.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                       <span class="bp">self</span><span class="o">.</span><span class="n">module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_python_name</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">extra</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">message</span> <span class="o">+=</span> <span class="s">&quot; Use &#39;{0}.{1}{2}&#39; instead.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                <span class="n">extra</span><span class="p">)</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">AstropyDeprecationWarning</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">(</span><span class="s">&#39;.set()&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+    <span class="nd">@contextmanager</span>
+    <span class="k">def</span> <span class="nf">set_temp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">(</span><span class="s">&#39;.set_temp()&#39;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+            <span class="k">yield</span>
+
+    <span class="k">def</span> <span class="nf">reload</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dont_warn</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ScienceStateAlias</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">reload</span><span class="p">()</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dont_warn</span>
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_deprecation_warning</span><span class="p">(</span><span class="s">&#39;.get()&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_science_state</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

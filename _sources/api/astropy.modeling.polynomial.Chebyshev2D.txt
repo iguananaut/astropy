@@ -1,0 +1,59 @@
+
+
+Chebyshev2D
+=======================================
+
+.. currentmodule:: astropy.modeling.polynomial
+
+.. autoclass:: Chebyshev2D
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Chebyshev2D.input_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Chebyshev2D.fit_deriv
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: fit_deriv
+
+   
+   

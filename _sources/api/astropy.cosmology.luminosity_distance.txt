@@ -1,0 +1,8 @@
+
+
+luminosity_distance
+=====================================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: luminosity_distance

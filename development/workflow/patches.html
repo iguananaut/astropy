@@ -1,0 +1,215 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Creating patches &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="creating-patches">
+<span id="basic-workflow"></span><h1>Creating patches<a class="headerlink" href="#creating-patches" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>If you haven&#8217;t already configured git:</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global user.name &quot;Your Name&quot;
+git config --global user.email you@yourdomain.example.com
+</pre></div>
+</div>
+<p>Then, the workflow is the following:</p>
+<div class="highlight-python"><div class="highlight"><pre># Get the repository if you don&#39;t have it
+git clone git://github.com/astropy/astropy.git
+
+# Make a branch for your patching
+cd astropy
+git branch the-fix-im-thinking-of
+git checkout the-fix-im-thinking-of
+
+# hack, hack, hack
+
+# Tell git about any new files you&#39;ve made
+git add somewhere/tests/test_my_bug.py
+
+# Commit work in progress as you go
+git commit -am &#39;BF - added tests for Funny bug&#39;
+
+# hack hack, hack
+
+# Commit work
+git commit -am &#39;BF - added fix for Funny bug&#39;
+
+# Make the patch files
+git format-patch -M -C master
+</pre></div>
+</div>
+<p>Then, send the generated patch files to the <a class="reference external" href="http://groups.google.com/group/astropy-dev">astropy-dev mailing list</a> —
+where we will thank you warmly.</p>
+</div>
+<div class="section" id="in-detail">
+<h2>In detail<a class="headerlink" href="#in-detail" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Tell git who you are so it can label the commits you&#8217;ve
+made:</p>
+<div class="highlight-python"><div class="highlight"><pre>git config --global user.name &quot;Your Name&quot;
+git config --global user.email you@yourdomain.example.com
+</pre></div>
+</div>
+<p>This is only necessary if you haven&#8217;t already done this, and you haven&#8217;t
+checked to <a class="reference internal" href="get_devel_version.html#check-git-install"><em>Make sure git is installed and configured on your computer</em></a>.</p>
+</li>
+<li><p class="first">If you don&#8217;t already have one, clone a copy of the
+<a class="reference external" href="http://astropy.org">Astropy</a> repository:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone git://github.com/astropy/astropy.git
+cd astropy
+</pre></div>
+</div>
+</li>
+<li><p class="first">Make a &#8216;feature branch&#8217;. This will be where you work on your bug fix. It&#8217;s
+nice and safe and leaves you with access to an unmodified copy of the code
+in the main branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>git branch the-fix-im-thinking-of
+git checkout the-fix-im-thinking-of
+</pre></div>
+</div>
+</li>
+<li><p class="first">Do some edits, and commit them as you go:</p>
+<div class="highlight-python"><div class="highlight"><pre># hack, hack, hack
+
+# Tell git about any new files you&#39;ve made
+git add somewhere/tests/test_my_bug.py
+
+# Commit work in progress as you go
+git commit -am &#39;BF - added tests for Funny bug&#39;
+
+# hack hack, hack
+
+# Commit work
+git commit -am &#39;BF - added fix for Funny bug&#39;
+</pre></div>
+</div>
+<p>Note the <tt class="docutils literal"><span class="pre">-am</span></tt> options to <tt class="docutils literal"><span class="pre">commit</span></tt>. The <tt class="docutils literal"><span class="pre">m</span></tt> flag just
+signals that you&#8217;re going to type a message on the command
+line.  The <tt class="docutils literal"><span class="pre">a</span></tt> flag — you can just take on faith —
+or see <a class="reference external" href="http://www.gitready.com/beginner/2009/01/18/the-staging-area.html">why the -a flag?</a>.</p>
+</li>
+<li><p class="first">When you have finished, check you have committed all your changes:</p>
+<div class="highlight-python"><div class="highlight"><pre>git status
+</pre></div>
+</div>
+</li>
+<li><p class="first">Finally, make your commits into patches. You want all the commits since you
+branched from the <tt class="docutils literal"><span class="pre">master</span></tt> branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>git format-patch -M -C master
+</pre></div>
+</div>
+<p>You will now have several files named for the commits:</p>
+<div class="highlight-python"><div class="highlight"><pre>0001-BF-added-tests-for-Funny-bug.patch
+0002-BF-added-fix-for-Funny-bug.patch
+</pre></div>
+</div>
+<p>Send these files to the <a class="reference external" href="http://groups.google.com/group/astropy-dev">astropy-dev mailing list</a>.</p>
+</li>
+</ol>
+<p>When you are done, to switch back to the main copy of the
+code, just return to the <tt class="docutils literal"><span class="pre">master</span></tt> branch:</p>
+<div class="highlight-python"><div class="highlight"><pre>git checkout master
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Creating patches</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#in-detail">In detail</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/development/workflow/patches.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/development/workflow/patches.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

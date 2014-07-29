@@ -1,0 +1,44 @@
+
+
+Base
+=========================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: Base
+   :show-inheritance:
+
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Base.parse
+      ~Base.to_string
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: parse
+   .. automethod:: to_string
+
+   
+   

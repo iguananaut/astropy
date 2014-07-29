@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>LabeledInput &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="Model" href="astropy.modeling.Model.html" />
+    <link rel="prev" title="InputParameterError" href="astropy.modeling.InputParameterError.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.Model.html" title="Model">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.InputParameterError.html" title="InputParameterError">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>LabeledInput</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="labeledinput">
+<h1>LabeledInput<a class="headerlink" href="#labeledinput" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.LabeledInput">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.</tt><tt class="descname">LabeledInput</tt><big>(</big><em>data</em>, <em>labels</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#LabeledInput"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L812" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.LabeledInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">dict</span></tt></a></p>
+<p>Used by <a class="reference internal" href="astropy.modeling.SerialCompositeModel.html#astropy.modeling.SerialCompositeModel" title="astropy.modeling.SerialCompositeModel"><tt class="xref py py-obj docutils literal"><span class="pre">SerialCompositeModel</span></tt></a> and <a class="reference internal" href="astropy.modeling.SummedCompositeModel.html#astropy.modeling.SummedCompositeModel" title="astropy.modeling.SummedCompositeModel"><tt class="xref py py-obj docutils literal"><span class="pre">SummedCompositeModel</span></tt></a> to choose input
+data using labels.</p>
+<p>This is a container assigning labels (names) to all input data arrays to a
+composite model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : list</p>
+<blockquote>
+<div><p>List of all input data</p>
+</div></blockquote>
+<p><strong>labels</strong> : list of strings</p>
+<blockquote class="last">
+<div><p>names matching each coordinate in data</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">y</span><span class="p">,</span> <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[:</span><span class="mi">5</span><span class="p">,</span> <span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labeled_input</span> <span class="o">=</span> <span class="n">LabeledInput</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">l</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;pixel&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labeled_input</span><span class="o">.</span><span class="n">x</span>
+<span class="go">array([[0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labeled_input</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span>
+<span class="go">array([[0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4],</span>
+<span class="go">       [0, 1, 2, 3, 4]])</span>
+</pre></div>
+</div>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.LabeledInput.add" title="astropy.modeling.LabeledInput.add"><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt></a>([label,&nbsp;value])</td>
+<td>Add input data to a LabeledInput object</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.LabeledInput.copy" title="astropy.modeling.LabeledInput.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.modeling.LabeledInput.add">
+<tt class="descname">add</tt><big>(</big><em>label=None</em>, <em>value=None</em>, <em>**kw</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#LabeledInput.add"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L868" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.LabeledInput.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add input data to a LabeledInput object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>label</strong> : str</p>
+<blockquote>
+<div><p>coordinate label</p>
+</div></blockquote>
+<p><strong>value</strong> : numerical type</p>
+<blockquote>
+<div><p>coordinate value</p>
+</div></blockquote>
+<p><strong>kw</strong> : dictionary</p>
+<blockquote class="last">
+<div><p>if given this is a dictionary of <tt class="docutils literal"><span class="pre">{label:</span> <span class="pre">value}</span></tt> pairs</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.LabeledInput.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#LabeledInput.copy"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L909" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.LabeledInput.copy" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">LabeledInput</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.LabeledInput.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.LabeledInput.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

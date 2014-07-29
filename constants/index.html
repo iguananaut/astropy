@@ -1,0 +1,415 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Constants (astropy.constants) &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="Constant" href="../api/astropy.constants.Constant.html" />
+    <link rel="prev" title="Getting Started with Astropy" href="../getting_started.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astropy.constants.Constant.html" title="Constant">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../getting_started.html" title="Getting Started with Astropy">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Constants (<tt class="docutils literal"><span class="pre">astropy.constants</span></tt>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="constants-astropy-constants">
+<h1>Constants (<a class="reference internal" href="#module-astropy.constants" title="astropy.constants"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.constants</span></tt></a>)<a class="headerlink" href="#constants-astropy-constants" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#module-astropy.constants" title="astropy.constants"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.constants</span></tt></a> contains a number of physical constants useful in
+Astronomy. Constants are <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> objects with
+additional meta-data describing their provenance and uncertainties.</p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>To use the constants in S.I. units, you can import the constants directly from
+the <a class="reference internal" href="#module-astropy.constants" title="astropy.constants"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.constants</span></tt></a> sub-package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.constants</span> <span class="kn">import</span> <span class="n">G</span>
+</pre></div>
+</div>
+<p>or, if you want to avoid having to explicitly import all the constants you
+need, you can simply do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+</pre></div>
+</div>
+<p>and then subsequently use for example <tt class="docutils literal"><span class="pre">const.G</span></tt>. Constants are fully-fledged
+<a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> objects, so you can easily convert them to
+different units for example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span>
+<span class="go">  Name   = Speed of light in vacuum</span>
+<span class="go">  Value  = 299792458.0</span>
+<span class="go">  Error  = 0.0</span>
+<span class="go">  Units  = m / s</span>
+<span class="go">  Reference = CODATA 2010</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s">&#39;km/s&#39;</span><span class="p">)</span>
+<span class="go">299792.458 km / s</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s">&#39;pc/yr&#39;</span><span class="p">)</span>
+<span class="go">0.306601393788 pc / yr</span>
+</pre></div>
+</div>
+<p>and you can use them in conjunction with unit and other non-constant
+<a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a> objects:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">G</span> <span class="o">*</span> <span class="mf">3.</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">M_sun</span> <span class="o">*</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kg</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">au</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">F</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+<span class="go">0.367669392028 N</span>
+</pre></div>
+</div>
+<p>It is possible to convert most constants to cgs using e.g.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span>
+<span class="go">&lt;Quantity 29979245800.0 cm / s&gt;</span>
+</pre></div>
+</div>
+<p>However, some constants are defined with different physical dimensions in cgs
+and cannot be directly converted. Because of this ambiguity, such constants
+cannot be used in expressions without specifying a system:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">100</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">e</span>
+<span class="gt">Traceback (most recent call last):</span>
+    <span class="o">...</span>
+<span class="gr">TypeError</span>: <span class="n">Constant u&#39;e&#39; does not have physically compatible units</span>
+<span class="go">across all systems of units and cannot be combined with other</span>
+<span class="go">values without specifying a system (eg. e.emu)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">100</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span>  
+<span class="go">&lt;Quantity 4.8032045057134676e-08 Fr&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-astropy.constants">
+<span id="astropy-constants-module"></span><h3>astropy.constants Module<a class="headerlink" href="#module-astropy.constants" title="Permalink to this headline">¶</a></h3>
+<p>Contains astronomical and physical constants for use in Astropy or other
+places.</p>
+<p>A typical use case might be:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.constants</span> <span class="kn">import</span> <span class="n">c</span><span class="p">,</span> <span class="n">m_e</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c"># ... define the mass of something you want the rest energy of as m ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">m_e</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">E</span> <span class="o">=</span> <span class="n">m</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">E</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s">&#39;MeV&#39;</span><span class="p">)</span>  
+<span class="go">&lt;Quantity 0.510998927603161 MeV&gt;</span>
+</pre></div>
+</div>
+<p>The following constants are available:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="12%" />
+<col width="17%" />
+<col width="20%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Value</th>
+<th class="head">Unit</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>G</td>
+<td>6.67384e-11</td>
+<td>m3 / (kg s2)</td>
+<td>Gravitational constant</td>
+</tr>
+<tr class="row-odd"><td>L_sun</td>
+<td>3.846e+26</td>
+<td>W</td>
+<td>Solar luminosity</td>
+</tr>
+<tr class="row-even"><td>M_earth</td>
+<td>5.9742e+24</td>
+<td>kg</td>
+<td>Earth mass</td>
+</tr>
+<tr class="row-odd"><td>M_jup</td>
+<td>1.8987e+27</td>
+<td>kg</td>
+<td>Jupiter mass</td>
+</tr>
+<tr class="row-even"><td>M_sun</td>
+<td>1.9891e+30</td>
+<td>kg</td>
+<td>Solar mass</td>
+</tr>
+<tr class="row-odd"><td>N_A</td>
+<td>6.02214129e+23</td>
+<td>1 / (mol)</td>
+<td>Avogadro&#8217;s number</td>
+</tr>
+<tr class="row-even"><td>R</td>
+<td>8.3144621</td>
+<td>J / (K mol)</td>
+<td>Gas constant</td>
+</tr>
+<tr class="row-odd"><td>R_earth</td>
+<td>6378136</td>
+<td>m</td>
+<td>Earth equatorial radius</td>
+</tr>
+<tr class="row-even"><td>R_jup</td>
+<td>71492000</td>
+<td>m</td>
+<td>Jupiter equatorial radius</td>
+</tr>
+<tr class="row-odd"><td>R_sun</td>
+<td>695508000</td>
+<td>m</td>
+<td>Solar radius</td>
+</tr>
+<tr class="row-even"><td>Ryd</td>
+<td>10973731.6</td>
+<td>1 / (m)</td>
+<td>Rydberg constant</td>
+</tr>
+<tr class="row-odd"><td>a0</td>
+<td>5.29177211e-11</td>
+<td>m</td>
+<td>Bohr radius</td>
+</tr>
+<tr class="row-even"><td>alpha</td>
+<td>0.00729735257</td>
+<td>&nbsp;</td>
+<td>Fine-structure constant</td>
+</tr>
+<tr class="row-odd"><td>atmosphere</td>
+<td>101325</td>
+<td>Pa</td>
+<td>Atmosphere</td>
+</tr>
+<tr class="row-even"><td>au</td>
+<td>1.49597871e+11</td>
+<td>m</td>
+<td>Astronomical Unit</td>
+</tr>
+<tr class="row-odd"><td>b_wien</td>
+<td>0.0028977721</td>
+<td>m K</td>
+<td>Wien wavelength displacement law constant</td>
+</tr>
+<tr class="row-even"><td>c</td>
+<td>299792458</td>
+<td>m / (s)</td>
+<td>Speed of light in vacuum</td>
+</tr>
+<tr class="row-odd"><td>e</td>
+<td>1.60217657e-19</td>
+<td>C</td>
+<td>Electron charge</td>
+</tr>
+<tr class="row-even"><td>eps0</td>
+<td>8.85418782e-12</td>
+<td>F/m</td>
+<td>Electric constant</td>
+</tr>
+<tr class="row-odd"><td>g0</td>
+<td>9.80665</td>
+<td>m / s2</td>
+<td>Standard acceleration of gravity</td>
+</tr>
+<tr class="row-even"><td>h</td>
+<td>6.62606957e-34</td>
+<td>J s</td>
+<td>Planck constant</td>
+</tr>
+<tr class="row-odd"><td>hbar</td>
+<td>1.05457173e-34</td>
+<td>J s</td>
+<td>Reduced Planck constant</td>
+</tr>
+<tr class="row-even"><td>k_B</td>
+<td>1.3806488e-23</td>
+<td>J / (K)</td>
+<td>Boltzmann constant</td>
+</tr>
+<tr class="row-odd"><td>kpc</td>
+<td>3.08567758e+19</td>
+<td>m</td>
+<td>Kiloparsec</td>
+</tr>
+<tr class="row-even"><td>m_e</td>
+<td>9.10938291e-31</td>
+<td>kg</td>
+<td>Electron mass</td>
+</tr>
+<tr class="row-odd"><td>m_n</td>
+<td>1.67492735e-27</td>
+<td>kg</td>
+<td>Neutron mass</td>
+</tr>
+<tr class="row-even"><td>m_p</td>
+<td>1.67262178e-27</td>
+<td>kg</td>
+<td>Proton mass</td>
+</tr>
+<tr class="row-odd"><td>mu0</td>
+<td>1.25663706e-06</td>
+<td>N/A2</td>
+<td>Magnetic constant</td>
+</tr>
+<tr class="row-even"><td>muB</td>
+<td>9.27400968e-24</td>
+<td>J/T</td>
+<td>Bohr magneton</td>
+</tr>
+<tr class="row-odd"><td>pc</td>
+<td>3.08567758e+16</td>
+<td>m</td>
+<td>Parsec</td>
+</tr>
+<tr class="row-even"><td>sigma_sb</td>
+<td>5.670373e-08</td>
+<td>W / (K4 m2)</td>
+<td>Stefan-Boltzmann constant</td>
+</tr>
+<tr class="row-odd"><td>u</td>
+<td>1.66053892e-27</td>
+<td>kg</td>
+<td>Atomic mass</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.constants.Constant.html#astropy.constants.Constant" title="astropy.constants.Constant"><tt class="xref py py-obj docutils literal"><span class="pre">Constant</span></tt></a>(abbrev,&nbsp;name,&nbsp;value,&nbsp;unit,&nbsp;...[,&nbsp;...])</td>
+<td>A physical or astronomical constant.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.constants.EMConstant.html#astropy.constants.EMConstant" title="astropy.constants.EMConstant"><tt class="xref py py-obj docutils literal"><span class="pre">EMConstant</span></tt></a>(abbrev,&nbsp;name,&nbsp;value,&nbsp;unit,&nbsp;...[,&nbsp;...])</td>
+<td>An electromagnetic constant.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-inheritance-diagram">
+<h4>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this headline">¶</a></h4>
+<p class="graphviz">
+<img src="../_images/inheritance-efd318ecea97785848dbaca297d726bc02a07cfa.png" alt="Inheritance diagram of astropy.constants.constant.Constant, astropy.constants.constant.EMConstant" usemap="#inheritance77b4864455" class="inheritance"/>
+<map id="inheritance77b4864455" name="inheritance77b4864455">
+<area shape="rect" id="node1" href="../api/astropy.constants.Constant.html#astropy.constants.Constant" title="A physical or astronomical constant." alt="" coords="256,5,341,33"/>
+<area shape="rect" id="node4" href="../api/astropy.constants.EMConstant.html#astropy.constants.EMConstant" title="An electromagnetic constant." alt="" coords="389,5,496,33"/>
+<area shape="rect" id="node2" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="A `Quantity` represents a number with some associated unit." alt="" coords="125,5,208,33"/>
+<area shape="rect" id="node6" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="5,5,77,33"/>
+</map>
+</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Constants (<tt class="docutils literal"><span class="pre">astropy.constants</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astropy.constants">astropy.constants Module</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/constants/index.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/constants/index.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

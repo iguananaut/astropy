@@ -1,0 +1,717 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.coordinates.builtin_frames &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.coordinates.builtin_frames</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains the coordinate frames actually implemented by astropy.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">)</span>
+
+<span class="c"># Standard library</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+
+<span class="c"># Dependencies</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># Project</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">..utils.compat.odict</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span> <span class="nn">..time</span> <span class="kn">import</span> <span class="n">Time</span>
+<span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">Angle</span>
+<span class="kn">from</span> <span class="nn">.representation</span> <span class="kn">import</span> <span class="p">(</span><span class="n">SphericalRepresentation</span><span class="p">,</span> <span class="n">CartesianRepresentation</span><span class="p">,</span>
+                             <span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.baseframe</span> <span class="kn">import</span> <span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">,</span> <span class="n">frame_transform_graph</span><span class="p">,</span> <span class="n">GenericFrame</span><span class="p">,</span>
+                        <span class="n">FrameAttribute</span><span class="p">,</span> <span class="n">TimeFrameAttribute</span><span class="p">,</span>
+                        <span class="n">RepresentationMapping</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.transformations</span> <span class="kn">import</span> <span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">DynamicMatrixTransform</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;ICRS&#39;</span><span class="p">,</span> <span class="s">&#39;FK5&#39;</span><span class="p">,</span> <span class="s">&#39;FK4&#39;</span><span class="p">,</span> <span class="s">&#39;FK4NoETerms&#39;</span><span class="p">,</span> <span class="s">&#39;Galactic&#39;</span><span class="p">,</span> <span class="s">&#39;AltAz&#39;</span><span class="p">]</span>
+
+<span class="c"># The UTC time scale is not properly defined prior to 1960, so Time(&#39;B1950&#39;,</span>
+<span class="c"># scale=&#39;utc&#39;) will emit a warning. Instead, we use Time(&#39;B1950&#39;, scale=&#39;tai&#39;)</span>
+<span class="c"># which is equivalent, but does not emit a warning.</span>
+<span class="n">_EQUINOX_J2000</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="s">&#39;J2000&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s">&#39;utc&#39;</span><span class="p">)</span>
+<span class="n">_EQUINOX_B1950</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="s">&#39;B1950&#39;</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s">&#39;tai&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ICRS"><a class="viewcode-back" href="../../../api/astropy.coordinates.ICRS.html#astropy.coordinates.ICRS">[docs]</a><span class="k">class</span> <span class="nc">ICRS</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A coordinate or frame in the ICRS system.</span>
+
+<span class="sd">    If you&#39;re looking for &quot;J2000&quot; coordinates, and aren&#39;t sure if you want to</span>
+<span class="sd">    use this or `FK5`, you probably want to use ICRS. It&#39;s more well-defined as</span>
+<span class="sd">    a catalog coordinate and is an inertial system, and is very close (within</span>
+<span class="sd">    tens of arcseconds) to J2000 equatorial.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    ra : `Angle`, optional, must be keyword</span>
+<span class="sd">        The RA for this object (``dec`` must also be given and ``representation``</span>
+<span class="sd">        must be None).</span>
+<span class="sd">    dec : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Declination for this object (``ra`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    distance : `~astropy.units.Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+<span class="sd">        (``representation`` must be None).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;ra&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;dec&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+    <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;unitspherical&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;spherical&#39;</span><span class="p">]</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">SphericalRepresentation</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_icrs_to_fk5_matrix</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        B-matrix from USNO circular 179.  Used by the ICRS-&gt;FK5 transformation</span>
+<span class="sd">        functions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">rotation_matrix</span>
+
+        <span class="n">eta0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">19.9</span> <span class="o">/</span> <span class="mf">3600000.</span>
+        <span class="n">xi0</span> <span class="o">=</span> <span class="mf">9.1</span> <span class="o">/</span> <span class="mf">3600000.</span>
+        <span class="n">da0</span> <span class="o">=</span> <span class="o">-</span><span class="mf">22.9</span> <span class="o">/</span> <span class="mf">3600000.</span>
+
+        <span class="n">m1</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="o">-</span><span class="n">eta0</span><span class="p">,</span> <span class="s">&#39;x&#39;</span><span class="p">)</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">xi0</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">)</span>
+        <span class="n">m3</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">da0</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">m1</span> <span class="o">*</span> <span class="n">m2</span> <span class="o">*</span> <span class="n">m3</span>
+
+<span class="c"># define this because it only needs to be computed once</span></div>
+<span class="n">ICRS</span><span class="o">.</span><span class="n">_ICRS_TO_FK5_J2000_MAT</span> <span class="o">=</span> <span class="n">ICRS</span><span class="o">.</span><span class="n">_icrs_to_fk5_matrix</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="FK5"><a class="viewcode-back" href="../../../api/astropy.coordinates.FK5.html#astropy.coordinates.FK5">[docs]</a><span class="k">class</span> <span class="nc">FK5</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A coordinate or frame in the FK5 system.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    ra : `Angle`, optional, must be keyword</span>
+<span class="sd">        The RA for this object (``dec`` must also be given and ``representation``</span>
+<span class="sd">        must be None).</span>
+<span class="sd">    dec : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Declination for this object (``ra`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    distance : `~astropy.units.Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+<span class="sd">        (``representation`` must be None).</span>
+<span class="sd">    equinox : `~astropy.time.Time`, optional, must be keyword</span>
+<span class="sd">        The equinox of this frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;ra&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;dec&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+    <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;unitspherical&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;spherical&#39;</span><span class="p">]</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">SphericalRepresentation</span>
+    <span class="n">equinox</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">_EQUINOX_J2000</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_precession_matrix</span><span class="p">(</span><span class="n">oldequinox</span><span class="p">,</span> <span class="n">newequinox</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute and return the precession matrix for FK5 based on Capitaine et</span>
+<span class="sd">        al. 2003/IAU2006.  Used inside some of the transformation functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        oldequinox : `~astropy.time.Time`</span>
+<span class="sd">            The equinox to precess from.</span>
+<span class="sd">        newequinox : `~astropy.time.Time`</span>
+<span class="sd">            The equinox to precess to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        newcoord : array</span>
+<span class="sd">            The precession matrix to transform to the new equinox</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.earth_orientation</span> <span class="kn">import</span> <span class="n">precession_matrix_Capitaine</span>
+
+        <span class="k">return</span> <span class="n">precession_matrix_Capitaine</span><span class="p">(</span><span class="n">oldequinox</span><span class="p">,</span> <span class="n">newequinox</span><span class="p">)</span>
+
+
+<span class="c"># Has to be defined at module level, because `transform` needs an FK5 reference</span></div>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK5</span><span class="p">,</span> <span class="n">FK5</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk5_to_fk5</span><span class="p">(</span><span class="n">fk5coord1</span><span class="p">,</span> <span class="n">fk5frame2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fk5coord1</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk5coord1</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">fk5frame2</span><span class="o">.</span><span class="n">equinox</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FK4"><a class="viewcode-back" href="../../../api/astropy.coordinates.FK4.html#astropy.coordinates.FK4">[docs]</a><span class="k">class</span> <span class="nc">FK4</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A coordinate or frame in the FK4 system.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    ra : `Angle`, optional, must be keyword</span>
+<span class="sd">        The RA for this object (``dec`` must also be given and ``representation``</span>
+<span class="sd">        must be None).</span>
+<span class="sd">    dec : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Declination for this object (``ra`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    distance : :class:`~astropy.units.Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+<span class="sd">        (``representation`` must be None).</span>
+<span class="sd">    equinox : astropy.time.Time, optional, must be keyword</span>
+<span class="sd">        The equinox of this frame.</span>
+<span class="sd">    obstime : astropy.time.Time, optional, must be keyword</span>
+<span class="sd">        The time this frame was observed.  If None, will be the same as</span>
+<span class="sd">        ``equinox``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;ra&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;dec&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+    <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;unitspherical&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;spherical&#39;</span><span class="p">]</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">SphericalRepresentation</span>
+    <span class="n">equinox</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">_EQUINOX_B1950</span><span class="p">)</span>
+    <span class="n">obstime</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">secondary_attribute</span><span class="o">=</span><span class="s">&#39;equinox&#39;</span><span class="p">)</span>
+
+</div>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">FK4</span><span class="p">,</span> <span class="n">FK4</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk4_to_fk4</span><span class="p">(</span><span class="n">fk4coord1</span><span class="p">,</span> <span class="n">fk4frame2</span><span class="p">):</span>
+    <span class="c"># deceptively complicated: need to transform to No E-terms FK4, precess, and</span>
+    <span class="c"># then come back, because precession is non-trivial with E-terms</span>
+    <span class="n">fnoe_w_eqx1</span> <span class="o">=</span> <span class="n">fk4coord1</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">FK4NoETerms</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="n">fk4coord1</span><span class="o">.</span><span class="n">equinox</span><span class="p">))</span>
+    <span class="n">fnoe_w_eqx2</span> <span class="o">=</span> <span class="n">fnoe_w_eqx1</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">FK4NoETerms</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="n">fk4frame2</span><span class="o">.</span><span class="n">equinox</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fnoe_w_eqx2</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">fk4frame2</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="FK4NoETerms"><a class="viewcode-back" href="../../../api/astropy.coordinates.FK4NoETerms.html#astropy.coordinates.FK4NoETerms">[docs]</a><span class="k">class</span> <span class="nc">FK4NoETerms</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A coordinate or frame in the FK4 system, but with the E-terms of aberration</span>
+<span class="sd">    removed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    ra : `Angle`, optional, must be keyword</span>
+<span class="sd">        The RA for this object (``dec`` must also be given and ``representation``</span>
+<span class="sd">        must be None).</span>
+<span class="sd">    dec : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Declination for this object (``ra`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    distance : :class:`~astropy.units.Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+<span class="sd">        (``representation`` must be None).</span>
+<span class="sd">    obstime : astropy.time.Time, optional, must be keyword</span>
+<span class="sd">        The time this frame was observed.  If None, will be the same as</span>
+<span class="sd">        ``equinox``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;ra&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;dec&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+    <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;unitspherical&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;spherical&#39;</span><span class="p">]</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">SphericalRepresentation</span>
+    <span class="n">equinox</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">_EQUINOX_B1950</span><span class="p">)</span>
+    <span class="n">obstime</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">secondary_attribute</span><span class="o">=</span><span class="s">&#39;equinox&#39;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_precession_matrix</span><span class="p">(</span><span class="n">oldequinox</span><span class="p">,</span> <span class="n">newequinox</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute and return the precession matrix for FK4 using Newcomb&#39;s method.</span>
+<span class="sd">        Used inside some of the transformation functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        oldequinox : `~astropy.time.Time`</span>
+<span class="sd">            The equinox to precess from.</span>
+<span class="sd">        newequinox : `~astropy.time.Time`</span>
+<span class="sd">            The equinox to precess to.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        newcoord : array</span>
+<span class="sd">            The precession matrix to transform to the new equinox</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.earth_orientation</span> <span class="kn">import</span> <span class="n">_precession_matrix_besselian</span>
+
+        <span class="k">return</span> <span class="n">_precession_matrix_besselian</span><span class="p">(</span><span class="n">oldequinox</span><span class="o">.</span><span class="n">byear</span><span class="p">,</span> <span class="n">newequinox</span><span class="o">.</span><span class="n">byear</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_fk4_B_matrix</span><span class="p">(</span><span class="n">obstime</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This is a correction term in the FK4 transformations because FK4 is a</span>
+<span class="sd">        rotating system - see Murray 89 eqn 29</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Note this is *julian century*, not besselian</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">obstime</span><span class="o">.</span><span class="n">jyear</span> <span class="o">-</span> <span class="mf">1950.</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.</span>
+        <span class="k">return</span> <span class="n">_B1950_TO_J2000_M</span> <span class="o">+</span> <span class="n">_FK4_CORR</span> <span class="o">*</span> <span class="n">T</span>
+
+</div>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk4noe_to_fk4noe</span><span class="p">(</span><span class="n">fk4necoord1</span><span class="p">,</span> <span class="n">fk4neframe2</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fk4necoord1</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk4necoord1</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">fk4neframe2</span><span class="o">.</span><span class="n">equinox</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Galactic"><a class="viewcode-back" href="../../../api/astropy.coordinates.Galactic.html#astropy.coordinates.Galactic">[docs]</a><span class="k">class</span> <span class="nc">Galactic</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Galactic Coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    l : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Galactic longitude for this object (``b`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    b : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Galactic latitude for this object (``l`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    distance : `~astropy.units.Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;l&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;b&#39;</span><span class="p">)],</span>
+        <span class="s">&#39;cartesian&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="s">&#39;u&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="s">&#39;v&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+    <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;unitspherical&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;spherical&#39;</span><span class="p">]</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">SphericalRepresentation</span>
+
+    <span class="c"># North galactic pole and zeropoint of l in FK4/FK5 coordinates. Needed for</span>
+    <span class="c"># transformations to/from FK4/5</span>
+    <span class="c"># These are from Reid &amp; Brunthaler 2004</span>
+    <span class="n">_ngp_J2000</span> <span class="o">=</span> <span class="n">FK5</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">192.859508</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">27.128336</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+    <span class="n">_lon0_J2000</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="mf">122.932</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+    <span class="c"># These are from the IAU&#39;s definition of galactic coordinates</span>
+    <span class="n">_ngp_B1950</span> <span class="o">=</span> <span class="n">FK4</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="mf">192.25</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="mf">27.4</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+    <span class="n">_lon0_B1950</span> <span class="o">=</span> <span class="n">Angle</span><span class="p">(</span><span class="mi">123</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="AltAz"><a class="viewcode-back" href="../../../api/astropy.coordinates.AltAz.html#astropy.coordinates.AltAz">[docs]</a><span class="k">class</span> <span class="nc">AltAz</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A coordinate or frame in the Altitude-Azimuth system (i.e., Horizontal</span>
+<span class="sd">    coordinates).</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        The AltAz class currently does not support any transformations. In a</span>
+<span class="sd">        future version, it will support the standard IAU2000 AltAz&lt;-&gt;ICRS</span>
+<span class="sd">        transformations.  It is provided right now as a placeholder for storing</span>
+<span class="sd">        as-observed horizontal coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    az : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Azimuth for this object (``alt`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    alt : `Angle`, optional, must be keyword</span>
+<span class="sd">        The Altitude for this object (``az`` must also be given and</span>
+<span class="sd">        ``representation`` must be None).</span>
+<span class="sd">    distance : :class:`~astropy.units.Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;az&#39;</span><span class="p">),</span>
+                      <span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;alt&#39;</span><span class="p">)],</span>
+    <span class="p">}</span>
+    <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;unitspherical&#39;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="n">frame_specific_representation_info</span><span class="p">[</span><span class="s">&#39;spherical&#39;</span><span class="p">]</span>
+
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">SphericalRepresentation</span>
+    <span class="n">equinox</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">_EQUINOX_B1950</span><span class="p">)</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">FrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+    <span class="n">obstime</span> <span class="o">=</span> <span class="n">TimeFrameAttribute</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+        <span class="kn">from</span> <span class="nn">astropy.utils.exceptions</span> <span class="kn">import</span> <span class="n">AstropyWarning</span>
+
+        <span class="n">warn</span><span class="p">(</span><span class="n">AstropyWarning</span><span class="p">(</span><span class="s">&#39;The AltAz class currently does not support any &#39;</span>
+                            <span class="s">&#39;transformations.  In a future version, it will &#39;</span>
+                            <span class="s">&#39;support the standard IAU2000 AltAz&lt;-&gt;ICRS &#39;</span>
+                            <span class="s">&#39;transformations.&#39;</span><span class="p">))</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AltAz</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="c"># &lt;--------------------------------transformations------------------------------&gt;</span>
+<span class="c"># Transformations are defined here instead of in the classes themselves, because</span>
+<span class="c"># we need references to the various objects to give to the decorators.</span>
+
+<span class="c"># ICRS to/from FK5 --------------------------------&gt;</span></div>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">ICRS</span><span class="p">,</span> <span class="n">FK5</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">icrs_to_fk5</span><span class="p">(</span><span class="n">icrscoord</span><span class="p">,</span> <span class="n">fk5frame</span><span class="p">):</span>
+    <span class="c"># ICRS is by design very close to J2000 equinox</span>
+    <span class="n">pmat</span> <span class="o">=</span> <span class="n">fk5frame</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">_EQUINOX_J2000</span><span class="p">,</span> <span class="n">fk5frame</span><span class="o">.</span><span class="n">equinox</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pmat</span> <span class="o">*</span> <span class="n">icrscoord</span><span class="o">.</span><span class="n">_ICRS_TO_FK5_J2000_MAT</span>
+
+
+<span class="c"># can&#39;t be static because the equinox is needed</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK5</span><span class="p">,</span> <span class="n">ICRS</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk5_to_icrs</span><span class="p">(</span><span class="n">fk5coord</span><span class="p">,</span> <span class="n">icrsframe</span><span class="p">):</span>
+    <span class="c"># ICRS is by design very close to J2000 equinox</span>
+    <span class="n">pmat</span> <span class="o">=</span> <span class="n">fk5coord</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk5coord</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">_EQUINOX_J2000</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">icrsframe</span><span class="o">.</span><span class="n">_ICRS_TO_FK5_J2000_MAT</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">pmat</span>
+
+
+<span class="c"># FK4-NO-E to/from FK4 -----------------------------&gt;</span>
+
+<span class="c"># In the present framework, we include two coordinate classes for FK4</span>
+<span class="c"># coordinates - one including the E-terms of aberration (FK4), and</span>
+<span class="c"># one not including them (FK4NoETerms). The following functions</span>
+<span class="c"># implement the transformation between these two.</span>
+<span class="k">def</span> <span class="nf">fk4_e_terms</span><span class="p">(</span><span class="n">equinox</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the e-terms of aberation vector</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    equinox : Time object</span>
+<span class="sd">        The equinox for which to compute the e-terms</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">earth_orientation</span> <span class="k">as</span> <span class="n">earth</span>
+
+    <span class="c"># Constant of aberration at J2000</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mf">0.0056932</span>
+
+    <span class="c"># Eccentricity of the Earth&#39;s orbit</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">(</span><span class="n">equinox</span><span class="o">.</span><span class="n">jd</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+    <span class="c"># Mean longitude of perigee of the solar orbit</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">mean_lon_of_perigee</span><span class="p">(</span><span class="n">equinox</span><span class="o">.</span><span class="n">jd</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+
+    <span class="c"># Obliquity of the ecliptic</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">earth</span><span class="o">.</span><span class="n">obliquity</span><span class="p">(</span><span class="n">equinox</span><span class="o">.</span><span class="n">jd</span><span class="p">,</span> <span class="n">algorithm</span><span class="o">=</span><span class="mi">1980</span><span class="p">)</span>
+    <span class="n">o</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">e</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> \
+           <span class="o">-</span><span class="n">e</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">o</span><span class="p">),</span> \
+           <span class="o">-</span><span class="n">e</span> <span class="o">*</span> <span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">g</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">o</span><span class="p">)</span>
+
+
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">FK4</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk4_to_fk4_no_e</span><span class="p">(</span><span class="n">fk4coord</span><span class="p">,</span> <span class="n">fk4noeframe</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.representation</span> <span class="kn">import</span> <span class="n">CartesianRepresentation</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span>
+
+    <span class="c"># Extract cartesian vector</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">fk4coord</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">xyz</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">3</span><span class="p">)))</span>
+
+    <span class="c"># Find distance (for re-normalization)</span>
+    <span class="n">d_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="c"># Apply E-terms of aberration. Note that this depends on the equinox (not</span>
+    <span class="c"># the observing time/epoch) of the coordinates. See issue #1496 for a</span>
+    <span class="c"># discussion of this.</span>
+    <span class="n">eterms_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fk4_e_terms</span><span class="p">(</span><span class="n">fk4coord</span><span class="o">.</span><span class="n">equinox</span><span class="p">))</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">-</span> <span class="n">eterms_a</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eterms_a</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="n">r</span>
+
+    <span class="c"># Find new distance (for re-normalization)</span>
+    <span class="n">d_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="c"># Renormalize</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">d_orig</span> <span class="o">/</span> <span class="n">d_new</span>
+
+    <span class="n">subshape</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subshape</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subshape</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subshape</span><span class="p">)</span>
+
+    <span class="c">#now re-cast into an appropriate Representation, and precess if need be</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fk4coord</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">):</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">one</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">one</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">one</span><span class="p">)</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="c"># if no obstime was given in the new frame, use the old one for consistency</span>
+    <span class="n">newobstime</span> <span class="o">=</span> <span class="n">fk4coord</span><span class="o">.</span><span class="n">_obstime</span> <span class="k">if</span> <span class="n">fk4noeframe</span><span class="o">.</span><span class="n">_obstime</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">fk4noeframe</span><span class="o">.</span><span class="n">_obstime</span>
+
+    <span class="n">fk4noe</span> <span class="o">=</span> <span class="n">FK4NoETerms</span><span class="p">(</span><span class="n">representation</span><span class="p">,</span> <span class="n">equinox</span><span class="o">=</span><span class="n">fk4coord</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span>
+                         <span class="n">obstime</span><span class="o">=</span><span class="n">newobstime</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">fk4coord</span><span class="o">.</span><span class="n">equinox</span> <span class="o">!=</span> <span class="n">fk4noeframe</span><span class="o">.</span><span class="n">equinox</span><span class="p">:</span>
+        <span class="c">#precession</span>
+        <span class="n">fk4noe</span> <span class="o">=</span> <span class="n">fk4noe</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">fk4noeframe</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fk4noe</span>
+
+
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">,</span> <span class="n">FK4</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk4_no_e_to_fk4</span><span class="p">(</span><span class="n">fk4noecoord</span><span class="p">,</span> <span class="n">fk4frame</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.representation</span> <span class="kn">import</span> <span class="n">CartesianRepresentation</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span>
+
+    <span class="c">#first precess, if necessary</span>
+    <span class="k">if</span> <span class="n">fk4noecoord</span><span class="o">.</span><span class="n">equinox</span> <span class="o">!=</span> <span class="n">fk4frame</span><span class="o">.</span><span class="n">equinox</span><span class="p">:</span>
+        <span class="n">fk4noe_w_fk4equinox</span> <span class="o">=</span> <span class="n">FK4NoETerms</span><span class="p">(</span><span class="n">equinox</span><span class="o">=</span><span class="n">fk4frame</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span>
+                                          <span class="n">obstime</span><span class="o">=</span><span class="n">fk4noecoord</span><span class="o">.</span><span class="n">obstime</span><span class="p">)</span>
+        <span class="n">fk4noecoord</span> <span class="o">=</span> <span class="n">fk4noecoord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">fk4noe_w_fk4equinox</span><span class="p">)</span>
+
+    <span class="c"># Extract cartesian vector</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">fk4noecoord</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">xyz</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">c</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="mi">3</span><span class="p">)))</span>
+
+    <span class="c"># Find distance (for re-normalization)</span>
+    <span class="n">d_orig</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="c"># Apply E-terms of aberration. Note that this depends on the equinox (not</span>
+    <span class="c"># the observing time/epoch) of the coordinates. See issue #1496 for a</span>
+    <span class="c"># discussion of this.</span>
+    <span class="n">eterms_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">fk4_e_terms</span><span class="p">(</span><span class="n">fk4noecoord</span><span class="o">.</span><span class="n">equinox</span><span class="p">))</span>
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">eterms_a</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">r0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eterms_a</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
+
+    <span class="c"># Find new distance (for re-normalization)</span>
+    <span class="n">d_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="c"># Renormalize</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">d_orig</span> <span class="o">/</span> <span class="n">d_new</span>
+
+    <span class="n">subshape</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subshape</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subshape</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">subshape</span><span class="p">)</span>
+
+    <span class="c">#now re-cast into an appropriate Representation, and precess if need be</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fk4noecoord</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">):</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">one</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">one</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">one</span><span class="p">)</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="n">representation</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">representation</span> <span class="o">=</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">unit</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="o">*</span><span class="n">c</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fk4frame</span><span class="o">.</span><span class="n">realize_frame</span><span class="p">(</span><span class="n">representation</span><span class="p">)</span>
+
+<span class="c"># FK5 to/from FK4 -------------------&gt;</span>
+
+<span class="c"># B1950-&gt;J2000 matrix from Murray 1989 A&amp;A 218,325 eqn 28</span>
+<span class="n">_B1950_TO_J2000_M</span> <span class="o">=</span> \
+    <span class="n">np</span><span class="o">.</span><span class="n">mat</span><span class="p">([[</span><span class="mf">0.9999256794956877</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0111814832204662</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0048590038153592</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0111814832391717</span><span class="p">,</span>  <span class="mf">0.9999374848933135</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0000271625947142</span><span class="p">],</span>
+            <span class="p">[</span><span class="mf">0.0048590037723143</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0000271702937440</span><span class="p">,</span>  <span class="mf">0.9999881946023742</span><span class="p">]])</span>
+
+<span class="n">_FK4_CORR</span> <span class="o">=</span> \
+    <span class="n">np</span><span class="o">.</span><span class="n">mat</span><span class="p">([[</span><span class="o">-</span><span class="mf">0.0026455262</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.1539918689</span><span class="p">,</span> <span class="o">+</span><span class="mf">2.1111346190</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">+</span><span class="mf">1.1540628161</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0129042997</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.0236021478</span><span class="p">],</span>
+            <span class="p">[</span><span class="o">-</span><span class="mf">2.1112979048</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.0056024448</span><span class="p">,</span> <span class="o">+</span><span class="mf">0.0102587734</span><span class="p">]])</span> <span class="o">*</span> <span class="mf">1.e-6</span>
+
+
+<span class="c"># This transformation can&#39;t be static because the observation date is needed.</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">,</span> <span class="n">FK5</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk4_no_e_to_fk5</span><span class="p">(</span><span class="n">fk4noecoord</span><span class="p">,</span> <span class="n">fk5frame</span><span class="p">):</span>
+    <span class="c"># Correction terms for FK4 being a rotating system</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">FK4NoETerms</span><span class="o">.</span><span class="n">_fk4_B_matrix</span><span class="p">(</span><span class="n">fk4noecoord</span><span class="o">.</span><span class="n">obstime</span><span class="p">)</span>
+
+    <span class="c"># construct both precession matricies - if the equinoxes are B1950 and</span>
+    <span class="c"># J2000, these are just identity matricies</span>
+    <span class="n">pmat1</span> <span class="o">=</span> <span class="n">fk4noecoord</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk4noecoord</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">_EQUINOX_B1950</span><span class="p">)</span>
+    <span class="n">pmat2</span> <span class="o">=</span> <span class="n">fk5frame</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">_EQUINOX_J2000</span><span class="p">,</span> <span class="n">fk5frame</span><span class="o">.</span><span class="n">equinox</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pmat2</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="n">pmat1</span>
+
+
+<span class="c"># This transformation can&#39;t be static because the observation date is needed.</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK5</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk5_to_fk4_no_e</span><span class="p">(</span><span class="n">fk5coord</span><span class="p">,</span> <span class="n">fk4noeframe</span><span class="p">):</span>
+    <span class="c"># Get transposed version of the rotating correction terms... so with the</span>
+    <span class="c"># transpose this takes us from FK5/J200 to FK4/B1950</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">FK4NoETerms</span><span class="o">.</span><span class="n">_fk4_B_matrix</span><span class="p">(</span><span class="n">fk4noeframe</span><span class="o">.</span><span class="n">obstime</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+    <span class="c"># construct both precession matricies - if the equinoxes are B1950 and</span>
+    <span class="c"># J2000, these are just identity matricies</span>
+    <span class="n">pmat1</span> <span class="o">=</span> <span class="n">fk5coord</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk5coord</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">_EQUINOX_J2000</span><span class="p">)</span>
+    <span class="n">pmat2</span> <span class="o">=</span> <span class="n">fk4noeframe</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">_EQUINOX_B1950</span><span class="p">,</span> <span class="n">fk4noeframe</span><span class="o">.</span><span class="n">equinox</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pmat2</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="n">pmat1</span>
+
+
+<span class="c"># Galactic to/from FK4/FK5 -----------------------&gt;</span>
+<span class="c"># can&#39;t be static because the equinox is needed</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK5</span><span class="p">,</span> <span class="n">Galactic</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk5_to_gal</span><span class="p">(</span><span class="n">fk5coord</span><span class="p">,</span> <span class="n">galframe</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">rotation_matrix</span>
+
+    <span class="c">#need precess to J2000 first</span>
+    <span class="n">pmat</span> <span class="o">=</span> <span class="n">fk5coord</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk5coord</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">_EQUINOX_J2000</span><span class="p">)</span>
+    <span class="n">mat1</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="mi">180</span> <span class="o">-</span> <span class="n">Galactic</span><span class="o">.</span><span class="n">_lon0_J2000</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">)</span>
+    <span class="n">mat2</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="mi">90</span> <span class="o">-</span> <span class="n">Galactic</span><span class="o">.</span><span class="n">_ngp_J2000</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">)</span>
+    <span class="n">mat3</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">Galactic</span><span class="o">.</span><span class="n">_ngp_J2000</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mat1</span> <span class="o">*</span> <span class="n">mat2</span> <span class="o">*</span> <span class="n">mat3</span> <span class="o">*</span> <span class="n">pmat</span>
+
+
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">Galactic</span><span class="p">,</span> <span class="n">FK5</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_gal_to_fk5</span><span class="p">(</span><span class="n">galcoord</span><span class="p">,</span> <span class="n">fk5frame</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fk5_to_gal</span><span class="p">(</span><span class="n">fk5frame</span><span class="p">,</span> <span class="n">galcoord</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">,</span> <span class="n">Galactic</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">fk4_to_gal</span><span class="p">(</span><span class="n">fk4coords</span><span class="p">,</span> <span class="n">galframe</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">rotation_matrix</span>
+
+    <span class="n">mat1</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="mi">180</span> <span class="o">-</span> <span class="n">Galactic</span><span class="o">.</span><span class="n">_lon0_B1950</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">)</span>
+    <span class="n">mat2</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="mi">90</span> <span class="o">-</span> <span class="n">Galactic</span><span class="o">.</span><span class="n">_ngp_B1950</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;y&#39;</span><span class="p">)</span>
+    <span class="n">mat3</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">Galactic</span><span class="o">.</span><span class="n">_ngp_B1950</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;z&#39;</span><span class="p">)</span>
+    <span class="n">matprec</span> <span class="o">=</span> <span class="n">fk4coords</span><span class="o">.</span><span class="n">_precession_matrix</span><span class="p">(</span><span class="n">fk4coords</span><span class="o">.</span><span class="n">equinox</span><span class="p">,</span> <span class="n">_EQUINOX_B1950</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mat1</span> <span class="o">*</span> <span class="n">mat2</span> <span class="o">*</span> <span class="n">mat3</span> <span class="o">*</span> <span class="n">matprec</span>
+
+
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">DynamicMatrixTransform</span><span class="p">,</span> <span class="n">Galactic</span><span class="p">,</span> <span class="n">FK4NoETerms</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">gal_to_fk4</span><span class="p">(</span><span class="n">galcoords</span><span class="p">,</span> <span class="n">fk4frame</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fk4_to_gal</span><span class="p">(</span><span class="n">fk4frame</span><span class="p">,</span> <span class="n">galcoords</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+
+
+<span class="k">def</span> <span class="nf">_make_transform_graph_docs</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a string for use with the coordinate package&#39;s docstring</span>
+<span class="sd">    to show the available transforms and coordinate systems</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+
+    <span class="n">isclass</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span>
+    <span class="n">coosys</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">itervalues</span><span class="p">(</span><span class="nb">globals</span><span class="p">()))</span>
+              <span class="k">if</span> <span class="n">isclass</span><span class="p">(</span><span class="n">item</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">BaseCoordinateFrame</span><span class="p">)]</span>
+    <span class="n">coosys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">BaseCoordinateFrame</span><span class="p">)</span>
+    <span class="n">coosys</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">GenericFrame</span><span class="p">)</span>
+    <span class="n">graphstr</span> <span class="o">=</span> <span class="n">frame_transform_graph</span><span class="o">.</span><span class="n">to_dot_graph</span><span class="p">(</span><span class="n">addnodes</span><span class="o">=</span><span class="n">coosys</span><span class="p">)</span>
+
+    <span class="n">docstr</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">    The diagram below shows all of the coordinate systems built into the</span>
+<span class="s">    `~astropy.coordinates` package, their aliases (usable for converting</span>
+<span class="s">    other coordinates to them using attribute-style access) and the</span>
+<span class="s">    pre-defined transformations between them.  The user is free to</span>
+<span class="s">    override any of these transformations by defining new trasnformation</span>
+<span class="s">    between these systems, but the pre-defined transformations should be</span>
+<span class="s">    sufficient for typical usage.</span>
+
+<span class="s">    The graph also indicates the priority for each transformation as a</span>
+<span class="s">    number next to the arrow.  These priorities are used to decide the</span>
+<span class="s">    preferred order when two trasnformation paths have the same number</span>
+<span class="s">    of steps.  These priorities are defined such that path with a</span>
+<span class="s">    *smaller* total priority are favored over one with larger.</span>
+
+
+<span class="s">    .. graphviz::</span>
+
+<span class="s">    &quot;&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">dedent</span><span class="p">(</span><span class="n">docstr</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;    &#39;</span> <span class="o">+</span> <span class="n">graphstr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">    &#39;</span><span class="p">)</span>
+<span class="n">_transform_graph_docs</span> <span class="o">=</span> <span class="n">_make_transform_graph_docs</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

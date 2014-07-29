@@ -1,0 +1,685 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Release Procedures &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="Workflow for Maintainers" href="workflow/maintainer_workflow.html" />
+    <link rel="prev" title="C or Cython Extensions" href="ccython.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="workflow/maintainer_workflow.html" title="Workflow for Maintainers">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="ccython.html" title="C or Cython Extensions">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Release Procedures</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="release-procedures">
+<h1>Release Procedures<a class="headerlink" href="#release-procedures" title="Permalink to this headline">¶</a></h1>
+<p>The current release procedure for Astropy involves a combination of an
+automated release script and some manual steps.  Future versions will automate
+more of the process, if not all.</p>
+<div class="section" id="release-procedure">
+<span id="id1"></span><h2>Release Procedure<a class="headerlink" href="#release-procedure" title="Permalink to this headline">¶</a></h2>
+<p>The automated portion of the Astropy release procedure uses <a class="reference external" href="http://pypi.python.org/pypi/zest.releaser">zest.releaser</a>
+to create the tag and update the version.  zest.releaser is extendable through
+hook functions&#8211;Astropy already includes a couple hook functions to modify the
+default behavior, but future releases may be further automated through the
+implementation of additional hook functions.  In order to use the hooks,
+Astropy itself must be <em>installed</em> alongside zest.releaser.  It is recommended
+to create a <a class="reference external" href="http://pypi.python.org/pypi/virtualenv">virtualenv</a> specifically for this purpose.</p>
+<p>This may seem like a lot of steps, but most of them won&#8217;t be necessary to
+repeat for each release.  The advantage of using an automated or semi-automated
+procedure is that ensures a consistent release process each time.</p>
+<blockquote>
+<div><ol class="arabic">
+<li><p class="first">Ensure you have a GPG key pair available for when git needs to sign the
+tag you create for the release.  See <a class="reference internal" href="#key-signing-info"><em>Creating a GPG Signing Key and a Signed Tag</em></a> for more on
+this.</p>
+</li>
+<li><p class="first">Update the list of contributors in the <tt class="docutils literal"><span class="pre">creditsandlicense.rst</span></tt> file. The
+easiest way to check this is do:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git shortlog -s
+</pre></div>
+</div>
+<p>And just add anyone from that list who isn&#8217;t already credited.</p>
+</li>
+<li><p class="first">Install virtualenv if you don&#8217;t already have it.  See the linked virtualenv
+documentation for details.  Also, make sure that you have <a class="reference external" href="http://www.cython.org/">cython</a>
+installed, as you will need it to generate the .c files needed for the
+release.</p>
+</li>
+<li><p class="first">Create and activate a virtualenv:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ virtualenv --system-site-packages astropy-release
+$ source astropy-release/bin/activate
+</pre></div>
+</div>
+</li>
+<li><p class="first">Obtain a <em>clean</em> version of the Astropy repository.  That is, one
+where you don&#8217;t have any intermediate build files.  Either use a fresh
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">clone</span></tt> or do <tt class="docutils literal"><span class="pre">git</span> <span class="pre">clean</span> <span class="pre">-dfx</span></tt>.</p>
+</li>
+<li><p class="first">Be sure you&#8217;re the &#8220;master&#8221; branch or, for a bug fix release, on the
+appropriate bug fix branch.  For example, if releasing version 0.2.2 make
+sure to:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git checkout v0.2.x
+</pre></div>
+</div>
+</li>
+<li><p class="first">Now install Astropy into the virtualenv:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py install
+</pre></div>
+</div>
+<p>This is necessary for two reasons.  First, the entry points for the
+releaser scripts need to be available, and these are in the Astropy
+package. Second, the build process will generate .c files from the
+Cython .pyx files, and the .c files are necessary for the source
+distribution.</p>
+</li>
+<li><p class="first">Install zest.releaser into the virtualenv; use <tt class="docutils literal"><span class="pre">--upgrade</span> <span class="pre">--force</span></tt> to
+ensure that the latest version is installed in the virtualenv (if you&#8217;re
+running a csh variant make sure to run <tt class="docutils literal"><span class="pre">rehash</span></tt> afterwards too):</p>
+<div class="highlight-python"><div class="highlight"><pre>$ pip install zest.releaser --upgrade --force
+</pre></div>
+</div>
+</li>
+<li><p class="first">Ensure that all changes to the code have been committed, then start the
+release by running:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ fullrelease
+</pre></div>
+</div>
+</li>
+<li><p class="first">You will be asked to enter the version to be released.  Press enter to
+accept the default (which will normally be correct) or enter a specific
+version string.  A diff will then be shown of CHANGES.rst and setup.py
+showing that a release date has been added to the changelog, and that the
+version has been updated in setup.py.  Enter &#8216;Y&#8217; when asked to commit
+these changes.</p>
+</li>
+<li><p class="first">You will then be shown the command that will be run to tag the release.
+Enter &#8216;Y&#8217; to confirm and run the command.</p>
+</li>
+<li><p class="first">When asked &#8220;Check out the tag (for tweaks or pypi/distutils server
+upload)&#8221; enter &#8216;N&#8217;: zest.releaser does not offer enough control yet over
+how the register and upload are performed so we will do this manually
+until the release scripts have been improved.</p>
+</li>
+<li><p class="first">You will be asked to enter a new development version.  Normally the next
+logical version will be selected&#8211;press enter to accept the default, or
+enter a specific version string.  Do not add &#8221;.dev&#8221; to the version, as
+this will be appended automatically (ignore the message that says &#8221;.dev0
+will be appended&#8221;&#8211;it will actually be &#8221;.dev&#8221; without the 0).  For
+example, if the just-released version was &#8220;0.1&#8221; the default next version
+will be &#8220;0.2&#8221;.  If we want the next version to be, say &#8220;0.1.1&#8221;, or &#8220;1.0&#8221;,
+then that must be entered manually.</p>
+</li>
+<li><p class="first">You will be shown a diff of CHANGES.rst showing that a new section has
+been added for the new development version, and showing that the version
+has been updated in setup.py.  Enter &#8216;Y&#8217; to commit these changes.</p>
+</li>
+<li><p class="first">When asked to push the changes to a remote repository, enter &#8216;Y&#8217;.  This
+should complete the portion of the process that&#8217;s automated at this point.</p>
+</li>
+<li><p class="first">Check out the tag of the released version.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git checkout v0.1
+</pre></div>
+</div>
+</li>
+<li><p class="first">Create the source distribution by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py sdist
+</pre></div>
+</div>
+<p>Copy the produced <tt class="docutils literal"><span class="pre">.tar.gz</span></tt> somewhere and verify that you can unpack it,
+build it, and get all the tests to pass.  It would be best to create a new
+virtualenv in which to do this.</p>
+</li>
+<li><p class="first">Register the release on PyPI with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py register
+</pre></div>
+</div>
+</li>
+<li><p class="first">Upload the source distribution to PyPI; this is preceded by re-running
+the sdist command, which is necessary for the upload command to know
+which distribution to upload:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ python setup.py sdist upload
+</pre></div>
+</div>
+</li>
+<li><p class="first">Go to <a class="reference external" href="https://pypi.python.org/pypi?:action=pkg_edit&amp;name=astropy">https://pypi.python.org/pypi?:action=pkg_edit&amp;name=astropy</a>
+and ensure that only the most recent releases in each actively maintained
+release line are <em>not</em> marked hidden.  For example, if v0.3.1 was
+just released, v0.3 should be hidden.  This is so that users only find
+the latest bugfix releases.</p>
+<p>Do not enabled &#8220;Auto-hide old releases&#8221; as that may hide bugfix releases
+from older release lines that we may still want to make available.</p>
+</li>
+<li><p class="first">Update the &#8220;stable&#8221; branch to point to the new stable release For example:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git checkout stable
+$ git reset --hard v0.1
+$ got push origin stable --force
+</pre></div>
+</div>
+</li>
+<li><p class="first">Update Readthedocs so that it builds docs for the corresponding github tag.
+Also verify that the <tt class="docutils literal"><span class="pre">stable</span></tt> Readthedocs version builds correctly for
+the new version (it should trigger automatically once you&#8217;ve done the
+previous step.)</p>
+</li>
+<li><p class="first">If this was a major/minor release (not a bug fix release) create a bug fix
+branch for this line of release.  That is, if the version just released
+was &#8220;v&lt;major&gt;.&lt;minor&gt;.0&#8221;, create bug fix branch with the name
+&#8220;v&lt;major&gt;.&lt;minor&gt;.x&#8221;.  Starting from the commit tagged as the release,
+just checkout a new branch and push it to the remote server.  For example,
+after releasing version 0.3, do:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git checkout -b v0.3.x
+</pre></div>
+</div>
+<p>Then edit <tt class="docutils literal"><span class="pre">setup.py</span></tt> so that the <tt class="docutils literal"><span class="pre">VERSION</span></tt> variable is
+<tt class="docutils literal"><span class="pre">'0.3.1.dev'</span></tt>, and commit that change. Then, do:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git push upstream v0.3.x
+</pre></div>
+</div>
+</li>
+</ol>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<blockquote>
+<div>You may need to replace <tt class="docutils literal"><span class="pre">upstream</span></tt> here with <tt class="docutils literal"><span class="pre">astropy</span></tt> or
+whatever remote name you use for the main astropy repository.</div></blockquote>
+<p class="last">The purpose of this branch is for creating bug fix releases like &#8220;0.3.1&#8221;
+and &#8220;0.3.2&#8221;, while allowing development of new features to continue in
+the master branch.  Only changesets that fix bugs without making
+significant API changes should be merged to the bug fix branches.</p>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="24">
+<li>Update <a class="reference external" href="https://github.com/astropy/astropy-website">astropy/astropy-website</a>
+for the new version.  Two files need to be updated: <tt class="docutils literal"><span class="pre">index.rst</span></tt> has two tags
+near the top specifying the current release, and the <tt class="docutils literal"><span class="pre">docs.rst</span></tt> file should
+be updated by putting the previous release in as an older version, and updating
+the &#8220;latest developer version&#8221; link to point to the new release.</li>
+<li>Run the <tt class="docutils literal"><span class="pre">upload_script.py</span></tt> script in <tt class="docutils literal"><span class="pre">astropy-website</span></tt> to update the actual
+web site.</li>
+</ol>
+</div></blockquote>
+<div class="section" id="modifications-for-a-beta-release-candidate-release">
+<h3>Modifications for a beta/release candidate release<a class="headerlink" href="#modifications-for-a-beta-release-candidate-release" title="Permalink to this headline">¶</a></h3>
+<p>For major releases with a lot of changes, we sometimes do beta and/or
+release candidates to have a chance to catch significant bugs before the true
+release.  If the release you are performing is this kind of pre-release, some
+of the above steps need to be modified.  The primary difference is that these
+releases go on the <a class="reference external" href="http://testpypi.python.org">http://testpypi.python.org</a> server instead of the regular
+PyPI.  The testpypi server provides a place to test the release and host it,
+but never appears anywhere on the regular server.  The price is that testpypi
+is not guaranteed to be up long-term, but for short-term pre-releases, this is
+no problem.</p>
+<p>The primary modifications to the release procedure are:</p>
+<ul class="simple">
+<li>When prompted for a version number (step #13), you will need to manually
+enter something like &#8220;1.0b1&#8221; or &#8220;1.0rc1&#8221;.  You should follow this numbering
+scheme (<tt class="docutils literal"><span class="pre">x.yb#</span></tt> or <tt class="docutils literal"><span class="pre">x.y.zrc#</span></tt>), as it will ensure the release is
+ordered &#8220;before&#8221; the main release by various automated tools.</li>
+<li>On steps #18 and #19, where you register and upload to PyPI, it is important
+that you add the option <tt class="docutils literal"><span class="pre">-r</span> <span class="pre">https://testpypi.python.org/pypi</span></tt>.  This
+ensures the release information and files are sent to the test server instead
+of the real PyPI server.  This will probably require you to set up a
+<tt class="docutils literal"><span class="pre">~/.pypirc</span></tt> file appropriate for the testpypi server.  See
+<a class="reference external" href="https://wiki.python.org/moin/TestPyPI">https://wiki.python.org/moin/TestPyPI</a> for more on how to do this.</li>
+<li>Do not do step #20 or later, as those are tasks for an actual release.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><tt class="docutils literal"><span class="pre">~/.pypirc</span></tt> files necessary for uploading to the testpypi server
+require you to include your password to be able to manage to do
+<tt class="docutils literal"><span class="pre">register</span></tt> properly.  This can be insecure, because it means you have
+to put your PyPI password in a plain-text file.  So you&#8217;ll want to set
+the <tt class="docutils literal"><span class="pre">~/.pypirc</span></tt> file permissions to be quite restrictive, use a
+temporary PyPI password just for doing releases, or some other measure
+to ensure your password remains secure.</p>
+</div>
+</div>
+</div>
+<div class="section" id="maintaining-bug-fix-releases">
+<h2>Maintaining Bug Fix Releases<a class="headerlink" href="#maintaining-bug-fix-releases" title="Permalink to this headline">¶</a></h2>
+<p>Astropy releases, as recommended for most Python projects, follows a
+&lt;major&gt;.&lt;minor&gt;.&lt;micro&gt; version scheme, where the &#8220;micro&#8221; version is also
+known as a &#8220;bug fix&#8221; release.  Bug fix releases should not change any user-
+visible interfaces.  They should only fix bugs on the previous major/minor
+release and may also refactor internal APIs or include omissions from previous
+releases&#8211;that is, features that were documented to exist but were accidentally
+left out of the previous release. They may also include changes to docstrings
+that enhance clarity but do not describe new features (e.g., more examples,
+typo fixes, etc).</p>
+<p>Bug fix releases are typically managed by maintaining one or more bug fix
+branches separate from the master branch (the release procedure below discusses
+creating these branches).  Typically, whenever an issue is fixed on the Astropy
+master branch a decision must be made whether this is a fix that should be
+included in the Astropy bug fix release.  Usually the answer to this question
+is &#8220;yes&#8221;, though there are some issues that may not apply to the bug fix
+branch.  For example, it is not necessary to backport a fix to a new feature
+that did not exist when the bug fix branch was first created.  New features
+are never merged into the bug fix branch&#8211;only bug fixes; hence the name.</p>
+<p>In rare cases a bug fix may be made directly into the bug fix branch without
+going into the master branch first.  This may occur if a fix is made to a
+feature that has been removed or rewritten in the development version and no
+longer has the issue being fixed.  However, depending on how critical the bug
+is it may be worth including in a bug fix release, as some users can be slow to
+upgrade to new major/micro versions due to API changes.</p>
+<p>Issues are assigned to an Astropy release by way of the Milestone feature in
+the GitHub issue tracker.  At any given time there are at least two versions
+under development: The next major/minor version, and the next bug fix release.
+For example, at the time of writing there are two release milestones open:
+v0.2.2 and v0.3.0.  In this case, v0.2.2 is the next bug fix release and all
+issues that should include fixes in that release should be assigned that
+milestone.  Any issues that implement new features would go into the v0.3.0
+milestone&#8211;this is any work that goes in the master branch that should not
+be backported.  For a more detailed set of guidelines on using milestones, see
+<a class="reference internal" href="workflow/maintainer_workflow.html#milestones-and-labels"><em>Using Milestones and Labels</em></a>.</p>
+<div class="section" id="backporting-fixes-from-master">
+<h3>Backporting fixes from master<a class="headerlink" href="#backporting-fixes-from-master" title="Permalink to this headline">¶</a></h3>
+<p>Most fixes are backported using the <tt class="docutils literal"><span class="pre">git</span> <span class="pre">cherry-pick</span></tt> command, which applies
+the diff from a single commit like a patch.  For the sake of example, say the
+current bug fix branch is &#8216;v0.2.x&#8217;, and that a bug was fixed in master in a
+commit <tt class="docutils literal"><span class="pre">abcd1234</span></tt>.  In order to backport the fix, simply checkout the v0.2.x
+branch (it&#8217;s also good to make sure it&#8217;s in sync with the main Astropy
+repository) and cherry-pick the appropriate commit:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git checkout v0.2.x
+$ git pull upstream v0.2.x
+$ git cherry-pick abcd1234
+</pre></div>
+</div>
+<p>Sometimes a cherry-pick does not apply cleanly, since the bug fix branch
+represents a different line of development.  This can be resolved like any
+other merge conflict:  Edit the conflicted files by hand, and then run
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></tt> and accept the default commit message.  If the fix being
+cherry-picked has an associated changelog entry in a separate commit make
+sure to backport that as well.</p>
+<p>What if the issue required more than one commit to fix?  There are a few
+possibilities for this.  The easiest is if the fix came in the form of a
+pull request that was merged into the master branch.  Whenever GitHub merges
+a pull request it generates a merge commit in the master branch.  This merge
+commit represents the <em>full</em> difference of all the commits in the pull request
+combined.  What this means is that it is only necessary to cherry-pick the
+merge commit (this requires adding the <tt class="docutils literal"><span class="pre">-m</span> <span class="pre">1</span></tt> option to the cherry-pick
+command).  For example, if <tt class="docutils literal"><span class="pre">5678abcd</span></tt> is a merge commit:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git checkout v0.2.x
+$ git pull upstream v0.2.x
+$ git cherry-pick -m 1 5678abcd
+</pre></div>
+</div>
+<p>In fact, because Astropy emphasizes a pull request-based workflow, this is the
+<em>most</em> common scenario for backporting bug fixes, and the one requiring the
+least thought.  However, if you&#8217;re not dealing with backporting a fix that was
+not brought in as a pull request, read on.</p>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="workflow/additional_git_topics.html#merge-commits-and-cherry-picks"><em>Merge commits and cherry picks</em></a> for further explanation of the
+cherry-pick command and how it works with merge commits.</p>
+</div>
+<p>If not cherry-picking a merge commit there are still other options for dealing
+with multiple commits.  The simplest, though potentially tedious, is to simply
+run the cherry-pick command once for each commit in the correct order.
+However, as of Git 1.7.2 it is possible to merge a range of commits like so:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git cherry-pick 1234abcd..56789def
+</pre></div>
+</div>
+<p>This works fine so long as the commits you want to pick are actually congruous
+with each other.  In most cases this will be the case, though some bug fixes
+will involve followup commits that need to back backported as well.  Most bug
+fixes will have an issues associated with it in the issue tracker, so make sure
+to reference all commits related to that issue in the commit message.  That way
+it&#8217;s harder for commits that need to be backported from getting lost.</p>
+</div>
+<div class="section" id="making-fixes-directly-to-the-bug-fix-branch">
+<h3>Making fixes directly to the bug fix branch<a class="headerlink" href="#making-fixes-directly-to-the-bug-fix-branch" title="Permalink to this headline">¶</a></h3>
+<p>As mentioned earlier in this section, in some cases a fix only applies to a bug
+fix release, and is not applicable in the mainline development.  In this case
+there are two choices:</p>
+<ol class="arabic simple">
+<li>An Astropy developer with commit access to the main Astropy repository may
+check out the bug fix branch and commit and push your fix directly.</li>
+<li><strong>Preferable</strong>: You may also make a pull request through GitHub against the
+bug fix branch rather than against master.  Normally when making a pull
+request from a branch on your fork to the main Astropy repository GitHub
+compares your branch to Astropy&#8217;s master.  If you look on the left-hand
+side of the pull request page, under &#8220;base repo: astropy/astropy&#8221; there is
+a drop-down list labeled &#8220;base branch: master&#8221;.  You can click on this
+drop-down and instead select the bug fix branch (&#8220;v0.2.x&#8221; for example). Then
+GitHub will instead compare your fix against that branch, and merge into
+that branch when the PR is accepted.</li>
+</ol>
+</div>
+<div class="section" id="preparing-the-bug-fix-branch-for-release">
+<h3>Preparing the bug fix branch for release<a class="headerlink" href="#preparing-the-bug-fix-branch-for-release" title="Permalink to this headline">¶</a></h3>
+<p>There are two primary steps that need to be taken before creating a bug fix
+release. The rest of the procedure is the same as any other release as
+described in <a class="reference internal" href="#release-procedure"><em>Release Procedure</em></a> (although be sure to provide the
+right version number).</p>
+<ol class="arabic simple">
+<li>Any existing fixes to the issues assigned to the current bug fix release
+milestone, or labeled with the relevant &#8220;backport-x.y.z&#8221; label must be
+merged into the bug fix branch.</li>
+<li>The Astropy changelog must be updated to list all issues&#8211;especially
+user-visible issues&#8211;fixed for the current release.  The changelog should
+be updated in the master branch, and then merged into the bug fix branch.
+Most issues <em>should</em> already have changelog entries for them. But it&#8217;s
+typical to forget this, so if doesn&#8217;t exist yet please add one in
+the process of backporting.  See <a class="reference internal" href="workflow/maintainer_workflow.html#changelog-format"><em>Updating and Maintaining the Changelog</em></a> for more details.</li>
+</ol>
+<p>To aid in this process there is a script called <tt class="docutils literal"><span class="pre">suggest_backports.py</span></tt> at
+<a class="reference external" href="https://gist.github.com/embray/4497178">https://gist.github.com/embray/4497178</a>.  The script is not perfect and still
+needs a little work, but it will get most of the work done.  For example, if
+the current bug fix branch is called &#8216;v0.2.x&#8217; run it like so:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ suggest_backports.py astropy astropy v0.2.x -f backport.sh
+</pre></div>
+</div>
+<p>This will search GitHub for all issues assigned to the next bug fix release
+milestone that&#8217;s associated with the given bug fix branch (&#8216;v0.2.2&#8217; for
+example), find the commits that fix those issues, and will generate a shell
+script called <tt class="docutils literal"><span class="pre">backport.sh</span></tt> containing all the <tt class="docutils literal"><span class="pre">git</span> <span class="pre">cherry-pick</span></tt> commands
+to backport all those fixes.</p>
+<p>The <tt class="docutils literal"><span class="pre">suggest_backports.py</span></tt> script will typically take a couple minutes to
+run, but once it&#8217;s done simply execute the generated script from within your
+local clone of the Astropy repository:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ ./backport.sh
+</pre></div>
+</div>
+<p>This will checkout the appropriate bug fix branch (&#8216;v0.2.x&#8217; in this example),
+do a <tt class="docutils literal"><span class="pre">git</span> <span class="pre">pull</span> <span class="pre">upstream</span> <span class="pre">v0.2.x</span></tt> to make sure it&#8217;s up to date, and then start
+doing cherry-picks into the bug fix branch.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>As discussed earlier, cherry-pick may result in merge conflicts.  If this
+occurs, the <tt class="docutils literal"><span class="pre">backport.sh</span></tt> script will exit and the conflict should be
+resolved manually, followed by running <tt class="docutils literal"><span class="pre">git</span> <span class="pre">commit</span></tt>.  To resume the
+<tt class="docutils literal"><span class="pre">backport.sh</span></tt> script after the merge conflict, it is currently necessary
+to edit the script to either remove or comment out the <tt class="docutils literal"><span class="pre">git</span> <span class="pre">cherry-pick</span></tt>
+commands that already ran successfully.</p>
+<p class="last">The author of the script hopes to improve it in the future to add
+<tt class="docutils literal"><span class="pre">git</span> <span class="pre">rebase</span></tt> like functionality, such that running
+<tt class="docutils literal"><span class="pre">backport.sh</span> <span class="pre">--continue</span></tt> or <tt class="docutils literal"><span class="pre">backport.sh</span> <span class="pre">--skip</span></tt> will be possible in
+such cases.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p>It has also been noted that the <tt class="docutils literal"><span class="pre">suggest_backports.py</span></tt> script is not
+perfect, and can either miss issues that need to be backported, and in some
+cases can report false positives.</p>
+<p>It&#8217;s always a good idea before finalizing a bug fix release to look on
+GitHub through the list of closed issues in the release milestone and check
+that each one has a fix in the bug fix branch.  Usually a quick way to do
+this is for each issue to run:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git log --oneline &lt;bugfix-branch&gt; | grep #&lt;issue&gt;
+</pre></div>
+</div>
+<p class="last">Most fixes will mention their related issue in the commit message, so this
+tends to be pretty reliable.  Some issues won&#8217;t show up in the commit log,
+however, as their fix is in a separate pull request.  Usually GitHub makes
+this clear by cross-referencing the issue with its PR.  A future version
+of the <tt class="docutils literal"><span class="pre">suggest_backports.py</span></tt> script will perform this check
+automatically.</p>
+</div>
+<p>Finally, not all issues assigned to a release milestone need to be fixed before
+making that release.  Usually, in the interest of getting a release with
+existing fixes out within some schedule, it&#8217;s best to triage issues that won&#8217;t
+be fixed soon to a new release milestone.  If the upcoming bug fix release is
+&#8216;v0.2.2&#8217;, then go ahead and create a &#8216;v0.2.3&#8217; milestone and reassign to it any
+issues that you don&#8217;t expect to be fixed in time for &#8216;v0.2.2&#8217;.</p>
+</div>
+</div>
+<div class="section" id="creating-a-gpg-signing-key-and-a-signed-tag">
+<span id="key-signing-info"></span><h2>Creating a GPG Signing Key and a Signed Tag<a class="headerlink" href="#creating-a-gpg-signing-key-and-a-signed-tag" title="Permalink to this headline">¶</a></h2>
+<p>One of the main steps in performing a release is to create a tag in the git
+repository representing the exact state of the repository that represents the
+version being released.  For Astropy we will always use <a class="reference external" href="http://git-scm.com/book/en/Git-Basics-Tagging#Signed-Tags">signed tags</a>: A
+signed tag is annotated with the name and e-mail address of the signer, a date
+and time, and a checksum of the code in the tag.  This information is then
+signed with a GPG private key and stored in the repository.</p>
+<p>Using a signed tag ensures the integrity of the contents of that tag for the
+future.  On a distributed VCS like git, anyone can create a tag of Astropy
+called &#8220;0.1&#8221; in their repository&#8211;and where it&#8217;s easy to monkey around even
+after the tag has been created.  But only one &#8220;0.1&#8221; will be signed by one of
+the Astropy project coordinators and will be verifiable with their public key.</p>
+<div class="section" id="generating-a-public-private-key-pair">
+<h3>Generating a public/private key pair<a class="headerlink" href="#generating-a-public-private-key-pair" title="Permalink to this headline">¶</a></h3>
+<p>Git uses GPG to created signed tags, so in order to perform an Astropy release
+you will need GPG installed and will have to generated a signing key pair.
+Most *NIX installations come with GPG installed by default (as it is used to
+verify the integrity of system packages).  If you don&#8217;t have the <tt class="docutils literal"><span class="pre">gpg</span></tt>
+command, consult the documentation for your system on how to install it.</p>
+<p>For OSX, GPG can be installed from MacPorts using <tt class="docutils literal"><span class="pre">sudo</span> <span class="pre">port</span> <span class="pre">install</span> <span class="pre">gnupg</span></tt>.</p>
+<p>To create a new public/private key pair, simply run:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gpg --gen-key
+</pre></div>
+</div>
+<p>This will take you through a few interactive steps. For the encryption
+and expiry settings, it should be safe to use the default settings (I use
+a key size of 4096 just because what does a couple extra kilobytes
+hurt?) Enter your full name, preferably including your middle name or
+middle initial, and an e-mail address that you expect to be active for a
+decent amount of time. Note that this name and e-mail address must match
+the info you provide as your git configuration, so you should either
+choose the same name/e-mail address when you create your key, or update
+your git configuration to match the key info. Finally, choose a very good
+pass phrase that won&#8217;t be easily subject to brute force attacks.</p>
+<p>If you expect to use the same key for some time, it&#8217;s good to make a backup of
+both your public and private key:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gpg --export --armor &gt; public.key
+$ gpg --export-secret-key --armor &gt; private.key
+</pre></div>
+</div>
+<p>Back up these files to a trusted location&#8211;preferably a write-once physical
+medium that can be stored safely somewhere.  One may also back up their keys to
+a trusted online encrypted storage, though some might not find that secure
+enough&#8211;it&#8217;s up to you and what you&#8217;re comfortable with.</p>
+</div>
+<div class="section" id="add-your-public-key-to-a-keyserver">
+<h3>Add your public key to a keyserver<a class="headerlink" href="#add-your-public-key-to-a-keyserver" title="Permalink to this headline">¶</a></h3>
+<p>Now that you have a public key, you can publish this anywhere you like&#8211;in your
+e-mail, in a public code repository, etc.  You can also upload it to a
+dedicated public OpenPGP keyserver.  This will store the public key
+indefinitely (until you manually revoke it), and will be automatically synced
+with other keyservers around the world.  That makes it easy to retrieve your
+public key using the gpg command-line tool.</p>
+<p>To do this you will need your public key&#8217;s keyname.  To find this enter:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gpg --list-keys
+</pre></div>
+</div>
+<p>This will output something like:</p>
+<div class="highlight-python"><div class="highlight"><pre>/path/to/.gnupg/pubring.gpg
+---------------------------------------------
+pub   4096D/1234ABCD 2012-01-01
+uid                  Your Name &lt;your_email&gt;
+sub   4096g/567890EF 2012-01-01
+</pre></div>
+</div>
+<p>The 8 digit hex number on the line starting with &#8220;pub&#8221;&#8211;in this example the
+&#8220;1234ABCD&#8221; unique keyname for your public key.  To push it to a keyserver
+enter:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ gpg --send-keys 1234ABCD
+</pre></div>
+</div>
+<p>But replace the 1234ABCD with the keyname for your public key.  Most systems
+come configured with a sensible default keyserver, so you shouldn&#8217;t have to
+specify any more than that.</p>
+</div>
+<div class="section" id="create-a-tag">
+<h3>Create a tag<a class="headerlink" href="#create-a-tag" title="Permalink to this headline">¶</a></h3>
+<p>Now test creating a signed tag in git.  It&#8217;s safe to experiment with this&#8211;you
+can always delete the tag before pushing it to a remote repository:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git tag -s v0.1 -m &quot;Astropy version 0.1&quot;
+</pre></div>
+</div>
+<p>This will ask for the password to unlock your private key in order to sign
+the tag with it.  Confirm that the default signing key selected by git is the
+correct one (it will be if you only have one key).</p>
+<p>Once the tag has been created, you can verify it with:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git tag -v v0.1
+</pre></div>
+</div>
+<p>This should output something like:</p>
+<div class="highlight-python"><div class="highlight"><pre>object e8e3e3edc82b02f2088f4e974dbd2fe820c0d934
+type commit
+tag v0.1
+tagger Your Name &lt;your_email&gt; 1339779534 -0400
+
+Astropy version 0.1
+gpg: Signature made Fri 15 Jun 2012 12:59:04 PM EDT using DSA key ID 0123ABCD
+gpg: Good signature from &quot;Your Name &lt;your_email&gt;&quot;
+</pre></div>
+</div>
+<p>You can use this to verify signed tags from any repository as long as you have
+the signer&#8217;s public key in your keyring.  In this case you signed the tag
+yourself, so you already have your public key.</p>
+<p>Note that if you are planning to do a release following the steps below, you
+will want to delete the tag you just created, because the release script does
+that for you.  You can delete this tag by doing:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ git tag -d v0.1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="creating-a-macos-x-installer-on-a-dmg">
+<h2>Creating a MacOS X Installer on a DMG<a class="headerlink" href="#creating-a-macos-x-installer-on-a-dmg" title="Permalink to this headline">¶</a></h2>
+<p>The <tt class="docutils literal"><span class="pre">bdist_dmg</span></tt> command can be used to create a <tt class="docutils literal"><span class="pre">.dmg</span></tt> disk image for
+MacOS X with a <tt class="docutils literal"><span class="pre">.pkg</span></tt> installer. In order to do this, you will need to
+ensure that you have the following dependencies installed:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://www.numpy.org">Numpy</a></li>
+<li><a class="reference external" href="http://sphinx.pocoo.org">Sphinx</a></li>
+<li><a class="reference external" href="http://pypi.python.org/pypi/bdist_mpkg/">bdist_mpkg</a></li>
+</ul>
+<p>To create a <tt class="docutils literal"><span class="pre">.dmg</span></tt> file, run:</p>
+<div class="highlight-python"><div class="highlight"><pre>python setup.py bdist_dmg
+</pre></div>
+</div>
+<p>Note that for the actual release version, you should do this with the Python
+distribution from <a class="reference external" href="http://python.org">python.org</a> (not e.g. MacPorts, EPD,
+etc.). The best way to ensure maximum compatibility is to make sure that
+Python and Numpy are installed into <tt class="docutils literal"><span class="pre">/Library/Frameworks/Python.framework</span></tt>
+using the latest stable <tt class="docutils literal"><span class="pre">.dmg</span></tt> installers available for those packages. In
+addition, the <tt class="docutils literal"><span class="pre">.dmg</span></tt> should be build on a MacOS 10.6 system, to ensure
+compatibility with 10.6, 10.7, and 10.8.</p>
+<p>Before distributing, you should test out an installation of Python, Numpy, and
+Astropy from scratch using the <tt class="docutils literal"><span class="pre">.dmg</span></tt> installers, preferably on a clean
+virtual machine.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Release Procedures</a><ul>
+<li><a class="reference internal" href="#release-procedure">Release Procedure</a><ul>
+<li><a class="reference internal" href="#modifications-for-a-beta-release-candidate-release">Modifications for a beta/release candidate release</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#maintaining-bug-fix-releases">Maintaining Bug Fix Releases</a><ul>
+<li><a class="reference internal" href="#backporting-fixes-from-master">Backporting fixes from master</a></li>
+<li><a class="reference internal" href="#making-fixes-directly-to-the-bug-fix-branch">Making fixes directly to the bug fix branch</a></li>
+<li><a class="reference internal" href="#preparing-the-bug-fix-branch-for-release">Preparing the bug fix branch for release</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-gpg-signing-key-and-a-signed-tag">Creating a GPG Signing Key and a Signed Tag</a><ul>
+<li><a class="reference internal" href="#generating-a-public-private-key-pair">Generating a public/private key pair</a></li>
+<li><a class="reference internal" href="#add-your-public-key-to-a-keyserver">Add your public key to a keyserver</a></li>
+<li><a class="reference internal" href="#create-a-tag">Create a tag</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creating-a-macos-x-installer-on-a-dmg">Creating a MacOS X Installer on a DMG</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/development/releasing.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/development/releasing.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

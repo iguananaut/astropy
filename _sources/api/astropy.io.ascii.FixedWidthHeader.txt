@@ -1,0 +1,65 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+FixedWidthHeader
+=================================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autoclass:: FixedWidthHeader
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~FixedWidthHeader.position_line
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~FixedWidthHeader.get_cols
+      ~FixedWidthHeader.get_fixedwidth_params
+      ~FixedWidthHeader.get_line
+      ~FixedWidthHeader.write
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: position_line
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: get_cols
+   .. automethod:: get_fixedwidth_params
+   .. automethod:: get_line
+   .. automethod:: write
+
+   
+   

@@ -1,0 +1,287 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.coordinates.matching &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.coordinates.matching</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains functions for matching coordinate catalogs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">.representation</span> <span class="kn">import</span> <span class="n">UnitSphericalRepresentation</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;match_coordinates_3d&#39;</span><span class="p">,</span> <span class="s">&#39;match_coordinates_sky&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="match_coordinates_3d"><a class="viewcode-back" href="../../../api/astropy.coordinates.match_coordinates_3d.html#astropy.coordinates.match_coordinates_3d">[docs]</a><span class="k">def</span> <span class="nf">match_coordinates_3d</span><span class="p">(</span><span class="n">matchcoord</span><span class="p">,</span> <span class="n">catalogcoord</span><span class="p">,</span> <span class="n">nthneighbor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">storekdtree</span><span class="o">=</span><span class="s">&#39;_kdtree_3d&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the nearest 3-dimensional matches of a coordinate or coordinates in</span>
+<span class="sd">    a set of catalog coordinates.</span>
+
+<span class="sd">    This finds the 3-dimensional closest neighbor, which is only different</span>
+<span class="sd">    from the on-sky distance if ``distance`` is set in either ``matchcoord``</span>
+<span class="sd">    or ``catalogcoord``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    matchcoord : `~astropy.coordinates.BaseCoordinateFrame` or `~astropy.coordinates.SkyCoord`</span>
+<span class="sd">        The coordinate(s) to match to the catalog.</span>
+<span class="sd">    catalogcoord : `~astropy.coordinates.BaseCoordinateFrame` or `~astropy.coordinates.SkyCoord`</span>
+<span class="sd">        The base catalog in which to search for matches. Typically this will</span>
+<span class="sd">        be a coordinate object that is an array (i.e.,</span>
+<span class="sd">        ``catalogcoord.isscalar == False``)</span>
+<span class="sd">    nthneighbor : int, optional</span>
+<span class="sd">        Which closest neighbor to search for.  Typically ``1`` is desired here,</span>
+<span class="sd">        as that is correct for matching one set of coordinates to another.</span>
+<span class="sd">        The next likely use case is ``2``, for matching a coordinate catalog</span>
+<span class="sd">        against *itself* (``1`` is inappropriate because each point will find</span>
+<span class="sd">        itself as the closest match).</span>
+<span class="sd">    storekdtree : bool or str, optional</span>
+<span class="sd">        If a string, will store the KD-Tree used for the computation</span>
+<span class="sd">        in the ``catalogcoord``, as an attribute in ``catalogcoord`` with the</span>
+<span class="sd">        provided name.  This dramatically speeds up subsequent calls with the</span>
+<span class="sd">        same catalog. If False, the KD-Tree is discarded after use.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    idx : integer array</span>
+<span class="sd">        Indecies into ``catalogcoord`` to get the matched points for each</span>
+<span class="sd">        ``matchcoord``. Shape matches ``matchcoord``.</span>
+<span class="sd">    sep2d : `~astropy.coordinates.Angle`</span>
+<span class="sd">        The on-sky separation between the closest match for each ``matchcoord``</span>
+<span class="sd">        and the ``matchcoord``. Shape matches ``matchcoord``.</span>
+<span class="sd">    dist3d : `~astropy.units.Quantity`</span>
+<span class="sd">        The 3D distance between the closest match for each ``matchcoord`` and</span>
+<span class="sd">        the ``matchcoord``. Shape matches ``matchcoord``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function requires `SciPy &lt;http://www.scipy.org&gt;`_ to be installed</span>
+<span class="sd">    or it will fail.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+
+    <span class="c">#without scipy this will immediately fail</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="kn">import</span> <span class="n">spatial</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">KDTree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">cKDTree</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">warn</span><span class="p">(</span><span class="s">&#39;C-base KD tree not found, falling back on (much slower) &#39;</span>
+             <span class="s">&#39;python implementation&#39;</span><span class="p">)</span>
+        <span class="n">KDTree</span> <span class="o">=</span> <span class="n">spatial</span><span class="o">.</span><span class="n">KDTree</span>
+
+    <span class="k">if</span> <span class="n">storekdtree</span> <span class="ow">is</span> <span class="bp">True</span><span class="p">:</span>  <span class="c"># backwards compatibility for pre v0.4</span>
+        <span class="n">storekdtree</span> <span class="o">=</span> <span class="s">&#39;_kdtree&#39;</span>
+
+    <span class="c"># figure out where any cached KDTree might be</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storekdtree</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+        <span class="n">kdt</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">,</span> <span class="n">storekdtree</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kdt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">kdt</span><span class="p">,</span> <span class="n">KDTree</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid `storekdtree` string:&#39;</span> <span class="o">+</span> <span class="n">storekdtree</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">storekdtree</span><span class="p">,</span> <span class="n">KDTree</span><span class="p">):</span>
+        <span class="n">kdt</span> <span class="o">=</span> <span class="n">storekdtree</span>
+        <span class="n">storekdtree</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">elif</span> <span class="ow">not</span> <span class="n">storekdtree</span><span class="p">:</span>
+        <span class="n">kdt</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid `storekdtree` argument:&#39;</span> <span class="o">+</span>
+                          <span class="nb">str</span><span class="p">(</span><span class="n">storekdtree</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">kdt</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="c">#need to build the cartesian KD-tree for the catalog</span>
+        <span class="n">cartxyz</span> <span class="o">=</span> <span class="n">catalogcoord</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">xyz</span>
+        <span class="n">flatxyz</span> <span class="o">=</span> <span class="n">cartxyz</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">cartxyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="n">kdt</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">flatxyz</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+    <span class="c">#make sure coordinate systems match</span>
+    <span class="n">matchcoord</span> <span class="o">=</span> <span class="n">matchcoord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">)</span>
+
+    <span class="c">#make sure units match</span>
+    <span class="n">catunit</span> <span class="o">=</span> <span class="n">catalogcoord</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">unit</span>
+    <span class="n">matchxyz</span> <span class="o">=</span> <span class="n">matchcoord</span><span class="o">.</span><span class="n">cartesian</span><span class="o">.</span><span class="n">xyz</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">catunit</span><span class="p">)</span>
+
+    <span class="n">matchflatxyz</span> <span class="o">=</span> <span class="n">matchxyz</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">matchxyz</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">dist</span><span class="p">,</span> <span class="n">idx</span> <span class="o">=</span> <span class="n">kdt</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">matchflatxyz</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">nthneighbor</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">nthneighbor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>  <span class="c"># query gives 1D arrays if k=1, 2D arrays otherwise</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">storekdtree</span><span class="p">:</span>
+        <span class="c">#cache the kdtree in `catalogcoord`</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">,</span> <span class="n">storekdtree</span><span class="p">,</span> <span class="n">kdt</span><span class="p">)</span>
+
+    <span class="n">sep2d</span> <span class="o">=</span> <span class="n">catalogcoord</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">matchcoord</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">idx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">matchxyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span> <span class="n">sep2d</span><span class="p">,</span> <span class="n">dist</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">matchxyz</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">*</span> <span class="n">catunit</span>
+
+</div>
+<div class="viewcode-block" id="match_coordinates_sky"><a class="viewcode-back" href="../../../api/astropy.coordinates.match_coordinates_sky.html#astropy.coordinates.match_coordinates_sky">[docs]</a><span class="k">def</span> <span class="nf">match_coordinates_sky</span><span class="p">(</span><span class="n">matchcoord</span><span class="p">,</span> <span class="n">catalogcoord</span><span class="p">,</span> <span class="n">nthneighbor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">storekdtree</span><span class="o">=</span><span class="s">&#39;_kdtree_sky&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Finds the nearest on-sky matches of a coordinate or coordinates in</span>
+<span class="sd">    a set of catalog coordinates.</span>
+
+<span class="sd">    This finds the on-sky closest neighbor, which is only different from the</span>
+<span class="sd">    3-dimensional match if ``distance`` is set in either ``matchcoord``</span>
+<span class="sd">    or ``catalogcoord``.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    matchcoord : `~astropy.coordinates.BaseCoordinateFrame` or `~astropy.coordinates.SkyCoord`</span>
+<span class="sd">        The coordinate(s) to match to the catalog.</span>
+<span class="sd">    catalogcoord : `~astropy.coordinates.BaseCoordinateFrame` or `~astropy.coordinates.SkyCoord`</span>
+<span class="sd">        The base catalog in which to search for matches. Typically this will</span>
+<span class="sd">        be a coordinate object that is an array (i.e.,</span>
+<span class="sd">        ``catalogcoord.isscalar == False``)</span>
+<span class="sd">    nthneighbor : int, optional</span>
+<span class="sd">        Which closest neighbor to search for.  Typically ``1`` is desired here,</span>
+<span class="sd">        as that is correct for matching one set of coordinates to another.</span>
+<span class="sd">        The next likely use case is ``2``, for matching a coordinate catalog</span>
+<span class="sd">        against *itself* (``1`` is inappropriate because each point will find</span>
+<span class="sd">        itself as the closest match).</span>
+<span class="sd">    storekdtree : bool or str, optional</span>
+<span class="sd">        If a string, will store the KD-Tree used for the computation</span>
+<span class="sd">        in the ``catalogcoord``, as an attrbute in ``catalogcoord`` with the</span>
+<span class="sd">        provided name.  This dramatically speeds up subsequent calls with the</span>
+<span class="sd">        same catalog. If False, the KD-Tree is discarded after use.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    idx : integer array</span>
+<span class="sd">        Indecies into ``catalogcoord`` to get the matched points for each</span>
+<span class="sd">        ``matchcoord``. Shape matches ``matchcoord``.</span>
+<span class="sd">    sep2d : `~astropy.coordinates.Angle`</span>
+<span class="sd">        The on-sky separation between the closest match for each</span>
+<span class="sd">        ``matchcoord`` and the ``matchcoord``. Shape matches ``matchcoord``.</span>
+<span class="sd">    dist3d : `~astropy.units.Quantity`</span>
+<span class="sd">        The 3D distance between the closest match for each ``matchcoord`` and</span>
+<span class="sd">        the ``matchcoord``. Shape matches ``matchcoord``.  If either</span>
+<span class="sd">        ``matchcoord`` or ``catalogcoord`` don&#39;t have a distance, this is the 3D</span>
+<span class="sd">        distance on the unit sphere, rather than a true distance.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function requires `SciPy &lt;http://www.scipy.org&gt;`_ to be installed</span>
+<span class="sd">    or it will fail.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># send to catalog frame</span>
+    <span class="n">newmatch</span> <span class="o">=</span> <span class="n">matchcoord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">)</span>
+
+    <span class="c">#strip out distance info</span>
+    <span class="n">match_urepr</span> <span class="o">=</span> <span class="n">newmatch</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+    <span class="n">newmatch_u</span> <span class="o">=</span> <span class="n">newmatch</span><span class="o">.</span><span class="n">realize_frame</span><span class="p">(</span><span class="n">match_urepr</span><span class="p">)</span>
+
+    <span class="n">cat_urepr</span> <span class="o">=</span> <span class="n">catalogcoord</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">)</span>
+    <span class="n">newcat_u</span> <span class="o">=</span> <span class="n">catalogcoord</span><span class="o">.</span><span class="n">realize_frame</span><span class="p">(</span><span class="n">cat_urepr</span><span class="p">)</span>
+
+    <span class="n">idx</span><span class="p">,</span> <span class="n">sep2d</span><span class="p">,</span> <span class="n">sep3d</span> <span class="o">=</span> <span class="n">match_coordinates_3d</span><span class="p">(</span><span class="n">newmatch_u</span><span class="p">,</span> <span class="n">newcat_u</span><span class="p">,</span> <span class="n">nthneighbor</span><span class="p">,</span> <span class="n">storekdtree</span><span class="p">)</span>
+    <span class="c"># sep3d is *wrong* above, because the distance information was removed,</span>
+    <span class="c"># unless one of the catalogs doesn&#39;t have a real distance</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">catalogcoord</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">newmatch</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">UnitSphericalRepresentation</span><span class="p">)):</span>
+        <span class="n">sep3d</span> <span class="o">=</span> <span class="n">catalogcoord</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="o">.</span><span class="n">separation_3d</span><span class="p">(</span><span class="n">newmatch</span><span class="p">)</span>
+
+    <span class="c">#update the kdtree on the actual passed-in coordinate</span>
+    <span class="k">if</span> <span class="n">storekdtree</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">catalogcoord</span><span class="p">,</span> <span class="n">storekdtree</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">newcat_u</span><span class="p">,</span> <span class="n">storekdtree</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">idx</span><span class="p">,</span> <span class="n">sep2d</span><span class="p">,</span> <span class="n">sep3d</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Linear1D &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="Lorentz1D" href="astropy.modeling.functional_models.Lorentz1D.html" />
+    <link rel="prev" title="GaussianAbsorption1D" href="astropy.modeling.functional_models.GaussianAbsorption1D.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.Lorentz1D.html" title="Lorentz1D">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.GaussianAbsorption1D.html" title="GaussianAbsorption1D">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Linear1D</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="linear1d">
+<h1>Linear1D<a class="headerlink" href="#linear1d" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.functional_models.Linear1D">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.functional_models.</tt><tt class="descname">Linear1D</tt><big>(</big><em>slope</em>, <em>intercept</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Linear1D"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L491" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="astropy.modeling.core.Fittable1DModel"><tt class="docutils literal"><span class="pre">astropy.modeling.Fittable1DModel</span></tt></a></p>
+<p>One dimensional Line model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>slope</strong> : float</p>
+<blockquote>
+<div><p>Slope of the straight line</p>
+</div></blockquote>
+<p><strong>intercept</strong> : float</p>
+<blockquote>
+<div><p>Intercept of the straight line</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>fixed</strong> : a dict</p>
+<blockquote>
+<div><p>A dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">boolean}</span></tt> of parameters to not be
+varied during fitting. True means the parameter is held fixed.
+Alternatively the <a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.fixed" title="astropy.modeling.Parameter.fixed"><tt class="xref py py-obj docutils literal"><span class="pre">fixed</span></tt></a>
+property of a parameter may be used.</p>
+</div></blockquote>
+<p><strong>tied</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">callable}</span></tt> of parameters which are
+linked to some other parameter. The dictionary values are callables
+providing the linking relationship.  Alternatively the
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.tied" title="astropy.modeling.Parameter.tied"><tt class="xref py py-obj docutils literal"><span class="pre">tied</span></tt></a> property of a parameter
+may be used.</p>
+</div></blockquote>
+<p><strong>bounds</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">boolean}</span></tt> of lower and upper bounds of
+parameters. Keys  are parameter names. Values  are a list of length 2
+giving the desired range for the parameter.  Alternatively the
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.min" title="astropy.modeling.Parameter.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a> and
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.max" title="astropy.modeling.Parameter.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a> properties of a parameter
+may be used.</p>
+</div></blockquote>
+<p><strong>eqcons</strong> : list</p>
+<blockquote>
+<div><p>A list of functions of length <tt class="docutils literal"><span class="pre">n</span></tt> such that <tt class="docutils literal"><span class="pre">eqcons[j](x0,*args)</span> <span class="pre">==</span>
+<span class="pre">0.0</span></tt> in a successfully optimized problem.</p>
+</div></blockquote>
+<p><strong>ineqcons</strong> : list</p>
+<blockquote class="last">
+<div><p>A list of functions of length <tt class="docutils literal"><span class="pre">n</span></tt> such that <tt class="docutils literal"><span class="pre">ieqcons[j](x0,*args)</span> <span class="pre">&gt;=</span>
+<span class="pre">0.0</span></tt> is a successfully optimized problem.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="astropy.modeling.functional_models.Const1D.html#astropy.modeling.functional_models.Const1D" title="astropy.modeling.functional_models.Const1D"><tt class="xref py py-obj docutils literal"><span class="pre">Const1D</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Model formula:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/b79b52731472d43673b4b542b88c563ed1f9c925.png" alt="f(x) = a x + b"/></p>
+</div></div></blockquote>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.input_names" title="astropy.modeling.functional_models.Linear1D.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.intercept" title="astropy.modeling.functional_models.Linear1D.intercept"><tt class="xref py py-obj docutils literal"><span class="pre">intercept</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.linear" title="astropy.modeling.functional_models.Linear1D.linear"><tt class="xref py py-obj docutils literal"><span class="pre">linear</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.param_names" title="astropy.modeling.functional_models.Linear1D.param_names"><tt class="xref py py-obj docutils literal"><span class="pre">param_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.slope" title="astropy.modeling.functional_models.Linear1D.slope"><tt class="xref py py-obj docutils literal"><span class="pre">slope</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.evaluate" title="astropy.modeling.functional_models.Linear1D.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;slope,&nbsp;intercept)</td>
+<td>One dimensional Line model function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Linear1D.fit_deriv" title="astropy.modeling.functional_models.Linear1D.fit_deriv"><tt class="xref py py-obj docutils literal"><span class="pre">fit_deriv</span></tt></a>(x,&nbsp;slope,&nbsp;intercept)</td>
+<td>One dimensional Line model derivative with respect to parameters</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Linear1D.input_names">
+<tt class="descname">input_names</tt><em class="property"> = ['x']</em><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Linear1D.intercept">
+<tt class="descname">intercept</tt><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.intercept" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Linear1D.linear">
+<tt class="descname">linear</tt><em class="property"> = True</em><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.linear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Linear1D.param_names">
+<tt class="descname">param_names</tt><em class="property"> = ['slope', 'intercept']</em><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.param_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Linear1D.slope">
+<tt class="descname">slope</tt><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.slope" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="staticmethod">
+<dt id="astropy.modeling.functional_models.Linear1D.evaluate">
+<em class="property">static </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>slope</em>, <em>intercept</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Linear1D.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L522" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional Line model function</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="astropy.modeling.functional_models.Linear1D.fit_deriv">
+<em class="property">static </em><tt class="descname">fit_deriv</tt><big>(</big><em>x</em>, <em>slope</em>, <em>intercept</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Linear1D.fit_deriv"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L528" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Linear1D.fit_deriv" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional Line model derivative with respect to parameters</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Linear1D</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.functional_models.Linear1D.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.functional_models.Linear1D.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

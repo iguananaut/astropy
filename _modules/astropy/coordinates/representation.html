@@ -1,0 +1,805 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.coordinates.representation &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.coordinates.representation</h1><div class="highlight"><pre>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">In this module, we define the coordinate representation classes, which are</span>
+<span class="sd">used to represent low-level cartesian, spherical, cylindrical, and other</span>
+<span class="sd">coordinates.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">abc</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+
+<span class="kn">from</span> <span class="nn">.angles</span> <span class="kn">import</span> <span class="n">Angle</span><span class="p">,</span> <span class="n">Longitude</span><span class="p">,</span> <span class="n">Latitude</span>
+<span class="kn">from</span> <span class="nn">.distances</span> <span class="kn">import</span> <span class="n">Distance</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;BaseRepresentation&quot;</span><span class="p">,</span> <span class="s">&quot;CartesianRepresentation&quot;</span><span class="p">,</span>
+           <span class="s">&quot;SphericalRepresentation&quot;</span><span class="p">,</span> <span class="s">&quot;UnitSphericalRepresentation&quot;</span><span class="p">,</span>
+           <span class="s">&quot;PhysicsSphericalRepresentation&quot;</span><span class="p">,</span> <span class="s">&quot;CylindricalRepresentation&quot;</span><span class="p">]</span>
+
+<span class="c"># Module-level dict mapping representation string alias names to class.</span>
+<span class="c"># This is populated by the metaclass init so all representation classes</span>
+<span class="c"># get registered automatically.</span>
+<span class="n">REPRESENTATION_CLASSES</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">broadcast_quantity</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Quantity-aware version of np.broadcast_arrays</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">new_quantities</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_arrays</span><span class="p">)):</span>
+        <span class="n">new_quantities</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">_new_view</span><span class="p">(</span><span class="n">new_arrays</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">new_quantities</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">MetaBaseRepresentation</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">dct</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MetaBaseRepresentation</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">dct</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s">&#39;BaseRepresentation&#39;</span> <span class="ow">and</span> <span class="s">&#39;attr_classes&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s">&#39;Representations must have an &#39;</span>
+                                      <span class="s">&#39;&quot;attr_classes&quot; class attribute.&#39;</span><span class="p">)</span>
+
+        <span class="c"># Register representation name (except for BaseRepresentation)</span>
+        <span class="k">if</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;BaseRepresentation&#39;</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">REPRESENTATION_CLASSES</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">get_name</span><span class="p">()]</span> <span class="o">=</span> <span class="n">cls</span>
+
+
+<span class="nd">@six.add_metaclass</span><span class="p">(</span><span class="n">MetaBaseRepresentation</span><span class="p">)</span>
+<div class="viewcode-block" id="BaseRepresentation"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation">[docs]</a><span class="k">class</span> <span class="nc">BaseRepresentation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base Representation object, for representing a point in a 3D coordinate</span>
+<span class="sd">    system.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    All representation classes should subclass this base representation</span>
+<span class="sd">    class. All subclasses should then define a ``to_cartesian`` method and a</span>
+<span class="sd">    ``from_cartesian`` class method. By default, transformations are done via</span>
+<span class="sd">    the cartesian system, but classes that want to define a smarter</span>
+<span class="sd">    transformation path can overload the ``represent_as`` method.</span>
+<span class="sd">    Furthermore, all classes must define an ``attr_classes`` attribute, an</span>
+<span class="sd">    `~collections.OrderedDict` which maps component names to the class that</span>
+<span class="sd">    creates them.  They can also define a `recommended_units` dictionary, which</span>
+<span class="sd">    maps component names to the units they are best presented to users in.  Note</span>
+<span class="sd">    that frame classes may override this with their own preferred units.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">recommended_units</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c"># subclasses can override</span>
+
+<div class="viewcode-block" id="BaseRepresentation.represent_as"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation.represent_as">[docs]</a>    <span class="k">def</span> <span class="nf">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_class</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">other_class</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># The default is to convert via cartesian coordinates</span>
+            <span class="k">return</span> <span class="n">other_class</span><span class="o">.</span><span class="n">from_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_cartesian</span><span class="p">())</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseRepresentation.from_representation"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation.from_representation">[docs]</a>    <span class="k">def</span> <span class="nf">from_representation</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">representation</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">representation</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
+
+    <span class="c"># Should be replaced by abstractclassmethod once we support only Python 3</span></div>
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseRepresentation.from_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation.from_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+    <span class="nd">@abc.abstractmethod</span>
+<div class="viewcode-block" id="BaseRepresentation.to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation.to_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+</div>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;A tuple with the in-order names of the coordinate components&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="BaseRepresentation.get_name"><a class="viewcode-back" href="../../../api/astropy.coordinates.BaseRepresentation.html#astropy.coordinates.BaseRepresentation.get_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">&#39;representation&#39;</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[:</span><span class="o">-</span><span class="mi">14</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">name</span>
+</div>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">)[</span><span class="n">view</span><span class="p">]</span>
+                                <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;&#39;{cls}&#39; object with scalar values have no &quot;</span>
+                            <span class="s">&quot;len()&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+    <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Py 2.x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c"># Py 3.x</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">isscalar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">isscalar</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_values</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Turn the coordinates into a record array with the coordinate values.</span>
+
+<span class="sd">        The record array fields will have the component names.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">allcomp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+                            <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">])</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">([(</span><span class="nb">str</span><span class="p">(</span><span class="n">component</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rollaxis</span><span class="p">(</span><span class="n">allcomp</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">allcomp</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+                <span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a dictionary with the units of the coordinate components.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">component</span><span class="p">,</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">)</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_unitstr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">units_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">units_set</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">unitstr</span> <span class="o">=</span> <span class="n">units_set</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">unitstr</span> <span class="o">=</span> <span class="s">&#39;({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="p">[</span><span class="n">component</span><span class="p">]</span><span class="o">.</span><span class="n">to_string</span><span class="p">()</span>
+                           <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">unitstr</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_units</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="s">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">))</span>
+                 <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;{0} {1:s}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unitstr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">isscalar</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;&lt;{0} {1}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;{0}={1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">component</span><span class="p">,</span>
+                                            <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">))</span>
+                           <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">]))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefixstr</span> <span class="o">=</span> <span class="s">&#39;    &#39;</span>
+            <span class="n">arrstr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_values</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="s">&#39;, &#39;</span><span class="p">,</span>
+                                     <span class="n">prefix</span><span class="o">=</span><span class="n">prefixstr</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="s">&#39;&lt;{0} ({1}) in {2:s}</span><span class="se">\n</span><span class="s">{3}{4}&gt;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">components</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_unitstr</span><span class="p">,</span> <span class="n">prefixstr</span><span class="p">,</span> <span class="n">arrstr</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="CartesianRepresentation"><a class="viewcode-back" href="../../../api/astropy.coordinates.CartesianRepresentation.html#astropy.coordinates.CartesianRepresentation">[docs]</a><span class="k">class</span> <span class="nc">CartesianRepresentation</span><span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representation of points in 3D cartesian coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x, y, z : `~astropy.units.Quantity`</span>
+<span class="sd">        The x, y, and z coordinates of the point(s). If ``x``, ``y``, and</span>
+<span class="sd">        ``z`` have different shapes, they should be broadcastable.</span>
+
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        If True arrays will be copied rather than referenced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attr_classes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;x&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;y&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)])</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">y</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">y</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">y</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">z</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;x, y, and z are required to instantiate CartesianRepresentation&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;x should be a {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;y should be a {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;z should be a {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;x&#39;</span><span class="p">](</span><span class="n">x</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;y&#39;</span><span class="p">](</span><span class="n">y</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">](</span><span class="n">z</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span> <span class="o">==</span> <span class="n">z</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span><span class="s">&quot;x, y, and z should have matching physical types&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">broadcast_quantity</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Input parameters x, y, and z cannot be broadcast&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="n">z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The x component of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_x</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The y component of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The z component of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">xyz</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span><span class="p">))</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CartesianRepresentation.from_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.CartesianRepresentation.html#astropy.coordinates.CartesianRepresentation.from_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">other</span>
+</div>
+<div class="viewcode-block" id="CartesianRepresentation.to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.CartesianRepresentation.html#astropy.coordinates.CartesianRepresentation.to_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+</div></div>
+<div class="viewcode-block" id="SphericalRepresentation"><a class="viewcode-back" href="../../../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation">[docs]</a><span class="k">class</span> <span class="nc">SphericalRepresentation</span><span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representation of points in 3D spherical coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lon, lat : `~astropy.units.Quantity`</span>
+<span class="sd">        The longitude and latitude of the point(s), in angular units. The</span>
+<span class="sd">        latitude should be between -90 and 90 degrees, and the longitude will</span>
+<span class="sd">        be wrapped to an angle between 0 and 360 degrees. These can also be</span>
+<span class="sd">        instances of `~astropy.coordinates.Angle`,</span>
+<span class="sd">        `~astropy.coordinates.Longitude`, or `~astropy.coordinates.Latitude`.</span>
+
+<span class="sd">    distance : `~astropy.units.Quantity`</span>
+<span class="sd">        The distance to the point(s). If the distance is a length, it is</span>
+<span class="sd">        passed to the :class:`~astropy.coordinates.Distance` class, otherwise</span>
+<span class="sd">        it is passed to the :class:`~astropy.units.Quantity` class.</span>
+
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        If True arrays will be copied rather than referenced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attr_classes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="n">Longitude</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="n">Latitude</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;distance&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)])</span>
+    <span class="n">recommended_units</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;lon&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="s">&#39;lat&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">Latitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;lon should be a Quantity, Angle, or Longitude&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">Longitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;lat should be a Quantity, Angle, or Latitude&#39;</span><span class="p">)</span>
+
+        <span class="c"># Let the Longitude and Latitude classes deal with e.g. parsing</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;lon&#39;</span><span class="p">](</span><span class="n">lon</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;lat&#39;</span><span class="p">](</span><span class="n">lat</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+        <span class="n">distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;distance&#39;</span><span class="p">](</span><span class="n">distance</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">distance</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span> <span class="o">==</span> <span class="s">&#39;length&#39;</span><span class="p">:</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">distance</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">Distance</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">broadcast_quantity</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Input parameters lon, lat, and distance cannot be broadcast&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lon</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lat</span> <span class="o">=</span> <span class="n">lat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="n">distance</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The longitude of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lon</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The latitude of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lat</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The distance from the origin to the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span>
+
+<div class="viewcode-block" id="SphericalRepresentation.represent_as"><a class="viewcode-back" href="../../../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation.represent_as">[docs]</a>    <span class="k">def</span> <span class="nf">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_class</span><span class="p">):</span>
+        <span class="c"># Take a short cut if the other clsss is a spherical representation</span>
+        <span class="k">if</span> <span class="n">other_class</span> <span class="ow">is</span> <span class="n">PhysicsSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PhysicsSphericalRepresentation</span><span class="p">(</span><span class="n">phi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+                                                  <span class="n">theta</span><span class="o">=</span><span class="mi">90</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                                                  <span class="n">r</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other_class</span> <span class="ow">is</span> <span class="n">UnitSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSphericalRepresentation</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">SphericalRepresentation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">other_class</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SphericalRepresentation.to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation.to_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts spherical polar coordinates to 3D rectangular cartesian</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># We need to convert Distance to Quantity to allow negative values.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="n">Distance</span><span class="p">):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SphericalRepresentation.from_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation.from_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts 3D rectangular cartesian coordinates to spherical polar</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="UnitSphericalRepresentation"><a class="viewcode-back" href="../../../api/astropy.coordinates.UnitSphericalRepresentation.html#astropy.coordinates.UnitSphericalRepresentation">[docs]</a><span class="k">class</span> <span class="nc">UnitSphericalRepresentation</span><span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representation of points on a unit sphere.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lon, lat : `~astropy.units.Quantity` or str</span>
+<span class="sd">        The longitude and latitude of the point(s), in angular units. The</span>
+<span class="sd">        latitude should be between -90 and 90 degrees, and the longitude will</span>
+<span class="sd">        be wrapped to an angle between 0 and 360 degrees. These can also be</span>
+<span class="sd">        instances of `~astropy.coordinates.Angle`,</span>
+<span class="sd">        `~astropy.coordinates.Longitude`, or `~astropy.coordinates.Latitude`.</span>
+
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        If True arrays will be copied rather than referenced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attr_classes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="n">Longitude</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="n">Latitude</span><span class="p">)])</span>
+    <span class="n">recommended_units</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;lon&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="s">&#39;lat&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">Latitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;lon should be a Quantity, Angle, or Longitude&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">Longitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;lat should be a Quantity, Angle, or Latitude&#39;</span><span class="p">)</span>
+        <span class="c"># Let the Longitude and Latitude classes deal with e.g. parsing</span>
+        <span class="n">lon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;lon&#39;</span><span class="p">](</span><span class="n">lon</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;lat&#39;</span><span class="p">](</span><span class="n">lat</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lon</span><span class="p">,</span> <span class="n">lat</span> <span class="o">=</span> <span class="n">broadcast_quantity</span><span class="p">(</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Input parameters lon and lat cannot be broadcast&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lon</span> <span class="o">=</span> <span class="n">lon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lat</span> <span class="o">=</span> <span class="n">lat</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The longitude of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lon</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">lat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The latitude of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lat</span>
+
+    <span class="c"># TODO: implement represent_as for efficient transformations</span>
+
+<div class="viewcode-block" id="UnitSphericalRepresentation.to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.UnitSphericalRepresentation.html#astropy.coordinates.UnitSphericalRepresentation.to_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts spherical polar coordinates to 3D rectangular cartesian</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">one</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">one</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">one</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="UnitSphericalRepresentation.from_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.UnitSphericalRepresentation.html#astropy.coordinates.UnitSphericalRepresentation.from_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts 3D rectangular cartesian coordinates to spherical polar</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+        <span class="n">lon</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">lat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="UnitSphericalRepresentation.represent_as"><a class="viewcode-back" href="../../../api/astropy.coordinates.UnitSphericalRepresentation.html#astropy.coordinates.UnitSphericalRepresentation.represent_as">[docs]</a>    <span class="k">def</span> <span class="nf">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_class</span><span class="p">):</span>
+        <span class="c"># Take a short cut if the other clsss is a spherical representation</span>
+        <span class="k">if</span> <span class="n">other_class</span> <span class="ow">is</span> <span class="n">PhysicsSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PhysicsSphericalRepresentation</span><span class="p">(</span><span class="n">phi</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span>
+                                                  <span class="n">theta</span><span class="o">=</span><span class="mi">90</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span>
+                                                  <span class="n">r</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other_class</span> <span class="ow">is</span> <span class="n">SphericalRepresentation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SphericalRepresentation</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lon</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">lat</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">UnitSphericalRepresentation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">other_class</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="PhysicsSphericalRepresentation"><a class="viewcode-back" href="../../../api/astropy.coordinates.PhysicsSphericalRepresentation.html#astropy.coordinates.PhysicsSphericalRepresentation">[docs]</a><span class="k">class</span> <span class="nc">PhysicsSphericalRepresentation</span><span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representation of points in 3D spherical coordinates (using the physics</span>
+<span class="sd">    convention of using ``phi`` and ``theta`` for azimuth and inclination</span>
+<span class="sd">    from the pole).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phi, theta : `~astropy.units.Quantity` or str</span>
+<span class="sd">        The azimuth and inclination of the point(s), in angular units. The</span>
+<span class="sd">        inclination should be between 0 and 180 degrees, and the azimuth will</span>
+<span class="sd">        be wrapped to an angle between 0 and 360 degrees. These can also be</span>
+<span class="sd">        instances of `~astropy.coordinates.Angle`.  If ``copy`` is False, `phi`</span>
+<span class="sd">        will be changed inplace if it is not between 0 and 360 degrees.</span>
+
+<span class="sd">    r : `~astropy.units.Quantity`</span>
+<span class="sd">        The distance to the point(s). If the distance is a length, it is</span>
+<span class="sd">        passed to the :class:`~astropy.coordinates.Distance` class, otherwise</span>
+<span class="sd">        it is passed to the :class:`~astropy.units.Quantity` class.</span>
+
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        If True arrays will be copied rather than referenced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attr_classes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;phi&#39;</span><span class="p">,</span> <span class="n">Angle</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;theta&#39;</span><span class="p">,</span> <span class="n">Angle</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;r&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)])</span>
+    <span class="n">recommended_units</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;phi&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="s">&#39;theta&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">Latitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;phi should be a Quantity or Angle&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">Longitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;phi should be a Quantity or Angle&#39;</span><span class="p">)</span>
+
+        <span class="c"># Let the Longitude and Latitude classes deal with e.g. parsing</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;phi&#39;</span><span class="p">](</span><span class="n">phi</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;theta&#39;</span><span class="p">](</span><span class="n">theta</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+        <span class="c"># Wrap/validate phi/theta</span>
+        <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+            <span class="n">phi</span> <span class="o">=</span> <span class="n">phi</span><span class="o">.</span><span class="n">wrap_at</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># necessary because the above version of `wrap_at` has to be a copy</span>
+            <span class="n">phi</span><span class="o">.</span><span class="n">wrap_at</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">theta</span><span class="o">.</span><span class="n">value</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">theta</span><span class="o">.</span><span class="n">value</span> <span class="o">&gt;</span> <span class="mf">180.</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Inclination angle(s) must be within 0 deg &lt;= angle &lt;= 180 deg, &#39;</span>
+                             <span class="s">&#39;got {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">theta</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)))</span>
+
+        <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;r&#39;</span><span class="p">](</span><span class="n">r</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span> <span class="o">==</span> <span class="s">&#39;length&#39;</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">Distance</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">broadcast_quantity</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Input parameters phi, theta, and r cannot be broadcast&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phi</span> <span class="o">=</span> <span class="n">phi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_theta</span> <span class="o">=</span> <span class="n">theta</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span> <span class="o">=</span> <span class="n">r</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The azimuth of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phi</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">theta</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The elevation of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_theta</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">r</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The distance from the origin to the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance</span>
+
+<div class="viewcode-block" id="PhysicsSphericalRepresentation.represent_as"><a class="viewcode-back" href="../../../api/astropy.coordinates.PhysicsSphericalRepresentation.html#astropy.coordinates.PhysicsSphericalRepresentation.represent_as">[docs]</a>    <span class="k">def</span> <span class="nf">represent_as</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other_class</span><span class="p">):</span>
+        <span class="c"># Take a short cut if the other clsss is a spherical representation</span>
+        <span class="k">if</span> <span class="n">other_class</span> <span class="ow">is</span> <span class="n">SphericalRepresentation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">SphericalRepresentation</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">,</span>
+                                           <span class="n">lat</span><span class="o">=</span><span class="mi">90</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span>
+                                           <span class="n">distance</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">other_class</span> <span class="ow">is</span> <span class="n">UnitSphericalRepresentation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">UnitSphericalRepresentation</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">,</span>
+                                               <span class="n">lat</span><span class="o">=</span><span class="mi">90</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">PhysicsSphericalRepresentation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">represent_as</span><span class="p">(</span><span class="n">other_class</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="PhysicsSphericalRepresentation.to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.PhysicsSphericalRepresentation.html#astropy.coordinates.PhysicsSphericalRepresentation.to_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts spherical polar coordinates to 3D rectangular cartesian</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># We need to convert Distance to Quantity to allow negative values.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">,</span> <span class="n">Distance</span><span class="p">):</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">d</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="PhysicsSphericalRepresentation.from_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.PhysicsSphericalRepresentation.html#astropy.coordinates.PhysicsSphericalRepresentation.from_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts 3D rectangular cartesian coordinates to spherical polar</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">z</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">phi</span><span class="o">=</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="CylindricalRepresentation"><a class="viewcode-back" href="../../../api/astropy.coordinates.CylindricalRepresentation.html#astropy.coordinates.CylindricalRepresentation">[docs]</a><span class="k">class</span> <span class="nc">CylindricalRepresentation</span><span class="p">(</span><span class="n">BaseRepresentation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representation of points in 3D cylindrical coordinates.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rho : `~astropy.units.Quantity`</span>
+<span class="sd">        The distance from the z axis to the point(s).</span>
+
+<span class="sd">    phi : `~astropy.units.Quantity`</span>
+<span class="sd">        The azimuth of the point(s), in angular units, which will be wrapped</span>
+<span class="sd">        to an angle between 0 and 360 degrees. This can also be instances of</span>
+<span class="sd">        `~astropy.coordinates.Angle`,</span>
+
+<span class="sd">    z : `~astropy.units.Quantity`</span>
+<span class="sd">        The z coordinate(s) of the point(s)</span>
+
+<span class="sd">    copy : bool, optional</span>
+<span class="sd">        If True arrays will be copied rather than referenced.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">attr_classes</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="s">&#39;rho&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;phi&#39;</span><span class="p">,</span> <span class="n">Angle</span><span class="p">),</span>
+                                <span class="p">(</span><span class="s">&#39;z&#39;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)])</span>
+    <span class="n">recommended_units</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;phi&#39;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span><span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">Latitude</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;phi should be a Quantity or Angle&#39;</span><span class="p">)</span>
+
+        <span class="n">rho</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;rho&#39;</span><span class="p">](</span><span class="n">rho</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;phi&#39;</span><span class="p">](</span><span class="n">phi</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr_classes</span><span class="p">[</span><span class="s">&#39;z&#39;</span><span class="p">](</span><span class="n">z</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="n">copy</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">rho</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span> <span class="o">==</span> <span class="n">z</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">physical_type</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span><span class="s">&quot;rho and z should have matching physical types&quot;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rho</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">z</span> <span class="o">=</span> <span class="n">broadcast_quantity</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Input parameters rho, phi, and z cannot be broadcast&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span> <span class="o">=</span> <span class="n">rho</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_phi</span> <span class="o">=</span> <span class="n">phi</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_z</span> <span class="o">=</span> <span class="n">z</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">rho</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The distance of the point(s) from the z-axis.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rho</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">phi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The azimuth of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_phi</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">z</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The height of the point(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_z</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="CylindricalRepresentation.from_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.CylindricalRepresentation.html#astropy.coordinates.CylindricalRepresentation.from_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">from_cartesian</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cart</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts 3D rectangular cartesian coordinates to cylindrical polar</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">cart</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">cart</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">cart</span><span class="o">.</span><span class="n">z</span>
+
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">rho</span><span class="o">=</span><span class="n">rho</span><span class="p">,</span> <span class="n">phi</span><span class="o">=</span><span class="n">phi</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CylindricalRepresentation.to_cartesian"><a class="viewcode-back" href="../../../api/astropy.coordinates.CylindricalRepresentation.html#astropy.coordinates.CylindricalRepresentation.to_cartesian">[docs]</a>    <span class="k">def</span> <span class="nf">to_cartesian</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts cylindrical polar coordinates to 3D rectangular cartesian</span>
+<span class="sd">        coordinates.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rho</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span>
+
+        <span class="k">return</span> <span class="n">CartesianRepresentation</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

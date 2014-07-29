@@ -1,0 +1,607 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Unified file read/write interface &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="FITS File handling (astropy.io.fits)" href="fits/index.html" />
+    <link rel="prev" title="Rotation2D" href="../api/astropy.modeling.rotations.Rotation2D.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="fits/index.html" title="FITS File handling (astropy.io.fits)">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astropy.modeling.rotations.Rotation2D.html" title="Rotation2D">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Unified file read/write interface</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="unified-file-read-write-interface">
+<span id="table-io"></span><h1>Unified file read/write interface<a class="headerlink" href="#unified-file-read-write-interface" title="Permalink to this headline">¶</a></h1>
+<p>Astropy provides a unified interface for reading and writing data in different formats.
+For many common cases this will simplify the process of file I/O and reduce the need to
+master the separate details of all the I/O packages within Astropy.  This functionality is
+still in active development and the number of supported formats will be increasing.  For
+details on the implementation see <a class="reference internal" href="registry.html#io-registry"><em>I/O Registry (astropy.io.registry)</em></a>.</p>
+<div class="section" id="getting-started-with-table-i-o">
+<h2>Getting started with Table I/O<a class="headerlink" href="#getting-started-with-table-i-o" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> class includes two methods,
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table.read" title="astropy.table.Table.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> and
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table.write" title="astropy.table.Table.write"><tt class="xref py py-meth docutils literal"><span class="pre">write()</span></tt></a>, that make it possible to read from
+and write to files. A number of formats are automatically supported (see
+<a class="reference internal" href="#built-in-table-readers-writers">Built-in table readers/writers</a>) and new file formats and extensions can be
+registered with the <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> class (see
+<a class="reference internal" href="registry.html#io-registry"><em>I/O Registry (astropy.io.registry)</em></a>).</p>
+<p>To use this interface, first import the <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> class, then
+simply call the <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a>
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table.read" title="astropy.table.Table.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> method with the name of the file and
+the file format, for instance <tt class="docutils literal"><span class="pre">'ascii.daophot'</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;photometry.dat&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;ascii.daophot&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is possible to load tables directly from the Internet using URLs. For example,
+download tables from Vizier catalogues in CDS format (<tt class="docutils literal"><span class="pre">'ascii.cds'</span></tt>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&quot;ftp://cdsarc.u-strasbg.fr/pub/cats/VII/253/snrs.dat&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">readme</span><span class="o">=</span><span class="s">&quot;ftp://cdsarc.u-strasbg.fr/pub/cats/VII/253/ReadMe&quot;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">format</span><span class="o">=</span><span class="s">&quot;ascii.cds&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For certain file formats, the format can be automatically detected, for
+example from the filename extension:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;table.tex&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Similarly, for writing, the format can be explicitly specified:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;latex&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As for the <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table.read" title="astropy.table.Table.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> method, the format may
+be automatically identified in some cases.</p>
+<p>Any additional arguments specified will depend on the format.  For examples of this see the
+section <a class="reference internal" href="#built-in-table-readers-writers">Built-in table readers/writers</a>.  This section also provides the full list of
+choices for the <tt class="docutils literal"><span class="pre">format</span></tt> argument.</p>
+</div>
+<div class="section" id="built-in-table-readers-writers">
+<span id="built-in-readers-writers"></span><h2>Built-in table readers/writers<a class="headerlink" href="#built-in-table-readers-writers" title="Permalink to this headline">¶</a></h2>
+<p>The full list of built-in readers and writers is shown in the table below:</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="46%" />
+<col width="7%" />
+<col width="8%" />
+<col width="22%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Format</th>
+<th class="head">Read</th>
+<th class="head">Write</th>
+<th class="head">Auto-identify</th>
+<th class="head">Deprecated</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>aastex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>ascii</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.aastex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.basic</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.cds</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.commented_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.daophot</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.fixed_width</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.fixed_width_no_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.fixed_width_two_line</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.html</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.ipac</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.latex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.no_header</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.rdb</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.sextractor</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>ascii.tab</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>ascii.csv</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>cds</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>daophot</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>fits</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>hdf5</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>html</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>ipac</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>latex</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>rdb</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>votable</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<p>Deprecated format names like <tt class="docutils literal"><span class="pre">aastex</span></tt> will be removed in a future version.
+Use the full name (e.g. <tt class="docutils literal"><span class="pre">ascii.aastex</span></tt>) instead.</p>
+<div class="section" id="ascii-formats">
+<span id="table-io-ascii"></span><h3>ASCII formats<a class="headerlink" href="#ascii-formats" title="Permalink to this headline">¶</a></h3>
+<p>The <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table.read" title="astropy.table.Table.read"><tt class="xref py py-meth docutils literal"><span class="pre">read()</span></tt></a> and
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table.write" title="astropy.table.Table.write"><tt class="xref py py-meth docutils literal"><span class="pre">write()</span></tt></a> methods can be used to read and write formats
+supported by <a class="reference internal" href="ascii/index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.ascii</span></tt></a>.</p>
+<p>Use <tt class="docutils literal"><span class="pre">format='ascii'</span></tt> in order to interface to the generic
+<a class="reference internal" href="../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> and <a class="reference internal" href="../api/astropy.io.ascii.write.html#astropy.io.ascii.write" title="astropy.io.ascii.write"><tt class="xref py py-func docutils literal"><span class="pre">write()</span></tt></a>
+functions from <a class="reference internal" href="ascii/index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.ascii</span></tt></a>.  When reading a table this means
+that all supported ASCII table formats will be tried in order to successfully
+parse the input.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;astropy/io/ascii/tests/t/latex1.tex&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;ascii&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">t</span>
+<span class="go">cola colb colc</span>
+<span class="go">---- ---- ----</span>
+<span class="go">   a    1    2</span>
+<span class="go">   b    3    4</span>
+</pre></div>
+</div>
+<p>When writing a table with <tt class="docutils literal"><span class="pre">format='ascii'</span></tt> the output is a basic
+character-delimited file with a single header line containing the
+column names.</p>
+<p>All additional arguments are passed to the <a class="reference internal" href="ascii/index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.ascii</span></tt></a>
+<a class="reference internal" href="../api/astropy.io.ascii.read.html#astropy.io.ascii.read" title="astropy.io.ascii.read"><tt class="xref py py-func docutils literal"><span class="pre">read()</span></tt></a> and <a class="reference internal" href="../api/astropy.io.ascii.write.html#astropy.io.ascii.write" title="astropy.io.ascii.write"><tt class="xref py py-func docutils literal"><span class="pre">write()</span></tt></a>
+functions. Further details are available in the sections on
+<a class="reference internal" href="ascii/read.html#io-ascii-read-parameters"><em>Parameters for read()</em></a> and <a class="reference internal" href="ascii/write.html#io-ascii-write-parameters"><em>Parameters for write()</em></a>.  For example, to change
+column delimiter and the output format for the <tt class="docutils literal"><span class="pre">colc</span></tt> column use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;ascii&#39;</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&#39;|&#39;</span><span class="p">,</span> <span class="n">formats</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;colc&#39;</span><span class="p">:</span> <span class="s">&#39;</span><span class="si">%0.2f</span><span class="s">&#39;</span><span class="p">})</span>
+<span class="go">cola|colb|colc</span>
+<span class="go">a|1|2.00</span>
+<span class="go">b|3|4.00</span>
+</pre></div>
+</div>
+<p>A full list of the supported <tt class="docutils literal"><span class="pre">format</span></tt> values and corresponding format types
+for ASCII tables is given below.  The <tt class="docutils literal"><span class="pre">Suffix</span></tt> column indicates the filename
+suffix where the format will be auto-detected, while the <tt class="docutils literal"><span class="pre">Write</span></tt> column
+indicates which support write functionality.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="4%" />
+<col width="4%" />
+<col width="69%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Format</th>
+<th class="head">Suffix</th>
+<th class="head">Write</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td>ASCII table in any supported format (uses guessing)</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.aastex</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.AASTex.html#astropy.io.ascii.AASTex" title="astropy.io.ascii.AASTex"><tt class="xref py py-class docutils literal"><span class="pre">AASTex</span></tt></a>: AASTeX deluxetable used for AAS journals</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.basic</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Basic.html#astropy.io.ascii.Basic" title="astropy.io.ascii.Basic"><tt class="xref py py-class docutils literal"><span class="pre">Basic</span></tt></a>: Basic table with custom delimiters</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.cds</span></tt></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Cds.html#astropy.io.ascii.Cds" title="astropy.io.ascii.Cds"><tt class="xref py py-class docutils literal"><span class="pre">Cds</span></tt></a>: CDS format table</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.commented_header</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.CommentedHeader.html#astropy.io.ascii.CommentedHeader" title="astropy.io.ascii.CommentedHeader"><tt class="xref py py-class docutils literal"><span class="pre">CommentedHeader</span></tt></a>: Column names in a commented line</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.daophot</span></tt></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Daophot.html#astropy.io.ascii.Daophot" title="astropy.io.ascii.Daophot"><tt class="xref py py-class docutils literal"><span class="pre">Daophot</span></tt></a>: IRAF DAOphot format table</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.fixed_width</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.FixedWidth.html#astropy.io.ascii.FixedWidth" title="astropy.io.ascii.FixedWidth"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidth</span></tt></a>: Fixed width</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.fixed_width_no_header</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.FixedWidthNoHeader.html#astropy.io.ascii.FixedWidthNoHeader" title="astropy.io.ascii.FixedWidthNoHeader"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidthNoHeader</span></tt></a>: Fixed width with no header</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.fixed_width_two_line</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.FixedWidthTwoLine.html#astropy.io.ascii.FixedWidthTwoLine" title="astropy.io.ascii.FixedWidthTwoLine"><tt class="xref py py-class docutils literal"><span class="pre">FixedWidthTwoLine</span></tt></a>: Fixed width with second header line</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.ipac</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Ipac.html#astropy.io.ascii.Ipac" title="astropy.io.ascii.Ipac"><tt class="xref py py-class docutils literal"><span class="pre">Ipac</span></tt></a>: IPAC format table</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.html</span></tt></td>
+<td>.html</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.HTML.html#astropy.io.ascii.HTML" title="astropy.io.ascii.HTML"><tt class="xref py py-class docutils literal"><span class="pre">HTML</span></tt></a>: HTML table</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.latex</span></tt></td>
+<td>.tex</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Latex.html#astropy.io.ascii.Latex" title="astropy.io.ascii.Latex"><tt class="xref py py-class docutils literal"><span class="pre">Latex</span></tt></a>: LaTeX table</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.no_header</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.NoHeader.html#astropy.io.ascii.NoHeader" title="astropy.io.ascii.NoHeader"><tt class="xref py py-class docutils literal"><span class="pre">NoHeader</span></tt></a>: Basic table with no headers</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.rdb</span></tt></td>
+<td>.rdb</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Rdb.html#astropy.io.ascii.Rdb" title="astropy.io.ascii.Rdb"><tt class="xref py py-class docutils literal"><span class="pre">Rdb</span></tt></a>: Tab-separated with a type definition header line</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.sextractor</span></tt></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.SExtractor.html#astropy.io.ascii.SExtractor" title="astropy.io.ascii.SExtractor"><tt class="xref py py-class docutils literal"><span class="pre">SExtractor</span></tt></a>: SExtractor format table</td>
+</tr>
+<tr class="row-odd"><td><tt class="docutils literal"><span class="pre">ascii.tab</span></tt></td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Tab.html#astropy.io.ascii.Tab" title="astropy.io.ascii.Tab"><tt class="xref py py-class docutils literal"><span class="pre">Tab</span></tt></a>: Basic table with tab-separated values</td>
+</tr>
+<tr class="row-even"><td><tt class="docutils literal"><span class="pre">ascii.csv</span></tt></td>
+<td>.csv</td>
+<td>Yes</td>
+<td><a class="reference internal" href="../api/astropy.io.ascii.Csv.html#astropy.io.ascii.Csv" title="astropy.io.ascii.Csv"><tt class="xref py py-class docutils literal"><span class="pre">Csv</span></tt></a>: Basic table with comma-separated values</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>When specifying a specific ASCII table format using the unified interface, the format name is
+prefixed with <tt class="docutils literal"><span class="pre">ascii.</span></tt> in order to identify the format as ASCII-based.  Compare the
+table above to the <a class="reference internal" href="ascii/index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.ascii</span></tt></a> list of <a class="reference internal" href="ascii/index.html#supported-formats"><em>Supported formats</em></a>.  Therefore the following
+are equivalent:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span> <span class="o">=</span> <span class="n">ascii</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;file.dat&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;daophot&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dat</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;file.dat&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;ascii.daophot&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="last">For compatibility with astropy version 0.2 and earlier, the following format
+values are also allowed in <tt class="docutils literal"><span class="pre">Table.read()</span></tt>: <tt class="docutils literal"><span class="pre">daophot</span></tt>, <tt class="docutils literal"><span class="pre">ipac</span></tt>, <tt class="docutils literal"><span class="pre">html</span></tt>, <tt class="docutils literal"><span class="pre">latex</span></tt>, and <tt class="docutils literal"><span class="pre">rdb</span></tt>.</p>
+</div>
+</div>
+<div class="section" id="fits">
+<span id="table-io-fits"></span><h3>FITS<a class="headerlink" href="#fits" title="Permalink to this headline">¶</a></h3>
+<p>Reading/writing from/to <a class="reference external" href="http://fits.gsfc.nasa.gov/">FITS</a>
+files is supported with <tt class="docutils literal"><span class="pre">format='fits'</span></tt>. In most cases, existing FITS
+files should be automatically identified as such based on the header of the
+file, but if not, or if writing to disk, then the format should be explicitly
+specified.</p>
+<p>If a FITS table file contains only a single table, then it can be read in
+with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;data.fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If more than one table is present in the file, the first table found will be
+read in and a warning will be emitted:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;data.fits&#39;</span><span class="p">)</span>
+<span class="go">WARNING: hdu= was not specified but multiple tables are present, reading in first available table (hdu=1) [astropy.io.fits.connect]</span>
+</pre></div>
+</div>
+<p>To write to a new file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;new_table.fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>At this time, the <tt class="docutils literal"><span class="pre">meta</span></tt> attribute of the
+<a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-class docutils literal"><span class="pre">Table</span></tt></a> class is simply an ordered
+dictionary and does not fully represent the structure of a FITS
+header (for example, keyword comments are dropped). This is likely
+to change in a future release.</p>
+</div>
+<div class="section" id="hdf5">
+<span id="table-io-hdf5"></span><h3>HDF5<a class="headerlink" href="#hdf5" title="Permalink to this headline">¶</a></h3>
+<p>Reading/writing from/to <a class="reference external" href="http://www.hdfgroup.org/HDF5/">HDF5</a> files is
+supported with <tt class="docutils literal"><span class="pre">format='hdf5'</span></tt> (this requires <a class="reference external" href="http://code.google.com/p/h5py/">h5py</a> to be installed). However, the <tt class="docutils literal"><span class="pre">.hdf5</span></tt>
+file extension is automatically recognized when writing files, and HDF5 files
+are automatically identified (even with a different extension) when reading
+in (using the first few bytes of the file to identify the format), so in most
+cases you will not need to explicitly specify <tt class="docutils literal"><span class="pre">format='hdf5'</span></tt>.</p>
+<p>Since HDF5 files can contain multiple tables, the full path to the table
+should be specified via the <tt class="docutils literal"><span class="pre">path=</span></tt> argument when reading and writing.
+For example, to read a table called <tt class="docutils literal"><span class="pre">data</span></tt> from an HDF5 file named
+<tt class="docutils literal"><span class="pre">observations.hdf5</span></tt>, you can do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;observations.hdf5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&#39;data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To read a table nested in a group in the HDF5 file, you can do:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;observations.hdf5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&#39;group/data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To write a table to a new file, the path should also be specified:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;new_file.hdf5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&#39;updated_data&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It is also possible to write a table to an existing file using <tt class="docutils literal"><span class="pre">append=True</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;observations.hdf5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&#39;updated_data&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, when writing to HDF5 files, the <tt class="docutils literal"><span class="pre">compression=</span></tt> argument can be
+used to ensure that the data is compressed on disk:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;new_file.hdf5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s">&#39;updated_data&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As with other formats, the <tt class="docutils literal"><span class="pre">overwrite=True</span></tt> argument is supported for
+overwriting existing files.</p>
+</div>
+<div class="section" id="vo-tables">
+<span id="table-io-votable"></span><h3>VO Tables<a class="headerlink" href="#vo-tables" title="Permalink to this headline">¶</a></h3>
+<p>Reading/writing from/to <a class="reference external" href="http://www.ivoa.net/Documents/VOTable/">VO table</a>
+files is supported with <tt class="docutils literal"><span class="pre">format='votable'</span></tt>. In most cases, existing VO
+tables should be automatically identified as such based on the header of the
+file, but if not, or if writing to disk, then the format should be explicitly
+specified.</p>
+<p>If a VO table file contains only a single table, then it can be read in with:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;aj285677t3_votable.xml&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>If more than one table is present in the file, an error will be raised,
+unless the table ID is specified via the <tt class="docutils literal"><span class="pre">table_id=</span></tt> argument:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;catalog.xml&#39;</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  File <span class="nb">&quot;&lt;stdin&gt;&quot;</span>, line <span class="m">1</span>, in <span class="n">&lt;module&gt;</span>
+  File <span class="nb">&quot;/Volumes/Raptor/Library/Python/2.7/lib/python/site-packages/astropy/table/table.py&quot;</span>, line <span class="m">1559</span>, in <span class="n">read</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="n">reader</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+  File <span class="nb">&quot;/Volumes/Raptor/Library/Python/2.7/lib/python/site-packages/astropy/io/votable/connect.py&quot;</span>, line <span class="m">44</span>, in <span class="n">read_table_votable</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Multiple tables found: table id should be set via the id= argument. The available tables are &quot;</span> <span class="o">+</span> <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tables</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+<span class="gr">ValueError</span>: <span class="n">Multiple tables found: table id should be set via the table_id= argument. The available tables are twomass, spitzer</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s">&#39;catalog.xml&#39;</span><span class="p">,</span> <span class="n">table_id</span><span class="o">=</span><span class="s">&#39;twomass&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To write to a new file, the ID of the table should also be specified (unless
+<tt class="docutils literal"><span class="pre">t.meta['ID']</span></tt> is defined):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39;new_catalog.xml&#39;</span><span class="p">,</span> <span class="n">table_id</span><span class="o">=</span><span class="s">&#39;updated_table&#39;</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;votable&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>When writing, the <tt class="docutils literal"><span class="pre">compression=True</span></tt> argument can be used to force
+compression of the data on disk, and the <tt class="docutils literal"><span class="pre">overwrite=True</span></tt> argument can be
+used to overwrite an existing file.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Unified file read/write interface</a><ul>
+<li><a class="reference internal" href="#getting-started-with-table-i-o">Getting started with Table I/O</a></li>
+<li><a class="reference internal" href="#built-in-table-readers-writers">Built-in table readers/writers</a><ul>
+<li><a class="reference internal" href="#ascii-formats">ASCII formats</a></li>
+<li><a class="reference internal" href="#fits">FITS</a></li>
+<li><a class="reference internal" href="#hdf5">HDF5</a></li>
+<li><a class="reference internal" href="#vo-tables">VO Tables</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/unified.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/io/unified.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

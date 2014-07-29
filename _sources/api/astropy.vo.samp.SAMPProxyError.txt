@@ -1,0 +1,10 @@
+
+.. include:: ../vo/samp/references.txt
+
+
+SAMPProxyError
+==============================
+
+.. currentmodule:: astropy.vo.samp
+
+.. autoexception:: SAMPProxyError

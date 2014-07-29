@@ -1,0 +1,516 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.io.registry &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.io.registry</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span>
+                        <span class="n">unicode_literals</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">..extern</span> <span class="kn">import</span> <span class="n">six</span>
+<span class="kn">from</span> <span class="nn">..extern.six.moves</span> <span class="kn">import</span> <span class="nb">zip</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;register_reader&#39;</span><span class="p">,</span> <span class="s">&#39;register_writer&#39;</span><span class="p">,</span> <span class="s">&#39;register_identifier&#39;</span><span class="p">,</span>
+           <span class="s">&#39;identify_format&#39;</span><span class="p">,</span> <span class="s">&#39;get_reader&#39;</span><span class="p">,</span> <span class="s">&#39;get_writer&#39;</span><span class="p">,</span> <span class="s">&#39;read&#39;</span><span class="p">,</span> <span class="s">&#39;write&#39;</span><span class="p">,</span>
+           <span class="s">&#39;get_formats&#39;</span><span class="p">]</span>
+
+
+<span class="n">__doctest_skip__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;register_identifier&#39;</span><span class="p">]</span>
+
+
+<span class="n">_readers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">_writers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">_identifiers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="get_formats"><a class="viewcode-back" href="../../../api/astropy.io.registry.get_formats.html#astropy.io.registry.get_formats">[docs]</a><span class="k">def</span> <span class="nf">get_formats</span><span class="p">(</span><span class="n">data_class</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the list of registered I/O formats as a Table.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_class : classobj</span>
+<span class="sd">        Filter readers/writer to match data class (default = all classes)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    format_table: Table</span>
+<span class="sd">        Table of available I/O formats</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">..table</span> <span class="kn">import</span> <span class="n">Table</span>
+    <span class="n">format_classes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">_readers</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">_writers</span><span class="p">),</span>
+                            <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">format_class</span> <span class="ow">in</span> <span class="n">format_classes</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data_class</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">_is_best_match</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">format_class</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">format_classes</span><span class="p">)):</span>
+            <span class="k">continue</span>
+
+        <span class="n">has_read</span> <span class="o">=</span> <span class="s">&#39;Yes&#39;</span> <span class="k">if</span> <span class="n">format_class</span> <span class="ow">in</span> <span class="n">_readers</span> <span class="k">else</span> <span class="s">&#39;No&#39;</span>
+        <span class="n">has_write</span> <span class="o">=</span> <span class="s">&#39;Yes&#39;</span> <span class="k">if</span> <span class="n">format_class</span> <span class="ow">in</span> <span class="n">_writers</span> <span class="k">else</span> <span class="s">&#39;No&#39;</span>
+        <span class="n">has_identify</span> <span class="o">=</span> <span class="s">&#39;Yes&#39;</span> <span class="k">if</span> <span class="n">format_class</span> <span class="ow">in</span> <span class="n">_identifiers</span> <span class="k">else</span> <span class="s">&#39;No&#39;</span>
+
+        <span class="c"># Check if this is a short name (e.g. &#39;rdb&#39;) which is deprecated in favor</span>
+        <span class="c"># of the full &#39;ascii.rdb&#39;.</span>
+        <span class="n">ascii_format_class</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;ascii.&#39;</span> <span class="o">+</span> <span class="n">format_class</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">format_class</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c"># In the following, we use &#39;   &#39; instead of &#39;&#39; because if the first</span>
+        <span class="c"># format that is added is not deprecated, the data type for this</span>
+        <span class="c"># element would be U0, which Numpy 1.5.x in Python 3 doesn&#39;t support,</span>
+        <span class="c"># so we have to give it a non-zero length.</span>
+        <span class="n">deprecated</span> <span class="o">=</span> <span class="s">&#39;Yes&#39;</span> <span class="k">if</span> <span class="n">ascii_format_class</span> <span class="ow">in</span> <span class="n">format_classes</span> <span class="k">else</span> <span class="s">&#39;   &#39;</span>
+
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">format_class</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">format_class</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">has_read</span><span class="p">,</span> <span class="n">has_write</span><span class="p">,</span>
+                     <span class="n">has_identify</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">))</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">rows</span><span class="p">))</span> <span class="k">if</span> <span class="n">rows</span> <span class="k">else</span> <span class="bp">None</span>
+    <span class="n">format_table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;Data class&#39;</span><span class="p">,</span> <span class="s">&#39;Format&#39;</span><span class="p">,</span> <span class="s">&#39;Read&#39;</span><span class="p">,</span> <span class="s">&#39;Write&#39;</span><span class="p">,</span>
+                                      <span class="s">&#39;Auto-identify&#39;</span><span class="p">,</span> <span class="s">&#39;Deprecated&#39;</span><span class="p">))</span>
+    <span class="n">format_table</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s">&#39;Data class&#39;</span><span class="p">,</span> <span class="s">&#39;Deprecated&#39;</span><span class="p">,</span> <span class="s">&#39;Format&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">format_table</span><span class="p">[</span><span class="s">&#39;Deprecated&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Yes&#39;</span><span class="p">):</span>
+        <span class="n">format_table</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s">&#39;Deprecated&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">format_table</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_update__doc__</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update the docstring to include all the available readers / writers for the</span>
+<span class="sd">    ``data_class.read`` or ``data_class.write`` functions (respectively).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">FORMATS_TEXT</span> <span class="o">=</span> <span class="s">&#39;The available built-in formats are:&#39;</span>
+
+    <span class="c"># Get the existing read or write method and its docstring</span>
+    <span class="n">class_readwrite_func</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">class_readwrite_func</span><span class="o">.</span><span class="n">__doc__</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+
+    <span class="c"># Find the location of the existing formats table if it exists</span>
+    <span class="n">sep_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">ii</span> <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="k">if</span> <span class="n">FORMATS_TEXT</span> <span class="ow">in</span> <span class="n">line</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">sep_indices</span><span class="p">:</span>
+        <span class="c"># Chop off the existing formats table, including the initial blank line.</span>
+        <span class="n">chop_index</span> <span class="o">=</span> <span class="n">sep_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[:</span><span class="n">chop_index</span><span class="p">]</span>
+
+    <span class="c"># Find the minimum indent, skipping the first line because it might be odd</span>
+    <span class="n">matches</span> <span class="o">=</span> <span class="p">[</span><span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="s">&#39;(\S)&#39;</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+    <span class="n">left_indent</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">start</span><span class="p">()</span> <span class="k">for</span> <span class="n">match</span> <span class="ow">in</span> <span class="n">matches</span> <span class="k">if</span> <span class="n">match</span><span class="p">)</span>
+
+    <span class="c"># Get the available unified I/O formats for this class</span>
+    <span class="n">format_table</span> <span class="o">=</span> <span class="n">get_formats</span><span class="p">(</span><span class="n">data_class</span><span class="p">)</span>
+
+    <span class="c"># Include only formats that have a reader, and drop the &#39;Data class&#39; column</span>
+    <span class="n">has_readwrite</span> <span class="o">=</span> <span class="n">format_table</span><span class="p">[</span><span class="n">readwrite</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()]</span> <span class="o">==</span> <span class="s">&#39;Yes&#39;</span>
+    <span class="n">format_table</span> <span class="o">=</span> <span class="n">format_table</span><span class="p">[</span><span class="n">has_readwrite</span><span class="p">]</span>
+    <span class="n">format_table</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s">&#39;Data class&#39;</span><span class="p">)</span>
+
+    <span class="c"># Get the available formats as a table, then munge the output of pformat() a bit and</span>
+    <span class="c"># put it into the docstring.</span>
+    <span class="n">new_lines</span> <span class="o">=</span> <span class="n">format_table</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">max_lines</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">80</span><span class="p">)</span>
+    <span class="n">table_rst_sep</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="n">new_lines</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">new_lines</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">table_rst_sep</span>
+    <span class="n">new_lines</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">table_rst_sep</span><span class="p">)</span>
+    <span class="n">new_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_rst_sep</span><span class="p">)</span>
+
+    <span class="c"># Check for deprecated names and include a warning at the end.</span>
+    <span class="k">if</span> <span class="s">&#39;Deprecated&#39;</span> <span class="ow">in</span> <span class="n">format_table</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+        <span class="n">new_lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39;&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;Deprecated format names like ``aastex`` will be removed in a &#39;</span>
+                          <span class="s">&#39;future version.&#39;</span><span class="p">,</span>
+                          <span class="s">&#39;Use the full name (e.g. ``ascii.aastex``) instead.&#39;</span><span class="p">])</span>
+
+    <span class="n">new_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">FORMATS_TEXT</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">new_lines</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s">&#39; &#39;</span> <span class="o">*</span> <span class="n">left_indent</span> <span class="o">+</span> <span class="n">line</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">new_lines</span><span class="p">])</span>
+
+    <span class="c"># Depending on Python version and whether class_readwrite_func is</span>
+    <span class="c"># an instancemethod or classmethod, one of the following will work.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">class_readwrite_func</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="n">class_readwrite_func</span><span class="o">.</span><span class="n">__func__</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="register_reader"><a class="viewcode-back" href="../../../api/astropy.io.registry.register_reader.html#astropy.io.registry.register_reader">[docs]</a><span class="k">def</span> <span class="nf">register_reader</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a reader function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_format : str</span>
+<span class="sd">        The data type identifier. This is the string that will be used to</span>
+<span class="sd">        specify the data type when reading.</span>
+<span class="sd">    data_class : classobj</span>
+<span class="sd">        The class of the object that the reader produces</span>
+<span class="sd">    function : function</span>
+<span class="sd">        The function to read in a data object.</span>
+<span class="sd">    force : bool</span>
+<span class="sd">        Whether to override any existing function if already present.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_readers</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+        <span class="n">_readers</span><span class="p">[(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)]</span> <span class="o">=</span> <span class="n">function</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Reader for format &#39;{0}&#39; and class &#39;{1}&#39; is &quot;</span>
+                        <span class="s">&#39;already defined&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span>
+                                                 <span class="n">data_class</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+    <span class="n">_update__doc__</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="s">&#39;read&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="register_writer"><a class="viewcode-back" href="../../../api/astropy.io.registry.register_writer.html#astropy.io.registry.register_writer">[docs]</a><span class="k">def</span> <span class="nf">register_writer</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Register a table writer function.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_format : str</span>
+<span class="sd">        The data type identifier. This is the string that will be used to</span>
+<span class="sd">        specify the data type when writing.</span>
+<span class="sd">    data_class : classobj</span>
+<span class="sd">        The class of the object that can be written</span>
+<span class="sd">    function : function</span>
+<span class="sd">        The function to write out a data object.</span>
+<span class="sd">    force : bool</span>
+<span class="sd">        Whether to override any existing function if already present.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_writers</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+        <span class="n">_writers</span><span class="p">[(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)]</span> <span class="o">=</span> <span class="n">function</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Writer for format &#39;{0}&#39; and class &#39;{1}&#39; is &quot;</span>
+                        <span class="s">&#39;already defined&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span>
+                                                 <span class="n">data_class</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+    <span class="n">_update__doc__</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="s">&#39;write&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="register_identifier"><a class="viewcode-back" href="../../../api/astropy.io.registry.register_identifier.html#astropy.io.registry.register_identifier">[docs]</a><span class="k">def</span> <span class="nf">register_identifier</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">,</span> <span class="n">identifier</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Associate an identifier function with a specific data type.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_format : str</span>
+<span class="sd">        The data type identifier. This is the string that is used to</span>
+<span class="sd">        specify the data type when reading/writing.</span>
+<span class="sd">    data_class : classobj</span>
+<span class="sd">        The class of the object that can be written</span>
+<span class="sd">    identifier : function</span>
+<span class="sd">        A function that checks the argument specified to `read` or `write` to</span>
+<span class="sd">        determine whether the input can be interpreted as a table of type</span>
+<span class="sd">        ``data_format``. This function should take the following arguments:</span>
+
+<span class="sd">           - ``origin``: A string `read` or `write` identifying whether</span>
+<span class="sd">             the file is to be opened for reading or writing.</span>
+<span class="sd">           - ``path``: The path to the file.</span>
+<span class="sd">           - ``fileobj``: An open file object to read the file&#39;s contents, or</span>
+<span class="sd">             `None` if the file could not be opened.</span>
+<span class="sd">           - ``*args``: A list of positional arguments to the `read` or</span>
+<span class="sd">             `write` function.</span>
+<span class="sd">           - ``**kwargs``: A list of keyword arguments to the `read` or</span>
+<span class="sd">             `write` function.</span>
+
+<span class="sd">        One or both of ``path`` or ``fileobj`` may be `None`.  If they are</span>
+<span class="sd">        both `None`, the identifier will need to work from ``args[0]``.</span>
+
+<span class="sd">        The function should return True if the input can be identified</span>
+<span class="sd">        as being of format ``data_format``, and False otherwise.</span>
+<span class="sd">    force : bool</span>
+<span class="sd">        Whether to override any existing function if already present.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    To set the identifier based on extensions, for formats that take a</span>
+<span class="sd">    filename as a first argument, you can do for example::</span>
+
+<span class="sd">        &gt;&gt;&gt; def my_identifier(*args, **kwargs):</span>
+<span class="sd">        ...     return (isinstance(args[0], basestring) and</span>
+<span class="sd">        ...             args[0].endswith(&#39;.tbl&#39;))</span>
+<span class="sd">        &gt;&gt;&gt; register_identifier(&#39;ipac&#39;, Table, my_identifier)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)</span> <span class="ow">in</span> <span class="n">_identifiers</span> <span class="ow">or</span> <span class="n">force</span><span class="p">:</span>
+        <span class="n">_identifiers</span><span class="p">[(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)]</span> <span class="o">=</span> <span class="n">identifier</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Identifier for format &#39;{0}&#39; and class &#39;{1}&#39; is &quot;</span>
+                        <span class="s">&#39;already defined&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span>
+                                                 <span class="n">data_class</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="identify_format"><a class="viewcode-back" href="../../../api/astropy.io.registry.identify_format.html#astropy.io.registry.identify_format">[docs]</a><span class="k">def</span> <span class="nf">identify_format</span><span class="p">(</span><span class="n">origin</span><span class="p">,</span> <span class="n">data_class_required</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="c"># Loop through identifiers to see which formats match</span>
+    <span class="n">valid_formats</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span> <span class="ow">in</span> <span class="n">_identifiers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_is_best_match</span><span class="p">(</span><span class="n">data_class_required</span><span class="p">,</span> <span class="n">data_class</span><span class="p">,</span> <span class="n">_identifiers</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_identifiers</span><span class="p">[(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">)](</span>
+                <span class="n">origin</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+                <span class="n">valid_formats</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">data_format</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">valid_formats</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_get_format_table_str</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">):</span>
+    <span class="n">format_table</span> <span class="o">=</span> <span class="n">get_formats</span><span class="p">(</span><span class="n">data_class</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">format_table</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">has_readwrite</span> <span class="o">=</span> <span class="n">format_table</span><span class="p">[</span><span class="n">readwrite</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;Yes&#39;</span>
+        <span class="n">format_table</span> <span class="o">=</span> <span class="n">format_table</span><span class="p">[</span><span class="n">has_readwrite</span><span class="p">]</span>
+    <span class="n">format_table</span><span class="o">.</span><span class="n">remove_column</span><span class="p">(</span><span class="s">&#39;Data class&#39;</span><span class="p">)</span>
+    <span class="n">format_table_str</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">format_table</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">max_lines</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">format_table_str</span>
+
+
+<div class="viewcode-block" id="get_reader"><a class="viewcode-back" href="../../../api/astropy.io.registry.get_reader.html#astropy.io.registry.get_reader">[docs]</a><span class="k">def</span> <span class="nf">get_reader</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">):</span>
+    <span class="c"># Get all the readers that work for `data_format`</span>
+    <span class="n">readers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span> <span class="k">for</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">_readers</span> <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="n">data_format</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">reader_format</span><span class="p">,</span> <span class="n">reader_class</span> <span class="ow">in</span> <span class="n">readers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_is_best_match</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">reader_class</span><span class="p">,</span> <span class="n">readers</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_readers</span><span class="p">[(</span><span class="n">reader_format</span><span class="p">,</span> <span class="n">reader_class</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">format_table_str</span> <span class="o">=</span> <span class="n">_get_format_table_str</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="s">&#39;Read&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;No reader defined for format &#39;{0}&#39; and class &#39;{1}&#39;.</span><span class="se">\n</span><span class="s">&quot;</span>
+                        <span class="s">&#39;The available formats are:</span><span class="se">\n</span><span class="s">&#39;</span>
+                        <span class="s">&#39;{2}&#39;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">format_table_str</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="get_writer"><a class="viewcode-back" href="../../../api/astropy.io.registry.get_writer.html#astropy.io.registry.get_writer">[docs]</a><span class="k">def</span> <span class="nf">get_writer</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="p">):</span>
+    <span class="n">writers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">fmt</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span> <span class="k">for</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">_writers</span> <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="n">data_format</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">writer_format</span><span class="p">,</span> <span class="n">writer_class</span> <span class="ow">in</span> <span class="n">writers</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">_is_best_match</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="n">writer_class</span><span class="p">,</span> <span class="n">writers</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">_writers</span><span class="p">[(</span><span class="n">writer_format</span><span class="p">,</span> <span class="n">writer_class</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">format_table_str</span> <span class="o">=</span> <span class="n">_get_format_table_str</span><span class="p">(</span><span class="n">data_class</span><span class="p">,</span> <span class="s">&#39;Write&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;No writer defined for format &#39;{0}&#39; and class &#39;{1}&#39;.</span><span class="se">\n</span><span class="s">&quot;</span>
+                        <span class="s">&#39;The available formats are:</span><span class="se">\n</span><span class="s">&#39;</span>
+                        <span class="s">&#39;{2}&#39;</span>
+                        <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data_format</span><span class="p">,</span> <span class="n">data_class</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span> <span class="n">format_table_str</span><span class="p">))</span>
+
+</div>
+<div class="viewcode-block" id="read"><a class="viewcode-back" href="../../../api/astropy.io.registry.read.html#astropy.io.registry.read">[docs]</a><span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Read in data</span>
+
+<span class="sd">    The arguments passed to this method depend on the format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s">&#39;format&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;format&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">format</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="n">ctx</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">format</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="n">fileobj</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                    <span class="kn">from</span> <span class="nn">..utils.data</span> <span class="kn">import</span> <span class="n">get_readable_fileobj</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">ctx</span> <span class="o">=</span> <span class="n">get_readable_fileobj</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;binary&#39;</span><span class="p">)</span>
+                        <span class="n">fileobj</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">__enter__</span><span class="p">()</span>
+                    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                        <span class="n">fileobj</span> <span class="o">=</span> <span class="bp">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">fileobj</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+                <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;read&#39;</span><span class="p">):</span>
+                    <span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+                    <span class="n">fileobj</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">format</span> <span class="o">=</span> <span class="n">_get_valid_format</span><span class="p">(</span>
+                <span class="s">&#39;read&#39;</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">reader</span> <span class="o">=</span> <span class="n">get_reader</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="n">cls</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">reader</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+                <span class="c"># User has read with a subclass where only the parent class is</span>
+                <span class="c"># registered.  This returns the parent class, so try coercing to </span>
+                <span class="c"># desired subclass.</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">data</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;could not convert reader output to {0} class&#39;</span>
+                                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;reader should return a {0} instance&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ctx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">ctx</span><span class="o">.</span><span class="n">__exit__</span><span class="p">(</span><span class="o">*</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+
+</div>
+<div class="viewcode-block" id="write"><a class="viewcode-back" href="../../../api/astropy.io.registry.write.html#astropy.io.registry.write">[docs]</a><span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Write out data</span>
+
+<span class="sd">    The arguments passed to this method depend on the format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="s">&#39;format&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">format</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;format&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">format</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="k">if</span> <span class="n">format</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">fileobj</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">fileobj</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&#39;read&#39;</span><span class="p">):</span>
+                <span class="n">path</span> <span class="o">=</span> <span class="bp">None</span>
+                <span class="n">fileobj</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">format</span> <span class="o">=</span> <span class="n">_get_valid_format</span><span class="p">(</span>
+            <span class="s">&#39;write&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">writer</span> <span class="o">=</span> <span class="n">get_writer</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">__class__</span><span class="p">)</span>
+    <span class="n">writer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_is_best_match</span><span class="p">(</span><span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">,</span> <span class="n">format_classes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine if class2 is the &quot;best&quot; match for class1 in the list</span>
+<span class="sd">    of classes.  It is assumed that (class2 in classes) is True.</span>
+<span class="sd">    class2 is the the best match if:</span>
+<span class="sd">      - class1 is class2 =&gt; class1 was directly registered.</span>
+<span class="sd">      - OR class1 is a subclass of class2 and class1 is not in classes.</span>
+<span class="sd">        In this case the subclass will use the parent reader/writer.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cls</span> <span class="k">for</span> <span class="n">fmt</span><span class="p">,</span> <span class="n">cls</span> <span class="ow">in</span> <span class="n">format_classes</span><span class="p">]</span>
+    <span class="n">is_best_match</span> <span class="o">=</span> <span class="p">((</span><span class="n">class1</span> <span class="ow">is</span> <span class="n">class2</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">issubclass</span><span class="p">(</span><span class="n">class1</span><span class="p">,</span> <span class="n">class2</span><span class="p">)</span>
+                                            <span class="ow">and</span> <span class="n">class1</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">is_best_match</span>
+
+<span class="k">def</span> <span class="nf">_get_valid_format</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the first valid format that can be used to read/write the data in</span>
+<span class="sd">    question.  Mode can be either &#39;read&#39; or &#39;write&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;read&#39;</span><span class="p">:</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="n">_readers</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s">&#39;write&#39;</span><span class="p">:</span>
+        <span class="n">funcs</span> <span class="o">=</span> <span class="n">_writers</span>
+
+    <span class="n">valid_formats</span> <span class="o">=</span> <span class="n">identify_format</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fileobj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_formats</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">format_table_str</span> <span class="o">=</span> <span class="n">_get_format_table_str</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">mode</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s">&quot;Format could not be identified.</span><span class="se">\n</span><span class="s">&quot;</span>
+                        <span class="s">&quot;The available formats are:</span><span class="se">\n</span><span class="s">&quot;</span>
+                        <span class="s">&quot;{0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">format_table_str</span><span class="p">))</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_formats</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="s">&quot;Format is ambiguous - options are: {0}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">valid_formats</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">tup</span><span class="p">:</span> <span class="n">tup</span><span class="p">[</span><span class="mi">0</span><span class="p">]))))</span>
+
+    <span class="k">return</span> <span class="n">valid_formats</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

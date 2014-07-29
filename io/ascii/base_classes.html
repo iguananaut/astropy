@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Base class elements &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+    <link rel="up" title="ASCII Tables (astropy.io.ascii)" href="index.html" />
+    <link rel="next" title="Extension Reader classes" href="extension_classes.html" />
+    <link rel="prev" title="Fixed-width Gallery" href="fixed_width_gallery.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="extension_classes.html" title="Extension Reader classes">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="fixed_width_gallery.html" title="Fixed-width Gallery">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">ASCII Tables (<tt class="docutils literal"><span class="pre">astropy.io.ascii</span></tt>)</a> &raquo;</li>
+      
+      <li>Base class elements</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="base-class-elements">
+<span id="id1"></span><h1>Base class elements<a class="headerlink" href="#base-class-elements" title="Permalink to this headline">¶</a></h1>
+<p>The key elements in <a class="reference internal" href="index.html#module-astropy.io.ascii" title="astropy.io.ascii"><tt class="xref py py-mod docutils literal"><span class="pre">astropy.io.ascii</span></tt></a> are:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../../api/astropy.io.ascii.Column.html#astropy.io.ascii.Column" title="astropy.io.ascii.Column"><tt class="xref py py-class docutils literal"><span class="pre">Column</span></tt></a>: Internal storage of column properties and data ()</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.BaseReader.html#astropy.io.ascii.BaseReader" title="astropy.io.ascii.BaseReader"><tt class="xref py py-class docutils literal"><span class="pre">Reader</span></tt></a>: Base class to handle reading and writing tables.</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.BaseInputter.html#astropy.io.ascii.BaseInputter" title="astropy.io.ascii.BaseInputter"><tt class="xref py py-class docutils literal"><span class="pre">Inputter</span></tt></a>: Get the lines from the table input.</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.BaseSplitter.html#astropy.io.ascii.BaseSplitter" title="astropy.io.ascii.BaseSplitter"><tt class="xref py py-class docutils literal"><span class="pre">Splitter</span></tt></a>: Split the lines into string column values.</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.BaseHeader.html#astropy.io.ascii.BaseHeader" title="astropy.io.ascii.BaseHeader"><tt class="xref py py-class docutils literal"><span class="pre">Header</span></tt></a>: Initialize output columns based on the table header or user input.</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.BaseData.html#astropy.io.ascii.BaseData" title="astropy.io.ascii.BaseData"><tt class="xref py py-class docutils literal"><span class="pre">Data</span></tt></a>: Populate column data from the table.</li>
+<li><a class="reference internal" href="../../api/astropy.io.ascii.BaseOutputter.html#astropy.io.ascii.BaseOutputter" title="astropy.io.ascii.BaseOutputter"><tt class="xref py py-class docutils literal"><span class="pre">Outputter</span></tt></a>: Convert column data to the specified output format, e.g. <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy</span></tt></a> structured array.</li>
+</ul>
+<p>Each of these elements is an inheritable class with attributes that control the
+corresponding functionality.  In this way the large number of tweakable
+parameters is modularized into managable groups.  Where it makes sense these
+attributes are actually functions that make it easy to handle special cases.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Base class elements</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/ascii/base_classes.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/io/ascii/base_classes.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

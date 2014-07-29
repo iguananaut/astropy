@@ -1,0 +1,46 @@
+
+.. include:: ../time/references.txt
+
+
+TimeISOT
+=====================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeISOT
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeISOT.name
+      ~TimeISOT.subfmts
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: name
+   .. autoattribute:: subfmts
+
+   
+   
+
+   
+   
+   

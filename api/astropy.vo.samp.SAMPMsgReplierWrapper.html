@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SAMPMsgReplierWrapper &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)" href="../vo/samp/index.html" />
+    <link rel="next" title="SAMPProxyError" href="astropy.vo.samp.SAMPProxyError.html" />
+    <link rel="prev" title="SAMPIntegratedClient" href="astropy.vo.samp.SAMPIntegratedClient.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPProxyError.html" title="SAMPProxyError">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPIntegratedClient.html" title="SAMPIntegratedClient">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/samp/index.html" accesskey="U">SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</a> &raquo;</li>
+      
+      <li>SAMPMsgReplierWrapper</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sampmsgreplierwrapper">
+<h1>SAMPMsgReplierWrapper<a class="headerlink" href="#sampmsgreplierwrapper" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.vo.samp.SAMPMsgReplierWrapper">
+<em class="property">class </em><tt class="descclassname">astropy.vo.samp.</tt><tt class="descname">SAMPMsgReplierWrapper</tt><big>(</big><em>cli</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/utils.html#SAMPMsgReplierWrapper"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/utils.py#L94" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPMsgReplierWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Function decorator that allows to automatically grab errors and returned
+maps (if any) from a function bound to a SAMP call (or notify).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>cli</strong> : <a class="reference internal" href="astropy.vo.samp.SAMPIntegratedClient.html#astropy.vo.samp.SAMPIntegratedClient" title="astropy.vo.samp.SAMPIntegratedClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPIntegratedClient</span></tt></a> or <a class="reference internal" href="astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a></p>
+<blockquote class="last">
+<div><p>SAMP client instance. Decorator initialization, accepting the instance
+of the client that receives the call or notification.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPMsgReplierWrapper.__call__" title="astropy.vo.samp.SAMPMsgReplierWrapper.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(f)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPMsgReplierWrapper.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>f</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/utils.html#SAMPMsgReplierWrapper.__call__"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/utils.py#L109" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPMsgReplierWrapper.__call__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SAMPMsgReplierWrapper</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.samp.SAMPMsgReplierWrapper.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.samp.SAMPMsgReplierWrapper.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

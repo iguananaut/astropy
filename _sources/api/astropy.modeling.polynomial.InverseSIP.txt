@@ -1,0 +1,63 @@
+
+
+InverseSIP
+======================================
+
+.. currentmodule:: astropy.modeling.polynomial
+
+.. autoclass:: InverseSIP
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~InverseSIP.input_names
+      ~InverseSIP.n_inputs
+      ~InverseSIP.n_outputs
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~InverseSIP.evaluate
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+   .. autoattribute:: n_inputs
+   .. autoattribute:: n_outputs
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+
+   
+   

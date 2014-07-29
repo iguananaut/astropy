@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SAMP (Simple Application Messaging Protocol (astropy.vo.samp) &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+    <link rel="up" title="Virtual Observatory Access (astropy.vo)" href="../index.html" />
+    <link rel="next" title="Starting and stopping a SAMP hub server" href="example_hub.html" />
+    <link rel="prev" title="ValidationMultiprocessingError" href="../../api/astropy.vo.validator.exceptions.ValidationMultiprocessingError.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="example_hub.html" title="Starting and stopping a SAMP hub server">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../../api/astropy.vo.validator.exceptions.ValidationMultiprocessingError.html" title="ValidationMultiprocessingError">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" accesskey="U">Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      
+      <li>SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="samp-simple-application-messaging-protocol-astropy-vo-samp">
+<span id="vo-samp"></span><h1>SAMP (Simple Application Messaging Protocol (<a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a>)<a class="headerlink" href="#samp-simple-application-messaging-protocol-astropy-vo-samp" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a> is an IVOA SAMP (Simple Application Messaging Protocol)
+messaging system implementation in Python. It provides classes to easily:</p>
+<ol class="arabic simple">
+<li>instantiate one or multiple Hubs;</li>
+<li>interface an application or script to a running Hub;</li>
+<li>create and manage a SAMP client.</li>
+</ol>
+<p><a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a> provides also a stand-alone program <tt class="docutils literal"><span class="pre">samp_hub</span></tt> capable to
+instantiate a persistent hub.</p>
+<p>SAMP is a protocol that is used by a number of other tools such as
+<a class="reference external" href="http://www.star.bris.ac.uk/~mbt/topcat/">TOPCAT</a>,
+<a class="reference external" href="http://hea-www.harvard.edu/RD/ds9">SAO Ds9</a>,
+and <a class="reference external" href="http://aladin.u-strasbg.fr">Aladin</a>, which means that it is possible to
+send and receive data to and from these tools. The <a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a> package
+also supports the &#8216;web profile&#8217; for SAMP, which means that it can be used to
+communicate with web SAMP clients. See the <a class="reference external" href="http://astrojs.github.io/sampjs/">sampjs</a> library examples for more details.</p>
+<p>The following classes are available in <a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a>:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="astropy.vo.samp.SAMPHubServer"><tt class="xref py py-class docutils literal"><span class="pre">SAMPHubServer</span></tt></a>, which is used to instantiate a hub server that clients can
+then connect to.</li>
+<li><a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy" title="astropy.vo.samp.SAMPHubProxy"><tt class="xref py py-class docutils literal"><span class="pre">SAMPHubProxy</span></tt></a>, which is used to connect to an existing hub (including hubs
+started from other applications such as
+<a class="reference external" href="http://www.star.bris.ac.uk/~mbt/topcat/">TOPCAT</a>).</li>
+<li><a class="reference internal" href="../../api/astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a>, which is used to create a SAMP client</li>
+<li><a class="reference internal" href="../../api/astropy.vo.samp.SAMPIntegratedClient.html#astropy.vo.samp.SAMPIntegratedClient" title="astropy.vo.samp.SAMPIntegratedClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPIntegratedClient</span></tt></a>, which is the same as <a class="reference internal" href="../../api/astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-class docutils literal"><span class="pre">SAMPClient</span></tt></a> except that it has
+a self-contained <a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy" title="astropy.vo.samp.SAMPHubProxy"><tt class="xref py py-class docutils literal"><span class="pre">SAMPHubProxy</span></tt></a> to provide a simpler user interface.</li>
+</ul>
+</div>
+<div class="section" id="using-astropy-vo-samp">
+<h2>Using <a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a><a class="headerlink" href="#using-astropy-vo-samp" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="example_hub.html">Starting and stopping a SAMP hub server</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example_hub.html#using-an-existing-hub">Using an existing hub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_hub.html#using-the-command-line-hub-utility">Using the command-line hub utility</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_hub.html#starting-a-hub-programmatically-advanced">Starting a hub programmatically (advanced)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example_table_image.html">Sending/receiving tables and images over SAMP</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="example_table_image.html#sending-a-table-to-topcat-and-ds9">Sending a table to TOPCAT and Ds9</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_table_image.html#receiving-a-table-from-topcat">Receiving a table from TOPCAT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_table_image.html#sending-an-image-to-ds9-and-aladin">Sending an image to Ds9 and Aladin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_table_image.html#receiving-a-table-from-ds9-or-aladin">Receiving a table from Ds9 or Aladin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="example_clients.html">Communication between integrated clients objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced_embed_samp_hub.html">Embedding a SAMP hub in a GUI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="advanced_embed_samp_hub.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="advanced_embed_samp_hub.html#example-of-embedding-a-samp-hub-in-a-tk-application">Example of embedding a SAMP hub in a Tk application</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-astropy.vo.samp">
+<span id="astropy-vo-samp-module"></span><h3>astropy.vo.samp Module<a class="headerlink" href="#module-astropy.vo.samp" title="Permalink to this headline">¶</a></h3>
+<p>This subpackage provides classes to communicate with other applications via the
+<a class="reference external" href="www.ivoa.net/samp">Simple Application Messaging Protocal (SAMP)</a>.</p>
+<p>Before integration into Astropy it was known as
+<a class="reference external" href="https://pypi.python.org/pypi/sampy/">SAMPy</a>, and was developed by Luigi Paioro
+(INAF - Istituto Nazionale di Astrofisica).</p>
+<div class="section" id="classes">
+<h4>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../../api/astropy.vo.samp.Conf.html#astropy.vo.samp.Conf" title="astropy.vo.samp.Conf"><tt class="xref py py-obj docutils literal"><span class="pre">Conf</span></tt></a></td>
+<td>Configuration parameters for <a class="reference internal" href="#module-astropy.vo.samp" title="astropy.vo.samp"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.samp</span></tt></a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="astropy.vo.samp.SAMPClient"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPClient</span></tt></a>(hub[,&nbsp;name,&nbsp;description,&nbsp;...])</td>
+<td>Utility class which provides facilities to create and manage a SAMP compliant XML-RPC server that acts as SAMP callable client application.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPClientError.html#astropy.vo.samp.SAMPClientError" title="astropy.vo.samp.SAMPClientError"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPClientError</span></tt></a></td>
+<td>SAMP Client exceptions.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubError.html#astropy.vo.samp.SAMPHubError" title="astropy.vo.samp.SAMPHubError"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPHubError</span></tt></a></td>
+<td>SAMP Hub exception.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy" title="astropy.vo.samp.SAMPHubProxy"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPHubProxy</span></tt></a>()</td>
+<td>Proxy class to simplify the client interaction with a SAMP hub (via the standard profile).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="astropy.vo.samp.SAMPHubServer"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPHubServer</span></tt></a>([secret,&nbsp;addr,&nbsp;port,&nbsp;...])</td>
+<td>SAMP Hub Server.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPIntegratedClient.html#astropy.vo.samp.SAMPIntegratedClient" title="astropy.vo.samp.SAMPIntegratedClient"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPIntegratedClient</span></tt></a>([name,&nbsp;description,&nbsp;...])</td>
+<td>A Simple SAMP client.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPMsgReplierWrapper.html#astropy.vo.samp.SAMPMsgReplierWrapper" title="astropy.vo.samp.SAMPMsgReplierWrapper"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPMsgReplierWrapper</span></tt></a>(cli)</td>
+<td>Function decorator that allows to automatically grab errors and returned maps (if any) from a function bound to a SAMP call (or notify).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPProxyError.html#astropy.vo.samp.SAMPProxyError" title="astropy.vo.samp.SAMPProxyError"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPProxyError</span></tt></a>(faultCode,&nbsp;faultString,&nbsp;**extra)</td>
+<td>SAMP Proxy Hub exception</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../../api/astropy.vo.samp.SAMPWarning.html#astropy.vo.samp.SAMPWarning" title="astropy.vo.samp.SAMPWarning"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPWarning</span></tt></a></td>
+<td>SAMP-specific Astropy warning class</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../../api/astropy.vo.samp.WebProfileDialog.html#astropy.vo.samp.WebProfileDialog" title="astropy.vo.samp.WebProfileDialog"><tt class="xref py py-obj docutils literal"><span class="pre">WebProfileDialog</span></tt></a></td>
+<td>A base class to make writing Web Profile GUI consent dialogs easier.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="class-inheritance-diagram">
+<h4>Class Inheritance Diagram<a class="headerlink" href="#class-inheritance-diagram" title="Permalink to this headline">¶</a></h4>
+<p class="graphviz">
+<img src="../../_images/inheritance-14998aff8a3c8e9c03ec3b5a4428f5ab3a829717.png" alt="Inheritance diagram of astropy.vo.samp.Conf, astropy.vo.samp.client.SAMPClient, astropy.vo.samp.errors.SAMPClientError, astropy.vo.samp.errors.SAMPHubError, astropy.vo.samp.hub_proxy.SAMPHubProxy, astropy.vo.samp.hub.SAMPHubServer, astropy.vo.samp.integrated_client.SAMPIntegratedClient, astropy.vo.samp.utils.SAMPMsgReplierWrapper, astropy.vo.samp.errors.SAMPProxyError, astropy.vo.samp.errors.SAMPWarning, astropy.vo.samp.hub.WebProfileDialog" usemap="#inheritanceec53744177" class="inheritance"/>
+<map id="inheritanceec53744177" name="inheritanceec53744177">
+<area shape="rect" id="node1" href="../../api/astropy.utils.exceptions.AstropyUserWarning.html#astropy.utils.exceptions.AstropyUserWarning" title="The primary warning class for Astropy." alt="" coords="244,511,399,539"/>
+<area shape="rect" id="node19" href="../../api/astropy.vo.samp.SAMPWarning.html#astropy.vo.samp.SAMPWarning" title="SAMP&#45;specific Astropy warning class" alt="" coords="457,511,569,539"/>
+<area shape="rect" id="node2" href="../../api/astropy.utils.exceptions.AstropyWarning.html#astropy.utils.exceptions.AstropyWarning" title="The base warning class from which all Astropy warnings should inherit." alt="" coords="37,511,163,539"/>
+<area shape="rect" id="node4" href="../../api/astropy.vo.samp.Conf.html#astropy.vo.samp.Conf" title="Configuration parameters for `astropy.vo.samp`." alt="" coords="285,461,357,489"/>
+<area shape="rect" id="node5" href="../../api/astropy.config.ConfigNamespace.html#astropy.config.ConfigNamespace" title="A namespace of configuration items. &#160;Each subpackage with" alt="" coords="28,461,172,489"/>
+<area shape="rect" id="node7" title="Base class for client errors." alt="" coords="64,410,136,438"/>
+<area shape="rect" id="node8" title="Indicates an XML&#45;RPC fault package." alt="" coords="285,410,357,438"/>
+<area shape="rect" id="node17" href="../../api/astropy.vo.samp.SAMPProxyError.html#astropy.vo.samp.SAMPProxyError" title="SAMP Proxy Hub exception" alt="" coords="448,410,579,438"/>
+<area shape="rect" id="node10" href="../../api/astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="Utility class which provides facilities to create and manage a SAMP" alt="" coords="51,359,149,387"/>
+<area shape="rect" id="node11" href="../../api/astropy.vo.samp.SAMPClientError.html#astropy.vo.samp.SAMPClientError" title="SAMP Client exceptions." alt="" coords="35,309,165,337"/>
+<area shape="rect" id="node12" href="../../api/astropy.vo.samp.SAMPHubError.html#astropy.vo.samp.SAMPHubError" title="SAMP Hub exception." alt="" coords="41,258,159,286"/>
+<area shape="rect" id="node13" href="../../api/astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy" title="Proxy class to simplify the client interaction with a SAMP hub (via the" alt="" coords="39,207,161,235"/>
+<area shape="rect" id="node14" href="../../api/astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="SAMP Hub Server." alt="" coords="35,157,165,185"/>
+<area shape="rect" id="node15" href="../../api/astropy.vo.samp.SAMPIntegratedClient.html#astropy.vo.samp.SAMPIntegratedClient" title="A Simple SAMP client." alt="" coords="13,106,187,134"/>
+<area shape="rect" id="node16" href="../../api/astropy.vo.samp.SAMPMsgReplierWrapper.html#astropy.vo.samp.SAMPMsgReplierWrapper" title="Function decorator that allows to automatically grab errors and returned" alt="" coords="7,55,193,83"/>
+<area shape="rect" id="node21" href="../../api/astropy.vo.samp.WebProfileDialog.html#astropy.vo.samp.WebProfileDialog" title="A base class to make writing Web Profile GUI consent dialogs" alt="" coords="33,5,167,33"/>
+</map>
+</p>
+</div>
+</div>
+</div>
+<div class="section" id="acknowledgments">
+<h2>Acknowledgments<a class="headerlink" href="#acknowledgments" title="Permalink to this headline">¶</a></h2>
+<p>This code is adapted from the <a class="reference external" href="https://pypi.python.org/pypi/sampy">SAMPy</a>
+package written by Luigi Paioro, who has granted the Astropy project permission
+to use the code under a BSD license.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#using-astropy-vo-samp">Using <tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt></a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astropy.vo.samp">astropy.vo.samp Module</a><ul>
+<li><a class="reference internal" href="#classes">Classes</a></li>
+<li><a class="reference internal" href="#class-inheritance-diagram">Class Inheritance Diagram</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#acknowledgments">Acknowledgments</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/vo/samp/index.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/vo/samp/index.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

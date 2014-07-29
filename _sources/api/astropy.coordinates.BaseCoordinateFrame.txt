@@ -1,0 +1,99 @@
+
+.. include:: ../coordinates/references.txt
+
+
+BaseCoordinateFrame
+=======================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: BaseCoordinateFrame
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~BaseCoordinateFrame.cartesian
+      ~BaseCoordinateFrame.data
+      ~BaseCoordinateFrame.default_representation
+      ~BaseCoordinateFrame.frame_specific_representation_info
+      ~BaseCoordinateFrame.has_data
+      ~BaseCoordinateFrame.isscalar
+      ~BaseCoordinateFrame.name
+      ~BaseCoordinateFrame.representation
+      ~BaseCoordinateFrame.representation_component_names
+      ~BaseCoordinateFrame.representation_component_units
+      ~BaseCoordinateFrame.representation_info
+      ~BaseCoordinateFrame.shape
+      ~BaseCoordinateFrame.spherical
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~BaseCoordinateFrame.get_frame_attr_names
+      ~BaseCoordinateFrame.is_frame_attr_default
+      ~BaseCoordinateFrame.is_transformable_to
+      ~BaseCoordinateFrame.realize_frame
+      ~BaseCoordinateFrame.represent_as
+      ~BaseCoordinateFrame.separation
+      ~BaseCoordinateFrame.separation_3d
+      ~BaseCoordinateFrame.transform_to
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: cartesian
+   .. autoattribute:: data
+   .. autoattribute:: default_representation
+   .. autoattribute:: frame_specific_representation_info
+   .. autoattribute:: has_data
+   .. autoattribute:: isscalar
+   .. autoattribute:: name
+   .. autoattribute:: representation
+   .. autoattribute:: representation_component_names
+   .. autoattribute:: representation_component_units
+   .. autoattribute:: representation_info
+   .. autoattribute:: shape
+   .. autoattribute:: spherical
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: get_frame_attr_names
+   .. automethod:: is_frame_attr_default
+   .. automethod:: is_transformable_to
+   .. automethod:: realize_frame
+   .. automethod:: represent_as
+   .. automethod:: separation
+   .. automethod:: separation_3d
+   .. automethod:: transform_to
+
+   
+   

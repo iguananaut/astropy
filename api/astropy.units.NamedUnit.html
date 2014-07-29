@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>NamedUnit &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Units and Quantities (astropy.units)" href="../units/index.html" />
+    <link rel="next" title="PrefixUnit" href="astropy.units.PrefixUnit.html" />
+    <link rel="prev" title="IrreducibleUnit" href="astropy.units.IrreducibleUnit.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.units.PrefixUnit.html" title="PrefixUnit">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.units.IrreducibleUnit.html" title="IrreducibleUnit">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../units/index.html" accesskey="U">Units and Quantities (<tt class="docutils literal"><span class="pre">astropy.units</span></tt>)</a> &raquo;</li>
+      
+      <li>NamedUnit</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="namedunit">
+<h1>NamedUnit<a class="headerlink" href="#namedunit" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.units.NamedUnit">
+<em class="property">class </em><tt class="descclassname">astropy.units.</tt><tt class="descname">NamedUnit</tt><big>(</big><em>st</em>, <em>register=None</em>, <em>doc=None</em>, <em>format=None</em>, <em>namespace=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#NamedUnit"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1360" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.NamedUnit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.core.UnitBase"><tt class="docutils literal"><span class="pre">astropy.units.UnitBase</span></tt></a></p>
+<p>The base class of units that have a name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>st</strong> : str, list of str, 2-tuple</p>
+<blockquote>
+<div><p>The name of the unit.  If a list of strings, the first element
+is the canonical (short) name, and the rest of the elements
+are aliases.  If a tuple of lists, the first element is a list
+of short names, and the second element is a list of long
+names; all but the first short name are considered &#8220;aliases&#8221;.
+Each name <em>should</em> be a valid Python identifier to make it
+easy to access, but this is not required.</p>
+</div></blockquote>
+<p><strong>namespace</strong> : dict, optional</p>
+<blockquote>
+<div><p>When provided, inject the unit, and all of its aliases, in the
+given namespace dictionary.  If a unit by the same name is
+already in the namespace, a ValueError is raised.</p>
+</div></blockquote>
+<p><strong>doc</strong> : str, optional</p>
+<blockquote>
+<div><p>A docstring describing the unit.</p>
+</div></blockquote>
+<p><strong>format</strong> : dict, optional</p>
+<blockquote>
+<div><p>A mapping to format-specific representations of this unit.
+For example, for the <tt class="docutils literal"><span class="pre">Ohm</span></tt> unit, it might be nice to have it
+displayed as <tt class="docutils literal"><span class="pre">\Omega</span></tt> by the <tt class="docutils literal"><span class="pre">latex</span></tt> formatter.  In that
+case, <a class="reference internal" href="../units/index.html#module-astropy.units.format" title="astropy.units.format"><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt></a> argument should be set to:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="s">&#39;latex&#39;</span><span class="p">:</span> <span class="s">r&#39;\Omega&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError</strong></p>
+<blockquote>
+<div><p>If any of the given unit names are already in the registry.</p>
+</div></blockquote>
+<p><strong>ValueError</strong></p>
+<blockquote class="last">
+<div><p>If any of the given unit names are not valid Python tokens.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.NamedUnit.aliases" title="astropy.units.NamedUnit.aliases"><tt class="xref py py-obj docutils literal"><span class="pre">aliases</span></tt></a></td>
+<td>Returns the alias (long) names for this unit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.NamedUnit.long_names" title="astropy.units.NamedUnit.long_names"><tt class="xref py py-obj docutils literal"><span class="pre">long_names</span></tt></a></td>
+<td>Returns all of the long names associated with this unit.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.NamedUnit.name" title="astropy.units.NamedUnit.name"><tt class="xref py py-obj docutils literal"><span class="pre">name</span></tt></a></td>
+<td>Returns the canonical (short) name associated with this unit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.NamedUnit.names" title="astropy.units.NamedUnit.names"><tt class="xref py py-obj docutils literal"><span class="pre">names</span></tt></a></td>
+<td>Returns all of the names associated with this unit.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.NamedUnit.short_names" title="astropy.units.NamedUnit.short_names"><tt class="xref py py-obj docutils literal"><span class="pre">short_names</span></tt></a></td>
+<td>Returns all of the short names associated with this unit.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.NamedUnit.deregister" title="astropy.units.NamedUnit.deregister"><tt class="xref py py-obj docutils literal"><span class="pre">deregister</span></tt></a>([remove_from_namespace])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.units.NamedUnit.get_format_name" title="astropy.units.NamedUnit.get_format_name"><tt class="xref py py-obj docutils literal"><span class="pre">get_format_name</span></tt></a>(format)</td>
+<td>Get a name for this unit that is specific to a particular format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.units.NamedUnit.register" title="astropy.units.NamedUnit.register"><tt class="xref py py-obj docutils literal"><span class="pre">register</span></tt></a>([add_to_namespace])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.units.NamedUnit.aliases">
+<tt class="descname">aliases</tt><a class="headerlink" href="#astropy.units.NamedUnit.aliases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the alias (long) names for this unit.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.NamedUnit.long_names">
+<tt class="descname">long_names</tt><a class="headerlink" href="#astropy.units.NamedUnit.long_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all of the long names associated with this unit.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.NamedUnit.name">
+<tt class="descname">name</tt><a class="headerlink" href="#astropy.units.NamedUnit.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the canonical (short) name associated with this unit.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.NamedUnit.names">
+<tt class="descname">names</tt><a class="headerlink" href="#astropy.units.NamedUnit.names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all of the names associated with this unit.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.units.NamedUnit.short_names">
+<tt class="descname">short_names</tt><a class="headerlink" href="#astropy.units.NamedUnit.short_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all of the short names associated with this unit.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.units.NamedUnit.deregister">
+<tt class="descname">deregister</tt><big>(</big><em>remove_from_namespace=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#NamedUnit.deregister"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1517" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.NamedUnit.deregister" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.NamedUnit.get_format_name">
+<tt class="descname">get_format_name</tt><big>(</big><em>format</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#NamedUnit.get_format_name"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1457" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.NamedUnit.get_format_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a name for this unit that is specific to a particular
+format.</p>
+<p>Uses the dictionary passed into the <a class="reference internal" href="../units/index.html#module-astropy.units.format" title="astropy.units.format"><tt class="xref py py-obj docutils literal"><span class="pre">format</span></tt></a> kwarg in the
+constructor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>format</strong> : str</p>
+<blockquote>
+<div><p>The name of the format</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote class="last">
+<div><p>The name of the unit for the given format.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.units.NamedUnit.register">
+<tt class="descname">register</tt><big>(</big><em>add_to_namespace=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/units/core.html#NamedUnit.register"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/units/core.py#L1512" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.units.NamedUnit.register" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">NamedUnit</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.units.NamedUnit.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.units.NamedUnit.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

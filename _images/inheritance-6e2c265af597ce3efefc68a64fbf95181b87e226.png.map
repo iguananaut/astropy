@@ -1,0 +1,12 @@
+<map id="inheritance7fcdcb79b9" name="inheritance7fcdcb79b9">
+<area shape="rect" id="node1" href="../api/astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="Base class for one&#45;dimensional fittable models." alt="" coords="439,131,572,159"/>
+<area shape="rect" id="node2" href="../api/astropy.modeling.FittableModel.html#astropy.modeling.FittableModel" title="Base class for models that can be fitted using the built&#45;in fitting" alt="" coords="231,182,345,210"/>
+<area shape="rect" id="node4" href="../api/astropy.modeling.Fittable2DModel.html#astropy.modeling.Fittable2DModel" title="Base class for one&#45;dimensional fittable models." alt="" coords="439,182,572,210"/>
+<area shape="rect" id="node6" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="Base class for all models." alt="" coords="51,207,123,235"/>
+<area shape="rect" id="node8" href="../api/astropy.modeling.InputParameterError.html#astropy.modeling.InputParameterError" title="Used for incorrect input parameter values and definitions." alt="" coords="7,157,167,185"/>
+<area shape="rect" id="node9" href="../api/astropy.modeling.LabeledInput.html#astropy.modeling.LabeledInput" title="Used by `SerialCompositeModel` and `SummedCompositeModel` to choose input" alt="" coords="32,106,141,134"/>
+<area shape="rect" id="node10" href="../api/astropy.modeling.ModelDefinitionError.html#astropy.modeling.ModelDefinitionError" title="Used for incorrect models definitions" alt="" coords="8,55,165,83"/>
+<area shape="rect" id="node11" href="../api/astropy.modeling.Parameter.html#astropy.modeling.Parameter" title="Wraps individual parameters." alt="" coords="40,5,133,33"/>
+<area shape="rect" id="node12" href="../api/astropy.modeling.SerialCompositeModel.html#astropy.modeling.SerialCompositeModel" title="Composite model that evaluates models in series." alt="" coords="420,233,591,261"/>
+<area shape="rect" id="node15" href="../api/astropy.modeling.SummedCompositeModel.html#astropy.modeling.SummedCompositeModel" title="Composite model that evaluates models in parallel." alt="" coords="408,283,603,311"/>
+</map>

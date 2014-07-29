@@ -1,0 +1,44 @@
+
+
+CustomKernel
+================================
+
+.. currentmodule:: astropy.convolution
+
+.. autoclass:: CustomKernel
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~CustomKernel.array
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: array
+
+   
+   
+
+   
+   
+   

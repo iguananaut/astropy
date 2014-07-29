@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Fitting Models to Data &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="index.html" />
+    <link rel="next" title="Defining New Model Classes" href="new.html" />
+    <link rel="prev" title="Instantiating and Evaluating Models" href="models.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="new.html" title="Defining New Model Classes">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="models.html" title="Instantiating and Evaluating Models">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Fitting Models to Data</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="fitting-models-to-data">
+<h1>Fitting Models to Data<a class="headerlink" href="#fitting-models-to-data" title="Permalink to this headline">¶</a></h1>
+<p>This module provides wrappers, called Fitters, around some Numpy and Scipy
+fitting functions. All Fitters can be called as functions. They take an
+instance of <a class="reference internal" href="../api/astropy.modeling.FittableModel.html#astropy.modeling.FittableModel" title="astropy.modeling.FittableModel"><tt class="xref py py-obj docutils literal"><span class="pre">FittableModel</span></tt></a> as input and modify its
+<tt class="docutils literal"><span class="pre">parameters</span></tt> attribute. The idea is to make this extensible and allow
+users to easily add other fitters.</p>
+<p>Linear fitting is done using Numpy&#8217;s <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.linalg.lstsq.html#numpy.linalg.lstsq" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.linalg.lstsq</span></tt></a> function.  There are
+currently two non-linear fitters which use <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.leastsq.html#scipy.optimize.leastsq" title="(in SciPy v0.14.0)"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.optimize.leastsq</span></tt></a> and
+<a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fmin_slsqp.html#scipy.optimize.fmin_slsqp" title="(in SciPy v0.14.0)"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.optimize.fmin_slsqp</span></tt></a>.</p>
+<p>The rules for passing input to fitters are:</p>
+<ul class="simple">
+<li>Non-linear fitters currently work only with single models (not model sets).</li>
+<li>The linear fitter can fit a single input to multiple model sets creating
+multiple fitted models.  This may require specifying the <tt class="docutils literal"><span class="pre">model_set_axis</span></tt>
+argument just as used when evaluating models; this may be required for the
+fitter to know how to broadcast the input data.</li>
+</ul>
+<div class="section" id="fitting-examples">
+<h2>Fitting examples<a class="headerlink" href="#fitting-examples" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">Fitting a polynomial model to multiple data sets simultaneously:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">fitting</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Polynomial1D</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span><span class="o">.</span><span class="n">c0</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span><span class="o">.</span><span class="n">c1</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
+<span class="go">Model: Polynomial1D</span>
+<span class="go">Inputs: 1</span>
+<span class="go">Outputs: 1</span>
+<span class="go">Model set size: 1</span>
+<span class="go">Degree: 3</span>
+<span class="go">Parameters:</span>
+<span class="go">    c0  c1  c2  c3</span>
+<span class="go">    --- --- --- ---</span>
+<span class="go">    1.0 2.0 0.0 0.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p2</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Polynomial1D</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_models</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pfit</span> <span class="o">=</span> <span class="n">fitting</span><span class="o">.</span><span class="n">LinearLSQFitter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_model</span> <span class="o">=</span> <span class="n">pfit</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">new_model</span><span class="p">)</span>  
+<span class="go">Model: Polynomial1D</span>
+<span class="go">Inputs: 1</span>
+<span class="go">Outputs: 1</span>
+<span class="go">Model set size: 2</span>
+<span class="go">Degree: 3</span>
+<span class="go">Parameters:</span>
+<span class="go">     c0  c1         c2                 c3</span>
+<span class="go">    --- --- ------------------ -----------------</span>
+<span class="go">    1.0 2.0 -5.86673908219e-16 3.61636197841e-17</span>
+<span class="go">    1.0 2.0 -5.86673908219e-16 3.61636197841e-17</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Fitters support constrained fitting.</p>
+<ul>
+<li><p class="first">All fitters support fixed (frozen) parameters through the <tt class="docutils literal"><span class="pre">fixed</span></tt> argument
+to models or setting the <a class="reference internal" href="../api/astropy.modeling.Parameter.html#astropy.modeling.Parameter.fixed" title="astropy.modeling.Parameter.fixed"><tt class="xref py py-obj docutils literal"><span class="pre">fixed</span></tt></a>
+attribute directly on a parameter.</p>
+<p>For linear fitters, freezing a polynomial coefficient means that a polynomial
+without that term will be fitted to the data. For example, fixing <tt class="docutils literal"><span class="pre">c0</span></tt> in a
+polynomial model will fit a polynomial with the zero-th order term missing.
+However, the fixed value of the coefficient is used when evaluating the
+model:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Polynomial1D</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">c0</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c1</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="n">c2</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">... </span>                         <span class="n">n_models</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span>
+<span class="go">&lt;Polynomial1D(2, c0=[ 1., 1.], c1=[ 2., 2.], c2=[ 3., 3.], n_models=2)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model_set_axis</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p1</span><span class="o">.</span><span class="n">c0</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pfit</span> <span class="o">=</span> <span class="n">fitting</span><span class="o">.</span><span class="n">LinearLSQFitter</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">new_model</span> <span class="o">=</span> <span class="n">pfit</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">new_model</span><span class="p">)</span>  
+<span class="go">Model: Polynomial1D</span>
+<span class="go">Inputs: 1</span>
+<span class="go">Outputs: 1</span>
+<span class="go">Model set size: 2</span>
+<span class="go">Degree: 2</span>
+<span class="go">Parameters:</span>
+<span class="go">     c0     c1         c2</span>
+<span class="go">    --- ------------- -------------</span>
+<span class="go">    1.0 2.38641216243 2.96827885742</span>
+<span class="go">    1.0 2.38641216243 2.96827885742</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">A parameter can be <a class="reference internal" href="../api/astropy.modeling.Parameter.html#astropy.modeling.Parameter.tied" title="astropy.modeling.Parameter.tied"><tt class="xref py py-obj docutils literal"><span class="pre">tied</span></tt></a> (linked to
+another parameter). This can be done in two ways:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tiedfunc</span><span class="p">(</span><span class="n">g1</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">mean</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">g1</span><span class="o">.</span><span class="n">stddev</span>
+<span class="gp">... </span>   <span class="k">return</span> <span class="n">mean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">tied</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;mean&#39;</span><span class="p">:</span> <span class="n">tiedfunc</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span> <span class="o">=</span> <span class="n">tiedfunc</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Bounded fitting is supported through the <tt class="docutils literal"><span class="pre">bounds</span></tt> arguments to models or by
+setting <a class="reference internal" href="../api/astropy.modeling.Parameter.html#astropy.modeling.Parameter.min" title="astropy.modeling.Parameter.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a> and <a class="reference internal" href="../api/astropy.modeling.Parameter.html#astropy.modeling.Parameter.max" title="astropy.modeling.Parameter.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a>
+attributes on a parameter.  Bounds for the
+<a class="reference internal" href="../api/astropy.modeling.fitting.LevMarLSQFitter.html#astropy.modeling.fitting.LevMarLSQFitter" title="astropy.modeling.fitting.LevMarLSQFitter"><tt class="xref py py-obj docutils literal"><span class="pre">LevMarLSQFitter</span></tt></a> are always exactly satisfied&#8211;if
+the value of the parameter is outside the fitting interval, it will be reset to
+the value at the bounds. The <a class="reference internal" href="../api/astropy.modeling.fitting.SLSQPLSQFitter.html#astropy.modeling.fitting.SLSQPLSQFitter" title="astropy.modeling.fitting.SLSQPLSQFitter"><tt class="xref py py-obj docutils literal"><span class="pre">SLSQPLSQFitter</span></tt></a> handles
+bounds internally.</p>
+<ul>
+<li><p class="first">Different fitters support different types of constraints:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">fitting</span><span class="o">.</span><span class="n">LinearLSQFitter</span><span class="o">.</span><span class="n">supported_constraints</span>
+<span class="go">[&#39;fixed&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fitting</span><span class="o">.</span><span class="n">LevMarLSQFitter</span><span class="o">.</span><span class="n">supported_constraints</span>
+<span class="go">[&#39;fixed&#39;, &#39;tied&#39;, &#39;bounds&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fitting</span><span class="o">.</span><span class="n">SLSQPLSQFitter</span><span class="o">.</span><span class="n">supported_constraints</span>
+<span class="go">[&#39;bounds&#39;, &#39;eqcons&#39;, &#39;ineqcons&#39;, &#39;fixed&#39;, &#39;tied&#39;]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Fitting Models to Data</a><ul>
+<li><a class="reference internal" href="#fitting-examples">Fitting examples</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/modeling/fitting.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/modeling/fitting.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

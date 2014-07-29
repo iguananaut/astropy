@@ -1,0 +1,579 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>VOSDatabase &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="VO Simple Cone Search" href="../vo/conesearch/index.html" />
+    <link rel="next" title="conesearch" href="astropy.vo.client.conesearch.conesearch.html" />
+    <link rel="prev" title="VOSCatalog" href="astropy.vo.client.vos_catalog.VOSCatalog.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.client.conesearch.conesearch.html" title="conesearch">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.client.vos_catalog.VOSCatalog.html" title="VOSCatalog">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/conesearch/index.html" accesskey="U">VO Simple Cone Search</a> &raquo;</li>
+      
+      <li>VOSDatabase</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="vosdatabase">
+<h1>VOSDatabase<a class="headerlink" href="#vosdatabase" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase">
+<em class="property">class </em><tt class="descclassname">astropy.vo.client.vos_catalog.</tt><tt class="descname">VOSDatabase</tt><big>(</big><em>tree</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L162" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.vo.client.vos_catalog.VOSBase.html#astropy.vo.client.vos_catalog.VOSBase" title="astropy.vo.client.vos_catalog.VOSBase"><tt class="xref py py-class docutils literal"><span class="pre">astropy.vo.client.vos_catalog.VOSBase</span></tt></a></p>
+<p>A class to represent a collection of <a class="reference internal" href="astropy.vo.client.vos_catalog.VOSCatalog.html#astropy.vo.client.vos_catalog.VOSCatalog" title="astropy.vo.client.vos_catalog.VOSCatalog"><tt class="xref py py-obj docutils literal"><span class="pre">VOSCatalog</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>tree</strong> : JSON tree</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>VOSError</strong></p>
+<blockquote class="last">
+<div><p>If given <tt class="docutils literal"><span class="pre">tree</span></tt> does not have &#8216;catalogs&#8217; key
+or catalog is invalid.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.version" title="astropy.vo.client.vos_catalog.VOSDatabase.version"><tt class="xref py py-obj docutils literal"><span class="pre">version</span></tt></a></td>
+<td>Database version number.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog"><tt class="xref py py-obj docutils literal"><span class="pre">add_catalog</span></tt></a>(name,&nbsp;cat[,&nbsp;allow_duplicate_url])</td>
+<td>Add a catalog to database.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog_by_url" title="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog_by_url"><tt class="xref py py-obj docutils literal"><span class="pre">add_catalog_by_url</span></tt></a>(name,&nbsp;url,&nbsp;**kwargs)</td>
+<td>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog"><tt class="xref py py-func docutils literal"><span class="pre">add_catalog()</span></tt></a> but the catalog is created with only the given name and access URL.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.create_empty" title="astropy.vo.client.vos_catalog.VOSDatabase.create_empty"><tt class="xref py py-obj docutils literal"><span class="pre">create_empty</span></tt></a>()</td>
+<td>Create an empty database of VO services.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog"><tt class="xref py py-obj docutils literal"><span class="pre">delete_catalog</span></tt></a>(name)</td>
+<td>Delete a catalog from database with given name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog_by_url" title="astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog_by_url"><tt class="xref py py-obj docutils literal"><span class="pre">delete_catalog_by_url</span></tt></a>(url)</td>
+<td>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog"><tt class="xref py py-func docutils literal"><span class="pre">delete_catalog()</span></tt></a> but using access URL.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.from_json" title="astropy.vo.client.vos_catalog.VOSDatabase.from_json"><tt class="xref py py-obj docutils literal"><span class="pre">from_json</span></tt></a>(filename,&nbsp;**kwargs)</td>
+<td>Create a database of VO services from a JSON file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.from_registry" title="astropy.vo.client.vos_catalog.VOSDatabase.from_registry"><tt class="xref py py-obj docutils literal"><span class="pre">from_registry</span></tt></a>(registry_url[,&nbsp;timeout])</td>
+<td>Create a database of VO services from VO registry URL.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalog"><tt class="xref py py-obj docutils literal"><span class="pre">get_catalog</span></tt></a>(name)</td>
+<td>Get one catalog of given name.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalog_by_url" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalog_by_url"><tt class="xref py py-obj docutils literal"><span class="pre">get_catalog_by_url</span></tt></a>(url)</td>
+<td>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalog"><tt class="xref py py-func docutils literal"><span class="pre">get_catalog()</span></tt></a> but using access URL look-up.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs"><tt class="xref py py-obj docutils literal"><span class="pre">get_catalogs</span></tt></a>()</td>
+<td>Iterator to get all catalogs.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs_by_url" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs_by_url"><tt class="xref py py-obj docutils literal"><span class="pre">get_catalogs_by_url</span></tt></a>(url)</td>
+<td>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs"><tt class="xref py py-func docutils literal"><span class="pre">get_catalogs()</span></tt></a> but using access URL look-up.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs" title="astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs"><tt class="xref py py-obj docutils literal"><span class="pre">list_catalogs</span></tt></a>([pattern,&nbsp;sort])</td>
+<td>List catalog names.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs_by_url" title="astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs_by_url"><tt class="xref py py-obj docutils literal"><span class="pre">list_catalogs_by_url</span></tt></a>([pattern,&nbsp;sort])</td>
+<td>Like <a class="reference internal" href="astropy.vo.client.vos_catalog.list_catalogs.html#astropy.vo.client.vos_catalog.list_catalogs" title="astropy.vo.client.vos_catalog.list_catalogs"><tt class="xref py py-func docutils literal"><span class="pre">list_catalogs()</span></tt></a> but using access URL.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.merge" title="astropy.vo.client.vos_catalog.VOSDatabase.merge"><tt class="xref py py-obj docutils literal"><span class="pre">merge</span></tt></a>(other,&nbsp;**kwargs)</td>
+<td>Merge two database together.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.to_json" title="astropy.vo.client.vos_catalog.VOSDatabase.to_json"><tt class="xref py py-obj docutils literal"><span class="pre">to_json</span></tt></a>(filename[,&nbsp;clobber])</td>
+<td>Write database content to a JSON file.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.version">
+<tt class="descname">version</tt><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Database version number.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog">
+<tt class="descname">add_catalog</tt><big>(</big><em>name</em>, <em>cat</em>, <em>allow_duplicate_url=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.add_catalog"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L297" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a catalog to database.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Primary key for the catalog.</p>
+</div></blockquote>
+<p><strong>cat</strong> : <a class="reference internal" href="astropy.vo.client.vos_catalog.VOSCatalog.html#astropy.vo.client.vos_catalog.VOSCatalog" title="astropy.vo.client.vos_catalog.VOSCatalog"><tt class="xref py py-obj docutils literal"><span class="pre">VOSCatalog</span></tt></a></p>
+<blockquote>
+<div><p>Catalog to add.</p>
+</div></blockquote>
+<p><strong>allow_duplicate_url</strong> : bool</p>
+<blockquote>
+<div><p>Allow catalog with duplicate access URL?</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>VOSError</strong></p>
+<blockquote>
+<div><p>Invalid catalog.</p>
+</div></blockquote>
+<p><strong>DuplicateCatalogName</strong></p>
+<blockquote>
+<div><p>Catalog with given name already exists.</p>
+</div></blockquote>
+<p><strong>DuplicateCatalogURL</strong></p>
+<blockquote class="last">
+<div><p>Catalog with given access URL already exists.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog_by_url">
+<tt class="descname">add_catalog_by_url</tt><big>(</big><em>name</em>, <em>url</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.add_catalog_by_url"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L338" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog_by_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog"><tt class="xref py py-func docutils literal"><span class="pre">add_catalog()</span></tt></a> but the catalog is created with
+only the given name and access URL.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Primary key for the catalog.</p>
+</div></blockquote>
+<p><strong>url</strong> : str</p>
+<blockquote>
+<div><p>Access URL of the service. This is used to build queries.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote class="last">
+<div><p>Keywords accepted by <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog"><tt class="xref py py-func docutils literal"><span class="pre">add_catalog()</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.create_empty">
+<em class="property">classmethod </em><tt class="descname">create_empty</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.create_empty"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L448" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.create_empty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an empty database of VO services.</p>
+<p>Empty database format:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&quot;__version__&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s">&quot;catalogs&quot;</span> <span class="p">:</span> <span class="p">{</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>db</strong> : <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a></p>
+<blockquote class="last">
+<div><p>Empty database.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog">
+<tt class="descname">delete_catalog</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.delete_catalog"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L356" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete a catalog from database with given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Primary key identifying the catalog.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>MissingCatalog</strong></p>
+<blockquote class="last">
+<div><p>If catalog is not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog_by_url">
+<tt class="descname">delete_catalog_by_url</tt><big>(</big><em>url</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.delete_catalog_by_url"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L376" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog_by_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.delete_catalog"><tt class="xref py py-func docutils literal"><span class="pre">delete_catalog()</span></tt></a> but using access URL.
+On multiple matches, all matches are deleted.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.from_json">
+<em class="property">classmethod </em><tt class="descname">from_json</tt><big>(</big><em>filename</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.from_json"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L468" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.from_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a database of VO services from a JSON file.</p>
+<p>Example JSON format for Cone Search:</p>
+<div class="highlight-python"><div class="highlight"><pre>{
+    &quot;__version__&quot;: 1,
+    &quot;catalogs&quot; : {
+        &quot;My Cone Search&quot;: {
+            &quot;capabilityClass&quot;: &quot;ConeSearch&quot;,
+            &quot;title&quot;: &quot;My Cone Search&quot;,
+            &quot;url&quot;: &quot;http://foo/cgi-bin/search?CAT=bar&amp;&quot;,
+            ...
+        },
+        &quot;Another Cone Search&quot;: {
+            ...
+        }
+    }
+}
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>JSON file.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Keywords accepted by
+<a class="reference internal" href="astropy.utils.data.get_readable_fileobj.html#astropy.utils.data.get_readable_fileobj" title="astropy.utils.data.get_readable_fileobj"><tt class="xref py py-func docutils literal"><span class="pre">get_readable_fileobj()</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>db</strong> : <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a></p>
+<blockquote class="last">
+<div><p>Database from given file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.from_registry">
+<em class="property">classmethod </em><tt class="descname">from_registry</tt><big>(</big><em>registry_url</em>, <em>timeout=60</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.from_registry"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L509" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.from_registry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a database of VO services from VO registry URL.</p>
+<p>This is described in detail in <a class="reference internal" href="../vo/conesearch/validator.html#vo-sec-validator-build-db"><em>Building the Database from Registry</em></a>,
+except for the <tt class="docutils literal"><span class="pre">validate_xxx</span></tt> keys that are added by the
+validator itself.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>registry_url</strong> : str</p>
+<blockquote>
+<div><p>URL of VO registry that returns a VO Table.
+For example, see <tt class="docutils literal"><span class="pre">astropy.vo.validator.validate.CS_MSTR_LIST</span></tt>.
+Pedantic is automatically set to <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> for parsing.</p>
+</div></blockquote>
+<p><strong>timeout</strong> : number</p>
+<blockquote>
+<div><p>Temporarily set <tt class="docutils literal"><span class="pre">astropy.utils.data.REMOTE_TIMEOUT</span></tt> to
+this value to avoid time out error while reading the
+entire registry.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Keywords accepted by
+<a class="reference internal" href="astropy.utils.data.get_readable_fileobj.html#astropy.utils.data.get_readable_fileobj" title="astropy.utils.data.get_readable_fileobj"><tt class="xref py py-func docutils literal"><span class="pre">get_readable_fileobj()</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>db</strong> : <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a></p>
+<blockquote>
+<div><p>Database from given registry.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>VOSError</strong></p>
+<blockquote class="last">
+<div><p>Invalid VO registry.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.get_catalog">
+<tt class="descname">get_catalog</tt><big>(</big><em>name</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.get_catalog"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L217" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get one catalog of given name.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Primary key identifying the catalog.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>obj</strong> : <a class="reference internal" href="astropy.vo.client.vos_catalog.VOSCatalog.html#astropy.vo.client.vos_catalog.VOSCatalog" title="astropy.vo.client.vos_catalog.VOSCatalog"><tt class="xref py py-obj docutils literal"><span class="pre">VOSCatalog</span></tt></a></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>MissingCatalog</strong></p>
+<blockquote class="last">
+<div><p>If catalog is not found.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.get_catalog_by_url">
+<tt class="descname">get_catalog_by_url</tt><big>(</big><em>url</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.get_catalog_by_url"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L240" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalog_by_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalog"><tt class="xref py py-func docutils literal"><span class="pre">get_catalog()</span></tt></a> but using access URL look-up.
+On multiple matches, only first match is returned.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs">
+<tt class="descname">get_catalogs</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.get_catalogs"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L206" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator to get all catalogs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs_by_url">
+<tt class="descname">get_catalogs_by_url</tt><big>(</big><em>url</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.get_catalogs_by_url"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L211" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs_by_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs"><tt class="xref py py-func docutils literal"><span class="pre">get_catalogs()</span></tt></a> but using access URL look-up.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs">
+<tt class="descname">list_catalogs</tt><big>(</big><em>pattern=None</em>, <em>sort=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.list_catalogs"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L267" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs" title="Permalink to this definition">¶</a></dt>
+<dd><p>List catalog names.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>pattern</strong> : str or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>If given string is anywhere in a catalog name, it is
+considered a matching catalog. It accepts patterns as
+in <a class="reference external" href="http://docs.python.org/library/fnmatch.html#module-fnmatch" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">fnmatch</span></tt></a> and is case-insensitive.
+By default, all catalogs are returned.</p>
+</div></blockquote>
+<p><strong>sort</strong> : bool</p>
+<blockquote>
+<div><p>Sort output in alphabetical order. If not sorted, the
+order depends on dictionary hashing. Default is <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>out_arr</strong> : list of str</p>
+<blockquote class="last">
+<div><p>List of catalog names.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs_by_url">
+<tt class="descname">list_catalogs_by_url</tt><big>(</big><em>pattern=None</em>, <em>sort=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.list_catalogs_by_url"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L290" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.list_catalogs_by_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>Like <a class="reference internal" href="astropy.vo.client.vos_catalog.list_catalogs.html#astropy.vo.client.vos_catalog.list_catalogs" title="astropy.vo.client.vos_catalog.list_catalogs"><tt class="xref py py-func docutils literal"><span class="pre">list_catalogs()</span></tt></a> but using access URL.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.merge">
+<tt class="descname">merge</tt><big>(</big><em>other</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.merge"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L389" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.merge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Merge two database together.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>other</strong> : <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a></p>
+<blockquote>
+<div><p>The other database to merge.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote>
+<div><p>Keywords accepted by <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase.add_catalog" title="astropy.vo.client.vos_catalog.VOSDatabase.add_catalog"><tt class="xref py py-func docutils literal"><span class="pre">add_catalog()</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>db</strong> : <a class="reference internal" href="#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a></p>
+<blockquote>
+<div><p>Merged database.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>VOSError</strong></p>
+<blockquote class="last">
+<div><p>Invalid database or incompatible version.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.client.vos_catalog.VOSDatabase.to_json">
+<tt class="descname">to_json</tt><big>(</big><em>filename</em>, <em>clobber=False</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/vos_catalog.html#VOSDatabase.to_json"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/vos_catalog.py#L425" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.vos_catalog.VOSDatabase.to_json" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write database content to a JSON file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>JSON file.</p>
+</div></blockquote>
+<p><strong>clobber</strong> : bool</p>
+<blockquote>
+<div><p>Overwrite existing file?</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>OSError</strong></p>
+<blockquote class="last">
+<div><p>File exists.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">VOSDatabase</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.client.vos_catalog.VOSDatabase.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.client.vos_catalog.VOSDatabase.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

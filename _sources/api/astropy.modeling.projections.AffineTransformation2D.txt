@@ -1,0 +1,73 @@
+
+
+AffineTransformation2D
+===================================================
+
+.. currentmodule:: astropy.modeling.projections
+
+.. autoclass:: AffineTransformation2D
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~AffineTransformation2D.input_names
+      ~AffineTransformation2D.matrix
+      ~AffineTransformation2D.n_inputs
+      ~AffineTransformation2D.n_outputs
+      ~AffineTransformation2D.param_names
+      ~AffineTransformation2D.standard_broadcasting
+      ~AffineTransformation2D.translation
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~AffineTransformation2D.evaluate
+      ~AffineTransformation2D.inverse
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+   .. autoattribute:: matrix
+   .. autoattribute:: n_inputs
+   .. autoattribute:: n_outputs
+   .. autoattribute:: param_names
+   .. autoattribute:: standard_broadcasting
+   .. autoattribute:: translation
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+   .. automethod:: inverse
+
+   
+   

@@ -1,0 +1,539 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>NDData &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="N-dimensional datasets (astropy.nddata)" href="../nddata/index.html" />
+    <link rel="next" title="NDUncertainty" href="astropy.nddata.NDUncertainty.html" />
+    <link rel="prev" title="MissingDataAssociationException" href="astropy.nddata.MissingDataAssociationException.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.nddata.NDUncertainty.html" title="NDUncertainty">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.nddata.MissingDataAssociationException.html" title="MissingDataAssociationException">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../nddata/index.html" accesskey="U">N-dimensional datasets (<tt class="docutils literal"><span class="pre">astropy.nddata</span></tt>)</a> &raquo;</li>
+      
+      <li>NDData</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nddata">
+<h1>NDData<a class="headerlink" href="#nddata" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.nddata.NDData">
+<em class="property">class </em><tt class="descclassname">astropy.nddata.</tt><tt class="descname">NDData</tt><big>(</big><em>data</em>, <em>uncertainty=None</em>, <em>mask=None</em>, <em>flags=None</em>, <em>wcs=None</em>, <em>meta=None</em>, <em>unit=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nddata.html#NDData"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nddata.py#L29" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>A Superclass for array-based data in Astropy.</p>
+<p>The key distinction from raw numpy arrays is the presence of
+additional metadata such as uncertainties, a mask, units, flags,
+and/or a coordinate system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a> or <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote>
+<div><p>The actual data contained in this <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object. Not that this
+will always be copies by <em>reference</em> , so you should make copy
+the <tt class="docutils literal"><span class="pre">data</span></tt> before passing it in if that&#8217;s the  desired behavior.</p>
+</div></blockquote>
+<p><strong>uncertainty</strong> : <a class="reference internal" href="astropy.nddata.NDUncertainty.html#astropy.nddata.NDUncertainty" title="astropy.nddata.NDUncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">NDUncertainty</span></tt></a>, optional</p>
+<blockquote>
+<div><p>Uncertainties on the data.</p>
+</div></blockquote>
+<p><strong>mask</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a>-like, optional</p>
+<blockquote>
+<div><p>Mask for the data, given as a boolean Numpy array or any object that
+can be converted to a boolean Numpy array with a shape
+matching that of the data. The values must be <tt class="docutils literal"><span class="pre">False</span></tt> where
+the data is <em>valid</em> and <tt class="docutils literal"><span class="pre">True</span></tt> when it is not (like Numpy
+masked arrays). If <tt class="docutils literal"><span class="pre">data</span></tt> is a numpy masked array, providing
+<tt class="docutils literal"><span class="pre">mask</span></tt> here will causes the mask from the masked array to be
+ignored.</p>
+</div></blockquote>
+<p><strong>flags</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a>-like or <a class="reference internal" href="astropy.nddata.FlagCollection.html#astropy.nddata.FlagCollection" title="astropy.nddata.FlagCollection"><tt class="xref py py-obj docutils literal"><span class="pre">FlagCollection</span></tt></a>, optional</p>
+<blockquote>
+<div><p>Flags giving information about each pixel. These can be specified
+either as a Numpy array of any type (or an object which can be converted
+to a Numpy array) with a shape matching that of the
+data, or as a <a class="reference internal" href="astropy.nddata.FlagCollection.html#astropy.nddata.FlagCollection" title="astropy.nddata.FlagCollection"><tt class="xref py py-obj docutils literal"><span class="pre">FlagCollection</span></tt></a> instance which has a
+shape matching that of the data.</p>
+</div></blockquote>
+<p><strong>wcs</strong> : undefined, optional</p>
+<blockquote>
+<div><p>WCS-object containing the world coordinate system for the data.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is not yet defind because the discussion of how best to
+represent this class&#8217;s WCS system generically is still under
+consideration. For now just leave it as None</p>
+</div>
+</div></blockquote>
+<p><strong>meta</strong> : <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a>-like object, optional</p>
+<blockquote>
+<div><p>Metadata for this object.  &#8220;Metadata&#8221; here means all information that
+is included with this object but not part of any other attribute
+of this particular object.  e.g., creation date, unique identifier,
+simulation parameters, exposure time, telescope name, etc.</p>
+</div></blockquote>
+<p><strong>unit</strong> : <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">UnitBase</span></tt></a> instance or str, optional</p>
+<blockquote>
+<div><p>The units of the data.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError :</strong></p>
+<blockquote class="last">
+<div><p>If the <a class="reference internal" href="#astropy.nddata.NDData.uncertainty" title="astropy.nddata.NDData.uncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">uncertainty</span></tt></a> or <a class="reference internal" href="#astropy.nddata.NDData.mask" title="astropy.nddata.NDData.mask"><tt class="xref py py-obj docutils literal"><span class="pre">mask</span></tt></a> inputs cannot be broadcast (e.g., match
+shape) onto <tt class="docutils literal"><span class="pre">data</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p><a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> objects can be easily converted to a regular Numpy array
+using <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.asarray.html#numpy.asarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.asarray</span></tt></a></p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">NDData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">NDData</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="go">array([1, 2, 3])</span>
+</pre></div>
+</div>
+<p>If the <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object has a <a class="reference internal" href="#astropy.nddata.NDData.mask" title="astropy.nddata.NDData.mask"><tt class="xref py py-obj docutils literal"><span class="pre">mask</span></tt></a>, <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.asarray.html#numpy.asarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.asarray</span></tt></a> will return a
+Numpy masked array.</p>
+<p>This is useful, for example, when plotting a 2D image using
+matplotlib:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.nddata</span> <span class="kn">import</span> <span class="n">NDData</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">NDData</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.dtype" title="astropy.nddata.NDData.dtype"><tt class="xref py py-obj docutils literal"><span class="pre">dtype</span></tt></a></td>
+<td><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.dtype</span></tt></a> of this object&#8217;s data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.flags" title="astropy.nddata.NDData.flags"><tt class="xref py py-obj docutils literal"><span class="pre">flags</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.mask" title="astropy.nddata.NDData.mask"><tt class="xref py py-obj docutils literal"><span class="pre">mask</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.ndim" title="astropy.nddata.NDData.ndim"><tt class="xref py py-obj docutils literal"><span class="pre">ndim</span></tt></a></td>
+<td>integer dimensions of this object&#8217;s data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.shape" title="astropy.nddata.NDData.shape"><tt class="xref py py-obj docutils literal"><span class="pre">shape</span></tt></a></td>
+<td>shape tuple of this object&#8217;s data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.size" title="astropy.nddata.NDData.size"><tt class="xref py py-obj docutils literal"><span class="pre">size</span></tt></a></td>
+<td>integer size of this object&#8217;s data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.uncertainty" title="astropy.nddata.NDData.uncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">uncertainty</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.unit" title="astropy.nddata.NDData.unit"><tt class="xref py py-obj docutils literal"><span class="pre">unit</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.add" title="astropy.nddata.NDData.add"><tt class="xref py py-obj docutils literal"><span class="pre">add</span></tt></a>(operand[,&nbsp;propagate_uncertainties])</td>
+<td>Add another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.convert_unit_to" title="astropy.nddata.NDData.convert_unit_to"><tt class="xref py py-obj docutils literal"><span class="pre">convert_unit_to</span></tt></a>(unit[,&nbsp;equivalencies])</td>
+<td>Returns a new <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object whose values have been converted to a new unit.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.divide" title="astropy.nddata.NDData.divide"><tt class="xref py py-obj docutils literal"><span class="pre">divide</span></tt></a>(operand[,&nbsp;propagate_uncertainties])</td>
+<td>Divide another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.multiply" title="astropy.nddata.NDData.multiply"><tt class="xref py py-obj docutils literal"><span class="pre">multiply</span></tt></a>(operand[,&nbsp;propagate_uncertainties])</td>
+<td>Multiply another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.read" title="astropy.nddata.NDData.read"><tt class="xref py py-obj docutils literal"><span class="pre">read</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td>Read in data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.nddata.NDData.subtract" title="astropy.nddata.NDData.subtract"><tt class="xref py py-obj docutils literal"><span class="pre">subtract</span></tt></a>(operand[,&nbsp;propagate_uncertainties])</td>
+<td>Subtract another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.nddata.NDData.write" title="astropy.nddata.NDData.write"><tt class="xref py py-obj docutils literal"><span class="pre">write</span></tt></a>(data,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Write out data</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.dtype">
+<tt class="descname">dtype</tt><a class="headerlink" href="#astropy.nddata.NDData.dtype" title="Permalink to this definition">¶</a></dt>
+<dd><p><a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.dtype.html#numpy.dtype" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.dtype</span></tt></a> of this object&#8217;s data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.flags">
+<tt class="descname">flags</tt><a class="headerlink" href="#astropy.nddata.NDData.flags" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.mask">
+<tt class="descname">mask</tt><a class="headerlink" href="#astropy.nddata.NDData.mask" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.ndim">
+<tt class="descname">ndim</tt><a class="headerlink" href="#astropy.nddata.NDData.ndim" title="Permalink to this definition">¶</a></dt>
+<dd><p>integer dimensions of this object&#8217;s data</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.shape">
+<tt class="descname">shape</tt><a class="headerlink" href="#astropy.nddata.NDData.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>shape tuple of this object&#8217;s data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.size">
+<tt class="descname">size</tt><a class="headerlink" href="#astropy.nddata.NDData.size" title="Permalink to this definition">¶</a></dt>
+<dd><p>integer size of this object&#8217;s data.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.uncertainty">
+<tt class="descname">uncertainty</tt><a class="headerlink" href="#astropy.nddata.NDData.uncertainty" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.nddata.NDData.unit">
+<tt class="descname">unit</tt><a class="headerlink" href="#astropy.nddata.NDData.unit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.nddata.NDData.add">
+<tt class="descname">add</tt><big>(</big><em>operand</em>, <em>propagate_uncertainties=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nddata.html#NDData.add"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nddata.py#L531" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operand</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote>
+<div><p>The second operand in the operation a + b</p>
+</div></blockquote>
+<p><strong>propagate_uncertainties</strong> : bool</p>
+<blockquote>
+<div><p>Whether to propagate uncertainties following the propagation rules
+defined by the class used for the <a class="reference internal" href="#astropy.nddata.NDData.uncertainty" title="astropy.nddata.NDData.uncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">uncertainty</span></tt></a> attribute.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote class="last">
+<div><p>The resulting dataset</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This method requires the datasets to have identical WCS
+properties, equivalent units, and identical shapes. Flags and
+meta-data get set to None in the resulting dataset. The unit
+in the result is the same as the unit in <tt class="docutils literal"><span class="pre">self</span></tt>. Uncertainties
+are propagated, although correlated errors are not supported
+by any of the built-in uncertainty classes.  If uncertainties
+are assumed to be correlated, a warning is issued by default
+(though this can be disabled via the
+<tt class="docutils literal"><span class="pre">astropy.nddata.conf.warn_unsupported_correlated</span></tt>
+configuration item). Values masked in either dataset before
+the operation are masked in the resulting dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDData.convert_unit_to">
+<tt class="descname">convert_unit_to</tt><big>(</big><em>unit</em>, <em>equivalencies=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nddata.html#NDData.convert_unit_to"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nddata.py#L567" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.convert_unit_to" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a> object whose values have been converted
+to a new unit.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>unit</strong> : <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.units.UnitBase</span></tt></a> instance or str</p>
+<blockquote>
+<div><p>The unit to convert to.</p>
+</div></blockquote>
+<p><strong>equivalencies</strong> : list of equivalence pairs, optional</p>
+<blockquote>
+<div><p>A list of equivalence pairs to try if the units are not
+directly convertible.  See <a class="reference internal" href="../units/equivalencies.html#unit-equivalencies"><em>Equivalencies</em></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote>
+<div><p>The resulting dataset</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>UnitsError</strong></p>
+<blockquote class="last">
+<div><p>If units are inconsistent.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Flags are set to None in the result.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDData.divide">
+<tt class="descname">divide</tt><big>(</big><em>operand</em>, <em>propagate_uncertainties=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nddata.html#NDData.divide"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nddata.py#L558" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.divide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operand</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote>
+<div><p>The second operand in the operation a / b</p>
+</div></blockquote>
+<p><strong>propagate_uncertainties</strong> : bool</p>
+<blockquote>
+<div><p>Whether to propagate uncertainties following the propagation rules
+defined by the class used for the <a class="reference internal" href="#astropy.nddata.NDData.uncertainty" title="astropy.nddata.NDData.uncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">uncertainty</span></tt></a> attribute.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote class="last">
+<div><p>The resulting dataset</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This method requires the datasets to have identical WCS
+properties, equivalent units, and identical shapes. Flags and
+meta-data get set to None in the resulting dataset. The unit
+in the result is the same as the unit in <tt class="docutils literal"><span class="pre">self</span></tt>. Uncertainties
+are propagated, although correlated errors are not supported
+by any of the built-in uncertainty classes.  If uncertainties
+are assumed to be correlated, a warning is issued by default
+(though this can be disabled via the
+<tt class="docutils literal"><span class="pre">astropy.nddata.conf.warn_unsupported_correlated</span></tt>
+configuration item). Values masked in either dataset before
+the operation are masked in the resulting dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDData.multiply">
+<tt class="descname">multiply</tt><big>(</big><em>operand</em>, <em>propagate_uncertainties=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nddata.html#NDData.multiply"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nddata.py#L549" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.multiply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Multiply another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operand</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote>
+<div><p>The second operand in the operation a * b</p>
+</div></blockquote>
+<p><strong>propagate_uncertainties</strong> : bool</p>
+<blockquote>
+<div><p>Whether to propagate uncertainties following the propagation rules
+defined by the class used for the <a class="reference internal" href="#astropy.nddata.NDData.uncertainty" title="astropy.nddata.NDData.uncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">uncertainty</span></tt></a> attribute.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote class="last">
+<div><p>The resulting dataset</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This method requires the datasets to have identical WCS
+properties, equivalent units, and identical shapes. Flags and
+meta-data get set to None in the resulting dataset. The unit
+in the result is the same as the unit in <tt class="docutils literal"><span class="pre">self</span></tt>. Uncertainties
+are propagated, although correlated errors are not supported
+by any of the built-in uncertainty classes.  If uncertainties
+are assumed to be correlated, a warning is issued by default
+(though this can be disabled via the
+<tt class="docutils literal"><span class="pre">astropy.nddata.conf.warn_unsupported_correlated</span></tt>
+configuration item). Values masked in either dataset before
+the operation are masked in the resulting dataset.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="astropy.nddata.NDData.read">
+<em class="property">classmethod </em><tt class="descname">read</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/registry.py#L293" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in data</p>
+<p>The arguments passed to this method depend on the format</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDData.subtract">
+<tt class="descname">subtract</tt><big>(</big><em>operand</em>, <em>propagate_uncertainties=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/nddata/nddata.html#NDData.subtract"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/nddata/nddata.py#L540" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.subtract" title="Permalink to this definition">¶</a></dt>
+<dd><p>Subtract another dataset (<tt class="docutils literal"><span class="pre">operand</span></tt>) to this dataset.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>operand</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote>
+<div><p>The second operand in the operation a - b</p>
+</div></blockquote>
+<p><strong>propagate_uncertainties</strong> : bool</p>
+<blockquote>
+<div><p>Whether to propagate uncertainties following the propagation rules
+defined by the class used for the <a class="reference internal" href="#astropy.nddata.NDData.uncertainty" title="astropy.nddata.NDData.uncertainty"><tt class="xref py py-obj docutils literal"><span class="pre">uncertainty</span></tt></a> attribute.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>result</strong> : <a class="reference internal" href="#astropy.nddata.NDData" title="astropy.nddata.NDData"><tt class="xref py py-obj docutils literal"><span class="pre">NDData</span></tt></a></p>
+<blockquote class="last">
+<div><p>The resulting dataset</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This method requires the datasets to have identical WCS
+properties, equivalent units, and identical shapes. Flags and
+meta-data get set to None in the resulting dataset. The unit
+in the result is the same as the unit in <tt class="docutils literal"><span class="pre">self</span></tt>. Uncertainties
+are propagated, although correlated errors are not supported
+by any of the built-in uncertainty classes.  If uncertainties
+are assumed to be correlated, a warning is issued by default
+(though this can be disabled via the
+<tt class="docutils literal"><span class="pre">astropy.nddata.conf.warn_unsupported_correlated</span></tt>
+configuration item). Values masked in either dataset before
+the operation are masked in the resulting dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.nddata.NDData.write">
+<tt class="descname">write</tt><big>(</big><em>data</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/registry.py#L351" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.nddata.NDData.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write out data</p>
+<p>The arguments passed to this method depend on the format</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">NDData</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.nddata.NDData.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.nddata.NDData.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

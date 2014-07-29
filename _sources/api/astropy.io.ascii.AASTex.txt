@@ -1,0 +1,31 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+AASTex
+=======================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autoclass:: AASTex
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

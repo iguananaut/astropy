@@ -1,0 +1,297 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>w0wzCDM &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Cosmological Calculations (astropy.cosmology)" href="../cosmology/index.html" />
+    <link rel="next" title="wCDM" href="astropy.cosmology.wCDM.html" />
+    <link rel="prev" title="w0waCDM" href="astropy.cosmology.w0waCDM.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.cosmology.wCDM.html" title="wCDM">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.cosmology.w0waCDM.html" title="w0waCDM">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../cosmology/index.html" accesskey="U">Cosmological Calculations (<tt class="docutils literal"><span class="pre">astropy.cosmology</span></tt>)</a> &raquo;</li>
+      
+      <li>w0wzCDM</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="w0wzcdm">
+<h1>w0wzCDM<a class="headerlink" href="#w0wzcdm" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.cosmology.w0wzCDM">
+<em class="property">class </em><tt class="descclassname">astropy.cosmology.</tt><tt class="descname">w0wzCDM</tt><big>(</big><em>H0</em>, <em>Om0</em>, <em>Ode0</em>, <em>w0=-1.0</em>, <em>wz=0.0</em>, <em>Tcmb0=2.725</em>, <em>Neff=3.04</em>, <em>m_nu=&lt;Quantity 0.0 eV&gt;</em>, <em>name=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/cosmology/core.html#w0wzCDM"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/cosmology/core.py#L2211" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.cosmology.w0wzCDM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.cosmology.FLRW.html#astropy.cosmology.FLRW" title="astropy.cosmology.core.FLRW"><tt class="docutils literal"><span class="pre">astropy.cosmology.FLRW</span></tt></a></p>
+<p>FLRW cosmology with a variable dark energy equation of state
+and curvature.</p>
+<p>The equation for the dark energy equation of state uses the
+simple form: <img class="math" src="../_images/math/2d8bfbc7c312c5e3d9c44fb0448cf3b9d43f4608.png" alt="w(z) = w_0 + w_z z"/>.</p>
+<p>This form is not recommended for z &gt; 1.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>H0</strong> : float or <a class="reference internal" href="astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></p>
+<blockquote>
+<div><p>Hubble constant at z = 0. If a float, must be in [km/sec/Mpc]</p>
+</div></blockquote>
+<p><strong>Om0</strong> : float</p>
+<blockquote>
+<div><p>Omega matter: density of non-relativistic matter in units of the
+critical density at z=0.</p>
+</div></blockquote>
+<p><strong>Ode0</strong> : float</p>
+<blockquote>
+<div><p>Omega dark energy: density of dark energy in units of the critical
+density at z=0.</p>
+</div></blockquote>
+<p><strong>w0</strong> : float</p>
+<blockquote>
+<div><p>Dark energy equation of state at z=0. This is pressure/density for dark
+energy in units where c=1. A cosmological constant has w0=-1.0.</p>
+</div></blockquote>
+<p><strong>wz</strong> : float</p>
+<blockquote>
+<div><p>Derivative of the dark energy equation of state with respect to z.</p>
+</div></blockquote>
+<p><strong>Tcmb0</strong> : float or <a class="reference internal" href="astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></p>
+<blockquote>
+<div><p>Temperature of the CMB z=0. If a float, must be in [K]. Default: 2.725.</p>
+</div></blockquote>
+<p><strong>Neff</strong> : float</p>
+<blockquote>
+<div><p>Effective number of Neutrino species. Default 3.04.</p>
+</div></blockquote>
+<p><strong>m_nu</strong> : float or ndarray or <a class="reference internal" href="astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></p>
+<blockquote>
+<div><p>Mass of each neutrino species, in eV. If this is a float or scalar
+Quantity, then all neutrino species are assumed to have that mass. If a
+ndarray or array Quantity, then these are the values of the mass of
+each species. The actual number of neutrino species (and hence the
+number of elements of m_nu if it is not scalar) must be the floor of
+Neff. Usually this means you must provide three neutrino masses unless
+you are considering something like a sterile neutrino.</p>
+</div></blockquote>
+<p><strong>name</strong> : str</p>
+<blockquote class="last">
+<div><p>Optional name for this cosmological object.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.cosmology</span> <span class="kn">import</span> <span class="n">w0wzCDM</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosmo</span> <span class="o">=</span> <span class="n">w0wzCDM</span><span class="p">(</span><span class="n">H0</span><span class="o">=</span><span class="mi">70</span><span class="p">,</span> <span class="n">Om0</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">Ode0</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="n">w0</span><span class="o">=-</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">wz</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The comoving distance in Mpc at redshift z:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dc</span> <span class="o">=</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">comoving_distance</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.cosmology.w0wzCDM.w0" title="astropy.cosmology.w0wzCDM.w0"><tt class="xref py py-obj docutils literal"><span class="pre">w0</span></tt></a></td>
+<td>Dark energy equation of state at z=0</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.cosmology.w0wzCDM.wz" title="astropy.cosmology.w0wzCDM.wz"><tt class="xref py py-obj docutils literal"><span class="pre">wz</span></tt></a></td>
+<td>Derivative of the dark energy equation of state w.r.t.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.cosmology.w0wzCDM.de_density_scale" title="astropy.cosmology.w0wzCDM.de_density_scale"><tt class="xref py py-obj docutils literal"><span class="pre">de_density_scale</span></tt></a>(z)</td>
+<td>Evaluates the redshift dependence of the dark energy density.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.cosmology.w0wzCDM.w" title="astropy.cosmology.w0wzCDM.w"><tt class="xref py py-obj docutils literal"><span class="pre">w</span></tt></a>(z)</td>
+<td>Returns dark energy equation of state at redshift <tt class="docutils literal"><span class="pre">z</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.cosmology.w0wzCDM.w0">
+<tt class="descname">w0</tt><a class="headerlink" href="#astropy.cosmology.w0wzCDM.w0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dark energy equation of state at z=0</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.cosmology.w0wzCDM.wz">
+<tt class="descname">wz</tt><a class="headerlink" href="#astropy.cosmology.w0wzCDM.wz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Derivative of the dark energy equation of state w.r.t. z</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.cosmology.w0wzCDM.de_density_scale">
+<tt class="descname">de_density_scale</tt><big>(</big><em>z</em><big>)</big><a class="reference internal" href="../_modules/astropy/cosmology/core.html#w0wzCDM.de_density_scale"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/cosmology/core.py#L2314" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.cosmology.w0wzCDM.de_density_scale" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the redshift dependence of the dark energy density.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>z</strong> : array_like</p>
+<blockquote>
+<div><p>Input redshifts.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>I</strong> : ndarray, or float if input scalar</p>
+<blockquote class="last">
+<div><p>The scaling of the energy density of dark energy with redshift.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The scaling factor, I, is defined by <img class="math" src="../_images/math/614b6ea880330f22d851379fc380b76476633aca.png" alt="\rho(z) = \rho_0 I"/>,
+and in this case is given by</p>
+<div class="math">
+<p><img src="../_images/math/4fed57a85edcfd023e2f4a877fdf15595d910d66.png" alt="I = \left(1 + z\right)^{3 \left(1 + w_0 - w_z\right)}
+\exp \left(-3 w_z z\right)"/></p>
+</div></dd></dl>
+
+<dl class="method">
+<dt id="astropy.cosmology.w0wzCDM.w">
+<tt class="descname">w</tt><big>(</big><em>z</em><big>)</big><a class="reference internal" href="../_modules/astropy/cosmology/core.html#w0wzCDM.w"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/cosmology/core.py#L2287" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.cosmology.w0wzCDM.w" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dark energy equation of state at redshift <tt class="docutils literal"><span class="pre">z</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>z</strong> : array_like</p>
+<blockquote>
+<div><p>Input redshifts.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>w</strong> : ndarray, or float if input scalar</p>
+<blockquote class="last">
+<div><p>The dark energy equation of state</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The dark energy equation of state is defined as
+<img class="math" src="../_images/math/77167ea8b3a89179d3645a363515013ee8d557f0.png" alt="w(z) = P(z)/\rho(z)"/>, where <img class="math" src="../_images/math/53bb655b00180283b219d3b951bc5abd0f572ae8.png" alt="P(z)"/> is the
+pressure at redshift z and <img class="math" src="../_images/math/37b5826977b172d681ccdb73541e3dcece514e4d.png" alt="\rho(z)"/> is the density
+at redshift z, both in units where c=1.  Here this is given by
+<img class="math" src="../_images/math/2d8bfbc7c312c5e3d9c44fb0448cf3b9d43f4608.png" alt="w(z) = w_0 + w_z z"/>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">w0wzCDM</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.cosmology.w0wzCDM.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.cosmology.w0wzCDM.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

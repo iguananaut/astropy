@@ -1,0 +1,73 @@
+
+.. include:: ../coordinates/references.txt
+
+
+BaseRepresentation
+======================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: BaseRepresentation
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~BaseRepresentation.components
+      ~BaseRepresentation.isscalar
+      ~BaseRepresentation.recommended_units
+      ~BaseRepresentation.shape
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~BaseRepresentation.from_cartesian
+      ~BaseRepresentation.from_representation
+      ~BaseRepresentation.get_name
+      ~BaseRepresentation.represent_as
+      ~BaseRepresentation.to_cartesian
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: components
+   .. autoattribute:: isscalar
+   .. autoattribute:: recommended_units
+   .. autoattribute:: shape
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: from_cartesian
+   .. automethod:: from_representation
+   .. automethod:: get_name
+   .. automethod:: represent_as
+   .. automethod:: to_cartesian
+
+   
+   

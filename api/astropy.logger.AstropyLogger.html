@@ -1,0 +1,345 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>AstropyLogger &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Logging system" href="../logging.html" />
+    <link rel="next" title="LoggingError" href="astropy.logger.LoggingError.html" />
+    <link rel="prev" title="Conf" href="astropy.logger.Conf.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.logger.LoggingError.html" title="LoggingError">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.logger.Conf.html" title="Conf">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../logging.html" accesskey="U">Logging system</a> &raquo;</li>
+      
+      <li>AstropyLogger</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="astropylogger">
+<h1>AstropyLogger<a class="headerlink" href="#astropylogger" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.logger.AstropyLogger">
+<em class="property">class </em><tt class="descclassname">astropy.logger.</tt><tt class="descname">AstropyLogger</tt><big>(</big><em>name</em>, <em>level=0</em><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L144" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/logging.html#logging.Logger" title="(in Python v2.7)"><tt class="xref py py-class docutils literal"><span class="pre">logging.Logger</span></tt></a></p>
+<p>This class is used to set up the Astropy logging.</p>
+<p>The main functionality added by this class over the built-in
+logging.Logger class is the ability to keep track of the origin of the
+messages, the ability to enable logging of warnings.warn calls and
+exceptions, and the addition of colorized output and context managers to
+easily capture messages to a file or list.</p>
+<p>Initialize the logger with a name and an optional level.</p>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.disable_color" title="astropy.logger.AstropyLogger.disable_color"><tt class="xref py py-obj docutils literal"><span class="pre">disable_color</span></tt></a>()</td>
+<td>Disable colorized output</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.disable_exception_logging" title="astropy.logger.AstropyLogger.disable_exception_logging"><tt class="xref py py-obj docutils literal"><span class="pre">disable_exception_logging</span></tt></a>()</td>
+<td>Disable logging of exceptions  Once called, any uncaught exceptions will no longer be emitted by this logger.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.disable_warnings_logging" title="astropy.logger.AstropyLogger.disable_warnings_logging"><tt class="xref py py-obj docutils literal"><span class="pre">disable_warnings_logging</span></tt></a>()</td>
+<td>Disable logging of warnings.warn() calls  Once called, any subsequent calls to <tt class="docutils literal"><span class="pre">warnings.warn()</span></tt> are no longer redirected to this logger.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.enable_color" title="astropy.logger.AstropyLogger.enable_color"><tt class="xref py py-obj docutils literal"><span class="pre">enable_color</span></tt></a>()</td>
+<td>Enable colorized output</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.enable_exception_logging" title="astropy.logger.AstropyLogger.enable_exception_logging"><tt class="xref py py-obj docutils literal"><span class="pre">enable_exception_logging</span></tt></a>()</td>
+<td>Enable logging of exceptions  Once called, any uncaught exceptions will be emitted with level <tt class="docutils literal"><span class="pre">ERROR</span></tt> by this logger, before being raised.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.enable_warnings_logging" title="astropy.logger.AstropyLogger.enable_warnings_logging"><tt class="xref py py-obj docutils literal"><span class="pre">enable_warnings_logging</span></tt></a>()</td>
+<td>Enable logging of warnings.warn() calls  Once called, any subsequent calls to <tt class="docutils literal"><span class="pre">warnings.warn()</span></tt> are redirected to this logger and emitted with level <tt class="docutils literal"><span class="pre">WARN</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.exception_logging_enabled" title="astropy.logger.AstropyLogger.exception_logging_enabled"><tt class="xref py py-obj docutils literal"><span class="pre">exception_logging_enabled</span></tt></a>()</td>
+<td>Determine if the exception-logging mechanism is enabled.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.log_to_file" title="astropy.logger.AstropyLogger.log_to_file"><tt class="xref py py-obj docutils literal"><span class="pre">log_to_file</span></tt></a>(*args,&nbsp;**kwds)</td>
+<td>Context manager to temporarily log messages to a file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.log_to_list" title="astropy.logger.AstropyLogger.log_to_list"><tt class="xref py py-obj docutils literal"><span class="pre">log_to_list</span></tt></a>(*args,&nbsp;**kwds)</td>
+<td>Context manager to temporarily log messages to a list.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.makeRecord" title="astropy.logger.AstropyLogger.makeRecord"><tt class="xref py py-obj docutils literal"><span class="pre">makeRecord</span></tt></a>(name,&nbsp;level,&nbsp;pathname,&nbsp;lineno,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.setLevel" title="astropy.logger.AstropyLogger.setLevel"><tt class="xref py py-obj docutils literal"><span class="pre">setLevel</span></tt></a>(level)</td>
+<td>Set the logging level of this logger.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.logger.AstropyLogger.warnings_logging_enabled" title="astropy.logger.AstropyLogger.warnings_logging_enabled"><tt class="xref py py-obj docutils literal"><span class="pre">warnings_logging_enabled</span></tt></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.disable_color">
+<tt class="descname">disable_color</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.disable_color"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L374" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.disable_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable colorized output</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.disable_exception_logging">
+<tt class="descname">disable_exception_logging</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.disable_exception_logging"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L339" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.disable_exception_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable logging of exceptions</p>
+<p>Once called, any uncaught exceptions will no longer be emitted by this
+logger.</p>
+<p>This can be re-enabled with <tt class="docutils literal"><span class="pre">enable_exception_logging</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.disable_warnings_logging">
+<tt class="descname">disable_warnings_logging</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.disable_warnings_logging"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L237" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.disable_warnings_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disable logging of warnings.warn() calls</p>
+<p>Once called, any subsequent calls to <tt class="docutils literal"><span class="pre">warnings.warn()</span></tt> are no longer
+redirected to this logger.</p>
+<p>This can be re-enabled with <tt class="docutils literal"><span class="pre">enable_warnings_logging</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.enable_color">
+<tt class="descname">enable_color</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.enable_color"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L368" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.enable_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable colorized output</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.enable_exception_logging">
+<tt class="descname">enable_exception_logging</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.enable_exception_logging"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L298" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.enable_exception_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable logging of exceptions</p>
+<p>Once called, any uncaught exceptions will be emitted with level
+<tt class="docutils literal"><span class="pre">ERROR</span></tt> by this logger, before being raised.</p>
+<p>This can be disabled with <tt class="docutils literal"><span class="pre">disable_exception_logging</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.enable_warnings_logging">
+<tt class="descname">enable_warnings_logging</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.enable_warnings_logging"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L222" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.enable_warnings_logging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enable logging of warnings.warn() calls</p>
+<p>Once called, any subsequent calls to <tt class="docutils literal"><span class="pre">warnings.warn()</span></tt> are
+redirected to this logger and emitted with level <tt class="docutils literal"><span class="pre">WARN</span></tt>. Note that
+this replaces the output from <tt class="docutils literal"><span class="pre">warnings.warn</span></tt>.</p>
+<p>This can be disabled with <tt class="docutils literal"><span class="pre">disable_warnings_logging</span></tt>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.exception_logging_enabled">
+<tt class="descname">exception_logging_enabled</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.exception_logging_enabled"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L279" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.exception_logging_enabled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the exception-logging mechanism is enabled.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>exclog</strong> : bool</p>
+<blockquote class="last">
+<div><p>True if exception logging is on, False if not.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.log_to_file">
+<tt class="descname">log_to_file</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.log_to_file"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L82" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.log_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to temporarily log messages to a file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>The file to log messages to.</p>
+</div></blockquote>
+<p><strong>filter_level</strong> : str</p>
+<blockquote>
+<div><p>If set, any log messages less important than <tt class="docutils literal"><span class="pre">filter_level</span></tt> will
+not be output to the file. Note that this is in addition to the
+top-level filtering for the logger, so if the logger has level
+&#8216;INFO&#8217;, then setting <tt class="docutils literal"><span class="pre">filter_level</span></tt> to <tt class="docutils literal"><span class="pre">INFO</span></tt> or <tt class="docutils literal"><span class="pre">DEBUG</span></tt>
+will have no effect, since these messages are already filtered
+out.</p>
+</div></blockquote>
+<p><strong>filter_origin</strong> : str</p>
+<blockquote class="last">
+<div><p>If set, only log messages with an origin starting with
+<tt class="docutils literal"><span class="pre">filter_origin</span></tt> will be output to the file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>By default, the logger already outputs log messages to a file set in
+the Astropy configuration file. Using this context manager does not
+stop log messages from being output to that file, nor does it stop log
+messages from being printed to standard output.</p>
+<p class="rubric">Examples</p>
+<p>The context manager is used as:</p>
+<div class="highlight-python"><div class="highlight"><pre>with logger.log_to_file(&#39;myfile.log&#39;):
+    # your code here
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.log_to_list">
+<tt class="descname">log_to_list</tt><big>(</big><em>*args</em>, <em>**kwds</em><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.log_to_list"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L82" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.log_to_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Context manager to temporarily log messages to a list.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>The file to log messages to.</p>
+</div></blockquote>
+<p><strong>filter_level</strong> : str</p>
+<blockquote>
+<div><p>If set, any log messages less important than <tt class="docutils literal"><span class="pre">filter_level</span></tt> will
+not be output to the file. Note that this is in addition to the
+top-level filtering for the logger, so if the logger has level
+&#8216;INFO&#8217;, then setting <tt class="docutils literal"><span class="pre">filter_level</span></tt> to <tt class="docutils literal"><span class="pre">INFO</span></tt> or <tt class="docutils literal"><span class="pre">DEBUG</span></tt>
+will have no effect, since these messages are already filtered
+out.</p>
+</div></blockquote>
+<p><strong>filter_origin</strong> : str</p>
+<blockquote class="last">
+<div><p>If set, only log messages with an origin starting with
+<tt class="docutils literal"><span class="pre">filter_origin</span></tt> will be output to the file.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Using this context manager does not stop log messages from being
+output to standard output.</p>
+<p class="rubric">Examples</p>
+<p>The context manager is used as:</p>
+<div class="highlight-python"><div class="highlight"><pre>with logger.log_to_list() as log_list:
+    # your code here
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.makeRecord">
+<tt class="descname">makeRecord</tt><big>(</big><em>name</em>, <em>level</em>, <em>pathname</em>, <em>lineno</em>, <em>msg</em>, <em>args</em>, <em>exc_info</em>, <em>func=None</em>, <em>extra=None</em>, <em>sinfo=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.makeRecord"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L155" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.makeRecord" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.setLevel">
+<tt class="descname">setLevel</tt><big>(</big><em>level</em><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.setLevel"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L472" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.setLevel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the logging level of this logger.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.logger.AstropyLogger.warnings_logging_enabled">
+<tt class="descname">warnings_logging_enabled</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/logger.html#AstropyLogger.warnings_logging_enabled"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/logger.py#L219" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.logger.AstropyLogger.warnings_logging_enabled" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">AstropyLogger</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.logger.AstropyLogger.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.logger.AstropyLogger.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

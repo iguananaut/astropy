@@ -1,0 +1,29 @@
+
+
+Tophat2DKernel
+==================================
+
+.. currentmodule:: astropy.convolution
+
+.. autoclass:: Tophat2DKernel
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

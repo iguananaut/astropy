@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>z_at_value &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Cosmological Calculations (astropy.cosmology)" href="../cosmology/index.html" />
+    <link rel="next" title="FLRW" href="astropy.cosmology.FLRW.html" />
+    <link rel="prev" title="set_current" href="astropy.cosmology.set_current.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.cosmology.FLRW.html" title="FLRW">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.cosmology.set_current.html" title="set_current">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../cosmology/index.html" accesskey="U">Cosmological Calculations (<tt class="docutils literal"><span class="pre">astropy.cosmology</span></tt>)</a> &raquo;</li>
+      
+      <li>z_at_value</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="z-at-value">
+<h1>z_at_value<a class="headerlink" href="#z-at-value" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.cosmology.z_at_value">
+<tt class="descclassname">astropy.cosmology.</tt><tt class="descname">z_at_value</tt><big>(</big><em>func</em>, <em>fval</em>, <em>zmin=0</em>, <em>zmax=1000</em>, <em>ztol=1e-05</em>, <em>maxfun=500</em><big>)</big><a class="reference internal" href="../_modules/astropy/cosmology/funcs.html#z_at_value"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/cosmology/funcs.py#L25" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.cosmology.z_at_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the redshift <tt class="docutils literal"><span class="pre">z</span></tt> at which <tt class="docutils literal"><span class="pre">func(z)</span> <span class="pre">=</span> <span class="pre">fval</span></tt>.</p>
+<p>This finds the redshift at which one of the cosmology functions or
+methods (for example Planck13.distmod) is equal to a known value.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Make sure you understand the behaviour of the function that you
+are trying to invert! Depending on the cosmology, there may not
+be a unique solution. For example, in the standard Lambda CDM
+cosmology, there are two redshifts which give an angular
+diameter distance of 1500 Mpc, z ~ 0.7 and z ~ 3.8. To force
+<tt class="docutils literal"><span class="pre">z_at_value</span></tt> to find the solution you are interested in, use the
+<tt class="docutils literal"><span class="pre">zmin</span></tt> and <tt class="docutils literal"><span class="pre">zmax</span></tt> keywords to limit the search range (see the
+example below).</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>func</strong> : function or method</p>
+<blockquote>
+<div><p>A function that takes a redshift as input.</p>
+</div></blockquote>
+<p><strong>fval</strong> : astropy.Quantity instance</p>
+<blockquote>
+<div><p>The value of <tt class="docutils literal"><span class="pre">func(z)</span></tt>.</p>
+</div></blockquote>
+<p><strong>zmin</strong> : float, optional</p>
+<blockquote>
+<div><p>The lower search limit for <tt class="docutils literal"><span class="pre">z</span></tt> (default 0).</p>
+</div></blockquote>
+<p><strong>zmax</strong> : float, optional</p>
+<blockquote>
+<div><p>The upper search limit for <tt class="docutils literal"><span class="pre">z</span></tt> (default 1000).</p>
+</div></blockquote>
+<p><strong>ztol</strong> : float, optional</p>
+<blockquote>
+<div><p>The relative error in <tt class="docutils literal"><span class="pre">z</span></tt> acceptable for convergence.</p>
+</div></blockquote>
+<p><strong>maxfun</strong> : int, optional</p>
+<blockquote>
+<div><p>The maximum number of function evaluations allowed in the
+optimization routine (default 500).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>z</strong> : float</p>
+<blockquote class="last">
+<div><p>The redshift <tt class="docutils literal"><span class="pre">z</span></tt> satisfying <tt class="docutils literal"><span class="pre">zmin</span> <span class="pre">&lt;</span> <span class="pre">z</span> <span class="pre">&lt;</span> <span class="pre">zmax</span></tt> and <tt class="docutils literal"><span class="pre">func(z)</span> <span class="pre">=</span>
+<span class="pre">fval</span></tt> within <tt class="docutils literal"><span class="pre">ztol</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This works for any arbitrary input cosmology, but is inefficient
+if you want to invert a large number of values for the same
+cosmology. In this case, it is faster to instead generate an array
+of values at many closely-spaced redshifts that cover the relevant
+redshift range, and then use interpolation to find the redshift at
+each value you&#8217;re interested in. For example, to efficiently find
+the redshifts corresponding to 10^6 values of the distance modulus
+in a Planck13 cosmology, you could do the following:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.cosmology</span> <span class="kn">import</span> <span class="n">Planck13</span><span class="p">,</span> <span class="n">z_at_value</span>
+</pre></div>
+</div>
+<p>Generate 10^6 distance moduli between 23 and 43 for which we
+want to find the corresponding redshifts:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">Dvals</span> <span class="o">=</span> <span class="p">(</span><span class="mi">23</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)</span> <span class="o">*</span> <span class="mi">20</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">mag</span>
+</pre></div>
+</div>
+<p>Make a grid of distance moduli covering the redshift range we
+need using 50 equally log-spaced values between zmin and
+zmax. We use log spacing to adequately sample the steep part of
+the curve at low distance moduli:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zmin</span> <span class="o">=</span> <span class="n">z_at_value</span><span class="p">(</span><span class="n">Planck13</span><span class="o">.</span><span class="n">distmod</span><span class="p">,</span> <span class="n">Dvals</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zmax</span> <span class="o">=</span> <span class="n">z_at_value</span><span class="p">(</span><span class="n">Planck13</span><span class="o">.</span><span class="n">distmod</span><span class="p">,</span> <span class="n">Dvals</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">zgrid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="n">zmin</span><span class="p">,</span> <span class="n">zmax</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Dgrid</span> <span class="o">=</span> <span class="n">Planck13</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">zgrid</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally interpolate to find the redshift at each distance modulus:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">zvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">Dvals</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">zgrid</span><span class="p">,</span> <span class="n">Dgrid</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.cosmology</span> <span class="kn">import</span> <span class="n">Planck13</span><span class="p">,</span> <span class="n">z_at_value</span>
+</pre></div>
+</div>
+<p>The age and lookback time are monotonic with redshift, and so a
+unique solution can be found:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z_at_value</span><span class="p">(</span><span class="n">Planck13</span><span class="o">.</span><span class="n">age</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Gyr</span><span class="p">)</span>
+<span class="go">3.1981191749374629</span>
+</pre></div>
+</div>
+<p>The angular diameter is not monotonic however, and there are two
+redshifts that give a value of 1500 Mpc. Use the zmin and zmax keywords
+to find the one you&#8217;re interested in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">z_at_value</span><span class="p">(</span><span class="n">Planck13</span><span class="o">.</span><span class="n">angular_diameter_distance</span><span class="p">,</span> <span class="mi">1500</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Mpc</span><span class="p">,</span> <span class="n">zmax</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="go">0.68127769625288614</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">z_at_value</span><span class="p">(</span><span class="n">Planck13</span><span class="o">.</span><span class="n">angular_diameter_distance</span><span class="p">,</span> <span class="mi">1500</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Mpc</span><span class="p">,</span> <span class="n">zmin</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
+<span class="go">3.7914918534022011</span>
+</pre></div>
+</div>
+<p>Also note that the luminosity distance and distance modulus (two
+other commonly inverted quantities) are monotonic in flat and open
+universes, but not in closed universes.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">z_at_value</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.cosmology.z_at_value.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.cosmology.z_at_value.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

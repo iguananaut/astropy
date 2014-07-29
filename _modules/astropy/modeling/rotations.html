@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>astropy.modeling.rotations &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+      
+       
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for astropy.modeling.rotations</h1><div class="highlight"><pre>
+<span class="c"># Licensed under a 3-clause BSD style license - see LICENSE.rst</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Implements roations, including spherical rotations as defined in WCS Paper II</span>
+<span class="sd">[1]_</span>
+
+<span class="sd">`RotateNative2Celestial` and `RotateCelestial2Native` follow the convention in</span>
+<span class="sd">WCS Paper II to rotate to/from a native sphere and the celestial sphere.</span>
+
+<span class="sd">The user interface sets and displays angles in degrees but the values are</span>
+<span class="sd">stored internally in radians.  This is managed through the parameter</span>
+<span class="sd">setters/getters.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">.. [1] Calabretta, M.R., Greisen, E.W., 2002, A&amp;A, 395, 1077 (Paper II)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="p">(</span><span class="n">absolute_import</span><span class="p">,</span> <span class="n">unicode_literals</span><span class="p">,</span> <span class="n">division</span><span class="p">,</span>
+                        <span class="n">print_function</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span> <span class="nn">.parameters</span> <span class="kn">import</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">InputParameterError</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;RotateCelestial2Native&#39;</span><span class="p">,</span> <span class="s">&#39;RotateNative2Celestial&#39;</span><span class="p">,</span> <span class="s">&#39;Rotation2D&#39;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">EulerAngleRotation</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for Euler angle rotations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phi, theta, psi : float</span>
+<span class="sd">        Euler angles in deg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_inputs</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">n_outputs</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">getter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">,</span> <span class="n">setter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">)</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">getter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">,</span> <span class="n">setter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">)</span>
+    <span class="n">psi</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">getter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">,</span> <span class="n">setter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">psi</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EulerAngleRotation</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_rotate_zxz</span><span class="p">(</span><span class="n">phi_i</span><span class="p">,</span> <span class="n">theta_i</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">psi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines a ZXZ rotation from initial coordinates phi_i, theta_i.</span>
+
+<span class="sd">        All inputs and outputs are in radians.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">cos_theta_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_i</span><span class="p">)</span>
+        <span class="n">sin_theta_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta_i</span><span class="p">)</span>
+        <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">sin_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">phi_i</span> <span class="o">-</span> <span class="n">psi</span>
+        <span class="n">cos_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+
+        <span class="n">phi_f</span> <span class="o">=</span> <span class="n">phi</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="o">-</span><span class="n">cos_theta_i</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">delta</span><span class="p">),</span>
+                                 <span class="n">sin_theta_i</span> <span class="o">*</span> <span class="n">cos_theta</span> <span class="o">-</span>
+                                 <span class="n">cos_theta_i</span> <span class="o">*</span> <span class="n">sin_theta</span> <span class="o">*</span> <span class="n">cos_delta</span><span class="p">)</span>
+
+        <span class="n">theta_f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">sin_theta_i</span> <span class="o">*</span> <span class="n">sin_theta</span> <span class="o">+</span>
+                            <span class="n">cos_theta_i</span> <span class="o">*</span> <span class="n">cos_theta</span> <span class="o">*</span> <span class="n">cos_delta</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">phi_f</span><span class="p">,</span> <span class="n">theta_f</span>
+
+
+<div class="viewcode-block" id="RotateNative2Celestial"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateNative2Celestial.html#astropy.modeling.rotations.RotateNative2Celestial">[docs]</a><span class="k">class</span> <span class="nc">RotateNative2Celestial</span><span class="p">(</span><span class="n">EulerAngleRotation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transformation from Native to Celestial Spherical Coordinates.</span>
+
+<span class="sd">    Defines a ZXZ rotation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phi, theta, psi : float</span>
+<span class="sd">        Euler angles in deg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RotateNative2Celestial.inverse"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateNative2Celestial.html#astropy.modeling.rotations.RotateNative2Celestial.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RotateCelestial2Native</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">psi</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RotateNative2Celestial.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateNative2Celestial.html#astropy.modeling.rotations.RotateNative2Celestial.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">phi_N</span><span class="p">,</span> <span class="n">theta_N</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">psi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate ZXZ rotation into celestial coordinates.</span>
+
+<span class="sd">        Note currently the parameter values are passed in as degrees so we need</span>
+<span class="sd">        to convert all inputs to radians and all outputs back to degrees.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># TODO: Unfortunately right now this superfluously converts from</span>
+        <span class="c"># radians to degrees back to radians again--this will be addressed in a</span>
+        <span class="c"># future change</span>
+        <span class="n">phi_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi_N</span><span class="p">)</span>
+        <span class="n">theta_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">theta_N</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+
+        <span class="n">alpha_C</span><span class="p">,</span> <span class="n">delta_C</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_rotate_zxz</span><span class="p">(</span><span class="n">phi_N</span><span class="p">,</span> <span class="n">theta_N</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">psi</span><span class="p">)</span>
+
+        <span class="n">alpha_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">alpha_C</span><span class="p">)</span>
+        <span class="n">delta_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">delta_C</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">alpha_C</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">alpha_C</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">360</span>
+        <span class="k">elif</span> <span class="n">mask</span><span class="p">:</span>
+            <span class="n">alpha_C</span> <span class="o">+=</span> <span class="mi">360</span>
+
+        <span class="k">return</span> <span class="n">alpha_C</span><span class="p">,</span> <span class="n">delta_C</span>
+</div>
+<div class="viewcode-block" id="RotateNative2Celestial.__call__"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateNative2Celestial.html#astropy.modeling.rotations.RotateNative2Celestial.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phi_N</span><span class="p">,</span> <span class="n">theta_N</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RotateNative2Celestial</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">phi_N</span><span class="p">,</span> <span class="n">theta_N</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="RotateCelestial2Native"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateCelestial2Native.html#astropy.modeling.rotations.RotateCelestial2Native">[docs]</a><span class="k">class</span> <span class="nc">RotateCelestial2Native</span><span class="p">(</span><span class="n">EulerAngleRotation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Transformation from Celestial to Native to Spherical Coordinates.</span>
+
+<span class="sd">    Defines a ZXZ rotation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    phi, theta, psi : float</span>
+<span class="sd">        Euler angles in deg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RotateCelestial2Native.inverse"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateCelestial2Native.html#astropy.modeling.rotations.RotateCelestial2Native.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">RotateNative2Celestial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">phi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">psi</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RotateCelestial2Native.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateCelestial2Native.html#astropy.modeling.rotations.RotateCelestial2Native.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">alpha_C</span><span class="p">,</span> <span class="n">delta_C</span><span class="p">,</span> <span class="n">phi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">psi</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate ZXZ rotation into native coordinates.</span>
+
+<span class="sd">        This is like RotateNative2Celestial.evaluate except phi and psi are</span>
+<span class="sd">        swapped in ZXZ rotation.</span>
+
+<span class="sd">        Note currently the parameter values are passed in as degrees so we need</span>
+<span class="sd">        to convert all inputs to radians and all outputs back to degrees.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">alpha_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">alpha_C</span><span class="p">)</span>
+        <span class="n">delta_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">delta_C</span><span class="p">)</span>
+        <span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">phi</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">psi</span><span class="p">)</span>
+
+        <span class="n">phi_N</span><span class="p">,</span> <span class="n">theta_N</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">_rotate_zxz</span><span class="p">(</span><span class="n">alpha_C</span><span class="p">,</span> <span class="n">delta_C</span><span class="p">,</span> <span class="n">psi</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">phi</span><span class="p">)</span>
+
+        <span class="n">phi_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">phi_N</span><span class="p">)</span>
+        <span class="n">theta_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">(</span><span class="n">theta_N</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">phi_N</span> <span class="o">&gt;</span> <span class="mi">180</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">phi_N</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">360</span>
+        <span class="k">elif</span> <span class="n">mask</span><span class="p">:</span>
+            <span class="n">phi_N</span> <span class="o">-=</span> <span class="mi">360</span>
+
+        <span class="k">return</span> <span class="n">phi_N</span><span class="p">,</span> <span class="n">theta_N</span>
+</div>
+<div class="viewcode-block" id="RotateCelestial2Native.__call__"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.RotateCelestial2Native.html#astropy.modeling.rotations.RotateCelestial2Native.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha_C</span><span class="p">,</span> <span class="n">delta_C</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RotateCelestial2Native</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__call__</span><span class="p">(</span><span class="n">alpha_C</span><span class="p">,</span> <span class="n">delta_C</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="Rotation2D"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.Rotation2D.html#astropy.modeling.rotations.Rotation2D">[docs]</a><span class="k">class</span> <span class="nc">Rotation2D</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform a 2D rotation given an angle in degrees.</span>
+
+<span class="sd">    Positive angles represent a counter-clockwise rotation and vice-versa.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    angle : float</span>
+<span class="sd">        angle of rotation in deg</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">n_inputs</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">n_outputs</span> <span class="o">=</span> <span class="mi">2</span>
+
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">getter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">rad2deg</span><span class="p">,</span> <span class="n">setter</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">angle</span><span class="o">=</span><span class="n">angle</span><span class="o">.</span><span class="n">default</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Rotation2D</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_matrix</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">angle</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Rotation2D.inverse"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.Rotation2D.html#astropy.modeling.rotations.Rotation2D.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inverse rotation.&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">angle</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">angle</span><span class="p">)</span>
+
+    <span class="c"># TODO: This needs to be refactored so that it can work as a</span>
+    <span class="c"># static/classmethod</span></div>
+<div class="viewcode-block" id="Rotation2D.evaluate"><a class="viewcode-back" href="../../../api/astropy.modeling.rotations.Rotation2D.html#astropy.modeling.rotations.Rotation2D.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">angle</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Apply the rotation to a set of 2D Cartesian coordinates given as two</span>
+<span class="sd">        lists--one for the x coordinates and one for a y coordinates--or a</span>
+<span class="sd">        single coordinate pair.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x, y : array, float</span>
+<span class="sd">            x and y coordinates</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Expected input arrays to have the same shape&quot;</span><span class="p">)</span>
+
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">inarr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">flatten</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">inarr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">inarr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Incompatible input shapes&quot;</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_matrix</span><span class="p">,</span> <span class="n">inarr</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="n">shape</span>
+
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span>
+</div>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_compute_matrix</span><span class="p">(</span><span class="n">angle</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)],</span>
+                         <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)]],</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right"> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

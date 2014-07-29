@@ -1,0 +1,50 @@
+
+.. include:: ../time/references.txt
+
+
+TimeBesselianEpochString
+=====================================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeBesselianEpochString
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeBesselianEpochString.epoch_prefix
+      ~TimeBesselianEpochString.epoch_to_jd
+      ~TimeBesselianEpochString.jd_to_epoch
+      ~TimeBesselianEpochString.name
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: epoch_prefix
+   .. autoattribute:: epoch_to_jd
+   .. autoattribute:: jd_to_epoch
+   .. autoattribute:: name
+
+   
+   
+
+   
+   
+   

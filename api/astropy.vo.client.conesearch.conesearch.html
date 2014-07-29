@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>conesearch &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="VO Simple Cone Search" href="../vo/conesearch/index.html" />
+    <link rel="next" title="search_all" href="astropy.vo.client.conesearch.search_all.html" />
+    <link rel="prev" title="VOSDatabase" href="astropy.vo.client.vos_catalog.VOSDatabase.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.client.conesearch.search_all.html" title="search_all">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.client.vos_catalog.VOSDatabase.html" title="VOSDatabase">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/conesearch/index.html" accesskey="U">VO Simple Cone Search</a> &raquo;</li>
+      
+      <li>conesearch</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="conesearch">
+<h1>conesearch<a class="headerlink" href="#conesearch" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.vo.client.conesearch.conesearch">
+<tt class="descclassname">astropy.vo.client.conesearch.</tt><tt class="descname">conesearch</tt><big>(</big><em>center</em>, <em>radius</em>, <em>verb=1</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/conesearch.html#conesearch"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/conesearch.py#L82" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.conesearch.conesearch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform Cone Search and returns the result of the
+first successful query.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>center</strong> : <a class="reference internal" href="astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a>, <a class="reference internal" href="astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="astropy.coordinates.BaseCoordinateFrame"><tt class="xref py py-obj docutils literal"><span class="pre">BaseCoordinateFrame</span></tt></a>, or sequence of length 2</p>
+<blockquote>
+<div><p>Position of the center of the cone to search.  It may be specified as an
+object from the <a class="reference internal" href="../coordinates/index.html#astropy-coordinates"><em>Astronomical Coordinate Systems (astropy.coordinates)</em></a> package, or as a length 2
+sequence.  If a sequence, it is assumed to be <tt class="docutils literal"><span class="pre">(RA,</span> <span class="pre">DEC)</span></tt> in the
+ICRS coordinate frame, given in decimal degrees.</p>
+</div></blockquote>
+<p><strong>radius</strong> : float or <a class="reference internal" href="astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="astropy.units.quantity.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a></p>
+<blockquote>
+<div><p>Radius of the cone to search:</p>
+<blockquote>
+<div><ul class="simple">
+<li>If float is given, it is assumed to be in decimal degrees.</li>
+<li>If astropy quantity is given, it is internally converted
+to degrees.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>verb</strong> : {1, 2, 3}</p>
+<blockquote>
+<div><p>Verbosity indicating how many columns are to be returned
+in the resulting table. Support for this parameter by
+a Cone Search service implementation is optional. If the
+service supports the parameter:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Return the bare minimum number of columns that
+the provider considers useful in describing the
+returned objects.</li>
+<li>Return a medium number of columns between the
+minimum and maximum (inclusive) that are
+considered by the provider to most typically
+useful to the user.</li>
+<li>Return all of the columns that are available for
+describing the objects.</li>
+</ol>
+</div></blockquote>
+<p>If not supported, the service should ignore the parameter
+and always return the same columns for every request.</p>
+</div></blockquote>
+<p><strong>catalog_db</strong></p>
+<blockquote>
+<div><p>May be one of the following, in order from easiest to
+use to most control:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>: A database of
+<a class="reference internal" href="astropy.vo.Conf.html#astropy.vo.Conf.conesearch_dbname" title="astropy.vo.Conf.conesearch_dbname"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.conesearch_dbname</span></tt></a> catalogs is
+downloaded from <a class="reference internal" href="astropy.vo.Conf.html#astropy.vo.Conf.vos_baseurl" title="astropy.vo.Conf.vos_baseurl"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.vos_baseurl</span></tt></a>.  The
+first catalog in the database to successfully return a
+result is used.</li>
+<li><em>catalog name</em>: A name in the database of
+<a class="reference internal" href="astropy.vo.Conf.html#astropy.vo.Conf.conesearch_dbname" title="astropy.vo.Conf.conesearch_dbname"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.conesearch_dbname</span></tt></a> catalogs at
+<a class="reference internal" href="astropy.vo.Conf.html#astropy.vo.Conf.vos_baseurl" title="astropy.vo.Conf.vos_baseurl"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.vos_baseurl</span></tt></a> is used.  For a list of
+acceptable names, use <a class="reference internal" href="astropy.vo.client.conesearch.list_catalogs.html#astropy.vo.client.conesearch.list_catalogs" title="astropy.vo.client.conesearch.list_catalogs"><tt class="xref py py-func docutils literal"><span class="pre">list_catalogs()</span></tt></a>.</li>
+<li><em>url</em>: The prefix of a URL to a IVOA Service for
+<a class="reference internal" href="astropy.vo.Conf.html#astropy.vo.Conf.conesearch_dbname" title="astropy.vo.Conf.conesearch_dbname"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.conesearch_dbname</span></tt></a>.  Must
+end in either &#8216;?&#8217; or &#8216;&amp;&#8217;.</li>
+<li><a class="reference internal" href="astropy.vo.client.vos_catalog.VOSCatalog.html#astropy.vo.client.vos_catalog.VOSCatalog" title="astropy.vo.client.vos_catalog.VOSCatalog"><tt class="xref py py-obj docutils literal"><span class="pre">VOSCatalog</span></tt></a> object: A specific
+catalog manually downloaded and selected from the database
+(see <a class="reference internal" href="../vo/conesearch/client.html#vo-sec-client-vos"><em>General VO Services Access</em></a>).</li>
+<li>Any of the above 3 options combined in a list, in which case
+they are tried in order.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>pedantic</strong> : bool or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>When <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, raise an error when the file violates the spec,
+otherwise issue a warning.  Warnings may be controlled using
+<a class="reference external" href="http://docs.python.org/library/warnings.html#module-warnings" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">warnings</span></tt></a> module.  When not provided, uses the
+configuration setting <a class="reference internal" href="astropy.io.votable.Conf.html#astropy.io.votable.Conf.pedantic" title="astropy.io.votable.Conf.pedantic"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.votable.Conf.pedantic</span></tt></a>,
+which defaults to <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>verbose</strong> : bool</p>
+<blockquote>
+<div><p>Verbose output.</p>
+</div></blockquote>
+<p><strong>cache</strong> : bool</p>
+<blockquote>
+<div><p>Use caching for VO Service database. Access to actual VO
+websites referenced by the database still needs internet
+connection.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>obj</strong> : <a class="reference internal" href="astropy.io.votable.tree.Table.html#astropy.io.votable.tree.Table" title="astropy.io.votable.tree.Table"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.votable.tree.Table</span></tt></a></p>
+<blockquote>
+<div><p>First table from first successful VO service request.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ConeSearchError</strong></p>
+<blockquote>
+<div><p>When invalid inputs are passed into Cone Search.</p>
+</div></blockquote>
+<p><strong>VOSError</strong></p>
+<blockquote class="last">
+<div><p>If VO service request fails.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">conesearch</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.client.conesearch.conesearch.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.client.conesearch.conesearch.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

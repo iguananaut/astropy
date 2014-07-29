@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>lazyproperty &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astropy Core Package Utilities (astropy.utils)" href="../utils/index.html" />
+    <link rel="next" title="NumpyRNGContext" href="astropy.utils.misc.NumpyRNGContext.html" />
+    <link rel="prev" title="indent" href="astropy.utils.misc.indent.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.utils.misc.NumpyRNGContext.html" title="NumpyRNGContext">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.utils.misc.indent.html" title="indent">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../utils/index.html" accesskey="U">Astropy Core Package Utilities (<tt class="docutils literal"><span class="pre">astropy.utils</span></tt>)</a> &raquo;</li>
+      
+      <li>lazyproperty</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="lazyproperty">
+<h1>lazyproperty<a class="headerlink" href="#lazyproperty" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.utils.misc.lazyproperty">
+<em class="property">class </em><tt class="descclassname">astropy.utils.misc.</tt><tt class="descname">lazyproperty</tt><big>(</big><em>fget</em>, <em>fset=None</em>, <em>fdel=None</em>, <em>doc=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/utils/misc.html#lazyproperty"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/utils/misc.py#L241" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.utils.misc.lazyproperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Works similarly to property(), but computes the value only once.</p>
+<p>This essentially memoizes the value of the property by storing the result
+of its computation in the <tt class="docutils literal"><span class="pre">__dict__</span></tt> of the object instance.  This is
+useful for computing the value of some property that should otherwise be
+invariant.  For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">LazyTest</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nd">@lazyproperty</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">complicated_property</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Computing the value for complicated_property...&#39;</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="mi">42</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lt</span> <span class="o">=</span> <span class="n">LazyTest</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lt</span><span class="o">.</span><span class="n">complicated_property</span>
+<span class="go">Computing the value for complicated_property...</span>
+<span class="go">42</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lt</span><span class="o">.</span><span class="n">complicated_property</span>
+<span class="go">42</span>
+</pre></div>
+</div>
+<p>If a setter for this property is defined, it will still be possible to
+manually update the value of the property, if that capability is desired.</p>
+<p>Adapted from the recipe at
+<a class="reference external" href="http://code.activestate.com/recipes/363602-lazy-property-evaluation">http://code.activestate.com/recipes/363602-lazy-property-evaluation</a></p>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.utils.misc.lazyproperty.deleter" title="astropy.utils.misc.lazyproperty.deleter"><tt class="xref py py-obj docutils literal"><span class="pre">deleter</span></tt></a>(fdel)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.utils.misc.lazyproperty.getter" title="astropy.utils.misc.lazyproperty.getter"><tt class="xref py py-obj docutils literal"><span class="pre">getter</span></tt></a>(fget)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.utils.misc.lazyproperty.setter" title="astropy.utils.misc.lazyproperty.setter"><tt class="xref py py-obj docutils literal"><span class="pre">setter</span></tt></a>(fset)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.utils.misc.lazyproperty.deleter">
+<tt class="descname">deleter</tt><big>(</big><em>fdel</em><big>)</big><a class="reference internal" href="../_modules/astropy/utils/misc.html#lazyproperty.deleter"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/utils/misc.py#L313" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.utils.misc.lazyproperty.deleter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.utils.misc.lazyproperty.getter">
+<tt class="descname">getter</tt><big>(</big><em>fget</em><big>)</big><a class="reference internal" href="../_modules/astropy/utils/misc.html#lazyproperty.getter"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/utils/misc.py#L307" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.utils.misc.lazyproperty.getter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.utils.misc.lazyproperty.setter">
+<tt class="descname">setter</tt><big>(</big><em>fset</em><big>)</big><a class="reference internal" href="../_modules/astropy/utils/misc.html#lazyproperty.setter"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/utils/misc.py#L310" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.utils.misc.lazyproperty.setter" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">lazyproperty</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.utils.misc.lazyproperty.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.utils.misc.lazyproperty.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

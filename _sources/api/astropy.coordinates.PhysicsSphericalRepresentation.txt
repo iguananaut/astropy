@@ -1,0 +1,73 @@
+
+.. include:: ../coordinates/references.txt
+
+
+PhysicsSphericalRepresentation
+==================================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: PhysicsSphericalRepresentation
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~PhysicsSphericalRepresentation.attr_classes
+      ~PhysicsSphericalRepresentation.phi
+      ~PhysicsSphericalRepresentation.r
+      ~PhysicsSphericalRepresentation.recommended_units
+      ~PhysicsSphericalRepresentation.theta
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~PhysicsSphericalRepresentation.from_cartesian
+      ~PhysicsSphericalRepresentation.represent_as
+      ~PhysicsSphericalRepresentation.to_cartesian
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: attr_classes
+   .. autoattribute:: phi
+   .. autoattribute:: r
+   .. autoattribute:: recommended_units
+   .. autoattribute:: theta
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: from_cartesian
+   .. automethod:: represent_as
+   .. automethod:: to_cartesian
+
+   
+   

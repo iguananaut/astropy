@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Resource &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="VOTable XML handling (astropy.io.votable)" href="../io/votable/index.html" />
+    <link rel="next" title="VOTableFile" href="astropy.io.votable.tree.VOTableFile.html" />
+    <link rel="prev" title="Table" href="astropy.io.votable.tree.Table.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.io.votable.tree.VOTableFile.html" title="VOTableFile">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.io.votable.tree.Table.html" title="Table">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../io/votable/index.html" accesskey="U">VOTable XML handling (<tt class="docutils literal"><span class="pre">astropy.io.votable</span></tt>)</a> &raquo;</li>
+      
+      <li>Resource</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="id1">
+<h1>Resource<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.io.votable.tree.Resource">
+<em class="property">class </em><tt class="descclassname">astropy.io.votable.tree.</tt><tt class="descname">Resource</tt><big>(</big><em>name=None</em>, <em>ID=None</em>, <em>utype=None</em>, <em>type=u'results'</em>, <em>id=None</em>, <em>config=None</em>, <em>pos=None</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/io/votable/tree.html#Resource"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/votable/tree.py#L2951" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.votable.tree.Resource" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.votable.tree.Element</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.votable.tree._IDProperty</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.votable.tree._NameProperty</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.votable.tree._UtypeProperty</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">astropy.io.votable.tree._DescriptionProperty</span></tt></p>
+<p><a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC21">RESOURCE</a> element: Groups <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC23">TABLE</a> and <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC21">RESOURCE</a> elements.</p>
+<p>The keyword arguments correspond to setting members of the same
+name, documented below.</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.coordinate_systems" title="astropy.io.votable.tree.Resource.coordinate_systems"><tt class="xref py py-obj docutils literal"><span class="pre">coordinate_systems</span></tt></a></td>
+<td>A list of coordinate system definitions (<a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC19">COOSYS</a> elements) for the <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC21">RESOURCE</a>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.extra_attributes" title="astropy.io.votable.tree.Resource.extra_attributes"><tt class="xref py py-obj docutils literal"><span class="pre">extra_attributes</span></tt></a></td>
+<td>A dictionary of string keys to string values containing any extra attributes of the <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC21">RESOURCE</a> element that are not defined in the specification.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.infos" title="astropy.io.votable.tree.Resource.infos"><tt class="xref py py-obj docutils literal"><span class="pre">infos</span></tt></a></td>
+<td>A list of informational parameters (key-value pairs) for the resource.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.links" title="astropy.io.votable.tree.Resource.links"><tt class="xref py py-obj docutils literal"><span class="pre">links</span></tt></a></td>
+<td>A list of links (pointers to other documents or servers through a URI) for the resource.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.params" title="astropy.io.votable.tree.Resource.params"><tt class="xref py py-obj docutils literal"><span class="pre">params</span></tt></a></td>
+<td>A list of parameters (constant-valued columns) for the resource.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.resources" title="astropy.io.votable.tree.Resource.resources"><tt class="xref py py-obj docutils literal"><span class="pre">resources</span></tt></a></td>
+<td>A list of nested resources inside this resource.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.tables" title="astropy.io.votable.tree.Resource.tables"><tt class="xref py py-obj docutils literal"><span class="pre">tables</span></tt></a></td>
+<td>A list of tables in the resource.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.type" title="astropy.io.votable.tree.Resource.type"><tt class="xref py py-obj docutils literal"><span class="pre">type</span></tt></a></td>
+<td>[<em>required</em>] The type of the resource.  Must be either:</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.iter_coosys" title="astropy.io.votable.tree.Resource.iter_coosys"><tt class="xref py py-obj docutils literal"><span class="pre">iter_coosys</span></tt></a>()</td>
+<td>Recursively iterates over all the <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC19">COOSYS</a> elements in the resource and nested resources.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.iter_fields_and_params" title="astropy.io.votable.tree.Resource.iter_fields_and_params"><tt class="xref py py-obj docutils literal"><span class="pre">iter_fields_and_params</span></tt></a>()</td>
+<td>Recursively iterates over all <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC24">FIELD</a> and <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC24">PARAM</a> elements in the resource, its tables and nested resources.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.iter_tables" title="astropy.io.votable.tree.Resource.iter_tables"><tt class="xref py py-obj docutils literal"><span class="pre">iter_tables</span></tt></a>()</td>
+<td>Recursively iterates over all tables in the resource and nested resources.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.parse" title="astropy.io.votable.tree.Resource.parse"><tt class="xref py py-obj docutils literal"><span class="pre">parse</span></tt></a>(votable,&nbsp;iterator,&nbsp;config)</td>
+<td>For internal use.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.io.votable.tree.Resource.to_xml" title="astropy.io.votable.tree.Resource.to_xml"><tt class="xref py py-obj docutils literal"><span class="pre">to_xml</span></tt></a>(w,&nbsp;**kwargs)</td>
+<td>For internal use.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.coordinate_systems">
+<tt class="descname">coordinate_systems</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.coordinate_systems" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of coordinate system definitions (<a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC19">COOSYS</a> elements) for
+the <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC21">RESOURCE</a>.  Must contain only <a class="reference internal" href="astropy.io.votable.tree.CooSys.html#astropy.io.votable.tree.CooSys" title="astropy.io.votable.tree.CooSys"><tt class="xref py py-obj docutils literal"><span class="pre">CooSys</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.extra_attributes">
+<tt class="descname">extra_attributes</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.extra_attributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dictionary of string keys to string values containing any
+extra attributes of the <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC21">RESOURCE</a> element that are not defined
+in the specification.  (The specification explicitly allows
+for extra attributes here, but nowhere else.)</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.infos">
+<tt class="descname">infos</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.infos" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of informational parameters (key-value pairs) for the
+resource.  Must only contain <a class="reference internal" href="astropy.io.votable.tree.Info.html#astropy.io.votable.tree.Info" title="astropy.io.votable.tree.Info"><tt class="xref py py-obj docutils literal"><span class="pre">Info</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.links">
+<tt class="descname">links</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.links" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of links (pointers to other documents or servers
+through a URI) for the resource.  Must contain only <a class="reference internal" href="astropy.io.votable.tree.Link.html#astropy.io.votable.tree.Link" title="astropy.io.votable.tree.Link"><tt class="xref py py-obj docutils literal"><span class="pre">Link</span></tt></a>
+objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.params">
+<tt class="descname">params</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.params" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of parameters (constant-valued columns) for the
+resource.  Must contain only <a class="reference internal" href="astropy.io.votable.tree.Param.html#astropy.io.votable.tree.Param" title="astropy.io.votable.tree.Param"><tt class="xref py py-obj docutils literal"><span class="pre">Param</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.resources">
+<tt class="descname">resources</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.resources" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of nested resources inside this resource.  Must contain
+only <a class="reference internal" href="#astropy.io.votable.tree.Resource" title="astropy.io.votable.tree.Resource"><tt class="xref py py-obj docutils literal"><span class="pre">Resource</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.tables">
+<tt class="descname">tables</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of tables in the resource.  Must contain only
+<a class="reference internal" href="astropy.io.votable.tree.Table.html#astropy.io.votable.tree.Table" title="astropy.io.votable.tree.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> objects.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.io.votable.tree.Resource.type">
+<tt class="descname">type</tt><a class="headerlink" href="#astropy.io.votable.tree.Resource.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>[<em>required</em>] The type of the resource.  Must be either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;results&#8217;: This resource contains actual result values
+(default)</li>
+<li>&#8216;meta&#8217;: This resource contains only datatype descriptions
+(<a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC24">FIELD</a> elements), but no actual data.</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.io.votable.tree.Resource.iter_coosys">
+<tt class="descname">iter_coosys</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/io/votable/tree.html#Resource.iter_coosys"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/votable/tree.py#L3156" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.votable.tree.Resource.iter_coosys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively iterates over all the <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC19">COOSYS</a> elements in the
+resource and nested resources.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.votable.tree.Resource.iter_fields_and_params">
+<tt class="descname">iter_fields_and_params</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/io/votable/tree.html#Resource.iter_fields_and_params"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/votable/tree.py#L3142" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.votable.tree.Resource.iter_fields_and_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively iterates over all <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC24">FIELD</a> and <a class="reference external" href="http://www.ivoa.net/Documents/REC/VOTable/VOTable-20040811.html#ToC24">PARAM</a> elements in
+the resource, its tables and nested resources.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.votable.tree.Resource.iter_tables">
+<tt class="descname">iter_tables</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/io/votable/tree.html#Resource.iter_tables"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/votable/tree.py#L3131" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.votable.tree.Resource.iter_tables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively iterates over all tables in the resource and
+nested resources.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.votable.tree.Resource.parse">
+<tt class="descname">parse</tt><big>(</big><em>votable</em>, <em>iterator</em>, <em>config</em><big>)</big><a class="reference internal" href="../_modules/astropy/io/votable/tree.html#Resource.parse"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/votable/tree.py#L3091" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.votable.tree.Resource.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>For internal use. Parse the XML content of the children of the
+element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>iterator</strong> : xml iterator</p>
+<blockquote>
+<div><p>An iterator over XML elements as returned by
+<a class="reference internal" href="astropy.utils.xml.iterparser.get_xml_iterator.html#astropy.utils.xml.iterparser.get_xml_iterator" title="astropy.utils.xml.iterparser.get_xml_iterator"><tt class="xref py py-obj docutils literal"><span class="pre">get_xml_iterator</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>config</strong> : dict</p>
+<blockquote>
+<div><p>The configuration dictionary that affects how certain
+elements are read.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>self</strong> : Element</p>
+<blockquote class="last">
+<div><p>Returns self as a convenience.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.io.votable.tree.Resource.to_xml">
+<tt class="descname">to_xml</tt><big>(</big><em>w</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/io/votable/tree.html#Resource.to_xml"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/io/votable/tree.py#L3119" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.io.votable.tree.Resource.to_xml" title="Permalink to this definition">¶</a></dt>
+<dd><p>For internal use. Output the element to XML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>w</strong> : astropy.utils.xml.writer.XMLWriter object</p>
+<blockquote>
+<div><p>An XML writer to write to.</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : dict</p>
+<blockquote class="last">
+<div><p>Any configuration parameters to control the output.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Resource</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.io.votable.tree.Resource.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.io.votable.tree.Resource.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

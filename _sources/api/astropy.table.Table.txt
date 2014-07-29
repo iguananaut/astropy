@@ -1,0 +1,125 @@
+
+.. include:: ../table/references.txt
+
+
+Table
+===================
+
+.. currentmodule:: astropy.table
+
+.. autoclass:: Table
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Table.ColumnClass
+      ~Table.colnames
+      ~Table.dtype
+      ~Table.groups
+      ~Table.mask
+      ~Table.masked
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Table.add_column
+      ~Table.add_columns
+      ~Table.add_row
+      ~Table.argsort
+      ~Table.convert_bytestring_to_unicode
+      ~Table.convert_unicode_to_bytestring
+      ~Table.copy
+      ~Table.create_mask
+      ~Table.field
+      ~Table.filled
+      ~Table.group_by
+      ~Table.index_column
+      ~Table.keep_columns
+      ~Table.keys
+      ~Table.more
+      ~Table.next
+      ~Table.pformat
+      ~Table.pprint
+      ~Table.read
+      ~Table.remove_column
+      ~Table.remove_columns
+      ~Table.remove_row
+      ~Table.remove_rows
+      ~Table.rename_column
+      ~Table.reverse
+      ~Table.show_in_browser
+      ~Table.sort
+      ~Table.write
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: ColumnClass
+   .. autoattribute:: colnames
+   .. autoattribute:: dtype
+   .. autoattribute:: groups
+   .. autoattribute:: mask
+   .. autoattribute:: masked
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: add_column
+   .. automethod:: add_columns
+   .. automethod:: add_row
+   .. automethod:: argsort
+   .. automethod:: convert_bytestring_to_unicode
+   .. automethod:: convert_unicode_to_bytestring
+   .. automethod:: copy
+   .. automethod:: create_mask
+   .. automethod:: field
+   .. automethod:: filled
+   .. automethod:: group_by
+   .. automethod:: index_column
+   .. automethod:: keep_columns
+   .. automethod:: keys
+   .. automethod:: more
+   .. automethod:: next
+   .. automethod:: pformat
+   .. automethod:: pprint
+   .. automethod:: read
+   .. automethod:: remove_column
+   .. automethod:: remove_columns
+   .. automethod:: remove_row
+   .. automethod:: remove_rows
+   .. automethod:: rename_column
+   .. automethod:: reverse
+   .. automethod:: show_in_browser
+   .. automethod:: sort
+   .. automethod:: write
+
+   
+   

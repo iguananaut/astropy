@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>predict_search &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="VO Simple Cone Search" href="../vo/conesearch/index.html" />
+    <link rel="next" title="conesearch_timer" href="astropy.vo.client.conesearch.conesearch_timer.html" />
+    <link rel="prev" title="list_catalogs" href="astropy.vo.client.conesearch.list_catalogs.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.client.conesearch.conesearch_timer.html" title="conesearch_timer">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.client.conesearch.list_catalogs.html" title="list_catalogs">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/conesearch/index.html" accesskey="U">VO Simple Cone Search</a> &raquo;</li>
+      
+      <li>predict_search</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="predict-search">
+<h1>predict_search<a class="headerlink" href="#predict-search" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.vo.client.conesearch.predict_search">
+<tt class="descclassname">astropy.vo.client.conesearch.</tt><tt class="descname">predict_search</tt><big>(</big><em>url</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/client/conesearch.html#predict_search"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/client/conesearch.py#L327" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.client.conesearch.predict_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the run time needed and the number of objects
+for a Cone Search for the given access URL, position, and
+radius.</p>
+<p>Run time prediction uses <a class="reference internal" href="astropy.utils.timer.RunTimePredictor.html#astropy.utils.timer.RunTimePredictor" title="astropy.utils.timer.RunTimePredictor"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.utils.timer.RunTimePredictor</span></tt></a>.
+Baseline searches are done with starting and ending radii at
+0.05 and 0.5 of the given radius, respectively.</p>
+<p>Extrapolation on good data uses least-square straight line fitting,
+assuming linear increase of search time and number of objects
+with radius, which might not be accurate for some cases. If
+there are less than 3 data points in the fit, it fails.</p>
+<p>Warnings (controlled by <a class="reference external" href="http://docs.python.org/library/warnings.html#module-warnings" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">warnings</span></tt></a>) are given when:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Fitted slope is negative.</li>
+<li>Any of the estimated results is negative.</li>
+<li>Estimated run time exceeds
+<a class="reference internal" href="astropy.utils.data.Conf.html#astropy.utils.data.Conf.remote_timeout" title="astropy.utils.data.Conf.remote_timeout"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.utils.data.Conf.remote_timeout</span></tt></a>.</li>
+</ol>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If <tt class="docutils literal"><span class="pre">verbose=True</span></tt>, extra log info will be provided.
+But unlike <a class="reference internal" href="astropy.vo.client.conesearch.conesearch_timer.html#astropy.vo.client.conesearch.conesearch_timer" title="astropy.vo.client.conesearch.conesearch_timer"><tt class="xref py py-func docutils literal"><span class="pre">conesearch_timer()</span></tt></a>, timer info is suppressed.</p>
+<p>If <tt class="docutils literal"><span class="pre">plot=True</span></tt>, plot will be displayed.
+Plotting uses <a class="reference external" href="http://matplotlib.sourceforge.net/">matplotlib</a>.</p>
+<p>The predicted results are just <em>rough</em> estimates.</p>
+<p class="last">Prediction is done using <a class="reference internal" href="astropy.vo.client.conesearch.conesearch.html#astropy.vo.client.conesearch.conesearch" title="astropy.vo.client.conesearch.conesearch"><tt class="xref py py-func docutils literal"><span class="pre">conesearch()</span></tt></a>. Prediction for
+<a class="reference internal" href="astropy.vo.client.conesearch.AsyncConeSearch.html#astropy.vo.client.conesearch.AsyncConeSearch" title="astropy.vo.client.conesearch.AsyncConeSearch"><tt class="xref py py-obj docutils literal"><span class="pre">AsyncConeSearch</span></tt></a> is not supported.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>url</strong> : str</p>
+<blockquote>
+<div><p>Cone Search access URL to use.</p>
+</div></blockquote>
+<p><strong>args, kwargs</strong> : see <a class="reference internal" href="astropy.vo.client.conesearch.conesearch.html#astropy.vo.client.conesearch.conesearch" title="astropy.vo.client.conesearch.conesearch"><tt class="xref py py-func docutils literal"><span class="pre">conesearch()</span></tt></a></p>
+<blockquote>
+<div><p>Extra keyword <tt class="docutils literal"><span class="pre">plot</span></tt> is allowed and only used by this
+function and not <a class="reference internal" href="astropy.vo.client.conesearch.conesearch.html#astropy.vo.client.conesearch.conesearch" title="astropy.vo.client.conesearch.conesearch"><tt class="xref py py-func docutils literal"><span class="pre">conesearch()</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>t_est</strong> : float</p>
+<blockquote>
+<div><p>Estimated time in seconds needed for the search.</p>
+</div></blockquote>
+<p><strong>n_est</strong> : int</p>
+<blockquote>
+<div><p>Estimated number of objects the search will yield.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>AssertionError</strong></p>
+<blockquote>
+<div><p>If prediction fails.</p>
+</div></blockquote>
+<p><strong>ConeSearchError</strong></p>
+<blockquote>
+<div><p>If input parameters are invalid.</p>
+</div></blockquote>
+<p><strong>VOSError</strong></p>
+<blockquote class="last">
+<div><p>If VO service request fails.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">predict_search</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.client.conesearch.predict_search.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.client.conesearch.predict_search.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+
+
+set_current
+=============================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: set_current

@@ -1,0 +1,8 @@
+
+
+ConfigurationMissingWarning
+==========================================
+
+.. currentmodule:: astropy.config
+
+.. autoexception:: ConfigurationMissingWarning

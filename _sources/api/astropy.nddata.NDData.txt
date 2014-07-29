@@ -1,0 +1,85 @@
+
+
+NDData
+=====================
+
+.. currentmodule:: astropy.nddata
+
+.. autoclass:: NDData
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~NDData.dtype
+      ~NDData.flags
+      ~NDData.mask
+      ~NDData.ndim
+      ~NDData.shape
+      ~NDData.size
+      ~NDData.uncertainty
+      ~NDData.unit
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~NDData.add
+      ~NDData.convert_unit_to
+      ~NDData.divide
+      ~NDData.multiply
+      ~NDData.read
+      ~NDData.subtract
+      ~NDData.write
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: dtype
+   .. autoattribute:: flags
+   .. autoattribute:: mask
+   .. autoattribute:: ndim
+   .. autoattribute:: shape
+   .. autoattribute:: size
+   .. autoattribute:: uncertainty
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: add
+   .. automethod:: convert_unit_to
+   .. automethod:: divide
+   .. automethod:: multiply
+   .. automethod:: read
+   .. automethod:: subtract
+   .. automethod:: write
+
+   
+   

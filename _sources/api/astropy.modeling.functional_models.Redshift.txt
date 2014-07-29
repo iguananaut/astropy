@@ -1,0 +1,67 @@
+
+
+Redshift
+===========================================
+
+.. currentmodule:: astropy.modeling.functional_models
+
+.. autoclass:: Redshift
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Redshift.input_names
+      ~Redshift.param_names
+      ~Redshift.z
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Redshift.evaluate
+      ~Redshift.fit_deriv
+      ~Redshift.inverse
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+   .. autoattribute:: param_names
+   .. autoattribute:: z
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: evaluate
+   .. automethod:: fit_deriv
+   .. automethod:: inverse
+
+   
+   

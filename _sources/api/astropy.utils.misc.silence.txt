@@ -1,0 +1,8 @@
+
+
+silence
+==========================
+
+.. currentmodule:: astropy.utils.misc
+
+.. autofunction:: silence

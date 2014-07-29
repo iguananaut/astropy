@@ -1,0 +1,29 @@
+
+
+Gaussian1DKernel
+====================================
+
+.. currentmodule:: astropy.convolution
+
+.. autoclass:: Gaussian1DKernel
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

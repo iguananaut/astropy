@@ -1,0 +1,411 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Quantity &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Units and Quantities (astropy.units)" href="index.html" />
+    <link rel="next" title="Standard units" href="standard_units.html" />
+    <link rel="prev" title="Units and Quantities (astropy.units)" href="index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="standard_units.html" title="Standard units">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="index.html" title="Units and Quantities (astropy.units)">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Units and Quantities (<tt class="docutils literal"><span class="pre">astropy.units</span></tt>)</a> &raquo;</li>
+      
+      <li>Quantity</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="quantity">
+<h1>Quantity<a class="headerlink" href="#quantity" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> object is meant to represent a value that has some unit
+associated with the number.</p>
+<div class="section" id="creating-quantity-instances">
+<h2>Creating Quantity instances<a class="headerlink" href="#creating-quantity-instances" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects are created through multiplication or division with
+<a class="reference internal" href="../api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><tt class="xref py py-class docutils literal"><span class="pre">Unit</span></tt></a> objects. For example, to create a <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a>
+to represent 15 m/s:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="go">&lt;Quantity 15.0 m / s&gt;</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects are converted to float by default.</p>
+</div>
+<p>As another example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1.25</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="go">&lt;Quantity 1.25 1 / s&gt;</span>
+</pre></div>
+</div>
+<p>You can also create instances using the <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> constructor directly, by
+specifying a value and unit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+<span class="go">&lt;Quantity 15.0 m / s&gt;</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects can also be created automatically from Numpy arrays
+or Python sequences:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity [ 1., 2., 3.] m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity [ 1., 2., 3.] m&gt;</span>
+</pre></div>
+</div>
+<p><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects can also be created from sequences of <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a>
+objects, as long as all of their units are equivalent, and will
+automatically convert to Numpy arrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">qlst</span> <span class="o">=</span> <span class="p">[</span><span class="mi">60</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="mi">1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">min</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">qlst</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">minute</span><span class="p">)</span>
+<span class="go">&lt;Quantity [ 1.,  1.] min&gt;</span>
+</pre></div>
+</div>
+<p>Finally, the current unit and value can be accessed via the
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.unit" title="astropy.units.quantity.Quantity.unit"><tt class="xref py py-obj docutils literal"><span class="pre">unit</span></tt></a> and
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.value" title="astropy.units.quantity.Quantity.value"><tt class="xref py py-obj docutils literal"><span class="pre">value</span></tt></a> attributes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">unit</span>
+<span class="go">Unit(&quot;m / s&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">value</span>
+<span class="go">2.5</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="converting-to-different-units">
+<h2>Converting to different units<a class="headerlink" href="#converting-to-different-units" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects can be converted to different units using the
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.to" title="astropy.units.quantity.Quantity.to"><tt class="xref py py-meth docutils literal"><span class="pre">to()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">2.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+<span class="go">&lt;Quantity 8.2... km / h&gt;</span>
+</pre></div>
+</div>
+<p>For convenience, the <a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.si" title="astropy.units.quantity.Quantity.si"><tt class="xref py py-obj docutils literal"><span class="pre">si</span></tt></a> and
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.cgs" title="astropy.units.quantity.Quantity.cgs"><tt class="xref py py-obj docutils literal"><span class="pre">cgs</span></tt></a> attributes can be used to
+convert the <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> to base S.I. or c.g.s units:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">2.4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">si</span>
+<span class="go">&lt;Quantity 2... m / s&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">cgs</span>
+<span class="go">&lt;Quantity 240.0 cm / s&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="arithmetic">
+<h2>Arithmetic<a class="headerlink" href="#arithmetic" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="addition-and-subtraction">
+<h3>Addition and Subtraction<a class="headerlink" href="#addition-and-subtraction" title="Permalink to this headline">¶</a></h3>
+<p>Addition or subtraction between <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects is supported when their
+units are equivalent. When the units are equal, the resulting object has the
+same unit:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mi">11</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">+</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="go">&lt;Quantity 41.0 s&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mi">30</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">-</span> <span class="mi">11</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="go">&lt;Quantity 19.0 s&gt;</span>
+</pre></div>
+</div>
+<p>If the units are equivalent, but not equal (e.g. kilometer and meter), the
+resulting object <strong>has units of the object on the left</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1100.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">+</span> <span class="mf">13.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+<span class="go">&lt;Quantity 14600.1 m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">13.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">+</span> <span class="mf">1100.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity 14.600... km&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">1100.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">-</span> <span class="mf">13.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+<span class="go">&lt;Quantity -12399.9 m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">13.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">-</span> <span class="mf">1100.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity 12.399... km&gt;</span>
+</pre></div>
+</div>
+<p>Addition and subtraction is not supported between <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects and basic
+numeric types:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">13.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">+</span> <span class="mf">19.412</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">UnitsError</span>: <span class="n">Can only apply &#39;add&#39; function to dimensionless</span>
+<span class="go">quantities when other argument is not a quantity (unless the</span>
+<span class="go">latter is all zero/infinity/nan)</span>
+</pre></div>
+</div>
+<p>except for dimensionless quantities (see <a class="reference internal" href="#dimensionless-quantities">Dimensionless quantities</a>).</p>
+</div>
+<div class="section" id="multiplication-and-division">
+<h3>Multiplication and Division<a class="headerlink" href="#multiplication-and-division" title="Permalink to this headline">¶</a></h3>
+<p>Multiplication and division is supported between <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects with any
+units, and with numeric types. For these operations between objects with
+equivalent units, the <strong>resulting object has composite units</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="mf">140.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+<span class="go">&lt;Quantity 154.33... cm m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">140.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">*</span> <span class="mf">1.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span>
+<span class="go">&lt;Quantity 154.33... cm m&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">1.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="mf">20.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+<span class="go">&lt;Quantity 0.05... m / cm&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="mf">20.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="go">&lt;Quantity 20.0 cm / m&gt;</span>
+</pre></div>
+</div>
+<p>For multiplication, you can change how to represent the resulting object by
+using the <a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.to" title="astropy.units.quantity.Quantity.to"><tt class="xref py py-meth docutils literal"><span class="pre">to()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="mf">140.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">&lt;Quantity 1.5433... m2&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">1.1</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">*</span> <span class="mf">140.3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">&lt;Quantity 15433.0... cm2&gt;</span>
+</pre></div>
+</div>
+<p>For division, if the units are equivalent, you may want to make the resulting
+object dimensionless by reducing the units. To do this, use the
+<a class="reference internal" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity.decompose" title="astropy.units.quantity.Quantity.decompose"><tt class="xref py py-meth docutils literal"><span class="pre">decompose()</span></tt></a> method:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">20.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">))</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+<span class="go">&lt;Quantity 0.2...&gt;</span>
+</pre></div>
+</div>
+<p>This method is also useful for more complicated arithmetic:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">15.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kg</span> <span class="o">*</span> <span class="mf">32.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="mf">11.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="mf">1914.15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">ms</span><span class="p">)</span>
+<span class="go">&lt;Quantity 0.341950972... cm kg m / (ms s)&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="mf">15.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">kg</span> <span class="o">*</span> <span class="mf">32.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="mf">11.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="mf">1914.15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">ms</span><span class="p">))</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+<span class="go">&lt;Quantity 3.41950972... kg m2 / s2&gt;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="numpy-functions">
+<h2>Numpy functions<a class="headerlink" href="#numpy-functions" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects are actually full Numpy arrays (the <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a>
+object class inherits from and extends the <tt class="docutils literal"><span class="pre">numpy.ndarray</span></tt> class), and
+we have tried to ensure that most Numpy functions behave properly with
+units:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">])</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">&lt;Quantity 2.5 m / s&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">&lt;Quantity 1.118033... m / s&gt;</span>
+</pre></div>
+</div>
+<p>including functions that only accept specific units such as angles:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="mf">30.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="go">&lt;Quantity 0.4999999...&gt;</span>
+</pre></div>
+</div>
+<p>or dimensionless quantities:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.constants</span> <span class="kn">import</span> <span class="n">h</span><span class="p">,</span> <span class="n">k_B</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nu</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">h</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">k_B</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+<span class="go">&lt;Quantity 0.99521225...&gt;</span>
+</pre></div>
+</div>
+<p>(see <a class="reference internal" href="#dimensionless-quantities">Dimensionless quantities</a> for more details).</p>
+</div>
+<div class="section" id="dimensionless-quantities">
+<h2>Dimensionless quantities<a class="headerlink" href="#dimensionless-quantities" title="Permalink to this headline">¶</a></h2>
+<p>Dimensionless quantities have the characteristic that if they are
+added or subtracted from a Python scalar or unitless <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">ndarray</span></tt></a>,
+or if they are passed to a Numpy function that takes dimensionless
+quantities, the units are simplified so that the quantity is
+dimensionless and scale-free. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1.</span> <span class="o">+</span> <span class="mf">1.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span>
+<span class="go">&lt;Quantity 1.00...&gt;</span>
+</pre></div>
+</div>
+<p>which is different from:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="mf">1.</span> <span class="o">+</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span class="go">2.0</span>
+</pre></div>
+</div>
+<p>In the latter case, the result is <tt class="docutils literal"><span class="pre">2.0</span></tt> because the unit of <tt class="docutils literal"><span class="pre">(1.</span> <span class="pre">*</span> <span class="pre">u.m</span> <span class="pre">/</span>
+<span class="pre">u.km)</span></tt> is not scale-free by default:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">unit</span>
+<span class="go">Unit(&quot;m / km&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+<span class="go">Unit(dimensionless with a scale of 0.001)</span>
+</pre></div>
+</div>
+<p>However, when combining with a non-quantity object, the unit is automatically
+decomposed to be scale-free, giving the expected result.</p>
+<p>This also occurs when passing dimensionless quantities to functions that take
+dimensionless quantities:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nu</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">k_B</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+<span class="go">&lt;Quantity 0.99521225...&gt;</span>
+</pre></div>
+</div>
+<p>The result is independent from the units the different quantities were specified in:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nu</span> <span class="o">=</span> <span class="mf">3.e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="n">h</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">k_B</span> <span class="o">*</span> <span class="n">T</span><span class="p">))</span>
+<span class="go">&lt;Quantity 0.99521225...&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="converting-to-plain-python-scalars">
+<h2>Converting to plain Python scalars<a class="headerlink" href="#converting-to-plain-python-scalars" title="Permalink to this headline">¶</a></h2>
+<p>Converting <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects does not work for non-dimensionless quantities:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">float</span><span class="p">(</span><span class="mf">3.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="gt">Traceback (most recent call last):</span>
+  <span class="c">...</span>
+<span class="gr">TypeError</span>: <span class="n">Only dimensionless scalar quantities can be converted</span>
+<span class="go">to Python scalars</span>
+</pre></div>
+</div>
+<p>Instead, only dimensionless values can be converted to plain Python scalars:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="nb">float</span><span class="p">(</span><span class="mf">3.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="go">0.75</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">float</span><span class="p">(</span><span class="mf">3.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="go">750.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">int</span><span class="p">(</span><span class="mf">6.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+<span class="go">3000</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="known-issues-with-conversion-to-numpy-arrays">
+<h2>Known issues with conversion to numpy arrays<a class="headerlink" href="#known-issues-with-conversion-to-numpy-arrays" title="Permalink to this headline">¶</a></h2>
+<p>Since <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> objects are Numpy arrays, we are not able to ensure
+that only dimensionless quantities are converted to Numpy arrays:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+<span class="go">array([ 1., 2., 3.])</span>
+</pre></div>
+</div>
+<p>Similarly, while most numpy functions work properly, a few have <a class="reference internal" href="../known_issues.html#quantity-issues"><em>known
+issues</em></a>, either ignoring the unit (e.g., <tt class="docutils literal"><span class="pre">np.dot</span></tt>) or
+not reinitializing it properly (e.g., <tt class="docutils literal"><span class="pre">np.hstack</span></tt>).  This propagates to
+more complex functions such as <tt class="docutils literal"><span class="pre">np.linalg.norm</span></tt> and
+<tt class="docutils literal"><span class="pre">scipy.integrate.odeint</span></tt>.</p>
+</div>
+<div class="section" id="subclassing-quantity">
+<h2>Subclassing Quantity<a class="headerlink" href="#subclassing-quantity" title="Permalink to this headline">¶</a></h2>
+<p>To subclass <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a>, one generally proceeds as one would when subclassing
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-class docutils literal"><span class="pre">ndarray</span></tt></a>, i.e., one typically needs to override <tt class="docutils literal"><span class="pre">__new__</span></tt>
+(rather than <tt class="docutils literal"><span class="pre">__init__</span></tt>) and uses the <tt class="docutils literal"><span class="pre">numpy.ndarray.__array_finalize__</span></tt>
+method to update attributes.  For details, see the <a class="reference external" href="http://docs.scipy.org/doc/numpy/user/basics.subclassing.html">numpy documentation on
+subclassing</a>.  For
+examples, one can look at <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> itself, where, e.g., the
+<tt class="docutils literal"><span class="pre">astropy.units.Quantity.__array_finalize__</span></tt> method is used to pass on the
+<tt class="docutils literal"><span class="pre">unit</span></tt>, at <a class="reference internal" href="../api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a>, where strings are parsed
+as angles in the <tt class="docutils literal"><span class="pre">astropy.coordinates.Angle.__new__</span></tt> method and at
+<a class="reference internal" href="../api/astropy.coordinates.Longitude.html#astropy.coordinates.Longitude" title="astropy.coordinates.Longitude"><tt class="xref py py-class docutils literal"><span class="pre">Longitude</span></tt></a>, where the
+<tt class="docutils literal"><span class="pre">astropy.coordinates.Longitude.__array_finalize__</span></tt> method is used to pass
+on the angle at which longitudes wrap.</p>
+<p>Another method that is meant to be overridden by subclasses, one specific to
+<a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a>, is <tt class="docutils literal"><span class="pre">astropy.units.Quantity.__quantity_subclass__</span></tt>.  This is
+called to decide which type of subclass to return, based on the unit of the
+quantity that is to be created.  It is used, e.g., in
+<a class="reference internal" href="../api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a> to return a <a class="reference internal" href="../api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a> if a calculation
+returns a unit other than an angular one.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Quantity</a><ul>
+<li><a class="reference internal" href="#creating-quantity-instances">Creating Quantity instances</a></li>
+<li><a class="reference internal" href="#converting-to-different-units">Converting to different units</a></li>
+<li><a class="reference internal" href="#arithmetic">Arithmetic</a><ul>
+<li><a class="reference internal" href="#addition-and-subtraction">Addition and Subtraction</a></li>
+<li><a class="reference internal" href="#multiplication-and-division">Multiplication and Division</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#numpy-functions">Numpy functions</a></li>
+<li><a class="reference internal" href="#dimensionless-quantities">Dimensionless quantities</a></li>
+<li><a class="reference internal" href="#converting-to-plain-python-scalars">Converting to plain Python scalars</a></li>
+<li><a class="reference internal" href="#known-issues-with-conversion-to-numpy-arrays">Known issues with conversion to numpy arrays</a></li>
+<li><a class="reference internal" href="#subclassing-quantity">Subclassing Quantity</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/units/quantity.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/units/quantity.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

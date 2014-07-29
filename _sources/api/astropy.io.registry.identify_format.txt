@@ -1,0 +1,8 @@
+
+
+identify_format
+===================================
+
+.. currentmodule:: astropy.io.registry
+
+.. autofunction:: identify_format

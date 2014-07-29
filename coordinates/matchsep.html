@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Separations, Catalog Matching, and Related Functionality &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="index.html" />
+    <link rel="next" title="Using and Designing Coordinate Representations" href="representations.html" />
+    <link rel="prev" title="Formatting Coordinate Strings" href="formatting.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="representations.html" title="Using and Designing Coordinate Representations">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="formatting.html" title="Formatting Coordinate Strings">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>Separations, Catalog Matching, and Related Functionality</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="separations-catalog-matching-and-related-functionality">
+<span id="astropy-coordinates-separations-matching"></span><h1>Separations, Catalog Matching, and Related Functionality<a class="headerlink" href="#separations-catalog-matching-and-related-functionality" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a> contains commonly-used tools for comparing or
+matching coordinate objects.  Of particular importance are those for
+determining separations between coordinates and those for matching a
+coordinate (or coordinates) to a catalog.  These are mainly implemented
+as methods on the coordinate objects.</p>
+<div class="section" id="separations">
+<h2>Separations<a class="headerlink" href="#separations" title="Permalink to this headline">¶</a></h2>
+<p>The on-sky separation is easily computed with the
+<a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.separation" title="astropy.coordinates.BaseCoordinateFrame.separation"><tt class="xref py py-meth docutils literal"><span class="pre">astropy.coordinates.BaseCoordinateFrame.separation()</span></tt></a> or
+<a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.separation" title="astropy.coordinates.SkyCoord.separation"><tt class="xref py py-meth docutils literal"><span class="pre">astropy.coordinates.SkyCoord.separation()</span></tt></a> methods,
+which computes the great-circle distance (<em>not</em> the small-angle
+approximation):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s">&#39;5h23m34.5s&#39;</span><span class="p">,</span> <span class="s">&#39;-69d45m22s&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s">&#39;0h52m44.8s&#39;</span><span class="p">,</span> <span class="s">&#39;-72d49m43s&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s">&#39;fk5&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span> <span class="o">=</span> <span class="n">c1</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span>  
+<span class="go">&lt;Angle 20.74611447604398 deg&gt;</span>
+</pre></div>
+</div>
+<p>The returned object is an <a class="reference internal" href="../api/astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-obj docutils literal"><span class="pre">Angle</span></tt></a> instance, so it
+is straightforward to access the angle in any of several equivalent angular
+units:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span><span class="o">.</span><span class="n">radian</span>  
+<span class="go">0.36208800460262575</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span><span class="o">.</span><span class="n">hour</span>  
+<span class="go">1.3830742984029323</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span><span class="o">.</span><span class="n">arcminute</span>  
+<span class="go">1244.7668685626388</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span><span class="o">.</span><span class="n">arcsecond</span>  
+<span class="go">74686.01211375833</span>
+</pre></div>
+</div>
+<p>Also note that the two input coordinates were not in the same frame -
+one is  automatically converted to match the other, ensuring that even
+though they are  in different frames, the separation is determined
+consistently.  This does mean, however, that a <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a> without a
+frame cannot be compared in this manner:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s">&#39;5h23m34.5s&#39;</span><span class="p">,</span> <span class="s">&#39;-69d45m22s&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s">&#39;0h52m44.8s&#39;</span><span class="p">,</span> <span class="s">&#39;-72d49m43s&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span> <span class="o">=</span> <span class="n">c1</span><span class="o">.</span><span class="n">separation</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span>  
+<span class="go">ValueError: Cannot transform to/from this SkyCoord because the frame was not specified at creation.</span>
+</pre></div>
+</div>
+<p>In addition to the on-sky separation described above,
+<a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame.separation_3d" title="astropy.coordinates.BaseCoordinateFrame.separation_3d"><tt class="xref py py-meth docutils literal"><span class="pre">astropy.coordinates.BaseCoordinateFrame.separation_3d()</span></tt></a> or
+<a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord.separation_3d" title="astropy.coordinates.SkyCoord.separation_3d"><tt class="xref py py-meth docutils literal"><span class="pre">astropy.coordinates.SkyCoord.separation_3d()</span></tt></a> methods will
+determine the 3D distance between two coordinates that have <tt class="docutils literal"><span class="pre">distance</span></tt>
+defined:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c1</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s">&#39;5h23m34.5s&#39;</span><span class="p">,</span> <span class="s">&#39;-69d45m22s&#39;</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">70</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">kpc</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c2</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="s">&#39;0h52m44.8s&#39;</span><span class="p">,</span> <span class="s">&#39;-72d49m43s&#39;</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="mi">80</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">kpc</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s">&#39;icrs&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span> <span class="o">=</span> <span class="n">c1</span><span class="o">.</span><span class="n">separation_3d</span><span class="p">(</span><span class="n">c2</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span>  
+<span class="go">&lt;Distance 28.743988157814094 kpc&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="matching-catalogs">
+<span id="astropy-coordinates-matching"></span><h2>Matching Catalogs<a class="headerlink" href="#matching-catalogs" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">coordinates</span></tt></a> supports leverages the coordinate framework to make it
+straightforward to find the closest coordinates in a catalog to a desired set
+of other coordinates. For example, assuming <tt class="docutils literal"><span class="pre">ra1</span></tt>/<tt class="docutils literal"><span class="pre">dec1</span></tt> and
+<tt class="docutils literal"><span class="pre">ra2</span></tt>/<tt class="docutils literal"><span class="pre">dec2</span></tt> are numpy arrays loaded from some file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">d2d</span><span class="p">,</span> <span class="n">d3d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">match_to_catalog_sky</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>You can also find the nearest 3d matches, different from the on-sky
+separation shown above only when the coordinates were initialized with
+a <tt class="docutils literal"><span class="pre">distance</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec1</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">catalog</span> <span class="o">=</span> <span class="n">SkyCoord</span><span class="p">(</span><span class="n">ra</span><span class="o">=</span><span class="n">ra2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec2</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">d2d</span><span class="p">,</span> <span class="n">d3d</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">match_to_catalog_3d</span><span class="p">(</span><span class="n">catalog</span><span class="p">)</span>  
+</pre></div>
+</div>
+<p>Now <tt class="docutils literal"><span class="pre">idx</span></tt> are indices into <tt class="docutils literal"><span class="pre">catalog</span></tt> that are the closest objects to each
+of the coordinates in <tt class="docutils literal"><span class="pre">c</span></tt>, <tt class="docutils literal"><span class="pre">d2d</span></tt> are the on-sky distances between them, and
+<tt class="docutils literal"><span class="pre">d3d</span></tt> are the 3-dimensional distances.  Because coordinate objects support
+indexing, <tt class="docutils literal"><span class="pre">idx</span></tt> enables easy access to the matched set of coordinates in
+the catalog:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">matches</span> <span class="o">=</span> <span class="n">catalog</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">matches</span><span class="o">.</span><span class="n">separation_3d</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">==</span> <span class="n">d3d</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>  
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dra</span> <span class="o">=</span> <span class="p">(</span><span class="n">matches</span><span class="o">.</span><span class="n">ra</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="p">)</span><span class="o">.</span><span class="n">arcmin</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ddec</span> <span class="o">=</span> <span class="p">(</span><span class="n">matches</span><span class="o">.</span><span class="n">dec</span> <span class="o">-</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="p">)</span><span class="o">.</span><span class="n">arcmin</span>  
+</pre></div>
+</div>
+<p>This functionality can also be accessed from the
+<a class="reference internal" href="../api/astropy.coordinates.match_coordinates_sky.html#astropy.coordinates.match_coordinates_sky" title="astropy.coordinates.match_coordinates_sky"><tt class="xref py py-func docutils literal"><span class="pre">match_coordinates_sky()</span></tt></a> and
+<a class="reference internal" href="../api/astropy.coordinates.match_coordinates_3d.html#astropy.coordinates.match_coordinates_3d" title="astropy.coordinates.match_coordinates_3d"><tt class="xref py py-func docutils literal"><span class="pre">match_coordinates_3d()</span></tt></a> functions. These
+will work on either <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a> objects <em>or</em> the lower-level frame classes:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">match_coordinates_sky</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">d2d</span><span class="p">,</span> <span class="n">d3d</span> <span class="o">=</span> <span class="n">match_coordinates_sky</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">catalog</span><span class="p">)</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="n">idx</span><span class="p">,</span> <span class="n">d2d</span><span class="p">,</span> <span class="n">d3d</span> <span class="o">=</span> <span class="n">match_coordinates_sky</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">frame</span><span class="p">,</span> <span class="n">catalog</span><span class="o">.</span><span class="n">frame</span><span class="p">)</span>  
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Separations, Catalog Matching, and Related Functionality</a><ul>
+<li><a class="reference internal" href="#separations">Separations</a></li>
+<li><a class="reference internal" href="#matching-catalogs">Matching Catalogs</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/coordinates/matchsep.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/coordinates/matchsep.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

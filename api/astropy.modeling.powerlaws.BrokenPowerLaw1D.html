@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>BrokenPowerLaw1D &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="ExponentialCutoffPowerLaw1D" href="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.html" />
+    <link rel="prev" title="Simplex" href="astropy.modeling.optimizers.Simplex.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.html" title="ExponentialCutoffPowerLaw1D">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.optimizers.Simplex.html" title="Simplex">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>BrokenPowerLaw1D</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="brokenpowerlaw1d">
+<h1>BrokenPowerLaw1D<a class="headerlink" href="#brokenpowerlaw1d" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.powerlaws.</tt><tt class="descname">BrokenPowerLaw1D</tt><big>(</big><em>amplitude</em>, <em>x_break</em>, <em>alpha_1</em>, <em>alpha_2</em>, <em>**constraints</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/powerlaws.html#BrokenPowerLaw1D"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/powerlaws.py#L73" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="astropy.modeling.core.Fittable1DModel"><tt class="docutils literal"><span class="pre">astropy.modeling.Fittable1DModel</span></tt></a></p>
+<p>One dimensional power law model with a break.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>amplitude</strong> : float</p>
+<blockquote>
+<div><p>Model amplitude at the break point</p>
+</div></blockquote>
+<p><strong>x_break</strong> : float</p>
+<blockquote>
+<div><p>Break point</p>
+</div></blockquote>
+<p><strong>alpha_1</strong> : float</p>
+<blockquote>
+<div><p>Power law index for x &lt; x_break</p>
+</div></blockquote>
+<p><strong>alpha_2</strong> : float</p>
+<blockquote class="last">
+<div><p>Power law index for x &gt; x_break</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="astropy.modeling.powerlaws.PowerLaw1D.html#astropy.modeling.powerlaws.PowerLaw1D" title="astropy.modeling.powerlaws.PowerLaw1D"><tt class="xref py py-obj docutils literal"><span class="pre">PowerLaw1D</span></tt></a>, <a class="reference internal" href="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.html#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D" title="astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D"><tt class="xref py py-obj docutils literal"><span class="pre">ExponentialCutoffPowerLaw1D</span></tt></a>, <a class="reference internal" href="astropy.modeling.powerlaws.LogParabola1D.html#astropy.modeling.powerlaws.LogParabola1D" title="astropy.modeling.powerlaws.LogParabola1D"><tt class="xref py py-obj docutils literal"><span class="pre">LogParabola1D</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Model formula (with <img class="math" src="../_images/math/0acafa529182e79b4f56165ec677554fba7fcf98.png" alt="A"/> for <tt class="docutils literal"><span class="pre">amplitude</span></tt> and <img class="math" src="../_images/math/d49f1c024407380df81f487799de241fa4e9d29f.png" alt="\alpha_1"/>
+for <tt class="docutils literal"><span class="pre">alpha_1</span></tt> and <img class="math" src="../_images/math/e6c0bd5b79c290b47b422e07545c3757ca182270.png" alt="\alpha_2"/> for <tt class="docutils literal"><span class="pre">alpha_2</span></tt>):</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/7e8af33ab5e5b18c013a0b53bdd6517f43b0579e.png" alt="f(x) = \left \{
+         \begin{array}{ll}
+           A (x / x_{break}) ^ {-\alpha_1} &amp; : x &lt; x_{break} \\
+           A (x / x_{break}) ^ {-\alpha_2} &amp; :  x &gt; x_{break} \\
+         \end{array}
+       \right."/></p>
+</div></div></blockquote>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_1" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_1"><tt class="xref py py-obj docutils literal"><span class="pre">alpha_1</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_2" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_2"><tt class="xref py py-obj docutils literal"><span class="pre">alpha_2</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.amplitude" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.amplitude"><tt class="xref py py-obj docutils literal"><span class="pre">amplitude</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.input_names" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.param_names" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.param_names"><tt class="xref py py-obj docutils literal"><span class="pre">param_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.x_break" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.x_break"><tt class="xref py py-obj docutils literal"><span class="pre">x_break</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.evaluate" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;amplitude,&nbsp;x_break,&nbsp;alpha_1,&nbsp;alpha_2)</td>
+<td>One dimensional broken power law model function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.fit_deriv" title="astropy.modeling.powerlaws.BrokenPowerLaw1D.fit_deriv"><tt class="xref py py-obj docutils literal"><span class="pre">fit_deriv</span></tt></a>(x,&nbsp;amplitude,&nbsp;x_break,&nbsp;alpha_1,&nbsp;...)</td>
+<td>One dimensional broken power law derivative with respect to parameters</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_1">
+<tt class="descname">alpha_1</tt><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_2">
+<tt class="descname">alpha_2</tt><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.alpha_2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.amplitude">
+<tt class="descname">amplitude</tt><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.amplitude" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.input_names">
+<tt class="descname">input_names</tt><em class="property"> = ['x']</em><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.param_names">
+<tt class="descname">param_names</tt><em class="property"> = ['amplitude', 'x_break', 'alpha_1', 'alpha_2']</em><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.param_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.x_break">
+<tt class="descname">x_break</tt><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.x_break" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="staticmethod">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.evaluate">
+<em class="property">static </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>amplitude</em>, <em>x_break</em>, <em>alpha_1</em>, <em>alpha_2</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/powerlaws.html#BrokenPowerLaw1D.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/powerlaws.py#L117" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional broken power law model function</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="astropy.modeling.powerlaws.BrokenPowerLaw1D.fit_deriv">
+<em class="property">static </em><tt class="descname">fit_deriv</tt><big>(</big><em>x</em>, <em>amplitude</em>, <em>x_break</em>, <em>alpha_1</em>, <em>alpha_2</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/powerlaws.html#BrokenPowerLaw1D.fit_deriv"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/powerlaws.py#L125" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.powerlaws.BrokenPowerLaw1D.fit_deriv" title="Permalink to this definition">¶</a></dt>
+<dd><p>One dimensional broken power law derivative with respect to parameters</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">BrokenPowerLaw1D</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.powerlaws.BrokenPowerLaw1D.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.powerlaws.BrokenPowerLaw1D.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

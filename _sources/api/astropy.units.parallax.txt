@@ -1,0 +1,8 @@
+
+
+parallax
+======================
+
+.. currentmodule:: astropy.units
+
+.. autofunction:: parallax

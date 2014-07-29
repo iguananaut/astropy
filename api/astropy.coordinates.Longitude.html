@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Longitude &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="../coordinates/index.html" />
+    <link rel="next" title="PhysicsSphericalRepresentation" href="astropy.coordinates.PhysicsSphericalRepresentation.html" />
+    <link rel="prev" title="Latitude" href="astropy.coordinates.Latitude.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.coordinates.PhysicsSphericalRepresentation.html" title="PhysicsSphericalRepresentation">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.coordinates.Latitude.html" title="Latitude">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../coordinates/index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>Longitude</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="longitude">
+<h1>Longitude<a class="headerlink" href="#longitude" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.coordinates.Longitude">
+<em class="property">class </em><tt class="descclassname">astropy.coordinates.</tt><tt class="descname">Longitude</tt><a class="reference internal" href="../_modules/astropy/coordinates/angles.html#Longitude"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/coordinates/angles.py#L566" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.coordinates.Longitude" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.angles.Angle"><tt class="docutils literal"><span class="pre">astropy.coordinates.Angle</span></tt></a></p>
+<p>Longitude-like angle(s) which are wrapped within a contiguous 360 degree range.</p>
+<p>A <tt class="docutils literal"><span class="pre">Longitude</span></tt> object is distinguished from a pure
+<a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a> by virtue of a <tt class="docutils literal"><span class="pre">wrap_angle</span></tt>
+property.  The <tt class="docutils literal"><span class="pre">wrap_angle</span></tt> specifies that all angle values
+represented by the object will be in the range:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">wrap_angle</span> <span class="o">-</span> <span class="mi">360</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">deg</span> <span class="o">&lt;=</span> <span class="n">angle</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">wrap_angle</span>
+</pre></div>
+</div>
+<p>The default <tt class="docutils literal"><span class="pre">wrap_angle</span></tt> is 360 deg.  Setting <tt class="docutils literal"><span class="pre">wrap_angle=180</span> <span class="pre">*</span>
+<span class="pre">u.deg</span></tt> would instead result in values between -180 and +180 deg.
+Setting the <tt class="docutils literal"><span class="pre">wrap_angle</span></tt> attribute of an existing <tt class="docutils literal"><span class="pre">Longitude</span></tt>
+object will result in re-wrapping the angle values in-place.</p>
+<p>The input angle(s) can be specified either as an array, list,
+scalar, tuple, string, <a class="reference internal" href="astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-class docutils literal"><span class="pre">Quantity</span></tt></a>
+or another <a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a>.</p>
+<p>The input parser is flexible and supports all of the input formats
+supported by <a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>angle</strong> : array, list, scalar, <a class="reference internal" href="astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><tt class="xref py py-obj docutils literal"><span class="pre">Quantity</span></tt></a>,</p>
+<blockquote>
+<div><p><a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a> The angle value(s). If a tuple,
+will be interpreted as <tt class="docutils literal"><span class="pre">(h,</span> <span class="pre">m</span> <span class="pre">s)</span></tt> or <tt class="docutils literal"><span class="pre">(d,</span> <span class="pre">m,</span> <span class="pre">s)</span></tt> depending
+on <tt class="docutils literal"><span class="pre">unit</span></tt>. If a string, it will be interpreted following the
+rules described for <a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a>.</p>
+<p>If <tt class="docutils literal"><span class="pre">angle</span></tt> is a sequence or array of strings, the resulting
+values will be in the given <tt class="docutils literal"><span class="pre">unit</span></tt>, or if <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> is provided,
+the unit will be taken from the first given value.</p>
+</div></blockquote>
+<p><strong>unit</strong> : <a class="reference internal" href="astropy.units.UnitBase.html#astropy.units.UnitBase" title="astropy.units.UnitBase"><tt class="xref py py-class docutils literal"><span class="pre">UnitBase</span></tt></a>, str, optional</p>
+<blockquote>
+<div><p>The unit of the value specified for the angle.  This may be
+any string that <a class="reference internal" href="astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><tt class="xref py py-obj docutils literal"><span class="pre">Unit</span></tt></a> understands, but it is
+better to give an actual unit object.  Must be an angular
+unit.</p>
+</div></blockquote>
+<p><strong>wrap_angle</strong> : <a class="reference internal" href="astropy.coordinates.Angle.html#astropy.coordinates.Angle" title="astropy.coordinates.Angle"><tt class="xref py py-class docutils literal"><span class="pre">Angle</span></tt></a> or equivalent, or None</p>
+<blockquote>
+<div><p>Angle at which to wrap back to <tt class="docutils literal"><span class="pre">wrap_angle</span> <span class="pre">-</span> <span class="pre">360</span> <span class="pre">deg</span></tt>.
+If <tt class="docutils literal"><span class="pre">None</span></tt> (default), it will be taken to be 360 deg unless <tt class="docutils literal"><span class="pre">angle</span></tt>
+has a <tt class="docutils literal"><span class="pre">wrap_angle</span></tt> attribute already (i.e., is a <tt class="docutils literal"><span class="pre">Longitude</span></tt>),
+in which case it will be taken from there.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>`~astropy.units.UnitsError`</strong></p>
+<blockquote>
+<div><p>If a unit is not provided or it is not an angular unit.</p>
+</div></blockquote>
+<p><strong>`TypeError`</strong></p>
+<blockquote class="last">
+<div><p>If the angle parameter is an instance of <a class="reference internal" href="astropy.coordinates.Latitude.html#astropy.coordinates.Latitude" title="astropy.coordinates.Latitude"><tt class="xref py py-class docutils literal"><span class="pre">Latitude</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.coordinates.Longitude.wrap_angle" title="astropy.coordinates.Longitude.wrap_angle"><tt class="xref py py-obj docutils literal"><span class="pre">wrap_angle</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.coordinates.Longitude.wrap_angle">
+<tt class="descname">wrap_angle</tt><a class="headerlink" href="#astropy.coordinates.Longitude.wrap_angle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Longitude</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.coordinates.Longitude.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.coordinates.Longitude.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

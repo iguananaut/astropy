@@ -1,0 +1,536 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Example: Defining A Coordinate Frame for the Sgr Dwarf &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astronomical Coordinate Systems (astropy.coordinates)" href="index.html" />
+    <link rel="next" title="Important Definitions" href="definitions.html" />
+    <link rel="prev" title="Using and Designing Coordinate Frames" href="frames.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="definitions.html" title="Important Definitions">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="frames.html" title="Using and Designing Coordinate Frames">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="index.html" accesskey="U">Astronomical Coordinate Systems (<tt class="docutils literal"><span class="pre">astropy.coordinates</span></tt>)</a> &raquo;</li>
+      
+      <li>Example: Defining A Coordinate Frame for the Sgr Dwarf</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="example-defining-a-coordinate-frame-for-the-sgr-dwarf">
+<span id="sgr-example"></span><h1>Example: Defining A Coordinate Frame for the Sgr Dwarf<a class="headerlink" href="#example-defining-a-coordinate-frame-for-the-sgr-dwarf" title="Permalink to this headline">¶</a></h1>
+<p>This document describes in detail how to subclass and define a custom
+spherical coordinate frame, as discussed in <a class="reference internal" href="frames.html"><em>Using and Designing Coordinate Frames</em></a> and the
+docstring for <a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="astropy.coordinates.BaseCoordinateFrame"><tt class="xref py py-obj docutils literal"><span class="pre">BaseCoordinateFrame</span></tt></a>. In this
+example, we will define a coordinate system defined by the plane of orbit of
+the Sagittarius Dwarf Galaxy (hereafter Sgr; as defined in Majewski et
+al. 2003).  The Sgr coordinate system is often referred to in terms of two
+angular coordinates, <img class="math" src="../_images/math/06b0e827dfad981228551716e47e97eed1772bb1.png" alt="\Lambda,B"/>.</p>
+<p>We need to define a subclass of <a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="astropy.coordinates.BaseCoordinateFrame"><tt class="xref py py-obj docutils literal"><span class="pre">BaseCoordinateFrame</span></tt></a>
+that knows the names and units of the coordinate system angles in each of
+the supported representations.  In this case we support
+<a class="reference internal" href="../api/astropy.coordinates.SphericalRepresentation.html#astropy.coordinates.SphericalRepresentation" title="astropy.coordinates.SphericalRepresentation"><tt class="xref py py-obj docutils literal"><span class="pre">SphericalRepresentation</span></tt></a> with &#8220;Lambda&#8221; and &#8220;Beta&#8221;.
+Then we have to define the
+transformation from this coordinate system to some other built-in system.
+Here we will use Galactic coordinates, represented by the
+<a class="reference internal" href="../api/astropy.coordinates.Galactic.html#astropy.coordinates.Galactic" title="astropy.coordinates.Galactic"><tt class="xref py py-obj docutils literal"><span class="pre">Galactic</span></tt></a> class.</p>
+<p>The first step is to create a new class, which we&#8217;ll call
+<tt class="docutils literal"><span class="pre">Sagittarius</span></tt> and make it a subclass of
+<a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="astropy.coordinates.BaseCoordinateFrame"><tt class="xref py py-obj docutils literal"><span class="pre">BaseCoordinateFrame</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span>
+
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">frame_transform_graph</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates.angles</span> <span class="kn">import</span> <span class="n">rotation_matrix</span>
+<span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="kn">as</span> <span class="nn">coord</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+
+<span class="k">class</span> <span class="nc">Sagittarius</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Heliocentric spherical coordinate system defined by the orbit</span>
+<span class="sd">    of the Sagittarius dwarf galaxy, as described in</span>
+<span class="sd">        http://adsabs.harvard.edu/abs/2003ApJ...599.1082M</span>
+<span class="sd">    and further explained in</span>
+<span class="sd">        http://www.astro.virginia.edu/~srm4n/Sgr/.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    Lambda : `Angle`, optional, must be keyword</span>
+<span class="sd">        The longitude-like angle corresponding to Sagittarius&#39; orbit.</span>
+<span class="sd">    Beta : `Angle`, optional, must be keyword</span>
+<span class="sd">        The latitude-like angle corresponding to Sagittarius&#39; orbit.</span>
+<span class="sd">    distance : `Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">SphericalRepresentation</span>
+
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;Lambda&#39;</span><span class="p">),</span>
+                      <span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;Beta&#39;</span><span class="p">),</span>
+                      <span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;distance&#39;</span><span class="p">,</span> <span class="s">&#39;distance&#39;</span><span class="p">)],</span>
+        <span class="s">&#39;unitspherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;Lambda&#39;</span><span class="p">),</span>
+                          <span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;Beta&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>Line by line, the first few are simply imports. Next we define the class
+as a subclass of <a class="reference internal" href="../api/astropy.coordinates.BaseCoordinateFrame.html#astropy.coordinates.BaseCoordinateFrame" title="astropy.coordinates.BaseCoordinateFrame"><tt class="xref py py-obj docutils literal"><span class="pre">BaseCoordinateFrame</span></tt></a>. Then we
+include a descriptive docstring.  The final lines are class-level
+attributes that specify the default representation for the data and
+mappings from the attribute names used by representation objects to the
+names that are to be used by <tt class="docutils literal"><span class="pre">Sagittarius</span></tt>.  In this case we override
+the names in the spherical representations but don&#8217;t do anything with
+other representations like cartesian or cylindrical.</p>
+<p>Next we have to define the transformation to some other built-in coordinate
+system; we will use Galactic coordinates. We can do this by defining functions
+that return transformation matrices, or by simply defining a function that accepts
+a coordinate and returns a new coordinate in the new system. We&#8217;ll start by
+constructing the rotation matrix, using the helper function
+<tt class="docutils literal"><span class="pre">rotation_matrix</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Define the Euler angles (from Law &amp; Majewski 2010)</span>
+<span class="n">SGR_PHI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">180</span><span class="o">+</span><span class="mf">3.75</span><span class="p">)</span>
+<span class="n">SGR_THETA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">90</span><span class="o">-</span><span class="mf">13.46</span><span class="p">)</span>
+<span class="n">SGR_PSI</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">180</span><span class="o">+</span><span class="mf">14.111534</span><span class="p">)</span>
+
+<span class="c"># Generate the rotation matrix using the x-convention (see Goldstein)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">SGR_PHI</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">SGR_THETA</span><span class="p">,</span> <span class="s">&quot;x&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">SGR_PSI</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+<span class="n">SGR_MATRIX</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>This is done at the module level, since it will be used by both the
+transformation from Sgr to Galactic as well as the inverse from Galactic to
+Sgr. Now we can define our first transformation function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Galactic to Sgr coordinates</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">coord</span><span class="o">.</span><span class="n">Galactic</span><span class="p">,</span> <span class="n">Sagittarius</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">galactic_to_sgr</span><span class="p">(</span><span class="n">gal_coord</span><span class="p">,</span> <span class="n">sgr_frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the transformation from Galactic spherical to</span>
+<span class="sd">        heliocentric Sgr coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gal_coord</span><span class="o">.</span><span class="n">l</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gal_coord</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="c"># Calculate X,Y,Z,distance in the Sgr system</span>
+    <span class="n">Xs</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span> <span class="o">=</span> <span class="n">SGR_MATRIX</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">]))</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="o">-</span><span class="n">Zs</span>
+
+    <span class="c"># Calculate the angular coordinates lambda,beta</span>
+    <span class="n">Lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Ys</span><span class="p">,</span><span class="n">Xs</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+    <span class="n">Lambda</span><span class="p">[</span><span class="n">Lambda</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">[</span><span class="n">Lambda</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+    <span class="n">Beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">Zs</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Xs</span><span class="o">*</span><span class="n">Xs</span><span class="o">+</span><span class="n">Ys</span><span class="o">*</span><span class="n">Ys</span><span class="o">+</span><span class="n">Zs</span><span class="o">*</span><span class="n">Zs</span><span class="p">))</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+
+    <span class="k">return</span> <span class="n">Sagittarius</span><span class="p">(</span><span class="n">Lambda</span><span class="o">=</span><span class="n">Lambda</span><span class="p">,</span> <span class="n">Beta</span><span class="o">=</span><span class="n">Beta</span><span class="p">,</span>
+                       <span class="n">distance</span><span class="o">=</span><span class="n">gal_coord</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The decorator
+<tt class="docutils literal"><span class="pre">&#64;frame_transform_graph.transform(coord.FunctionTransform,</span>
+<span class="pre">coord.Galactic,</span> <span class="pre">Sagittarius)</span></tt>  registers this function on the
+<tt class="docutils literal"><span class="pre">frame_transform_graph</span></tt> as a  transformation.   Inside the function, we
+simply follow the same procedure as detailed by David Law&#8217;s
+<a class="reference external" href="http://www.astro.virginia.edu/~srm4n/Sgr/code.html">transformation code</a>.
+Note that in this case, both coordinate systems are heliocentric, so we
+can simply copy any distance from the <a class="reference internal" href="../api/astropy.coordinates.Galactic.html#astropy.coordinates.Galactic" title="astropy.coordinates.Galactic"><tt class="xref py py-obj docutils literal"><span class="pre">Galactic</span></tt></a>
+object.</p>
+<p>We then register the inverse transformation by using the transpose of the
+rotation matrix (which is faster to compute than the inverse):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># Sgr to Galactic coordinates</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">Sagittarius</span><span class="p">,</span> <span class="n">coord</span><span class="o">.</span><span class="n">Galactic</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">sgr_to_galactic</span><span class="p">(</span><span class="n">sgr_coord</span><span class="p">,</span> <span class="n">gal_frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the transformation from heliocentric Sgr coordinates to</span>
+<span class="sd">        spherical Galactic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">sgr_coord</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">sgr_coord</span><span class="o">.</span><span class="n">Beta</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="n">Ys</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="o">-</span><span class="n">Zs</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">SGR_MATRIX</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Xs</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">]))</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">Z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">*</span><span class="n">X</span><span class="o">+</span><span class="n">Y</span><span class="o">*</span><span class="n">Y</span><span class="o">+</span><span class="n">Z</span><span class="o">*</span><span class="n">Z</span><span class="p">))</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+
+    <span class="n">l</span><span class="p">[</span><span class="n">l</span><span class="o">&lt;=</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+
+    <span class="k">return</span> <span class="n">coord</span><span class="o">.</span><span class="n">Galactic</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">sgr_coord</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now that we&#8217;ve registered these transformations between <tt class="docutils literal"><span class="pre">Sagittarius</span></tt>
+and <a class="reference internal" href="../api/astropy.coordinates.Galactic.html#astropy.coordinates.Galactic" title="astropy.coordinates.Galactic"><tt class="xref py py-obj docutils literal"><span class="pre">Galactic</span></tt></a>, we can transform between <em>any</em>
+coordinate system and <tt class="docutils literal"><span class="pre">Sagittarius</span></tt> (as long as the other system has a
+path to transform to <a class="reference internal" href="../api/astropy.coordinates.Galactic.html#astropy.coordinates.Galactic" title="astropy.coordinates.Galactic"><tt class="xref py py-obj docutils literal"><span class="pre">Galactic</span></tt></a>). For example, to
+transform from ICRS coordinates to <tt class="docutils literal"><span class="pre">Sagittarius</span></tt>, we simply:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="kn">as</span> <span class="nn">coord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">icrs</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">ICRS</span><span class="p">(</span><span class="mf">280.161732</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="mf">11.91934</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">icrs</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">Sagittarius</span><span class="p">)</span>  
+<span class="go">&lt;Sagittarius Coordinate: (Lambda, Beta, distance) in (deg, deg, )</span>
+<span class="go">    (346.818273..., -39.283667..., 1.0)&gt;</span>
+</pre></div>
+</div>
+<p>The complete code for the above example is included below for reference.</p>
+<div class="section" id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Majewski et al. 2003, &#8220;A Two Micron All Sky Survey View of the Sagittarius
+Dwarf Galaxy. I. Morphology of the Sagittarius Core and Tidal Arms&#8221;,
+<a class="reference external" href="http://arxiv.org/abs/astro-ph/0304198">http://arxiv.org/abs/astro-ph/0304198</a></li>
+<li>Law &amp; Majewski 2010, &#8220;The Sagittarius Dwarf Galaxy: A Model for Evolution in a
+Triaxial Milky Way Halo&#8221;, <a class="reference external" href="http://arxiv.org/abs/1003.1132">http://arxiv.org/abs/1003.1132</a></li>
+<li>David Law&#8217;s Sgr info page <a class="reference external" href="http://www.astro.virginia.edu/~srm4n/Sgr/">http://www.astro.virginia.edu/~srm4n/Sgr/</a></li>
+</ul>
+</div>
+<div class="section" id="complete-code-for-example">
+<h2>Complete Code for Example<a class="headerlink" href="#complete-code-for-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># coding: utf-8</span>
+
+<span class="sd">&quot;&quot;&quot; Astropy coordinate class for the Sagittarius coordinate system &quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s">&quot;adrn &lt;adrn@astro.columbia.edu&gt;&quot;</span>
+
+<span class="c"># Third-party</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">cos</span><span class="p">,</span> <span class="n">sin</span>
+
+<span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">frame_transform_graph</span>
+<span class="kn">from</span> <span class="nn">astropy.coordinates.angles</span> <span class="kn">import</span> <span class="n">rotation_matrix</span>
+<span class="kn">import</span> <span class="nn">astropy.coordinates</span> <span class="kn">as</span> <span class="nn">coord</span>
+<span class="kn">import</span> <span class="nn">astropy.units</span> <span class="kn">as</span> <span class="nn">u</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;Sagittarius&quot;</span><span class="p">]</span>
+
+
+<span class="k">class</span> <span class="nc">Sagittarius</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">BaseCoordinateFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A Heliocentric spherical coordinate system defined by the orbit</span>
+<span class="sd">    of the Sagittarius dwarf galaxy, as described in</span>
+<span class="sd">        http://adsabs.harvard.edu/abs/2003ApJ...599.1082M</span>
+<span class="sd">    and further explained in</span>
+<span class="sd">        http://www.astro.virginia.edu/~srm4n/Sgr/.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    representation : `BaseRepresentation` or None</span>
+<span class="sd">        A representation object or None to have no data (or use the other keywords)</span>
+<span class="sd">    Lambda : `Angle`, optional, must be keyword</span>
+<span class="sd">        The longitude-like angle corresponding to Sagittarius&#39; orbit.</span>
+<span class="sd">    Beta : `Angle`, optional, must be keyword</span>
+<span class="sd">        The latitude-like angle corresponding to Sagittarius&#39; orbit.</span>
+<span class="sd">    distance : `Quantity`, optional, must be keyword</span>
+<span class="sd">        The Distance for this object along the line-of-sight.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">default_representation</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">SphericalRepresentation</span>
+
+    <span class="n">frame_specific_representation_info</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;spherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;Lambda&#39;</span><span class="p">),</span>
+                      <span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;Beta&#39;</span><span class="p">),</span>
+                      <span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;distance&#39;</span><span class="p">,</span> <span class="s">&#39;distance&#39;</span><span class="p">)],</span>
+        <span class="s">&#39;unitspherical&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lon&#39;</span><span class="p">,</span> <span class="s">&#39;Lambda&#39;</span><span class="p">),</span>
+                          <span class="n">coord</span><span class="o">.</span><span class="n">RepresentationMapping</span><span class="p">(</span><span class="s">&#39;lat&#39;</span><span class="p">,</span> <span class="s">&#39;Beta&#39;</span><span class="p">)]</span>
+    <span class="p">}</span>
+
+<span class="c"># Define the Euler angles (from Law &amp; Majewski 2010)</span>
+<span class="n">phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">180</span><span class="o">+</span><span class="mf">3.75</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">90</span><span class="o">-</span><span class="mf">13.46</span><span class="p">)</span>
+<span class="n">psi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">180</span><span class="o">+</span><span class="mf">14.111534</span><span class="p">)</span>
+
+<span class="c"># Generate the rotation matrix using the x-convention (see Goldstein)</span>
+<span class="n">D</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">phi</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="s">&quot;x&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">rotation_matrix</span><span class="p">(</span><span class="n">psi</span><span class="p">,</span> <span class="s">&quot;z&quot;</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+<span class="n">sgr_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">C</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
+
+
+<span class="c"># Galactic to Sgr coordinates</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">coord</span><span class="o">.</span><span class="n">Galactic</span><span class="p">,</span> <span class="n">Sagittarius</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">galactic_to_sgr</span><span class="p">(</span><span class="n">gal_coord</span><span class="p">,</span> <span class="n">sgr_frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the transformation from Galactic spherical to</span>
+<span class="sd">        heliocentric Sgr coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gal_coord</span><span class="o">.</span><span class="n">l</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">gal_coord</span><span class="o">.</span><span class="n">b</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="c"># Calculate X,Y,Z,distance in the Sgr system</span>
+    <span class="n">Xs</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span> <span class="o">=</span> <span class="n">sgr_matrix</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">]))</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="o">-</span><span class="n">Zs</span>
+
+    <span class="c"># Calculate the angular coordinates lambda,beta</span>
+    <span class="n">Lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Ys</span><span class="p">,</span> <span class="n">Xs</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+    <span class="n">Lambda</span><span class="p">[</span><span class="n">Lambda</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Lambda</span><span class="p">[</span><span class="n">Lambda</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+    <span class="n">Beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">Zs</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Xs</span><span class="o">*</span><span class="n">Xs</span><span class="o">+</span><span class="n">Ys</span><span class="o">*</span><span class="n">Ys</span><span class="o">+</span><span class="n">Zs</span><span class="o">*</span><span class="n">Zs</span><span class="p">))</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+
+    <span class="k">return</span> <span class="n">Sagittarius</span><span class="p">(</span><span class="n">Lambda</span><span class="o">=</span><span class="n">Lambda</span><span class="p">,</span> <span class="n">Beta</span><span class="o">=</span><span class="n">Beta</span><span class="p">,</span>
+                       <span class="n">distance</span><span class="o">=</span><span class="n">gal_coord</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+
+
+<span class="c"># Sgr to Galactic coordinates</span>
+<span class="nd">@frame_transform_graph.transform</span><span class="p">(</span><span class="n">coord</span><span class="o">.</span><span class="n">FunctionTransform</span><span class="p">,</span> <span class="n">Sagittarius</span><span class="p">,</span> <span class="n">coord</span><span class="o">.</span><span class="n">Galactic</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">sgr_to_galactic</span><span class="p">(</span><span class="n">sgr_coord</span><span class="p">,</span> <span class="n">gal_frame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Compute the transformation from heliocentric Sgr coordinates to</span>
+<span class="sd">        spherical Galactic.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">sgr_coord</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">sgr_coord</span><span class="o">.</span><span class="n">Beta</span><span class="o">.</span><span class="n">radian</span><span class="p">)</span>
+
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="n">Ys</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">B</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">B</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="o">-</span><span class="n">Zs</span>
+
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">sgr_matrix</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">Xs</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">]))</span>
+
+    <span class="n">l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arctan2</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arcsin</span><span class="p">(</span><span class="n">Z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">X</span><span class="o">*</span><span class="n">X</span><span class="o">+</span><span class="n">Y</span><span class="o">*</span><span class="n">Y</span><span class="o">+</span><span class="n">Z</span><span class="o">*</span><span class="n">Z</span><span class="p">))</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+
+    <span class="n">l</span><span class="p">[</span><span class="n">l</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">radian</span>
+
+    <span class="k">return</span> <span class="n">coord</span><span class="o">.</span><span class="n">Galactic</span><span class="p">(</span><span class="n">l</span><span class="o">=</span><span class="n">l</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">distance</span><span class="o">=</span><span class="n">sgr_coord</span><span class="o">.</span><span class="n">distance</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c"># Example use case for our newly defined coordinate class</span>
+    <span class="n">icrs</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">ICRS</span><span class="p">(</span><span class="mf">152.88572</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="mf">11.57281</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
+    <span class="n">sgr</span> <span class="o">=</span> <span class="n">icrs</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">Sagittarius</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">sgr</span><span class="p">)</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Example: Defining A Coordinate Frame for the Sgr Dwarf</a><ul>
+<li><a class="reference internal" href="#see-also">See Also</a></li>
+<li><a class="reference internal" href="#complete-code-for-example">Complete Code for Example</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/coordinates/sgr-example.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/coordinates/sgr-example.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

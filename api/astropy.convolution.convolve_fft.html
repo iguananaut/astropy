@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>convolve_fft &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Convolution and filtering (astropy.convolution)" href="../convolution/index.html" />
+    <link rel="next" title="discretize_model" href="astropy.convolution.discretize_model.html" />
+    <link rel="prev" title="convolve" href="astropy.convolution.convolve.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.convolution.discretize_model.html" title="discretize_model">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.convolution.convolve.html" title="convolve">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../convolution/index.html" accesskey="U">Convolution and filtering (<tt class="docutils literal"><span class="pre">astropy.convolution</span></tt>)</a> &raquo;</li>
+      
+      <li>convolve_fft</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="convolve-fft">
+<h1>convolve_fft<a class="headerlink" href="#convolve-fft" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.convolution.convolve_fft">
+<tt class="descclassname">astropy.convolution.</tt><tt class="descname">convolve_fft</tt><big>(</big><em>array</em>, <em>kernel</em>, <em>boundary=u'fill'</em>, <em>fill_value=0</em>, <em>crop=True</em>, <em>return_fft=False</em>, <em>fft_pad=True</em>, <em>psf_pad=False</em>, <em>interpolate_nan=False</em>, <em>quiet=False</em>, <em>ignore_edge_zeros=False</em>, <em>min_wt=0.0</em>, <em>normalize_kernel=False</em>, <em>allow_huge=False</em>, <em>fftn=&lt;function fftn at 0x1b1c230&gt;</em>, <em>ifftn=&lt;function ifftn at 0x1b1c2a8&gt;</em>, <em>complex_dtype=&lt;type 'complex'&gt;</em><big>)</big><a class="reference internal" href="../_modules/astropy/convolution/convolve.html#convolve_fft"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/convolution/convolve.py#L223" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.convolution.convolve_fft" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convolve an ndarray with an nd-kernel.  Returns a convolved image with
+shape = array.shape.  Assumes kernel is centered.</p>
+<p><a class="reference internal" href="#astropy.convolution.convolve_fft" title="astropy.convolution.convolve_fft"><tt class="xref py py-obj docutils literal"><span class="pre">convolve_fft</span></tt></a> differs from <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.fftconvolve.html#scipy.signal.fftconvolve" title="(in SciPy v0.14.0)"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.signal.fftconvolve</span></tt></a> in a few ways:</p>
+<ul class="simple">
+<li>It can treat <tt class="docutils literal"><span class="pre">NaN</span></tt> values as zeros or interpolate over them.</li>
+<li><tt class="docutils literal"><span class="pre">inf</span></tt> values are treated as <tt class="docutils literal"><span class="pre">NaN</span></tt></li>
+<li>(optionally) It pads to the nearest 2^n size to improve FFT speed.</li>
+<li>Its only valid <tt class="docutils literal"><span class="pre">mode</span></tt> is &#8216;same&#8217; (i.e., the same shape array is returned)</li>
+<li>It lets you use your own fft, e.g.,
+<a class="reference external" href="http://pypi.python.org/pypi/pyFFTW">pyFFTW</a> or
+<a class="reference external" href="http://pypi.python.org/pypi/PyFFTW3/0.2.1">pyFFTW3</a> , which can lead to
+performance improvements, depending on your system configuration.  pyFFTW3
+is threaded, and therefore may yield significant performance benefits on
+multi-core machines at the cost of greater memory requirements.  Specify
+the <tt class="docutils literal"><span class="pre">fftn</span></tt> and <tt class="docutils literal"><span class="pre">ifftn</span></tt> keywords to override the default, which is
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.fft.fft.html#numpy.fft.fft" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.fft.fft</span></tt></a> and <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.fft.ifft.html#numpy.fft.ifft" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.fft.ifft</span></tt></a>.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>array</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+<blockquote>
+<div><p>Array to be convolved with <tt class="docutils literal"><span class="pre">kernel</span></tt></p>
+</div></blockquote>
+<p><strong>kernel</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ndarray</span></tt></a></p>
+<blockquote>
+<div><p>Will be normalized if <tt class="docutils literal"><span class="pre">normalize_kernel</span></tt> is set.  Assumed to be
+centered (i.e., shifts may result if your kernel is asymmetric)</p>
+</div></blockquote>
+<p><strong>boundary</strong> : {&#8216;fill&#8217;, &#8216;wrap&#8217;}, optional</p>
+<blockquote>
+<div><p>A flag indicating how to handle boundaries:</p>
+<blockquote>
+<div><ul class="simple">
+<li>&#8216;fill&#8217;: set values outside the array boundary to fill_value
+(default)</li>
+<li>&#8216;wrap&#8217;: periodic boundary</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+<p><strong>interpolate_nan</strong> : bool, optional</p>
+<blockquote>
+<div><p>The convolution will be re-weighted assuming <tt class="docutils literal"><span class="pre">NaN</span></tt> values are meant to be
+ignored, not treated as zero.  If this is off, all <tt class="docutils literal"><span class="pre">NaN</span></tt> values will be
+treated as zero.</p>
+</div></blockquote>
+<p><strong>ignore_edge_zeros</strong> : bool, optional</p>
+<blockquote>
+<div><p>Ignore the zero-pad-created zeros.  This will effectively decrease
+the kernel area on the edges but will not re-normalize the kernel.
+This parameter may result in &#8216;edge-brightening&#8217; effects if you&#8217;re using
+a normalized kernel</p>
+</div></blockquote>
+<p><strong>min_wt</strong> : float, optional</p>
+<blockquote>
+<div><p>If ignoring <tt class="docutils literal"><span class="pre">NaN</span></tt> / zeros, force all grid points with a weight less than
+this value to <tt class="docutils literal"><span class="pre">NaN</span></tt> (the weight of a grid point with <em>no</em> ignored
+neighbors is 1.0).
+If <tt class="docutils literal"><span class="pre">min_wt</span></tt> is zero, then all zero-weight points will be set to zero
+instead of <tt class="docutils literal"><span class="pre">NaN</span></tt> (which they would be otherwise, because 1/0 = nan).
+See the examples below</p>
+</div></blockquote>
+<p><strong>normalize_kernel</strong> : function or boolean, optional</p>
+<blockquote>
+<div><p>If specified, this is the function to divide kernel by to normalize it.
+e.g., <tt class="docutils literal"><span class="pre">normalize_kernel=np.sum</span></tt> means that kernel will be modified to be:
+<tt class="docutils literal"><span class="pre">kernel</span> <span class="pre">=</span> <span class="pre">kernel</span> <span class="pre">/</span> <span class="pre">np.sum(kernel)</span></tt>.  If True, defaults to
+<tt class="docutils literal"><span class="pre">normalize_kernel</span> <span class="pre">=</span> <span class="pre">np.sum</span></tt>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>default</strong> : ndarray</p>
+<blockquote>
+<div><p><strong>array</strong> convolved with <tt class="docutils literal"><span class="pre">kernel</span></tt>.
+If <tt class="docutils literal"><span class="pre">return_fft</span></tt> is set, returns fft(<strong>array</strong>) * fft(<tt class="docutils literal"><span class="pre">kernel</span></tt>).
+If crop is not set, returns the image, but with the fft-padded size
+instead of the input size</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>fft_pad</strong> : bool, optional</p>
+<blockquote>
+<div><p>Default on.  Zero-pad image to the nearest 2^n</p>
+</div></blockquote>
+<p><strong>psf_pad</strong> : bool, optional</p>
+<blockquote>
+<div><p>Default off.  Zero-pad image to be at least the sum of the image sizes
+(in order to avoid edge-wrapping when smoothing)</p>
+</div></blockquote>
+<p><strong>crop</strong> : bool, optional</p>
+<blockquote>
+<div><p>Default on.  Return an image of the size of the largest input image.
+If the images are asymmetric in opposite directions, will return the
+largest image in both directions.
+For example, if an input image has shape [100,3] but a kernel with shape
+[6,6] is used, the output will be [100,6].</p>
+</div></blockquote>
+<p><strong>return_fft</strong> : bool, optional</p>
+<blockquote>
+<div><p>Return the fft(image)*fft(kernel) instead of the convolution (which is
+ifft(fft(image)*fft(kernel))).  Useful for making PSDs.</p>
+</div></blockquote>
+<p><strong>fftn, ifftn</strong> : functions, optional</p>
+<blockquote>
+<div><p>The fft and inverse fft functions.  Can be overridden to use your own
+ffts, e.g. an fftw3 wrapper or scipy&#8217;s fftn, e.g.
+<tt class="docutils literal"><span class="pre">fftn=scipy.fftpack.fftn</span></tt></p>
+</div></blockquote>
+<p><strong>complex_dtype</strong> : np.complex, optional</p>
+<blockquote>
+<div><p>Which complex dtype to use.  <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy</span></tt></a> has a range of options, from 64 to
+256.</p>
+</div></blockquote>
+<p><strong>quiet</strong> : bool, optional</p>
+<blockquote>
+<div><p>Silence warning message about NaN interpolation</p>
+</div></blockquote>
+<p><strong>allow_huge</strong> : bool, optional</p>
+<blockquote>
+<div><p>Allow huge arrays in the FFT?  If False, will raise an exception if the
+array or kernel size is &gt;1 GB</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Raises:</th><td class="field-body"><p class="first"><strong>ValueError:</strong></p>
+<blockquote class="last">
+<div><p>If the array is bigger than 1 GB after padding, will raise this exception
+unless allow_huge is True</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="astropy.convolution.convolve.html#astropy.convolution.convolve" title="astropy.convolution.convolve"><tt class="xref py py-obj docutils literal"><span class="pre">convolve</span></tt></a></dt>
+<dd>Convolve is a non-fft version of this code.  It is more memory efficient and for small kernels can be faster.</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([ 1.,  4.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="go">array([ 1.,  4.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="go">array([ 1.,  0.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="go">array([ 1.,  2.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">interpolate_nan</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="go">array([ 1.,  0.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">interpolate_nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">... </span>             <span class="n">min_wt</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span>
+<span class="go">array([ 1.,  nan,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interpolate_nan</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">array([ 1.,  4.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interpolate_nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">normalize_kernel</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ignore_edge_zeros</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">array([ 1.,  2.,  3.])</span>
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scipy.fftpack</span>  <span class="c"># optional - requires scipy</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convolve_fft</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">interpolate_nan</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">normalize_kernel</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ignore_edge_zeros</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="gp">... </span>              <span class="n">fftn</span><span class="o">=</span><span class="n">scipy</span><span class="o">.</span><span class="n">fftpack</span><span class="o">.</span><span class="n">fft</span><span class="p">,</span> <span class="n">ifftn</span><span class="o">=</span><span class="n">scipy</span><span class="o">.</span><span class="n">fftpack</span><span class="o">.</span><span class="n">ifft</span><span class="p">)</span>
+<span class="go">array([ 1.,  2.,  3.])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">convolve_fft</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.convolution.convolve_fft.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.convolution.convolve_fft.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

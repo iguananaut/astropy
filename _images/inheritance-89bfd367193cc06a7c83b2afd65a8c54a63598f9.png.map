@@ -1,0 +1,17 @@
+<map id="inheritancea27b0cafa9" name="inheritancea27b0cafa9">
+<area shape="rect" id="node5" href="../api/astropy.table.Column.html#astropy.table.Column" title="Define a data column for use in a Table object." alt="" coords="384,410,456,438"/>
+<area shape="rect" id="node2" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="41,435,113,463"/>
+<area shape="rect" id="node12" title="An array class with possibly masked values." alt="" coords="367,461,473,489"/>
+<area shape="rect" id="node4" title="A class to represent groups within a table of heterogeneous data." alt="" coords="27,334,128,362"/>
+<area shape="rect" id="node7" href="../api/astropy.table.ColumnGroups.html#astropy.table.ColumnGroups" title="ColumnGroups" alt="" coords="199,309,316,337"/>
+<area shape="rect" id="node23" href="../api/astropy.table.TableGroups.html#astropy.table.TableGroups" title="TableGroups" alt="" coords="207,359,308,387"/>
+<area shape="rect" id="node14" href="../api/astropy.table.MaskedColumn.html#astropy.table.MaskedColumn" title="Define a masked data column for use in a Table object." alt="" coords="523,435,645,463"/>
+<area shape="rect" id="node9" href="../api/astropy.table.Conf.html#astropy.table.Conf" title="Configuration parameters for `astropy.table`." alt="" coords="221,258,293,286"/>
+<area shape="rect" id="node10" href="../api/astropy.config.ConfigNamespace.html#astropy.config.ConfigNamespace" title="A namespace of configuration items. &#160;Each subpackage with" alt="" coords="5,258,149,286"/>
+<area shape="rect" id="node17" title="Dictionary that remembers insertion order" alt="" coords="24,207,131,235"/>
+<area shape="rect" id="node20" href="../api/astropy.table.TableColumns.html#astropy.table.TableColumns" title="OrderedDict subclass for a set of columns." alt="" coords="201,207,313,235"/>
+<area shape="rect" id="node18" href="../api/astropy.table.Row.html#astropy.table.Row" title="A class to represent one row of a Table object." alt="" coords="41,157,113,185"/>
+<area shape="rect" id="node19" href="../api/astropy.table.Table.html#astropy.table.Table" title="A class to represent tables of heterogeneous data." alt="" coords="41,106,113,134"/>
+<area shape="rect" id="node22" href="../api/astropy.table.TableFormatter.html#astropy.table.TableFormatter" title="TableFormatter" alt="" coords="15,55,140,83"/>
+<area shape="rect" id="node25" href="../api/astropy.table.TableMergeError.html#astropy.table.TableMergeError" title="TableMergeError" alt="" coords="12,5,143,33"/>
+</map>

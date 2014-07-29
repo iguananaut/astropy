@@ -1,0 +1,18 @@
+<map id="inheritanceec53744177" name="inheritanceec53744177">
+<area shape="rect" id="node1" href="../../api/astropy.utils.exceptions.AstropyUserWarning.html#astropy.utils.exceptions.AstropyUserWarning" title="The primary warning class for Astropy." alt="" coords="244,511,399,539"/>
+<area shape="rect" id="node19" href="../../api/astropy.vo.samp.SAMPWarning.html#astropy.vo.samp.SAMPWarning" title="SAMP&#45;specific Astropy warning class" alt="" coords="457,511,569,539"/>
+<area shape="rect" id="node2" href="../../api/astropy.utils.exceptions.AstropyWarning.html#astropy.utils.exceptions.AstropyWarning" title="The base warning class from which all Astropy warnings should inherit." alt="" coords="37,511,163,539"/>
+<area shape="rect" id="node4" href="../../api/astropy.vo.samp.Conf.html#astropy.vo.samp.Conf" title="Configuration parameters for `astropy.vo.samp`." alt="" coords="285,461,357,489"/>
+<area shape="rect" id="node5" href="../../api/astropy.config.ConfigNamespace.html#astropy.config.ConfigNamespace" title="A namespace of configuration items. &#160;Each subpackage with" alt="" coords="28,461,172,489"/>
+<area shape="rect" id="node7" title="Base class for client errors." alt="" coords="64,410,136,438"/>
+<area shape="rect" id="node8" title="Indicates an XML&#45;RPC fault package." alt="" coords="285,410,357,438"/>
+<area shape="rect" id="node17" href="../../api/astropy.vo.samp.SAMPProxyError.html#astropy.vo.samp.SAMPProxyError" title="SAMP Proxy Hub exception" alt="" coords="448,410,579,438"/>
+<area shape="rect" id="node10" href="../../api/astropy.vo.samp.SAMPClient.html#astropy.vo.samp.SAMPClient" title="Utility class which provides facilities to create and manage a SAMP" alt="" coords="51,359,149,387"/>
+<area shape="rect" id="node11" href="../../api/astropy.vo.samp.SAMPClientError.html#astropy.vo.samp.SAMPClientError" title="SAMP Client exceptions." alt="" coords="35,309,165,337"/>
+<area shape="rect" id="node12" href="../../api/astropy.vo.samp.SAMPHubError.html#astropy.vo.samp.SAMPHubError" title="SAMP Hub exception." alt="" coords="41,258,159,286"/>
+<area shape="rect" id="node13" href="../../api/astropy.vo.samp.SAMPHubProxy.html#astropy.vo.samp.SAMPHubProxy" title="Proxy class to simplify the client interaction with a SAMP hub (via the" alt="" coords="39,207,161,235"/>
+<area shape="rect" id="node14" href="../../api/astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="SAMP Hub Server." alt="" coords="35,157,165,185"/>
+<area shape="rect" id="node15" href="../../api/astropy.vo.samp.SAMPIntegratedClient.html#astropy.vo.samp.SAMPIntegratedClient" title="A Simple SAMP client." alt="" coords="13,106,187,134"/>
+<area shape="rect" id="node16" href="../../api/astropy.vo.samp.SAMPMsgReplierWrapper.html#astropy.vo.samp.SAMPMsgReplierWrapper" title="Function decorator that allows to automatically grab errors and returned" alt="" coords="7,55,193,83"/>
+<area shape="rect" id="node21" href="../../api/astropy.vo.samp.WebProfileDialog.html#astropy.vo.samp.WebProfileDialog" title="A base class to make writing Web Profile GUI consent dialogs" alt="" coords="33,5,167,33"/>
+</map>

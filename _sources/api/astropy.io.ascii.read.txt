@@ -1,0 +1,10 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+read
+=====================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autofunction:: read

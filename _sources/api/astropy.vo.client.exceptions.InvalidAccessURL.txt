@@ -1,0 +1,8 @@
+
+
+InvalidAccessURL
+=============================================
+
+.. currentmodule:: astropy.vo.client.exceptions
+
+.. autoexception:: InvalidAccessURL

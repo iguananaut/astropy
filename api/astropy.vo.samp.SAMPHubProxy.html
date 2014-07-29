@@ -1,0 +1,380 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>SAMPHubProxy &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="SAMP (Simple Application Messaging Protocol (astropy.vo.samp)" href="../vo/samp/index.html" />
+    <link rel="next" title="SAMPHubServer" href="astropy.vo.samp.SAMPHubServer.html" />
+    <link rel="prev" title="SAMPHubError" href="astropy.vo.samp.SAMPHubError.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPHubServer.html" title="SAMPHubServer">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.vo.samp.SAMPHubError.html" title="SAMPHubError">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../vo/index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="../vo/samp/index.html" accesskey="U">SAMP (Simple Application Messaging Protocol (<tt class="docutils literal"><span class="pre">astropy.vo.samp</span></tt>)</a> &raquo;</li>
+      
+      <li>SAMPHubProxy</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="samphubproxy">
+<h1>SAMPHubProxy<a class="headerlink" href="#samphubproxy" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.vo.samp.SAMPHubProxy">
+<em class="property">class </em><tt class="descclassname">astropy.vo.samp.</tt><tt class="descname">SAMPHubProxy</tt><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L24" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Proxy class to simplify the client interaction with a SAMP hub (via the
+standard profile).</p>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.is_connected" title="astropy.vo.samp.SAMPHubProxy.is_connected"><tt class="xref py py-obj docutils literal"><span class="pre">is_connected</span></tt></a></td>
+<td>Whether the hub proxy is currently connected to a hub.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.call" title="astropy.vo.samp.SAMPHubProxy.call"><tt class="xref py py-obj docutils literal"><span class="pre">call</span></tt></a>(private_key,&nbsp;recipient_id,&nbsp;msg_tag,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">call</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.call_all" title="astropy.vo.samp.SAMPHubProxy.call_all"><tt class="xref py py-obj docutils literal"><span class="pre">call_all</span></tt></a>(private_key,&nbsp;msg_tag,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">callAll</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.call_and_wait" title="astropy.vo.samp.SAMPHubProxy.call_and_wait"><tt class="xref py py-obj docutils literal"><span class="pre">call_and_wait</span></tt></a>(private_key,&nbsp;recipient_id,&nbsp;...)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">callAndWait</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.connect" title="astropy.vo.samp.SAMPHubProxy.connect"><tt class="xref py py-obj docutils literal"><span class="pre">connect</span></tt></a>([hub,&nbsp;hub_params,&nbsp;key_file,&nbsp;...])</td>
+<td>Connect to the current SAMP Hub.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.declare_metadata" title="astropy.vo.samp.SAMPHubProxy.declare_metadata"><tt class="xref py py-obj docutils literal"><span class="pre">declare_metadata</span></tt></a>(private_key,&nbsp;metadata)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">declareMetadata</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.declare_subscriptions" title="astropy.vo.samp.SAMPHubProxy.declare_subscriptions"><tt class="xref py py-obj docutils literal"><span class="pre">declare_subscriptions</span></tt></a>(private_key,&nbsp;subscriptions)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">declareSubscriptions</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.disconnect" title="astropy.vo.samp.SAMPHubProxy.disconnect"><tt class="xref py py-obj docutils literal"><span class="pre">disconnect</span></tt></a>()</td>
+<td>Disconnect from the current SAMP Hub.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.get_metadata" title="astropy.vo.samp.SAMPHubProxy.get_metadata"><tt class="xref py py-obj docutils literal"><span class="pre">get_metadata</span></tt></a>(private_key,&nbsp;client_id)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getMetadata</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.get_registered_clients" title="astropy.vo.samp.SAMPHubProxy.get_registered_clients"><tt class="xref py py-obj docutils literal"><span class="pre">get_registered_clients</span></tt></a>(private_key)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getRegisteredClients</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.get_subscribed_clients" title="astropy.vo.samp.SAMPHubProxy.get_subscribed_clients"><tt class="xref py py-obj docutils literal"><span class="pre">get_subscribed_clients</span></tt></a>(private_key,&nbsp;mtype)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getSubscribedClients</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.get_subscriptions" title="astropy.vo.samp.SAMPHubProxy.get_subscriptions"><tt class="xref py py-obj docutils literal"><span class="pre">get_subscriptions</span></tt></a>(private_key,&nbsp;client_id)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">getSubscriptions</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.notify" title="astropy.vo.samp.SAMPHubProxy.notify"><tt class="xref py py-obj docutils literal"><span class="pre">notify</span></tt></a>(private_key,&nbsp;recipient_id,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">notify</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.notify_all" title="astropy.vo.samp.SAMPHubProxy.notify_all"><tt class="xref py py-obj docutils literal"><span class="pre">notify_all</span></tt></a>(private_key,&nbsp;message)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">notifyAll</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.ping" title="astropy.vo.samp.SAMPHubProxy.ping"><tt class="xref py py-obj docutils literal"><span class="pre">ping</span></tt></a>()</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">ping</span></tt> SAMP Hub method (Standard Profile only).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.register" title="astropy.vo.samp.SAMPHubProxy.register"><tt class="xref py py-obj docutils literal"><span class="pre">register</span></tt></a>(secret)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">register</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.reply" title="astropy.vo.samp.SAMPHubProxy.reply"><tt class="xref py py-obj docutils literal"><span class="pre">reply</span></tt></a>(private_key,&nbsp;msg_id,&nbsp;response)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">reply</span></tt> SAMP Hub method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.set_xmlrpc_callback" title="astropy.vo.samp.SAMPHubProxy.set_xmlrpc_callback"><tt class="xref py py-obj docutils literal"><span class="pre">set_xmlrpc_callback</span></tt></a>(private_key,&nbsp;xmlrpc_addr)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">setXmlrpcCallback</span></tt> SAMP Hub method (Standard Profile only).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.vo.samp.SAMPHubProxy.unregister" title="astropy.vo.samp.SAMPHubProxy.unregister"><tt class="xref py py-obj docutils literal"><span class="pre">unregister</span></tt></a>(private_key)</td>
+<td>Proxy to <tt class="docutils literal"><span class="pre">unregister</span></tt> SAMP Hub method.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.vo.samp.SAMPHubProxy.is_connected">
+<tt class="descname">is_connected</tt><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.is_connected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the hub proxy is currently connected to a hub.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.call">
+<tt class="descname">call</tt><big>(</big><em>private_key</em>, <em>recipient_id</em>, <em>msg_tag</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.call"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L234" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">call</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.call_all">
+<tt class="descname">call_all</tt><big>(</big><em>private_key</em>, <em>msg_tag</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.call_all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L240" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.call_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">callAll</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.call_and_wait">
+<tt class="descname">call_and_wait</tt><big>(</big><em>private_key</em>, <em>recipient_id</em>, <em>message</em>, <em>timeout</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.call_and_wait"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L246" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.call_and_wait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">callAndWait</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.connect">
+<tt class="descname">connect</tt><big>(</big><em>hub=None</em>, <em>hub_params=None</em>, <em>key_file=None</em>, <em>cert_file=None</em>, <em>cert_reqs=0</em>, <em>ca_certs=None</em>, <em>ssl_version=None</em>, <em>pool_size=20</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.connect"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L41" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect to the current SAMP Hub.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>hub</strong> : <a class="reference internal" href="astropy.vo.samp.SAMPHubServer.html#astropy.vo.samp.SAMPHubServer" title="astropy.vo.samp.SAMPHubServer"><tt class="xref py py-obj docutils literal"><span class="pre">SAMPHubServer</span></tt></a>, optional</p>
+<blockquote>
+<div><p>The hub to connect to.</p>
+</div></blockquote>
+<p><strong>hub_params</strong> : dict, optional</p>
+<blockquote>
+<div><p>Optional dictionary containing the lock-file content of the Hub
+with which to connect. This dictionary has the form
+<tt class="docutils literal"><span class="pre">{&lt;token-name&gt;:</span> <span class="pre">&lt;token-string&gt;,</span> <span class="pre">...}</span></tt>.</p>
+</div></blockquote>
+<p><strong>key_file</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file containing the private key for SSL connections.
+If the certificate file (<tt class="docutils literal"><span class="pre">cert_file</span></tt>) contains the private key,
+then <tt class="docutils literal"><span class="pre">key_file</span></tt> can be omitted.</p>
+</div></blockquote>
+<p><strong>cert_file</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file which contains a certificate to be used to
+identify the local side of the secure connection.</p>
+</div></blockquote>
+<p><strong>cert_reqs</strong> : int, optional</p>
+<blockquote>
+<div><p>Whether a certificate is required from the server side of the
+connection, and whether it will be validated if provided. It must
+be one of the three values <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_NONE" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_NONE</span></tt></a> (certificates ignored),
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_OPTIONAL" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_OPTIONAL</span></tt></a> (not required, but validated if provided), or
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_REQUIRED" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_REQUIRED</span></tt></a> (required and validated). If the value of this
+parameter is not <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.CERT_NONE" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.CERT_NONE</span></tt></a>, then the <tt class="docutils literal"><span class="pre">ca_certs</span></tt> parameter
+must point to a file of CA certificates.</p>
+</div></blockquote>
+<p><strong>ca_certs</strong> : str, optional</p>
+<blockquote>
+<div><p>The path to a file containing a set of concatenated &#8220;Certification
+Authority&#8221; certificates, which are used to validate the
+certificate passed from the Hub end of the connection.</p>
+</div></blockquote>
+<p><strong>ssl_version</strong> : int, optional</p>
+<blockquote>
+<div><p>Which version of the SSL protocol to use. Typically, the server
+chooses a particular protocol version, and the client must adapt
+to the server&#8217;s choice. Most of the versions are not interoperable
+with the other versions. If not specified the default SSL version
+is <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv3" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv3</span></tt></a>. This version provides the most
+compatibility with other versions server side. Other SSL protocol
+versions are: <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv2" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv2</span></tt></a>, <a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_SSLv3" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_SSLv3</span></tt></a> and
+<a class="reference external" href="http://docs.python.org/library/ssl.html#ssl.PROTOCOL_TLSv1" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">ssl.PROTOCOL_TLSv1</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>pool_size</strong> : int, optional</p>
+<blockquote class="last">
+<div><p>The number of socket connections opened to communicate with the
+Hub.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.declare_metadata">
+<tt class="descname">declare_metadata</tt><big>(</big><em>private_key</em>, <em>metadata</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.declare_metadata"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L186" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.declare_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">declareMetadata</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.declare_subscriptions">
+<tt class="descname">declare_subscriptions</tt><big>(</big><em>private_key</em>, <em>subscriptions</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.declare_subscriptions"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L198" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.declare_subscriptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">declareSubscriptions</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.disconnect">
+<tt class="descname">disconnect</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.disconnect"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L146" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnect from the current SAMP Hub.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.get_metadata">
+<tt class="descname">get_metadata</tt><big>(</big><em>private_key</em>, <em>client_id</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.get_metadata"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L192" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.get_metadata" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getMetadata</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.get_registered_clients">
+<tt class="descname">get_registered_clients</tt><big>(</big><em>private_key</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.get_registered_clients"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L210" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.get_registered_clients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getRegisteredClients</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.get_subscribed_clients">
+<tt class="descname">get_subscribed_clients</tt><big>(</big><em>private_key</em>, <em>mtype</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.get_subscribed_clients"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L216" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.get_subscribed_clients" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getSubscribedClients</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.get_subscriptions">
+<tt class="descname">get_subscriptions</tt><big>(</big><em>private_key</em>, <em>client_id</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.get_subscriptions"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L204" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.get_subscriptions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">getSubscriptions</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.notify">
+<tt class="descname">notify</tt><big>(</big><em>private_key</em>, <em>recipient_id</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.notify"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L222" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.notify" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">notify</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.notify_all">
+<tt class="descname">notify_all</tt><big>(</big><em>private_key</em>, <em>message</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.notify_all"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L228" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.notify_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">notifyAll</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.ping">
+<tt class="descname">ping</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.ping"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L162" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.ping" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">ping</span></tt> SAMP Hub method (Standard Profile only).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.register">
+<tt class="descname">register</tt><big>(</big><em>secret</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.register"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L174" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">register</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.reply">
+<tt class="descname">reply</tt><big>(</big><em>private_key</em>, <em>msg_id</em>, <em>response</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.reply"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L253" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.reply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">reply</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.set_xmlrpc_callback">
+<tt class="descname">set_xmlrpc_callback</tt><big>(</big><em>private_key</em>, <em>xmlrpc_addr</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.set_xmlrpc_callback"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L168" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.set_xmlrpc_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">setXmlrpcCallback</span></tt> SAMP Hub method (Standard Profile only).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.vo.samp.SAMPHubProxy.unregister">
+<tt class="descname">unregister</tt><big>(</big><em>private_key</em><big>)</big><a class="reference internal" href="../_modules/astropy/vo/samp/hub_proxy.html#SAMPHubProxy.unregister"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/vo/samp/hub_proxy.py#L180" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.vo.samp.SAMPHubProxy.unregister" title="Permalink to this definition">¶</a></dt>
+<dd><p>Proxy to <tt class="docutils literal"><span class="pre">unregister</span></tt> SAMP Hub method.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">SAMPHubProxy</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.vo.samp.SAMPHubProxy.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.vo.samp.SAMPHubProxy.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

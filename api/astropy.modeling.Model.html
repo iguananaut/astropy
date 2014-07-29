@@ -1,0 +1,502 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Model &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="ModelDefinitionError" href="astropy.modeling.ModelDefinitionError.html" />
+    <link rel="prev" title="LabeledInput" href="astropy.modeling.LabeledInput.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.ModelDefinitionError.html" title="ModelDefinitionError">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.LabeledInput.html" title="LabeledInput">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Model</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="model">
+<h1>Model<a class="headerlink" href="#model" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.Model">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.</tt><tt class="descname">Model</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L116" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="http://docs.python.org/3/library/functions.html#object" title="(in Python v3.4)"><tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></a></p>
+<p>Base class for all models.</p>
+<p>This is an abstract class and should not be instantiated directly.</p>
+<p>This class sets the constraints and other properties for all individual
+parameters and performs parameter validation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>param_dim</strong> : int</p>
+<blockquote>
+<div><p>Number of parameter sets</p>
+</div></blockquote>
+<p><strong>fixed</strong> : dict</p>
+<blockquote>
+<div><p>Dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">bool}</span></tt> setting the fixed constraint
+for one or more parameters.  <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a> means the parameter is held fixed
+during fitting and is prevented from updates once an instance of the
+model has been created.</p>
+<p>Alternatively the <a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.fixed" title="astropy.modeling.Parameter.fixed"><tt class="xref py py-obj docutils literal"><span class="pre">fixed</span></tt></a> property of a
+parameter may be used to lock or unlock individual parameters.</p>
+</div></blockquote>
+<p><strong>tied</strong> : dict</p>
+<blockquote>
+<div><p>Dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">callable}</span></tt> of parameters which are
+linked to some other parameter. The dictionary values are callables
+providing the linking relationship.</p>
+<p>Alternatively the <a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.tied" title="astropy.modeling.Parameter.tied"><tt class="xref py py-obj docutils literal"><span class="pre">tied</span></tt></a> property of a
+parameter may be used to set the <tt class="docutils literal"><span class="pre">tied</span></tt> constraint on individual
+parameters.</p>
+</div></blockquote>
+<p><strong>bounds</strong> : dict</p>
+<blockquote>
+<div><p>Dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">value}</span></tt> of lower and upper bounds of
+parameters. Keys are parameter names. Values are a list of length 2
+giving the desired range for the parameter.</p>
+<p>Alternatively the <a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.min" title="astropy.modeling.Parameter.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a> and
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.max" title="astropy.modeling.Parameter.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a> or
+~astropy.modeling.Parameter.bounds` properties of a parameter may be
+used to set bounds on individual parameters.</p>
+</div></blockquote>
+<p><strong>eqcons</strong> : list</p>
+<blockquote>
+<div><p>List of functions of length n such that <tt class="docutils literal"><span class="pre">eqcons[j](x0,</span> <span class="pre">*args)</span> <span class="pre">==</span> <span class="pre">0.0</span></tt>
+in a successfully optimized problem.</p>
+</div></blockquote>
+<p><strong>ineqcons</strong> : list</p>
+<blockquote class="last">
+<div><p>List of functions of length n such that <tt class="docutils literal"><span class="pre">ieqcons[j](x0,</span> <span class="pre">*args)</span> <span class="pre">&gt;=</span>
+<span class="pre">0.0</span></tt> is a successfully optimized problem.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tie_center</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">mean</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">stddev</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">mean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tied_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mean&#39;</span><span class="p">:</span> <span class="n">tie_center</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Specify that <tt class="docutils literal"><span class="pre">'mean'</span></tt> is a tied parameter in one of two ways:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">tied</span><span class="o">=</span><span class="n">tied_parameters</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span> <span class="o">=</span> <span class="n">tie_center</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span>
+<span class="go">&lt;function tie_center at 0x...&gt;</span>
+</pre></div>
+</div>
+<p>Fixed parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">fixed</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;stddev&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.bounds" title="astropy.modeling.Model.bounds"><tt class="xref py py-obj docutils literal"><span class="pre">bounds</span></tt></a></td>
+<td>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> mapping parameter names to their upper and lower bounds as <tt class="docutils literal"><span class="pre">(min,</span> <span class="pre">max)</span></tt> tuples.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.eqcons" title="astropy.modeling.Model.eqcons"><tt class="xref py py-obj docutils literal"><span class="pre">eqcons</span></tt></a></td>
+<td>List of parameter equality constraints.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.fittable" title="astropy.modeling.Model.fittable"><tt class="xref py py-obj docutils literal"><span class="pre">fittable</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.fixed" title="astropy.modeling.Model.fixed"><tt class="xref py py-obj docutils literal"><span class="pre">fixed</span></tt></a></td>
+<td>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> mapping parameter names to their fixed constraint.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.ineqcons" title="astropy.modeling.Model.ineqcons"><tt class="xref py py-obj docutils literal"><span class="pre">ineqcons</span></tt></a></td>
+<td>List of parameter inequality constraints.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.input_names" title="astropy.modeling.Model.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.linear" title="astropy.modeling.Model.linear"><tt class="xref py py-obj docutils literal"><span class="pre">linear</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.model_constraints" title="astropy.modeling.Model.model_constraints"><tt class="xref py py-obj docutils literal"><span class="pre">model_constraints</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.model_set_axis" title="astropy.modeling.Model.model_set_axis"><tt class="xref py py-obj docutils literal"><span class="pre">model_set_axis</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.n_inputs" title="astropy.modeling.Model.n_inputs"><tt class="xref py py-obj docutils literal"><span class="pre">n_inputs</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.n_outputs" title="astropy.modeling.Model.n_outputs"><tt class="xref py py-obj docutils literal"><span class="pre">n_outputs</span></tt></a></td>
+<td>int(x=0) -&gt; int or long</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.param_dim" title="astropy.modeling.Model.param_dim"><tt class="xref py py-obj docutils literal"><span class="pre">param_dim</span></tt></a></td>
+<td><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.4.</span></p>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.param_names" title="astropy.modeling.Model.param_names"><tt class="xref py py-obj docutils literal"><span class="pre">param_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.param_sets" title="astropy.modeling.Model.param_sets"><tt class="xref py py-obj docutils literal"><span class="pre">param_sets</span></tt></a></td>
+<td>Return parameters as a pset.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.parameter_constraints" title="astropy.modeling.Model.parameter_constraints"><tt class="xref py py-obj docutils literal"><span class="pre">parameter_constraints</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.parameters" title="astropy.modeling.Model.parameters"><tt class="xref py py-obj docutils literal"><span class="pre">parameters</span></tt></a></td>
+<td>A flattened array of all parameter values in all parameter sets.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.standard_broadcasting" title="astropy.modeling.Model.standard_broadcasting"><tt class="xref py py-obj docutils literal"><span class="pre">standard_broadcasting</span></tt></a></td>
+<td>bool(x) -&gt; bool</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.tied" title="astropy.modeling.Model.tied"><tt class="xref py py-obj docutils literal"><span class="pre">tied</span></tt></a></td>
+<td>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> mapping parameter names to their tied constraint.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.__call__" title="astropy.modeling.Model.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(*inputs,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.add_model" title="astropy.modeling.Model.add_model"><tt class="xref py py-obj docutils literal"><span class="pre">add_model</span></tt></a>(model,&nbsp;mode)</td>
+<td>Create a CompositeModel by chaining the current model with the new one using the specified mode.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.copy" title="astropy.modeling.Model.copy"><tt class="xref py py-obj docutils literal"><span class="pre">copy</span></tt></a>()</td>
+<td>Return a copy of this model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.evaluate" title="astropy.modeling.Model.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(*args,&nbsp;**kwargs)</td>
+<td>Evaluate the model on some input variables.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.inverse" title="astropy.modeling.Model.inverse"><tt class="xref py py-obj docutils literal"><span class="pre">inverse</span></tt></a>()</td>
+<td>Returns a callable object which performs the inverse transform.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.invert" title="astropy.modeling.Model.invert"><tt class="xref py py-obj docutils literal"><span class="pre">invert</span></tt></a>()</td>
+<td>Invert coordinates iteratively if possible.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.Model.prepare_inputs" title="astropy.modeling.Model.prepare_inputs"><tt class="xref py py-obj docutils literal"><span class="pre">prepare_inputs</span></tt></a>(*inputs,&nbsp;**kwargs)</td>
+<td>This method is used in <a class="reference internal" href="#astropy.modeling.Model.__call__" title="astropy.modeling.Model.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">Model.__call__</span></tt></a> to ensure that all the inputs to the model can be broadcast into compatible shapes (if one or both of them are input as arrays), particularly if there are more than one parameter sets.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.Model.prepare_outputs" title="astropy.modeling.Model.prepare_outputs"><tt class="xref py py-obj docutils literal"><span class="pre">prepare_outputs</span></tt></a>(format_info,&nbsp;*outputs,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.Model.bounds">
+<tt class="descname">bounds</tt><a class="headerlink" href="#astropy.modeling.Model.bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> mapping parameter names to their upper and lower bounds as
+<tt class="docutils literal"><span class="pre">(min,</span> <span class="pre">max)</span></tt> tuples.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.eqcons">
+<tt class="descname">eqcons</tt><a class="headerlink" href="#astropy.modeling.Model.eqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of parameter equality constraints.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.fittable">
+<tt class="descname">fittable</tt><em class="property"> = False</em><a class="headerlink" href="#astropy.modeling.Model.fittable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.fixed">
+<tt class="descname">fixed</tt><a class="headerlink" href="#astropy.modeling.Model.fixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> mapping parameter names to their fixed constraint.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.ineqcons">
+<tt class="descname">ineqcons</tt><a class="headerlink" href="#astropy.modeling.Model.ineqcons" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of parameter inequality constraints.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.input_names">
+<tt class="descname">input_names</tt><em class="property"> = []</em><a class="headerlink" href="#astropy.modeling.Model.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.linear">
+<tt class="descname">linear</tt><em class="property"> = True</em><a class="headerlink" href="#astropy.modeling.Model.linear" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.model_constraints">
+<tt class="descname">model_constraints</tt><em class="property"> = [u'eqcons', u'ineqcons']</em><a class="headerlink" href="#astropy.modeling.Model.model_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.model_set_axis">
+<tt class="descname">model_set_axis</tt><a class="headerlink" href="#astropy.modeling.Model.model_set_axis" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.n_inputs">
+<tt class="descname">n_inputs</tt><em class="property"> = 1</em><a class="headerlink" href="#astropy.modeling.Model.n_inputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.n_outputs">
+<tt class="descname">n_outputs</tt><em class="property"> = 1</em><a class="headerlink" href="#astropy.modeling.Model.n_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.param_dim">
+<tt class="descname">param_dim</tt><a class="headerlink" href="#astropy.modeling.Model.param_dim" title="Permalink to this definition">¶</a></dt>
+<dd><div class="deprecated">
+<p><span class="versionmodified">Deprecated since version 0.4: </span>Use len(model) instead.</p>
+</div>
+<p></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.param_names">
+<tt class="descname">param_names</tt><em class="property"> = []</em><a class="headerlink" href="#astropy.modeling.Model.param_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of names of the parameters that describe models of this type.</p>
+<p>The parameters in this list are in the same order they should be passed in
+when initializing a model of a specific type.  Some types of models, such
+as polynomial models, have a different number of parameters depending on
+some other property of the model, such as the degree.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.param_sets">
+<tt class="descname">param_sets</tt><a class="headerlink" href="#astropy.modeling.Model.param_sets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return parameters as a pset.</p>
+<p>This is a list with one item per parameter set, which is an array of
+that parameter&#8217;s values across all parameter sets, with the last axis
+associated with the parameter set.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.parameter_constraints">
+<tt class="descname">parameter_constraints</tt><em class="property"> = [u'fixed', u'tied', u'bounds']</em><a class="headerlink" href="#astropy.modeling.Model.parameter_constraints" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.parameters">
+<tt class="descname">parameters</tt><a class="headerlink" href="#astropy.modeling.Model.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flattened array of all parameter values in all parameter sets.</p>
+<p>Fittable parameters maintain this list and fitters modify it.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.standard_broadcasting">
+<tt class="descname">standard_broadcasting</tt><em class="property"> = True</em><a class="headerlink" href="#astropy.modeling.Model.standard_broadcasting" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.Model.tied">
+<tt class="descname">tied</tt><a class="headerlink" href="#astropy.modeling.Model.tied" title="Permalink to this definition">¶</a></dt>
+<dd><p>A <a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">dict</span></tt></a> mapping parameter names to their tied constraint.</p>
+</dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="method">
+<dt id="astropy.modeling.Model.__call__">
+<tt class="descname">__call__</tt><big>(</big><em>*inputs</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.__call__"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L236" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.__call__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.add_model">
+<tt class="descname">add_model</tt><big>(</big><em>model</em>, <em>mode</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.add_model"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L422" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.add_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a CompositeModel by chaining the current model with the new one
+using the specified mode.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>model</strong> : an instance of a subclass of Model</p>
+<p><strong>mode</strong> :  string</p>
+<blockquote>
+<div><p>&#8216;parallel&#8217;, &#8216;serial&#8217;, &#8216;p&#8217; or &#8216;s&#8217;
+a flag indicating whether to combine the models
+in series or in parallel</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>model</strong> : CompositeModel</p>
+<blockquote class="last">
+<div><p>an instance of CompositeModel</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.copy">
+<tt class="descname">copy</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.copy"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L448" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of this model.</p>
+<p>Uses a deep copy so that all model attributes, including parameter
+values, are copied as well.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L368" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the model on some input variables.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.inverse">
+<tt class="descname">inverse</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.inverse"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L357" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.inverse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a callable object which performs the inverse transform.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.invert">
+<tt class="descname">invert</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.invert"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L363" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.invert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Invert coordinates iteratively if possible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.prepare_inputs">
+<tt class="descname">prepare_inputs</tt><big>(</big><em>*inputs</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.prepare_inputs"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L372" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.prepare_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used in <a class="reference internal" href="#astropy.modeling.Model.__call__" title="astropy.modeling.Model.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">Model.__call__</span></tt></a> to ensure that all the inputs
+to the model can be broadcast into compatible shapes (if one or both of
+them are input as arrays), particularly if there are more than one
+parameter sets.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="astropy.modeling.Model.prepare_outputs">
+<tt class="descname">prepare_outputs</tt><big>(</big><em>format_info</em>, <em>*outputs</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/core.html#Model.prepare_outputs"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/core.py#L416" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.Model.prepare_outputs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Model</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.Model.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.Model.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

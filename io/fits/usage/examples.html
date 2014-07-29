@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Examples &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../../index.html" />
+    <link rel="up" title="FITS File handling (astropy.io.fits)" href="../index.html" />
+    <link rel="next" title="Header Interface Transition Guide" href="../appendix/header_transition.html" />
+    <link rel="prev" title="Miscellaneous Features" href="misc.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../appendix/header_transition.html" title="Header Interface Transition Guide">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="misc.html" title="Miscellaneous Features">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" accesskey="U">FITS File handling (<tt class="docutils literal"><span class="pre">astropy.io.fits</span></tt>)</a> &raquo;</li>
+      
+      <li>Examples</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="converting-a-3-color-image-jpg-to-separate-fits-images">
+<h2>Converting a 3-color image (JPG) to separate FITS images<a class="headerlink" href="#converting-a-3-color-image-jpg-to-separate-fits-images" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-center">
+<a class="reference internal image-reference" href="../../../_images/Hs-2009-14-a-web.jpg"><img alt="Starting image" src="../../../_images/Hs-2009-14-a-web.jpg" style="width: 400.0px; height: 232.0px;" /></a>
+</div>
+<div class="figures container">
+<div class="figure">
+<a class="reference internal image-reference" href="../../../_images/Red.jpg"><img alt="Red color information" src="../../../_images/Red.jpg" style="width: 200.0px; height: 116.0px;" /></a>
+<p class="caption">Red color information</p>
+</div>
+<div class="figure">
+<a class="reference internal image-reference" href="../../../_images/Green.jpg"><img alt="Green color information" src="../../../_images/Green.jpg" style="width: 200.0px; height: 116.0px;" /></a>
+<p class="caption">Green color information</p>
+</div>
+<div class="figure">
+<a class="reference internal image-reference" href="../../../_images/Blue.jpg"><img alt="Blue color information" src="../../../_images/Blue.jpg" style="width: 200.0px; height: 116.0px;" /></a>
+<p class="caption">Blue color information</p>
+</div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#!/usr/bin/env python</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">Image</span>
+
+<span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
+
+<span class="c">#get the image and color information</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s">&#39;hs-2009-14-a-web.jpg&#39;</span><span class="p">)</span>
+<span class="c">#image.show()</span>
+<span class="n">xsize</span><span class="p">,</span> <span class="n">ysize</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">size</span>
+<span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+<span class="n">rdata</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">getdata</span><span class="p">()</span> <span class="c"># data is now an array of length ysize\*xsize</span>
+<span class="n">gdata</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">getdata</span><span class="p">()</span>
+<span class="n">bdata</span> <span class="o">=</span> <span class="n">b</span><span class="o">.</span><span class="n">getdata</span><span class="p">()</span>
+
+<span class="c"># create numpy arrays</span>
+<span class="n">npr</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">rdata</span><span class="p">,</span> <span class="p">(</span><span class="n">ysize</span><span class="p">,</span> <span class="n">xsize</span><span class="p">))</span>
+<span class="n">npg</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">gdata</span><span class="p">,</span> <span class="p">(</span><span class="n">ysize</span><span class="p">,</span> <span class="n">xsize</span><span class="p">))</span>
+<span class="n">npb</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">bdata</span><span class="p">,</span> <span class="p">(</span><span class="n">ysize</span><span class="p">,</span> <span class="n">xsize</span><span class="p">))</span>
+
+<span class="c"># write out the fits images, the data numbers are still JUST the RGB</span>
+<span class="c"># scalings; don&#39;t use for science</span>
+<span class="n">red</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">npr</span><span class="p">)</span>
+<span class="n">red</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;LATOBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;32:11:56&quot;</span> <span class="c"># add spurious header info</span>
+<span class="n">red</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;LONGOBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;110:56&quot;</span>
+<span class="n">red</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s">&#39;red.fits&#39;</span><span class="p">)</span>
+
+<span class="n">green</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">npg</span><span class="p">)</span>
+<span class="n">green</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;LATOBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;32:11:56&quot;</span>
+<span class="n">green</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;LONGOBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;110:56&quot;</span>
+<span class="n">green</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s">&#39;green.fits&#39;</span><span class="p">)</span>
+
+<span class="n">blue</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">PrimaryHDU</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">npb</span><span class="p">)</span>
+<span class="n">blue</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;LATOBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;32:11:56&quot;</span>
+<span class="n">blue</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="s">&#39;LONGOBS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;110:56&quot;</span>
+<span class="n">blue</span><span class="o">.</span><span class="n">writeto</span><span class="p">(</span><span class="s">&#39;blue.fits&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Examples</a><ul>
+<li><a class="reference internal" href="#converting-a-3-color-image-jpg-to-separate-fits-images">Converting a 3-color image (JPG) to separate FITS images</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/io/fits/usage/examples.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../../_sources/io/fits/usage/examples.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

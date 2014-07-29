@@ -1,0 +1,850 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Using astropy.vo.client &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../../index.html" />
+    <link rel="up" title="VO Simple Cone Search" href="index.html" />
+    <link rel="next" title="Using astropy.vo.validator" href="validator.html" />
+    <link rel="prev" title="VO Simple Cone Search" href="index.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="validator.html" title="Using astropy.vo.validator">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="index.html" title="VO Simple Cone Search">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../index.html" >Virtual Observatory Access (<tt class="docutils literal"><span class="pre">astropy.vo</span></tt>)</a> &raquo;</li>
+      <li><a href="index.html" accesskey="U">VO Simple Cone Search</a> &raquo;</li>
+      
+      <li>Using <tt class="docutils literal"><span class="pre">astropy.vo.client</span></tt></li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="using-astropy-vo-client">
+<h1>Using <tt class="docutils literal"><span class="pre">astropy.vo.client</span></tt><a class="headerlink" href="#using-astropy-vo-client" title="Permalink to this headline">¶</a></h1>
+<p>This subpackage contains modules supporting VO client-side operations.</p>
+<div class="section" id="catalog-manipulation">
+<span id="vo-sec-client-cat-manip"></span><h2>Catalog Manipulation<a class="headerlink" href="#catalog-manipulation" title="Permalink to this headline">¶</a></h2>
+<p>You can manipulate a VO catalog using
+<a class="reference internal" href="../../api/astropy.vo.client.vos_catalog.VOSCatalog.html#astropy.vo.client.vos_catalog.VOSCatalog" title="astropy.vo.client.vos_catalog.VOSCatalog"><tt class="xref py py-obj docutils literal"><span class="pre">VOSCatalog</span></tt></a>, which is basically a dictionary
+with added functionalities.</p>
+<div class="section" id="examples">
+<span id="vo-sec-client-cat-manip-examples"></span><h3>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client.vos_catalog</span> <span class="kn">import</span> <span class="n">VOSCatalog</span>
+</pre></div>
+</div>
+<p>You can create a VO catalog from scratch with your own VO service by
+providing its title and access URL, and optionally any other metadata
+as key-value pairs:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_cat</span> <span class="o">=</span> <span class="n">VOSCatalog</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;My Own&#39;</span><span class="p">,</span> <span class="s">&#39;http://ex.org/cgi-bin/cs.pl?&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">description</span><span class="o">=</span><span class="s">&#39;My first VO service.&#39;</span><span class="p">,</span> <span class="n">creator</span><span class="o">=</span><span class="s">&#39;J. Doe&#39;</span><span class="p">,</span> <span class="n">year</span><span class="o">=</span><span class="mi">2013</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_cat</span><span class="p">)</span>
+<span class="go">title: My Own</span>
+<span class="go">url: http://ex.org/cgi-bin/cs.pl?</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_cat</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="go">{</span>
+<span class="go">    &quot;creator&quot;: &quot;J. Doe&quot;,</span>
+<span class="go">    &quot;description&quot;: &quot;My first VO service.&quot;,</span>
+<span class="go">    &quot;title&quot;: &quot;My Own&quot;,</span>
+<span class="go">    &quot;url&quot;: &quot;http://ex.org/cgi-bin/cs.pl?&quot;,</span>
+<span class="go">    &quot;year&quot;: 2013</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>You can modify and add fields:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_cat</span><span class="p">[</span><span class="s">&#39;year&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2014</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_cat</span><span class="p">[</span><span class="s">&#39;new_field&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;Hello world&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_cat</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="go">{</span>
+<span class="go">    &quot;creator&quot;: &quot;J. Doe&quot;,</span>
+<span class="go">    &quot;description&quot;: &quot;My first VO service.&quot;,</span>
+<span class="go">    &quot;new_field&quot;: &quot;Hello world&quot;,</span>
+<span class="go">    &quot;title&quot;: &quot;My Own&quot;,</span>
+<span class="go">    &quot;url&quot;: &quot;http://ex.org/cgi-bin/cs.pl?&quot;,</span>
+<span class="go">    &quot;year&quot;: 2014</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>In addition, you can also delete an existing field, except the compulsory
+title and access URL:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_cat</span><span class="o">.</span><span class="n">delete_attribute</span><span class="p">(</span><span class="s">&#39;description&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_cat</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="go">{</span>
+<span class="go">    &quot;creator&quot;: &quot;J. Doe&quot;,</span>
+<span class="go">    &quot;new_field&quot;: &quot;Hello world&quot;,</span>
+<span class="go">    &quot;title&quot;: &quot;My Own&quot;,</span>
+<span class="go">    &quot;url&quot;: &quot;http://ex.org/cgi-bin/cs.pl?&quot;,</span>
+<span class="go">    &quot;year&quot;: 2014</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="database-manipulation">
+<span id="vo-sec-client-db-manip"></span><h2>Database Manipulation<a class="headerlink" href="#database-manipulation" title="Permalink to this headline">¶</a></h2>
+<p>You can manipulate VO database using
+<a class="reference internal" href="../../api/astropy.vo.client.vos_catalog.VOSDatabase.html#astropy.vo.client.vos_catalog.VOSDatabase" title="astropy.vo.client.vos_catalog.VOSDatabase"><tt class="xref py py-obj docutils literal"><span class="pre">VOSDatabase</span></tt></a>, which is basically a nested
+dictionary with added functionalities.</p>
+<div class="section" id="vo-sec-client-db-manip-examples">
+<span id="id1"></span><h3>Examples<a class="headerlink" href="#vo-sec-client-db-manip-examples" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client.vos_catalog</span> <span class="kn">import</span> <span class="n">VOSDatabase</span>
+</pre></div>
+</div>
+<p>You can choose to start with an empty database:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span> <span class="o">=</span> <span class="n">VOSDatabase</span><span class="o">.</span><span class="n">create_empty</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_db</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="go">{</span>
+<span class="go">    &quot;__version__&quot;: 1,</span>
+<span class="go">    &quot;catalogs&quot;: {}</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Add the custom catalog from
+<a class="reference internal" href="#vo-sec-client-cat-manip-examples"><em>VO catalog examples</em></a> to database:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span><span class="o">.</span><span class="n">add_catalog</span><span class="p">(</span><span class="s">&#39;My Catalog 1&#39;</span><span class="p">,</span> <span class="n">my_cat</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_db</span><span class="p">)</span>
+<span class="go">My Catalog 1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_db</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="go">{</span>
+<span class="go">    &quot;__version__&quot;: 1,</span>
+<span class="go">    &quot;catalogs&quot;: {</span>
+<span class="go">        &quot;My Catalog 1&quot;: {</span>
+<span class="go">            &quot;creator&quot;: &quot;J. Doe&quot;,</span>
+<span class="go">            &quot;new_field&quot;: &quot;Hello world&quot;,</span>
+<span class="go">            &quot;title&quot;: &quot;My Own&quot;,</span>
+<span class="go">            &quot;url&quot;: &quot;http://ex.org/cgi-bin/cs.pl?&quot;,</span>
+<span class="go">            &quot;year&quot;: 2014</span>
+<span class="go">        }</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>You can write/read the new database to/from a JSON file:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span><span class="o">.</span><span class="n">to_json</span><span class="p">(</span><span class="s">&#39;my_vo_database.json&#39;</span><span class="p">,</span> <span class="n">clobber</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span> <span class="o">=</span> <span class="n">VOSDatabase</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="s">&#39;my_vo_database.json&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also load a database from a VO registry. The process is described in
+<a class="reference internal" href="validator.html#vo-sec-validator-build-db"><em>Building the Database from Registry</em></a>, except that here, validation is not done,
+so <tt class="docutils literal"><span class="pre">validate_xxx</span></tt> keys are not added. This might generate a lot of warnings,
+especially if the registry has duplicate entries of similar services, so
+here, we silently ignore all the warnings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.validator.validate</span> <span class="kn">import</span> <span class="n">CS_MSTR_LIST</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">registry_db</span> <span class="o">=</span> <span class="n">VOSDatabase</span><span class="o">.</span><span class="n">from_registry</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">CS_MSTR_LIST</span><span class="p">(),</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&#39;binary&#39;</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">Downloading http://vao.stsci.edu/directory/NVORegInt.asmx/...</span>
+<span class="go">|===========================================|  25M/ 25M (100.00%)        00s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">registry_db</span><span class="p">)</span>
+<span class="go">11937</span>
+</pre></div>
+</div>
+<p>Find catalog names containing <tt class="docutils literal"><span class="pre">'usno*a2'</span></tt> in the registry database:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">usno_a2_list</span> <span class="o">=</span> <span class="n">registry_db</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;usno*a2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">usno_a2_list</span>
+<span class="go">[u&#39;ROSAT All-Sky Survey Bright Source Catalog USNO A2 Cross-Associations 1&#39;,</span>
+<span class="go"> u&#39;The USNO-A2.0 Catalogue (Monet+ 1998) 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2 Catalogue 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2.0 1&#39;,</span>
+<span class="go"> u&#39;USNO-SA2.0 1&#39;]</span>
+</pre></div>
+</div>
+<p>Find access URLs containing <tt class="docutils literal"><span class="pre">'stsci'</span></tt> in the registry database:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">stsci_urls</span> <span class="o">=</span> <span class="n">registry_db</span><span class="o">.</span><span class="n">list_catalogs_by_url</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;stsci&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stsci_urls</span>
+<span class="go">[&#39;http://archive.stsci.edu/befs/search.php?&#39;,</span>
+<span class="go"> &#39;http://archive.stsci.edu/copernicus/search.php?&#39;, ...,</span>
+<span class="go"> &#39;http://galex.stsci.edu/gxWS/ConeSearch/gxConeSearch.aspx?&#39;,</span>
+<span class="go"> &#39;http://gsss.stsci.edu/webservices/vo/ConeSearch.aspx?CAT=GSC23&amp;&#39;]</span>
+</pre></div>
+</div>
+<p>Extract a catalog titled <tt class="docutils literal"><span class="pre">'USNO-A2</span> <span class="pre">Catalogue</span> <span class="pre">1'</span></tt> from the registry:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">usno_a2</span> <span class="o">=</span> <span class="n">registry_db</span><span class="o">.</span><span class="n">get_catalog</span><span class="p">(</span><span class="s">&#39;USNO-A2 Catalogue 1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">usno_a2</span><span class="p">)</span>
+<span class="go">title: USNO-A2 Catalogue</span>
+<span class="go">url: http://www.nofs.navy.mil/cgi-bin/vo_cone.cgi?CAT=USNO-A2&amp;</span>
+</pre></div>
+</div>
+<p>Extract a catalog by known access URL from the registry (the iterator version
+of this functionality is
+<a class="reference internal" href="../../api/astropy.vo.client.vos_catalog.VOSDatabase.html#astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs_by_url" title="astropy.vo.client.vos_catalog.VOSDatabase.get_catalogs_by_url"><tt class="xref py py-func docutils literal"><span class="pre">get_catalogs_by_url()</span></tt></a>,
+which is useful in the case of multiple entries with same access URL):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gsc</span> <span class="o">=</span> <span class="n">registry_db</span><span class="o">.</span><span class="n">get_catalog_by_url</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/305/out&amp;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">gsc</span><span class="p">)</span>
+<span class="go">title: The Guide Star Catalog, Version 2.3.2 (GSC2.3) (STScI, 2006)</span>
+<span class="go">url: http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/305/out&amp;</span>
+</pre></div>
+</div>
+<p>Add all <tt class="docutils literal"><span class="pre">'usno*a2'</span></tt> catalogs from registry to your database:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">registry_db</span><span class="o">.</span><span class="n">get_catalogs</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">usno_a2_list</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">my_db</span><span class="o">.</span><span class="n">add_catalog</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">cat</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">()</span>
+<span class="go">[u&#39;My Catalog 1&#39;,</span>
+<span class="go"> u&#39;ROSAT All-Sky Survey Bright Source Catalog USNO A2 Cross-Associations 1&#39;,</span>
+<span class="go"> u&#39;The USNO-A2.0 Catalogue (Monet+ 1998) 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2 Catalogue 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2.0 1&#39;,</span>
+<span class="go"> u&#39;USNO-SA2.0 1&#39;]</span>
+</pre></div>
+</div>
+<p>You can delete a catalog from the database either by name or access URL:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span><span class="o">.</span><span class="n">delete_catalog</span><span class="p">(</span><span class="s">&#39;USNO-SA2.0 1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span><span class="o">.</span><span class="n">delete_catalog_by_url</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;http://www.nofs.navy.mil/cgi-bin/vo_cone.cgi?CAT=USNO-A2&amp;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">()</span>
+<span class="go">[u&#39;My Catalog 1&#39;,</span>
+<span class="go"> u&#39;ROSAT All-Sky Survey Bright Source Catalog USNO A2 Cross-Associations 1&#39;,</span>
+<span class="go"> u&#39;The USNO-A2.0 Catalogue (Monet+ 1998) 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2.0 1&#39;]</span>
+</pre></div>
+</div>
+<p>You can also merge two database together. In this example, the second database
+contains a simple catalog that only has given name and access URL:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">other_db</span> <span class="o">=</span> <span class="n">VOSDatabase</span><span class="o">.</span><span class="n">create_empty</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">other_db</span><span class="o">.</span><span class="n">add_catalog_by_url</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;My Guide Star Catalogue&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="s">&#39;http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/305/out&amp;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">other_db</span><span class="o">.</span><span class="n">dumps</span><span class="p">())</span>
+<span class="go">{</span>
+<span class="go">    &quot;__version__&quot;: 1,</span>
+<span class="go">    &quot;catalogs&quot;: {</span>
+<span class="go">        &quot;My Guide Star Catalogue&quot;: {</span>
+<span class="go">            &quot;title&quot;: &quot;My Guide Star Catalogue&quot;,</span>
+<span class="go">            &quot;url&quot;: &quot;http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/305/out&amp;&quot;</span>
+<span class="go">        }</span>
+<span class="go">    }</span>
+<span class="go">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">merged_db</span> <span class="o">=</span> <span class="n">my_db</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">other_db</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">merged_db</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">()</span>
+<span class="go">[u&#39;My Catalog 1&#39;,</span>
+<span class="go"> u&#39;My Guide Star Catalogue&#39;,</span>
+<span class="go"> u&#39;ROSAT All-Sky Survey Bright Source Catalog USNO A2 Cross-Associations 1&#39;,</span>
+<span class="go"> u&#39;The USNO-A2.0 Catalogue (Monet+ 1998) 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2.0 1&#39;]</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="general-vo-services-access">
+<span id="vo-sec-client-vos"></span><h2>General VO Services Access<a class="headerlink" href="#general-vo-services-access" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="index.html#module-astropy.vo.client.vos_catalog" title="astropy.vo.client.vos_catalog"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.client.vos_catalog</span></tt></a> also contains common utilities for accessing
+simple VO services already validated by STScI (see
+<a class="reference internal" href="validator.html#vo-sec-validator-validate"><em>Validation for Simple Cone Search</em></a>).</p>
+<div class="section" id="configurable-items">
+<span id="vo-sec-vos-config"></span><h3>Configurable Items<a class="headerlink" href="#configurable-items" title="Permalink to this headline">¶</a></h3>
+<p>These parameters are set via <a class="reference internal" href="../../config/index.html#astropy-config"><em>Configuration system (astropy.config)</em></a>:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../../api/astropy.io.votable.Conf.html#astropy.io.votable.Conf.pedantic" title="astropy.io.votable.Conf.pedantic"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.votable.Conf.pedantic</span></tt></a>
+Set strictness of VO table parser (<a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a> is recommended).</li>
+<li><a class="reference internal" href="../../api/astropy.utils.data.Conf.html#astropy.utils.data.Conf.remote_timeout" title="astropy.utils.data.Conf.remote_timeout"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.utils.data.Conf.remote_timeout</span></tt></a>
+Timeout for remote service access.</li>
+<li><a class="reference internal" href="../../api/astropy.vo.Conf.html#astropy.vo.Conf.vos_baseurl" title="astropy.vo.Conf.vos_baseurl"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.vos_baseurl</span></tt></a>
+URL (or path) where VO Service database is stored.</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Examples<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client</span> <span class="kn">import</span> <span class="n">vos_catalog</span>
+</pre></div>
+</div>
+<p>Get all catalogs from a database named <tt class="docutils literal"><span class="pre">'conesearch_good'</span></tt> (this contains
+cone search services that cleanly passed daily validations;
+also see <a class="reference internal" href="#vo-sec-scs-examples"><em>Cone Search Examples</em></a>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_db</span> <span class="o">=</span> <span class="n">vos_catalog</span><span class="o">.</span><span class="n">get_remote_catalog_db</span><span class="p">(</span><span class="s">&#39;conesearch_good&#39;</span><span class="p">)</span>
+<span class="go">Downloading http://stsdas.stsci.edu/astrolib/vo_databases/conesearch_good.json</span>
+<span class="go">|============================================|  56/ 56k (100.00%)        00s</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span><span class="p">(</span><span class="n">my_db</span><span class="p">)</span>
+<span class="go">Guide Star Catalog 2.3 1</span>
+<span class="go">SDSS DR7 - Sloan Digital Sky Survey Data Release 7 1</span>
+<span class="go">SDSS DR7 - Sloan Digital Sky Survey Data Release 7 2</span>
+<span class="go"># ...</span>
+<span class="go">USNO-A2 Catalogue 1</span>
+<span class="go">USNO-A2.0 1</span>
+</pre></div>
+</div>
+<p>If you get timeout error, you need to use a custom timeout as follows:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.utils</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">data</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set_temp</span><span class="p">(</span><span class="s">&#39;remote_timeout&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">my_db</span> <span class="o">=</span> <span class="n">vos_catalog</span><span class="o">.</span><span class="n">get_remote_catalog_db</span><span class="p">(</span><span class="s">&#39;conesearch_good&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To see validation warnings generated by <a class="reference internal" href="validator.html#vo-sec-validator-validate"><em>Validation for Simple Cone Search</em></a>
+for the one of the catalogs above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_cat</span> <span class="o">=</span> <span class="n">my_db</span><span class="o">.</span><span class="n">get_catalog</span><span class="p">(</span><span class="s">&#39;Guide Star Catalog 2.3 1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">my_cat</span><span class="p">[</span><span class="s">&#39;validate_warnings&#39;</span><span class="p">]:</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<span class="go">/.../vo.xml:136:0: W50: Invalid unit string &#39;pixel&#39;</span>
+<span class="go">/.../vo.xml:155:0: W48: Unknown attribute &#39;nrows&#39; on TABLEDATA</span>
+</pre></div>
+</div>
+<p>By default, pedantic is <tt class="docutils literal"><span class="pre">False</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io.votable</span> <span class="kn">import</span> <span class="n">conf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conf</span><span class="o">.</span><span class="n">pedantic</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>To call a given VO service; In this case, a Cone Search
+(also see <a class="reference internal" href="#vo-sec-scs-examples"><em>Cone Search Examples</em></a>):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">coordinates</span> <span class="k">as</span> <span class="n">coord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s">&#39;47 Tuc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;SkyCoord (ICRS): ra=6.0223292 deg, dec=-72.0814444 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sr</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sr</span>
+<span class="go">&lt;Quantity 0.5 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">vos_catalog</span><span class="o">.</span><span class="n">call_vo_service</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s">&#39;conesearch_good&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;RA&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;DEC&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;SR&#39;</span><span class="p">:</span> <span class="n">sr</span><span class="o">.</span><span class="n">value</span><span class="p">},</span>
+<span class="gp">... </span>    <span class="n">catalog_db</span><span class="o">=</span><span class="s">&#39;The PMM USNO-A1.0 Catalogue (Monet 1997) 1&#39;</span><span class="p">)</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/243/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+<span class="go">WARNING: W03: ... Implictly generating an ID from a name &#39;RA(ICRS)&#39;...</span>
+<span class="go">WARNING: W03: ... Implictly generating an ID from a name &#39;DE(ICRS)&#39;...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span>
+<span class="go">&lt;Table rows=36184 names=(&#39;_r&#39;,&#39;_RAJ2000&#39;,&#39;_DEJ2000&#39;, ...&gt;</span>
+</pre></div>
+</div>
+<p>To repeat the above and suppress <em>all</em> the screen outputs (not recommended):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">vos_catalog</span><span class="o">.</span><span class="n">call_vo_service</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="s">&#39;conesearch_good&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;RA&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;DEC&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;SR&#39;</span><span class="p">:</span> <span class="n">sr</span><span class="o">.</span><span class="n">value</span><span class="p">},</span>
+<span class="gp">... </span>        <span class="n">catalog_db</span><span class="o">=</span><span class="s">&#39;The PMM USNO-A1.0 Catalogue (Monet 1997) 1&#39;</span><span class="p">,</span>
+<span class="gp">... </span>        <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You can also use custom VO database, say, <tt class="docutils literal"><span class="pre">'my_vo_database.json'</span></tt> from
+<a class="reference internal" href="#vo-sec-client-db-manip-examples"><em>VO database examples</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client.vos_catalog</span> <span class="kn">import</span> <span class="n">BASEURL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">BASEURL</span><span class="o">.</span><span class="n">set_temp</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="k">try</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="n">result</span> <span class="o">=</span> <span class="n">vos_catalog</span><span class="o">.</span><span class="n">call_vo_service</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="s">&#39;my_vo_database&#39;</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;RA&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">ra</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span> <span class="s">&#39;DEC&#39;</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">dec</span><span class="o">.</span><span class="n">degree</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="s">&#39;SR&#39;</span><span class="p">:</span> <span class="n">sr</span><span class="o">.</span><span class="n">value</span><span class="p">})</span>
+<span class="gp">... </span>    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+<span class="go">Trying http://ex.org/cgi-bin/cs.pl?</span>
+<span class="go">Downloading http://ex.org/cgi-bin/cs.pl?SR=0.5&amp;DEC=-72.0814444&amp;RA=6.0223292</span>
+<span class="go">|===========================================| 1.8k/1.8k (100.00%)        00s</span>
+<span class="go">None of the available catalogs returned valid results.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="simple-cone-search">
+<span id="vo-sec-client-scs"></span><h2>Simple Cone Search<a class="headerlink" href="#simple-cone-search" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="index.html#module-astropy.vo.client.conesearch" title="astropy.vo.client.conesearch"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.client.conesearch</span></tt></a> supports VO Simple Cone Search capabilities.</p>
+<p>Available databases are generated on the server-side hosted by STScI
+using <a class="reference internal" href="validator.html#vo-sec-validator-validate"><em>Validation for Simple Cone Search</em></a>. The database used is
+controlled by <a class="reference internal" href="../../api/astropy.vo.Conf.html#astropy.vo.Conf.conesearch_dbname" title="astropy.vo.Conf.conesearch_dbname"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.conesearch_dbname</span></tt></a>, which can be
+changed in <a class="reference internal" href="#vo-sec-scs-config"><em>Configurable Items</em></a> below. Here are the available
+options:</p>
+<ol class="arabic">
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">'conesearch_good'</span></tt></dt>
+<dd><p class="first last">Default. Passed validation without critical warnings and exceptions.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">'conesearch_warn'</span></tt></dt>
+<dd><p class="first last">Has critical warnings but no exceptions. Use at your own risk.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">'conesearch_exception'</span></tt></dt>
+<dd><p class="first last">Has some exceptions. <em>Never</em> use this.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><tt class="docutils literal"><span class="pre">'conesearch_error'</span></tt></dt>
+<dd><p class="first last">Has network connection error. <em>Never</em> use this.</p>
+</dd>
+</dl>
+</li>
+</ol>
+<p>In the default setting, it searches the good Cone Search services one by one,
+stops at the first one that gives non-zero match(es), and returns the result.
+Since the list of services are extracted from a Python dictionary, the search
+order might differ from call to call.</p>
+<p>There are also functions, both synchronously and asynchronously, available to
+return <em>all</em> the Cone Search query results. However, this is not recommended
+unless one knows what one is getting into, as it could potentially take up
+significant run time and computing resources.</p>
+<p><a class="reference internal" href="#vo-sec-scs-examples"><em>Examples</em></a> below show how to use non-default search behaviors,
+where the user has more control of which catalog(s) to search, et cetera.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Most services currently fail to parse when <tt class="docutils literal"><span class="pre">pedantic=True</span></tt>.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">When Cone Search returns warnings, you should decide
+whether the results are reliable by inspecting the
+warning codes in <a class="reference internal" href="../../io/votable/api_exceptions.html#module-astropy.io.votable.exceptions" title="astropy.io.votable.exceptions"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.io.votable.exceptions</span></tt></a>.</p>
+</div>
+<div class="section" id="vo-sec-scs-config">
+<span id="id3"></span><h3>Configurable Items<a class="headerlink" href="#vo-sec-scs-config" title="Permalink to this headline">¶</a></h3>
+<p>These parameters are set via <a class="reference internal" href="../../config/index.html#astropy-config"><em>Configuration system (astropy.config)</em></a>:</p>
+<ul class="simple">
+<li><a class="reference internal" href="../../api/astropy.vo.Conf.html#astropy.vo.Conf.conesearch_dbname" title="astropy.vo.Conf.conesearch_dbname"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.vo.Conf.conesearch_dbname</span></tt></a>
+Cone Search database name to query.</li>
+</ul>
+<p>Also depends on
+<a class="reference internal" href="#vo-sec-vos-config"><em>General VO Services Access Configurable Items</em></a>.</p>
+</div>
+<div class="section" id="vo-sec-scs-examples">
+<span id="id4"></span><h3>Examples<a class="headerlink" href="#vo-sec-scs-examples" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client</span> <span class="kn">import</span> <span class="n">conesearch</span>
+</pre></div>
+</div>
+<p>Shows a sorted list of Cone Search services to be searched:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">conesearch</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">()</span>
+<span class="go">[u&#39;Guide Star Catalog 2.3 1&#39;,</span>
+<span class="go"> u&#39;SDSS DR7 - Sloan Digital Sky Survey Data Release 7 1&#39;,</span>
+<span class="go"> u&#39;SDSS DR7 - Sloan Digital Sky Survey Data Release 7 2&#39;,</span>
+<span class="go"> u&#39;SDSS DR7 - Sloan Digital Sky Survey Data Release 7 3&#39;,</span>
+<span class="go"> u&#39;SDSS DR7 - Sloan Digital Sky Survey Data Release 7 4&#39;,</span>
+<span class="go"> u&#39;SDSS DR8 - Sloan Digital Sky Survey Data Release 8 1&#39;,</span>
+<span class="go"> u&#39;SDSS DR8 - Sloan Digital Sky Survey Data Release 8 2&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version 1.1 (Lasker+ 1992) 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version 1.2 (Lasker+ 1996) 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version GSC-ACT (Lasker+ 1996-99) 1&#39;,</span>
+<span class="go"> u&#39;The PMM USNO-A1.0 Catalogue (Monet 1997) 1&#39;,</span>
+<span class="go"> u&#39;The USNO-A2.0 Catalogue (Monet+ 1998) 1&#39;,</span>
+<span class="go"> u&#39;Two Micron All Sky Survey (2MASS) 1&#39;,</span>
+<span class="go"> u&#39;Two Micron All Sky Survey (2MASS) 2&#39;,</span>
+<span class="go"> u&#39;USNO-A2 Catalogue 1&#39;,</span>
+<span class="go"> u&#39;USNO-A2.0 1&#39;]</span>
+</pre></div>
+</div>
+<p>To inspect them in detail, do the following and then refer to the examples in
+<a class="reference internal" href="#vo-sec-client-db-manip"><em>Database Manipulation</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client</span> <span class="kn">import</span> <span class="n">vos_catalog</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">good_db</span> <span class="o">=</span> <span class="n">vos_catalog</span><span class="o">.</span><span class="n">get_remote_catalog_db</span><span class="p">(</span><span class="s">&#39;conesearch_good&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Select a catalog to search:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">my_catname</span> <span class="o">=</span> <span class="s">&#39;The PMM USNO-A1.0 Catalogue (Monet 1997) 1&#39;</span>
+</pre></div>
+</div>
+<p>By default, pedantic is <tt class="docutils literal"><span class="pre">False</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.io.votable</span> <span class="kn">import</span> <span class="n">conf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conf</span><span class="o">.</span><span class="n">pedantic</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Perform Cone Search in the selected catalog above for 0.5 degree radius
+around 47 Tucanae with minimum verbosity, if supported.
+The <tt class="docutils literal"><span class="pre">catalog_db</span></tt> keyword gives control over which catalog(s) to use.
+If running this for the first time, a copy of the catalogs database will be
+downloaded to local cache. To run this again without
+using cached data, set <tt class="docutils literal"><span class="pre">cache=False</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">coordinates</span> <span class="k">as</span> <span class="n">coord</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">SkyCoord</span><span class="o">.</span><span class="n">from_name</span><span class="p">(</span><span class="s">&#39;47 Tuc&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">c</span>
+<span class="go">&lt;SkyCoord (ICRS): ra=6.0223292 deg, dec=-72.0814444 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sr</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">degree</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sr</span>
+<span class="go">&lt;Quantity 0.5 deg&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">my_catname</span><span class="p">)</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/243/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+</pre></div>
+</div>
+<p>To run the command above using custom timeout of
+30 seconds for each Cone Search service query:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.utils</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">data</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set_temp</span><span class="p">(</span><span class="s">&#39;remote_timeout&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">my_catname</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To suppress <em>all</em> the screen outputs (not recommended):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">my_catname</span><span class="p">,</span>
+<span class="gp">... </span>                                   <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Extract Numpy array containing the matched objects. See
+<a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/index.html#module-numpy" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy</span></tt></a> for available operations:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span>
+<span class="go">array([(0.499298, 4.403473, -72.124045, &#39;0150-00088188&#39;),</span>
+<span class="go">       (0.499075, 4.403906, -72.122762, &#39;0150-00088198&#39;),</span>
+<span class="go">       (0.499528, 4.404531, -72.045198, &#39;0150-00088210&#39;), ...,</span>
+<span class="go">       (0.4988, 7.641731, -72.113156, &#39;0150-00225965&#39;),</span>
+<span class="go">       (0.499554, 7.645489, -72.103167, &#39;0150-00226134&#39;),</span>
+<span class="go">       (0.499917, 7.6474, -72.0876, &#39;0150-00226223&#39;)],</span>
+<span class="go">      dtype=[(&#39;_r&#39;, &#39;&lt;f8&#39;), (&#39;_RAJ2000&#39;, &#39;&lt;f8&#39;), (&#39;_DEJ2000&#39;, &#39;&lt;f8&#39;),</span>
+<span class="go">             (&#39;USNO-A1.0&#39;, &#39;|S13&#39;)])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<span class="go">(&#39;_r&#39;, &#39;_RAJ2000&#39;, &#39;_DEJ2000&#39;, &#39;USNO-A1.0&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="o">.</span><span class="n">size</span>
+<span class="go">36184</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra_list</span> <span class="o">=</span> <span class="n">cone_arr</span><span class="p">[</span><span class="s">&#39;_RAJ2000&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra_list</span>
+<span class="go">array([ 4.403473,  4.403906,  4.404531, ...,  7.641731,  7.645489,  7.6474  ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c"># First row</span>
+<span class="go">(0.499298, 4.403473, -72.124045, &#39;0150-00088188&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># Last row</span>
+<span class="go">(0.499917, 7.6474, -72.0876, &#39;0150-00226223&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="p">[:</span><span class="mi">10</span><span class="p">]</span>  <span class="c"># First 10 rows</span>
+<span class="go">array([(0.499298, 4.403473, -72.124045, &#39;0150-00088188&#39;),</span>
+<span class="go">       (0.499075, 4.403906, -72.122762, &#39;0150-00088198&#39;),</span>
+<span class="go">       (0.499528, 4.404531, -72.045198, &#39;0150-00088210&#39;),</span>
+<span class="go">       (0.497252, 4.406078, -72.095045, &#39;0150-00088245&#39;),</span>
+<span class="go">       (0.499739, 4.406462, -72.139545, &#39;0150-00088254&#39;),</span>
+<span class="go">       (0.496312, 4.410623, -72.110492, &#39;0150-00088372&#39;),</span>
+<span class="go">       (0.49473, 4.415053, -72.071217, &#39;0150-00088494&#39;),</span>
+<span class="go">       (0.494171, 4.415939, -72.087512, &#39;0150-00088517&#39;),</span>
+<span class="go">       (0.493722, 4.417678, -72.0972, &#39;0150-00088572&#39;),</span>
+<span class="go">       (0.495147, 4.418262, -72.047142, &#39;0150-00088595&#39;)],</span>
+<span class="go">      dtype=[(&#39;_r&#39;, &#39;&lt;f8&#39;), (&#39;_RAJ2000&#39;, &#39;&lt;f8&#39;), (&#39;_DEJ2000&#39;, &#39;&lt;f8&#39;),</span>
+<span class="go">             (&#39;USNO-A1.0&#39;, &#39;|S13&#39;)])</span>
+</pre></div>
+</div>
+<p>Sort the matched objects by angular separation in ascending order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sep</span> <span class="o">=</span> <span class="n">cone_arr</span><span class="p">[</span><span class="s">&#39;_r&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">i_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">sep</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="p">[</span><span class="n">i_sorted</span><span class="p">]</span>
+<span class="go">array([(0.081971, 5.917787, -72.006075, &#39;0150-00145335&#39;),</span>
+<span class="go">       (0.083181, 6.020339, -72.164623, &#39;0150-00149799&#39;),</span>
+<span class="go">       (0.089166, 5.732798, -72.077698, &#39;0150-00137181&#39;), ...,</span>
+<span class="go">       (0.499981, 7.024962, -72.477503, &#39;0150-00198745&#39;),</span>
+<span class="go">       (0.499987, 6.423773, -71.597364, &#39;0150-00168596&#39;),</span>
+<span class="go">       (0.499989, 6.899589, -72.5043, &#39;0150-00192872&#39;)],</span>
+<span class="go">      dtype=[(&#39;_r&#39;, &#39;&lt;f8&#39;), (&#39;_RAJ2000&#39;, &#39;&lt;f8&#39;), (&#39;_DEJ2000&#39;, &#39;&lt;f8&#39;),</span>
+<span class="go">             (&#39;USNO-A1.0&#39;, &#39;|S13&#39;)])</span>
+</pre></div>
+</div>
+<p>Result can also be manipulated as <a class="reference internal" href="../../io/votable/index.html#astropy-io-votable"><em>VOTable XML handling (astropy.io.votable)</em></a>
+and its unit can be manipulated as <a class="reference internal" href="../../units/index.html#astropy-units"><em>Units and Quantities (astropy.units)</em></a>.
+In this example, we convert RA values from degree to arcsec:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra_field</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_field_by_id</span><span class="p">(</span><span class="s">&#39;_RAJ2000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra_field</span><span class="o">.</span><span class="n">title</span>
+<span class="go">u&#39;Right ascension (FK5, Equinox=J2000.0) (computed by VizieR, ...)&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra_field</span><span class="o">.</span><span class="n">unit</span>
+<span class="go">Unit(&quot;deg&quot;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ra_field</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">arcsec</span><span class="p">)</span> <span class="o">*</span> <span class="n">ra_list</span>
+<span class="go">array([ 15852.5028,  15854.0616,  15856.3116, ...,  27510.2316,</span>
+<span class="go">        27523.7604,  27530.64  ])</span>
+</pre></div>
+</div>
+<p>Perform the same Cone Search as above but asynchronously using
+<a class="reference internal" href="../../api/astropy.vo.client.conesearch.AsyncConeSearch.html#astropy.vo.client.conesearch.AsyncConeSearch" title="astropy.vo.client.conesearch.AsyncConeSearch"><tt class="xref py py-obj docutils literal"><span class="pre">AsyncConeSearch</span></tt></a>.  Queries to
+individual Cone Search services are still governed by
+<a class="reference internal" href="../../api/astropy.utils.data.Conf.html#astropy.utils.data.Conf.remote_timeout" title="astropy.utils.data.Conf.remote_timeout"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.utils.data.Conf.remote_timeout</span></tt></a>. Cone Search is forced to run
+in silent mode asynchronously, but warnings are still controlled by
+<a class="reference external" href="http://docs.python.org/library/warnings.html#module-warnings" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">warnings</span></tt></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">async_search</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">AsyncConeSearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">my_catname</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Check asynchronous search status:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">async_search</span><span class="o">.</span><span class="n">running</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">async_search</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+<span class="go">False</span>
+</pre></div>
+</div>
+<p>Get search results after a 30-second wait (not to be confused with
+<a class="reference internal" href="../../api/astropy.utils.data.Conf.html#astropy.utils.data.Conf.remote_timeout" title="astropy.utils.data.Conf.remote_timeout"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.utils.data.Conf.remote_timeout</span></tt></a> that governs individual Cone
+Search queries). If search is still not done after 30 seconds,
+<tt class="docutils literal"><span class="pre">TimeoutError</span></tt> is raised. Otherwise, Cone Search result is returned
+and can be manipulated as above. If no <tt class="docutils literal"><span class="pre">timeout</span></tt> keyword given, it
+waits until completion:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">async_result</span> <span class="o">=</span> <span class="n">async_search</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span> <span class="o">=</span> <span class="n">async_result</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cone_arr</span><span class="o">.</span><span class="n">size</span>
+<span class="go">36184</span>
+</pre></div>
+</div>
+<p>Estimate the execution time and the number of objects for
+the Cone Search service URL from above. The prediction naively
+assumes a linear model, which might not be accurate for some cases.
+It also uses the normal <a class="reference internal" href="../../api/astropy.vo.client.conesearch.conesearch.html#astropy.vo.client.conesearch.conesearch" title="astropy.vo.client.conesearch.conesearch"><tt class="xref py py-func docutils literal"><span class="pre">conesearch()</span></tt></a>,
+not the asynchronous version. This example uses a custom
+timeout of 30 seconds and runs silently (except for warnings):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">url</span>
+<span class="go">u&#39;http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/243/out&amp;&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">data</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">set_temp</span><span class="p">(</span><span class="s">&#39;remote_timeout&#39;</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">t_est</span><span class="p">,</span> <span class="n">n_est</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">predict_search</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="n">result</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+<span class="go"># ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t_est</span>  <span class="c"># Predicted execution time</span>
+<span class="go">10.757875269998323</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n_est</span>  <span class="c"># Predicted number of objects</span>
+<span class="go">37340</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../_images/client_predict_search_t.png"><img alt="Example plot from conesearch.predict_search() for t_est" src="../../_images/client_predict_search_t.png" style="width: 450px;" /></a>
+<a class="reference internal image-reference" href="../../_images/client_predict_search_n.png"><img alt="Example plot from conesearch.predict_search() for n_est" src="../../_images/client_predict_search_n.png" style="width: 450px;" /></a>
+<p>For debugging purpose, one can obtain the actual execution time
+and number of objects, and compare them with the predicted values
+above. The INFO message shown in controlled by <a class="reference internal" href="../../logging.html#module-astropy.logger" title="astropy.logger"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.logger</span></tt></a>.
+Keep in mind that running this for every prediction
+would defeat the purpose of the prediction itself:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">t_real</span><span class="p">,</span> <span class="n">tab</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch_timer</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">result</span><span class="o">.</span><span class="n">url</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="go">INFO: conesearch_timer took 11.5103080273 s on AVERAGE for 1 call(s). [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t_real</span>  <span class="c"># Actual execution time</span>
+<span class="go">9.33926796913147</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tab</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">size</span>  <span class="c"># Actual number of objects</span>
+<span class="go">36184</span>
+</pre></div>
+</div>
+<p>One can also search in a list of catalogs instead of a single one.
+In this example, we look for all catalogs containing <tt class="docutils literal"><span class="pre">'guide*star'</span></tt> in their
+titles and only perform Cone Search using those services.
+The first catalog in the list to successfully return non-zero result is used.
+Therefore, the order of catalog names given in <tt class="docutils literal"><span class="pre">catalog_db</span></tt> is important:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_cats</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">(</span><span class="n">pattern</span><span class="o">=</span><span class="s">&#39;guide*star&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_cats</span>
+<span class="go">[u&#39;Guide Star Catalog 2.3 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version 1.1 (Lasker+ 1992) 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version 1.2 (Lasker+ 1996) 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version GSC-ACT (Lasker+ 1996-99) 1&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">gsc_cats</span><span class="p">)</span>
+<span class="go">Trying http://gsss.stsci.edu/webservices/vo/ConeSearch.aspx?CAT=GSC23&amp;</span>
+<span class="go">WARNING: W50: ... Invalid unit string &#39;pixel&#39; [...]</span>
+<span class="go">WARNING: W48: ... Unknown attribute &#39;nrows&#39; on TABLEDATA [...]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_result</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">size</span>
+<span class="go">74276</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_result</span><span class="o">.</span><span class="n">url</span>
+<span class="go">u&#39;http://gsss.stsci.edu/webservices/vo/ConeSearch.aspx?CAT=GSC23&amp;&#39;</span>
+</pre></div>
+</div>
+<p>To repeat the Cone Search above with the services listed in a
+different order:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_cats_reordered</span> <span class="o">=</span> <span class="p">[</span><span class="n">gsc_cats</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_cats_reordered</span>
+<span class="go">[u&#39;The HST Guide Star Catalog, Version GSC-ACT (Lasker+ 1996-99) 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version 1.1 (Lasker+ 1992) 1&#39;,</span>
+<span class="go"> u&#39;The HST Guide Star Catalog, Version 1.2 (Lasker+ 1996) 1&#39;,</span>
+<span class="go"> u&#39;Guide Star Catalog 2.3 1&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">gsc_cats_reordered</span><span class="p">)</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/255/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_result</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">size</span>
+<span class="go">2997</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">gsc_result</span><span class="o">.</span><span class="n">url</span>
+<span class="go">u&#39;http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/255/out&amp;&#39;</span>
+</pre></div>
+</div>
+<p>To obtain results from <em>all</em> the services above:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">all_gsc_results</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">search_all</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">gsc_cats</span><span class="p">)</span>
+<span class="go">Trying http://gsss.stsci.edu/webservices/vo/ConeSearch.aspx?CAT=GSC23&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/220/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/254/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/255/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">len</span><span class="p">(</span><span class="n">all_gsc_results</span><span class="p">)</span>
+<span class="go">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">tab</span> <span class="ow">in</span> <span class="n">all_gsc_results</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<span class="gp">... </span>    <span class="k">print</span><span class="p">(</span><span class="s">&#39;{0} has {1} results&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">tab</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
+<span class="go">http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/254/out&amp; has 2998 results</span>
+<span class="go">http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/255/out&amp; has 2997 results</span>
+<span class="go">http://gsss.stsci.edu/webservices/vo/ConeSearch.aspx?CAT=GSC23&amp; has 74276 results</span>
+<span class="go">http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/220/out&amp; has 2997 results</span>
+</pre></div>
+</div>
+<p>To repeat the above asynchronously:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">async_search_all</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">AsyncSearchAll</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">,</span> <span class="n">catalog_db</span><span class="o">=</span><span class="n">gsc_cats</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">async_search_all</span><span class="o">.</span><span class="n">running</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">async_search_all</span><span class="o">.</span><span class="n">done</span><span class="p">()</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">all_gsc_results</span> <span class="o">=</span> <span class="n">async_search_all</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>If one is unable to obtain any results using the default
+Cone Search database, <tt class="docutils literal"><span class="pre">'conesearch_good'</span></tt>, that only contains
+sites that cleanly passed validation, one can use <a class="reference internal" href="../../config/index.html#astropy-config"><em>Configuration system (astropy.config)</em></a>
+to use another database, <tt class="docutils literal"><span class="pre">'conesearch_warn'</span></tt>, containing sites with
+validation warnings. One should use these sites with caution:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo</span> <span class="kn">import</span> <span class="n">conf</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conf</span><span class="o">.</span><span class="n">conesearch_dbname</span> <span class="o">=</span> <span class="s">&#39;conesearch_warn&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conesearch</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">()</span>
+<span class="go">Downloading http://stsdas.stsci.edu/astrolib/vo_databases/conesearch_warn.json</span>
+<span class="go">|===========================================|  87k/ 87k (100.00%)        00s</span>
+<span class="go">[u&#39;2MASS All-Sky Catalog of Point Sources (Cutri+ 2003) 1&#39;,</span>
+<span class="go"> u&#39;2MASS All-Sky Point Source Catalog 1&#39;,</span>
+<span class="go"> u&#39;Data release 7 of Sloan Digital Sky Survey catalogs 1&#39;,</span>
+<span class="go"> u&#39;Data release 7 of Sloan Digital Sky Survey catalogs 2&#39;,</span>
+<span class="go"> u&#39;Data release 7 of Sloan Digital Sky Survey catalogs 3&#39;,</span>
+<span class="go"> u&#39;Data release 7 of Sloan Digital Sky Survey catalogs 4&#39;,</span>
+<span class="go"> u&#39;Data release 7 of Sloan Digital Sky Survey catalogs 5&#39;,</span>
+<span class="go"> u&#39;Data release 7 of Sloan Digital Sky Survey catalogs 6&#39;,</span>
+<span class="go"> u&#39;The 2MASS All-Sky Catalog 1&#39;,</span>
+<span class="go"> u&#39;The 2MASS All-Sky Catalog 2&#39;,</span>
+<span class="go"> u&#39;The USNO-B1.0 Catalog (Monet+ 2003) 1&#39;,</span>
+<span class="go"> u&#39;The USNO-B1.0 Catalog 1&#39;,</span>
+<span class="go"> u&#39;USNO-A V2.0, A Catalog of Astrometric Standards 1&#39;,</span>
+<span class="go"> u&#39;USNO-B1 Catalogue 1&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">)</span>
+<span class="go">Trying http://vizier.u-strasbg.fr/viz-bin/votable/-A?-source=I/284/out&amp;</span>
+<span class="go">Downloading ...</span>
+<span class="go">WARNING: W22: ... The DEFINITIONS element is deprecated in VOTable 1.1...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span><span class="o">.</span><span class="n">array</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">size</span>
+<span class="go">50000</span>
+</pre></div>
+</div>
+<p>You can also use custom Cone Search database, say, <tt class="docutils literal"><span class="pre">'my_vo_database.json'</span></tt>
+from <a class="reference internal" href="#vo-sec-client-db-manip-examples"><em>VO database examples</em></a>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">os</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.client.vos_catalog</span> <span class="kn">import</span> <span class="n">BASEURL</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">BASEURL</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">curdir</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conesearch</span><span class="o">.</span><span class="n">CONESEARCH_DBNAME</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;my_vo_database&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conesearch</span><span class="o">.</span><span class="n">list_catalogs</span><span class="p">()</span>
+<span class="go">[u&#39;My Catalog 1&#39;]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">conesearch</span><span class="o">.</span><span class="n">conesearch</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sr</span><span class="p">)</span>
+<span class="go">Trying http://ex.org/cgi-bin/cs.pl?</span>
+<span class="go">Downloading ...</span>
+<span class="go">|===========================================| 1.8k/1.8k (100.00%)        00s</span>
+<span class="go"># ...</span>
+<span class="go">VOSError: None of the available catalogs returned valid results.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Using <tt class="docutils literal"><span class="pre">astropy.vo.client</span></tt></a><ul>
+<li><a class="reference internal" href="#catalog-manipulation">Catalog Manipulation</a><ul>
+<li><a class="reference internal" href="#examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#database-manipulation">Database Manipulation</a><ul>
+<li><a class="reference internal" href="#vo-sec-client-db-manip-examples">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#general-vo-services-access">General VO Services Access</a><ul>
+<li><a class="reference internal" href="#configurable-items">Configurable Items</a></li>
+<li><a class="reference internal" href="#id2">Examples</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#simple-cone-search">Simple Cone Search</a><ul>
+<li><a class="reference internal" href="#vo-sec-scs-config">Configurable Items</a></li>
+<li><a class="reference internal" href="#vo-sec-scs-examples">Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/vo/conesearch/client.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../../_sources/vo/conesearch/client.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

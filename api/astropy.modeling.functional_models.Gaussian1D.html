@@ -1,0 +1,309 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Gaussian1D &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
+    <link rel="next" title="Gaussian2D" href="astropy.modeling.functional_models.Gaussian2D.html" />
+    <link rel="prev" title="Disk2D" href="astropy.modeling.functional_models.Disk2D.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.Gaussian2D.html" title="Gaussian2D">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.modeling.functional_models.Disk2D.html" title="Disk2D">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
+      
+      <li>Gaussian1D</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="gaussian1d">
+<h1>Gaussian1D<a class="headerlink" href="#gaussian1d" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="astropy.modeling.functional_models.Gaussian1D">
+<em class="property">class </em><tt class="descclassname">astropy.modeling.functional_models.</tt><tt class="descname">Gaussian1D</tt><big>(</big><em>amplitude</em>, <em>mean</em>, <em>stddev</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Gaussian1D"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L30" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="astropy.modeling.core.Fittable1DModel"><tt class="docutils literal"><span class="pre">astropy.modeling.Fittable1DModel</span></tt></a></p>
+<p>One dimensional Gaussian model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>amplitude</strong> : float</p>
+<blockquote>
+<div><p>Amplitude of the Gaussian.</p>
+</div></blockquote>
+<p><strong>mean</strong> : float</p>
+<blockquote>
+<div><p>Mean of the Gaussian.</p>
+</div></blockquote>
+<p><strong>stddev</strong> : float</p>
+<blockquote>
+<div><p>Standard deviation of the Gaussian.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Other Parameters:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><p class="first"><strong>fixed</strong> : a dict</p>
+<blockquote>
+<div><p>A dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">boolean}</span></tt> of parameters to not be
+varied during fitting. True means the parameter is held fixed.
+Alternatively the <a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.fixed" title="astropy.modeling.Parameter.fixed"><tt class="xref py py-obj docutils literal"><span class="pre">fixed</span></tt></a>
+property of a parameter may be used.</p>
+</div></blockquote>
+<p><strong>tied</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">callable}</span></tt> of parameters which are
+linked to some other parameter. The dictionary values are callables
+providing the linking relationship.  Alternatively the
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.tied" title="astropy.modeling.Parameter.tied"><tt class="xref py py-obj docutils literal"><span class="pre">tied</span></tt></a> property of a parameter
+may be used.</p>
+</div></blockquote>
+<p><strong>bounds</strong> : dict</p>
+<blockquote>
+<div><p>A dictionary <tt class="docutils literal"><span class="pre">{parameter_name:</span> <span class="pre">boolean}</span></tt> of lower and upper bounds of
+parameters. Keys  are parameter names. Values  are a list of length 2
+giving the desired range for the parameter.  Alternatively the
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.min" title="astropy.modeling.Parameter.min"><tt class="xref py py-obj docutils literal"><span class="pre">min</span></tt></a> and
+<a class="reference internal" href="astropy.modeling.Parameter.html#astropy.modeling.Parameter.max" title="astropy.modeling.Parameter.max"><tt class="xref py py-obj docutils literal"><span class="pre">max</span></tt></a> properties of a parameter
+may be used.</p>
+</div></blockquote>
+<p><strong>eqcons</strong> : list</p>
+<blockquote>
+<div><p>A list of functions of length <tt class="docutils literal"><span class="pre">n</span></tt> such that <tt class="docutils literal"><span class="pre">eqcons[j](x0,*args)</span> <span class="pre">==</span>
+<span class="pre">0.0</span></tt> in a successfully optimized problem.</p>
+</div></blockquote>
+<p><strong>ineqcons</strong> : list</p>
+<blockquote class="last">
+<div><p>A list of functions of length <tt class="docutils literal"><span class="pre">n</span></tt> such that <tt class="docutils literal"><span class="pre">ieqcons[j](x0,*args)</span> <span class="pre">&gt;=</span>
+<span class="pre">0.0</span></tt> is a successfully optimized problem.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="astropy.modeling.functional_models.Gaussian2D.html#astropy.modeling.functional_models.Gaussian2D" title="astropy.modeling.functional_models.Gaussian2D"><tt class="xref py py-obj docutils literal"><span class="pre">Gaussian2D</span></tt></a>, <a class="reference internal" href="astropy.modeling.functional_models.Box1D.html#astropy.modeling.functional_models.Box1D" title="astropy.modeling.functional_models.Box1D"><tt class="xref py py-obj docutils literal"><span class="pre">Box1D</span></tt></a>, <a class="reference internal" href="astropy.modeling.functional_models.Beta1D.html#astropy.modeling.functional_models.Beta1D" title="astropy.modeling.functional_models.Beta1D"><tt class="xref py py-obj docutils literal"><span class="pre">Beta1D</span></tt></a>, <a class="reference internal" href="astropy.modeling.functional_models.Lorentz1D.html#astropy.modeling.functional_models.Lorentz1D" title="astropy.modeling.functional_models.Lorentz1D"><tt class="xref py py-obj docutils literal"><span class="pre">Lorentz1D</span></tt></a></p>
+</div>
+<p class="rubric">Notes</p>
+<p>Model formula:</p>
+<blockquote>
+<div><div class="math">
+<p><img src="../_images/math/f8c0a16d9a6df2a23c6bbc44cf387479c3a15364.png" alt="f(x) = A e^{- \frac{\left(x - x_{0}\right)^{2}}{2 \sigma^{2}}}"/></p>
+</div></div></blockquote>
+<p class="rubric">Examples</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">tie_center</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="n">mean</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">*</span> <span class="n">model</span><span class="o">.</span><span class="n">stddev</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">mean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tied_parameters</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;mean&#39;</span><span class="p">:</span> <span class="n">tie_center</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Specify that &#8216;mean&#8217; is a tied parameter in one of two ways:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>                            <span class="n">tied</span><span class="o">=</span><span class="n">tied_parameters</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span> <span class="o">=</span> <span class="n">tie_center</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">mean</span><span class="o">.</span><span class="n">tied</span>
+<span class="go">&lt;function tie_center at 0x...&gt;</span>
+</pre></div>
+</div>
+<p>Fixed parameters:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">... </span>                       <span class="n">fixed</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;stddev&#39;</span><span class="p">:</span> <span class="bp">True</span><span class="p">})</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">Gaussian1D</span><span class="p">(</span><span class="n">amplitude</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">mean</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">stddev</span><span class="o">=.</span><span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span>
+<span class="go">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g1</span><span class="o">.</span><span class="n">stddev</span><span class="o">.</span><span class="n">fixed</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.amplitude" title="astropy.modeling.functional_models.Gaussian1D.amplitude"><tt class="xref py py-obj docutils literal"><span class="pre">amplitude</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.input_names" title="astropy.modeling.functional_models.Gaussian1D.input_names"><tt class="xref py py-obj docutils literal"><span class="pre">input_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.mean" title="astropy.modeling.functional_models.Gaussian1D.mean"><tt class="xref py py-obj docutils literal"><span class="pre">mean</span></tt></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.param_names" title="astropy.modeling.functional_models.Gaussian1D.param_names"><tt class="xref py py-obj docutils literal"><span class="pre">param_names</span></tt></a></td>
+<td>list() -&gt; new empty list</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.stddev" title="astropy.modeling.functional_models.Gaussian1D.stddev"><tt class="xref py py-obj docutils literal"><span class="pre">stddev</span></tt></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods Summary</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.evaluate" title="astropy.modeling.functional_models.Gaussian1D.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;amplitude,&nbsp;mean,&nbsp;stddev)</td>
+<td>Gaussian1D model function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.functional_models.Gaussian1D.fit_deriv" title="astropy.modeling.functional_models.Gaussian1D.fit_deriv"><tt class="xref py py-obj docutils literal"><span class="pre">fit_deriv</span></tt></a>(x,&nbsp;amplitude,&nbsp;mean,&nbsp;stddev)</td>
+<td>Gaussian1D model function derivatives.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes Documentation</p>
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Gaussian1D.amplitude">
+<tt class="descname">amplitude</tt><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.amplitude" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Gaussian1D.input_names">
+<tt class="descname">input_names</tt><em class="property"> = ['x']</em><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.input_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Gaussian1D.mean">
+<tt class="descname">mean</tt><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Gaussian1D.param_names">
+<tt class="descname">param_names</tt><em class="property"> = ['amplitude', 'mean', 'stddev']</em><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.param_names" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="astropy.modeling.functional_models.Gaussian1D.stddev">
+<tt class="descname">stddev</tt><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.stddev" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="rubric">Methods Documentation</p>
+<dl class="staticmethod">
+<dt id="astropy.modeling.functional_models.Gaussian1D.evaluate">
+<em class="property">static </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>amplitude</em>, <em>mean</em>, <em>stddev</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Gaussian1D.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L101" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian1D model function.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="astropy.modeling.functional_models.Gaussian1D.fit_deriv">
+<em class="property">static </em><tt class="descname">fit_deriv</tt><big>(</big><em>x</em>, <em>amplitude</em>, <em>mean</em>, <em>stddev</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/functional_models.html#Gaussian1D.fit_deriv"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/functional_models.py#L108" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.functional_models.Gaussian1D.fit_deriv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gaussian1D model function derivatives.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Gaussian1D</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.modeling.functional_models.Gaussian1D.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.modeling.functional_models.Gaussian1D.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

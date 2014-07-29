@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Astrostatistics Tools (astropy.stats) &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="next" title="binned_binom_proportion" href="../api/astropy.stats.binned_binom_proportion.html" />
+    <link rel="prev" title="wpwaCDM" href="../api/astropy.cosmology.wpwaCDM.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="../api/astropy.stats.binned_binom_proportion.html" title="binned_binom_proportion">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="../api/astropy.cosmology.wpwaCDM.html" title="wpwaCDM">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      
+      <li>Astrostatistics Tools (<tt class="docutils literal"><span class="pre">astropy.stats</span></tt>)</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="astrostatistics-tools-astropy-stats">
+<span id="stats"></span><h1>Astrostatistics Tools (<a class="reference internal" href="#module-astropy.stats" title="astropy.stats"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.stats</span></tt></a>)<a class="headerlink" href="#astrostatistics-tools-astropy-stats" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="#module-astropy.stats" title="astropy.stats"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.stats</span></tt></a> package holds statistical functions or algorithms used
+in astronomy and astropy.</p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>The current tools are fairly self-contained, and include relevant examples in
+their docstrings.</p>
+</div>
+<div class="section" id="see-also">
+<h2>See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><dl class="first docutils">
+<dt><a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/stats.html#module-scipy.stats" title="(in SciPy v0.14.0)"><tt class="xref py py-mod docutils literal"><span class="pre">scipy.stats</span></tt></a></dt>
+<dd><p class="first last">This scipy package contains a variety of useful statistical functions and
+classes.  The functionality in <a class="reference internal" href="#module-astropy.stats" title="astropy.stats"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.stats</span></tt></a> is intended to supplement
+this, <em>not</em> replace it.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="reference-api">
+<h2>Reference/API<a class="headerlink" href="#reference-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-astropy.stats">
+<span id="astropy-stats-module"></span><h3>astropy.stats Module<a class="headerlink" href="#module-astropy.stats" title="Permalink to this headline">¶</a></h3>
+<p>This subpackage contains statistical tools provided for or used by Astropy.</p>
+<p>While the <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/stats.html#module-scipy.stats" title="(in SciPy v0.14.0)"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats</span></tt></a> package contains a wide range of statistical
+tools, it is a general-purpose package, and is missing some that are
+particularly useful to astronomy or are used in an atypical way in
+astronomy. This package is intended to provide such functionality, but
+<em>not</em> to replace <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/stats.html#module-scipy.stats" title="(in SciPy v0.14.0)"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.stats</span></tt></a> if its implementation satisfies
+astronomers&#8217; needs.</p>
+<div class="section" id="functions">
+<h4>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.stats.binned_binom_proportion.html#astropy.stats.binned_binom_proportion" title="astropy.stats.binned_binom_proportion"><tt class="xref py py-obj docutils literal"><span class="pre">binned_binom_proportion</span></tt></a>(x,&nbsp;success[,&nbsp;bins,&nbsp;...])</td>
+<td>Binomial proportion and confidence interval in bins of a continuous variable <tt class="docutils literal"><span class="pre">x</span></tt>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.stats.binom_conf_interval.html#astropy.stats.binom_conf_interval" title="astropy.stats.binom_conf_interval"><tt class="xref py py-obj docutils literal"><span class="pre">binom_conf_interval</span></tt></a>(k,&nbsp;n[,&nbsp;conf,&nbsp;interval])</td>
+<td>Binomial proportion confidence interval given k successes, n trials.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.stats.biweight_location.html#astropy.stats.biweight_location" title="astropy.stats.biweight_location"><tt class="xref py py-obj docutils literal"><span class="pre">biweight_location</span></tt></a>(a[,&nbsp;c,&nbsp;M])</td>
+<td>Compute the biweight location for an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.stats.biweight_midvariance.html#astropy.stats.biweight_midvariance" title="astropy.stats.biweight_midvariance"><tt class="xref py py-obj docutils literal"><span class="pre">biweight_midvariance</span></tt></a>(a[,&nbsp;c,&nbsp;M])</td>
+<td>Compute the biweight midvariance for an array.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.stats.bootstrap.html#astropy.stats.bootstrap" title="astropy.stats.bootstrap"><tt class="xref py py-obj docutils literal"><span class="pre">bootstrap</span></tt></a>(data[,&nbsp;bootnum,&nbsp;samples,&nbsp;bootfunc])</td>
+<td>Performs bootstrap resampling on numpy arrays.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.stats.median_absolute_deviation.html#astropy.stats.median_absolute_deviation" title="astropy.stats.median_absolute_deviation"><tt class="xref py py-obj docutils literal"><span class="pre">median_absolute_deviation</span></tt></a>(a[,&nbsp;axis])</td>
+<td>Compute the median absolute deviation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../api/astropy.stats.sigma_clip.html#astropy.stats.sigma_clip" title="astropy.stats.sigma_clip"><tt class="xref py py-obj docutils literal"><span class="pre">sigma_clip</span></tt></a>(data[,&nbsp;sig,&nbsp;iters,&nbsp;cenfunc,&nbsp;...])</td>
+<td>Perform sigma-clipping on the provided data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../api/astropy.stats.signal_to_noise_oir_ccd.html#astropy.stats.signal_to_noise_oir_ccd" title="astropy.stats.signal_to_noise_oir_ccd"><tt class="xref py py-obj docutils literal"><span class="pre">signal_to_noise_oir_ccd</span></tt></a>(t,&nbsp;source_eps,&nbsp;...)</td>
+<td>Computes the signal to noise ratio for source being observed in the optical/IR using a CCD.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Astrostatistics Tools (<tt class="docutils literal"><span class="pre">astropy.stats</span></tt>)</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li><a class="reference internal" href="#see-also">See Also</a></li>
+<li><a class="reference internal" href="#reference-api">Reference/API</a><ul>
+<li><a class="reference internal" href="#module-astropy.stats">astropy.stats Module</a><ul>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/stats/index.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/stats/index.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

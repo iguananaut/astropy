@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>sigma_clip &mdash; Astropy v0.4rc3.dev9435</title>
+    
+    <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.4rc3.dev9435',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/sidebar.js"></script>
+    <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
+    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="up" title="Astrostatistics Tools (astropy.stats)" href="../stats/index.html" />
+    <link rel="next" title="signal_to_noise_oir_ccd" href="astropy.stats.signal_to_noise_oir_ccd.html" />
+    <link rel="prev" title="median_absolute_deviation" href="astropy.stats.median_absolute_deviation.html" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="../_static/copybutton.js"></script>
+
+
+  </head>
+  <body>
+<div class="topbar">
+  <a class="brand" title="Documentation Home" href="../index.html"><span id="logotext1">astro</span><span id="logotext2">py</span><span id="logotext3">:docs</span></a>
+  <ul>
+    <li><a class="homelink" title="Astropy Homepage" href="http://www.astropy.org"></a></li>
+    <li><a title="General Index" href="../genindex.html">Index</a></li>
+    <li><a title="Module Index" href="../py-modindex.html">Modules</a></li>
+    <li>
+      
+      
+<form action="../search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+      
+    </li>
+  </ul>
+</div>
+
+<div class="related">
+    <h3>Navigation</h3>
+    <ul>
+      <li class="right">
+	<a href="astropy.stats.signal_to_noise_oir_ccd.html" title="signal_to_noise_oir_ccd">
+	  next &raquo;
+	</a>
+      </li>
+      <li class="right">
+	<a href="astropy.stats.median_absolute_deviation.html" title="median_absolute_deviation">
+	  &laquo; previous
+	</a>
+	 |
+      </li>
+      <li>
+	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	 &raquo;
+      </li>
+      <li><a href="../stats/index.html" accesskey="U">Astrostatistics Tools (<tt class="docutils literal"><span class="pre">astropy.stats</span></tt>)</a> &raquo;</li>
+      
+      <li>sigma_clip</li> 
+    </ul>
+</div>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sigma-clip">
+<h1>sigma_clip<a class="headerlink" href="#sigma-clip" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="astropy.stats.sigma_clip">
+<tt class="descclassname">astropy.stats.</tt><tt class="descname">sigma_clip</tt><big>(</big><em>data</em>, <em>sig=3</em>, <em>iters=1</em>, <em>cenfunc=&lt;function median at 0x1d292a8&gt;</em>, <em>varfunc=&lt;function var at 0x1974230&gt;</em>, <em>axis=None</em>, <em>copy=True</em><big>)</big><a class="reference internal" href="../_modules/astropy/stats/funcs.html#sigma_clip"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/stats/funcs.py#L28" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.stats.sigma_clip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform sigma-clipping on the provided data.</p>
+<p>This performs the sigma clipping algorithm - i.e. the data will be iterated
+over, each time rejecting points that are more than a specified number of
+standard deviations discrepant.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.sigmaclip.html">scipy.stats.sigmaclip</a>
+provides a subset of the functionality in this function.</p>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : array-like</p>
+<blockquote>
+<div><p>The data to be sigma-clipped (any shape).</p>
+</div></blockquote>
+<p><strong>sig</strong> : float</p>
+<blockquote>
+<div><p>The number of standard deviations (<em>not</em> variances) to use as the
+clipping limit.</p>
+</div></blockquote>
+<p><strong>iters</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>The number of iterations to perform clipping for, or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a> to clip
+until convergence is achieved (i.e. continue until the last
+iteration clips nothing).</p>
+</div></blockquote>
+<p><strong>cenfunc</strong> : callable</p>
+<blockquote>
+<div><p>The technique to compute the center for the clipping. Must be a
+callable that takes in a masked array and outputs the central value.
+Defaults to the median (numpy.median).</p>
+</div></blockquote>
+<p><strong>varfunc</strong> : callable</p>
+<blockquote>
+<div><p>The technique to compute the standard deviation about the center. Must
+be a callable that takes in a masked array and outputs a width
+estimator:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">deviation</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="n">sig</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">varfunc</span><span class="p">(</span><span class="n">deviation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Defaults to the variance (numpy.var).</p>
+</div></blockquote>
+<p><strong>axis</strong> : int or <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a></p>
+<blockquote>
+<div><p>If not <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>, clip along the given axis.  For this case, axis=int will
+be passed on to cenfunc and varfunc, which are expected to return an
+array with the axis dimension removed (like the numpy functions).
+If <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>, clip over all values.  Defaults to <a class="reference external" href="http://docs.python.org/library/constants.html#None" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">None</span></tt></a>.</p>
+</div></blockquote>
+<p><strong>copy</strong> : bool</p>
+<blockquote>
+<div><p>If <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>, the data array will be copied.  If <a class="reference external" href="http://docs.python.org/library/constants.html#False" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">False</span></tt></a>, the masked array
+data will contain the same array as <tt class="docutils literal"><span class="pre">data</span></tt>.  Defaults to <a class="reference external" href="http://docs.python.org/library/constants.html#True" title="(in Python v2.7)"><tt class="xref py py-obj docutils literal"><span class="pre">True</span></tt></a>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>filtered_data</strong> : <a class="reference external" href="http://docs.scipy.org/doc/numpy/reference/maskedarray.baseclass.html#numpy.ma.MaskedArray" title="(in NumPy v1.8)"><tt class="xref py py-obj docutils literal"><span class="pre">numpy.ma.MaskedArray</span></tt></a></p>
+<blockquote class="last">
+<div><p>A masked array with the same shape as <tt class="docutils literal"><span class="pre">data</span></tt> input, where the points
+rejected by the algorithm have been masked.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<ol class="arabic">
+<li><p class="first">The routine works by calculating:</p>
+<div class="highlight-python"><div class="highlight"><pre>deviation = data - cenfunc(data [,axis=int])
+</pre></div>
+</div>
+<p>and then setting a mask for points outside the range:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">data</span><span class="o">.</span><span class="n">mask</span> <span class="o">=</span> <span class="n">deviation</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="n">sig</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">varfunc</span><span class="p">(</span><span class="n">deviation</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It will iterate a given number of times, or until no further points are
+rejected.</p>
+</li>
+<li><p class="first">Most numpy functions deal well with masked arrays, but if one would
+like to have an array with just the good (or bad) values, one can use:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">good_only</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="o">~</span><span class="n">filtered_data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
+<span class="n">bad_only</span> <span class="o">=</span> <span class="n">filtered_data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">filtered_data</span><span class="o">.</span><span class="n">mask</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>However, for multidimensional data, this flattens the array, which may
+not be what one wants (especially is filtering was done along an axis).</p>
+</li>
+</ol>
+<p class="rubric">Examples</p>
+<p>This will generate random variates from a Gaussian distribution and return
+a masked array in which all points that are more than 2 <em>sample</em> standard
+deviation from the median are masked:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">sigma_clip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">randn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">randvar</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">sigma_clip</span><span class="p">(</span><span class="n">randvar</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will clipping on a similar distribution, but for 3 sigma relative to
+the sample <em>mean</em>, will clip until converged, and does not copy the data:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">sigma_clip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">randn</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">mean</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">randvar</span> <span class="o">=</span> <span class="n">randn</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">sigma_clip</span><span class="p">(</span><span class="n">randvar</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This will clip along one axis on a similar distribution with bad points
+inserted:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.stats</span> <span class="kn">import</span> <span class="n">sigma_clip</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.random</span> <span class="kn">import</span> <span class="n">normal</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy</span> <span class="kn">import</span> <span class="n">arange</span><span class="p">,</span> <span class="n">diag</span><span class="p">,</span> <span class="n">ones</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.05</span><span class="p">,(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span><span class="o">+</span><span class="n">diag</span><span class="p">(</span><span class="n">ones</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filtered_data</span> <span class="o">=</span> <span class="n">sigma_clip</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sig</span><span class="o">=</span><span class="mf">2.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Note that along the other axis, no points would be masked, as the variance
+is higher.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper"><h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">sigma_clip</a></li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+<footer class="footer">
+  <p class="pull-right">
+    <a href="http://github.com/astropy/astropy/tree/master/docs/api/astropy.stats.sigma_clip.rst">Edit This Page on Github</a> &nbsp;
+    <a href="../_sources/api/astropy.stats.sigma_clip.txt"
+       rel="nofollow">Page Source</a> &nbsp;
+    <a href="#">Back to Top</a></p>
+  <p>
+    &copy; Copyright 2011-2014, The Astropy Developers.<br/>
+    Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
+    Last built 29 Jul 2014. <br/>
+  </p>
+</footer>
+  </body>
+</html>

@@ -1,0 +1,107 @@
+
+
+Model
+======================
+
+.. currentmodule:: astropy.modeling
+
+.. autoclass:: Model
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Model.bounds
+      ~Model.eqcons
+      ~Model.fittable
+      ~Model.fixed
+      ~Model.ineqcons
+      ~Model.input_names
+      ~Model.linear
+      ~Model.model_constraints
+      ~Model.model_set_axis
+      ~Model.n_inputs
+      ~Model.n_outputs
+      ~Model.param_dim
+      ~Model.param_names
+      ~Model.param_sets
+      ~Model.parameter_constraints
+      ~Model.parameters
+      ~Model.standard_broadcasting
+      ~Model.tied
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Model.__call__
+      ~Model.add_model
+      ~Model.copy
+      ~Model.evaluate
+      ~Model.inverse
+      ~Model.invert
+      ~Model.prepare_inputs
+      ~Model.prepare_outputs
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: bounds
+   .. autoattribute:: eqcons
+   .. autoattribute:: fittable
+   .. autoattribute:: fixed
+   .. autoattribute:: ineqcons
+   .. autoattribute:: input_names
+   .. autoattribute:: linear
+   .. autoattribute:: model_constraints
+   .. autoattribute:: model_set_axis
+   .. autoattribute:: n_inputs
+   .. autoattribute:: n_outputs
+   .. autoattribute:: param_dim
+   .. autoattribute:: param_names
+   .. autoattribute:: param_sets
+   .. autoattribute:: parameter_constraints
+   .. autoattribute:: parameters
+   .. autoattribute:: standard_broadcasting
+   .. autoattribute:: tied
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __call__
+   .. automethod:: add_model
+   .. automethod:: copy
+   .. automethod:: evaluate
+   .. automethod:: inverse
+   .. automethod:: invert
+   .. automethod:: prepare_inputs
+   .. automethod:: prepare_outputs
+
+   
+   
