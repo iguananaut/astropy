@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>convolve_fft &mdash; Astropy v0.4rc3.dev9435</title>
+    <title>convolve_fft &mdash; Astropy v0.4rc3.dev9437</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4rc3.dev9435',
+        VERSION:     '0.4rc3.dev9437',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="top" title="Astropy v0.4rc3.dev9437" href="../index.html" />
     <link rel="up" title="Convolution and filtering (astropy.convolution)" href="../convolution/index.html" />
     <link rel="next" title="discretize_model" href="astropy.convolution.discretize_model.html" />
     <link rel="prev" title="convolve" href="astropy.convolution.convolve.html" />
@@ -69,7 +69,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	<a href="../index.html">Astropy v0.4rc3.dev9437</a>
 	 &raquo;
       </li>
       <li><a href="../convolution/index.html" accesskey="U">Convolution and filtering (<tt class="docutils literal"><span class="pre">astropy.convolution</span></tt>)</a> &raquo;</li>
@@ -88,7 +88,7 @@
 <h1>convolve_fft<a class="headerlink" href="#convolve-fft" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="astropy.convolution.convolve_fft">
-<tt class="descclassname">astropy.convolution.</tt><tt class="descname">convolve_fft</tt><big>(</big><em>array</em>, <em>kernel</em>, <em>boundary=u'fill'</em>, <em>fill_value=0</em>, <em>crop=True</em>, <em>return_fft=False</em>, <em>fft_pad=True</em>, <em>psf_pad=False</em>, <em>interpolate_nan=False</em>, <em>quiet=False</em>, <em>ignore_edge_zeros=False</em>, <em>min_wt=0.0</em>, <em>normalize_kernel=False</em>, <em>allow_huge=False</em>, <em>fftn=&lt;function fftn at 0x1b1c230&gt;</em>, <em>ifftn=&lt;function ifftn at 0x1b1c2a8&gt;</em>, <em>complex_dtype=&lt;type 'complex'&gt;</em><big>)</big><a class="reference internal" href="../_modules/astropy/convolution/convolve.html#convolve_fft"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/convolution/convolve.py#L223" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.convolution.convolve_fft" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">astropy.convolution.</tt><tt class="descname">convolve_fft</tt><big>(</big><em>array</em>, <em>kernel</em>, <em>boundary=u'fill'</em>, <em>fill_value=0</em>, <em>crop=True</em>, <em>return_fft=False</em>, <em>fft_pad=True</em>, <em>psf_pad=False</em>, <em>interpolate_nan=False</em>, <em>quiet=False</em>, <em>ignore_edge_zeros=False</em>, <em>min_wt=0.0</em>, <em>normalize_kernel=False</em>, <em>allow_huge=False</em>, <em>fftn=&lt;function fftn at 0x201f2a8&gt;</em>, <em>ifftn=&lt;function ifftn at 0x201f320&gt;</em>, <em>complex_dtype=&lt;type 'complex'&gt;</em><big>)</big><a class="reference internal" href="../_modules/astropy/convolution/convolve.html#convolve_fft"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/convolution/convolve.py#L223" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.convolution.convolve_fft" title="Permalink to this definition">¶</a></dt>
 <dd><p>Convolve an ndarray with an nd-kernel.  Returns a convolved image with
 shape = array.shape.  Assumes kernel is centered.</p>
 <p><a class="reference internal" href="#astropy.convolution.convolve_fft" title="astropy.convolution.convolve_fft"><tt class="xref py py-obj docutils literal"><span class="pre">convolve_fft</span></tt></a> differs from <a class="reference external" href="http://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.fftconvolve.html#scipy.signal.fftconvolve" title="(in SciPy v0.14.0)"><tt class="xref py py-obj docutils literal"><span class="pre">scipy.signal.fftconvolve</span></tt></a> in a few ways:</p>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Defining New Model Classes &mdash; Astropy v0.4rc3.dev9435</title>
+    <title>Defining New Model Classes &mdash; Astropy v0.4rc3.dev9437</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4rc3.dev9435',
+        VERSION:     '0.4rc3.dev9437',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="top" title="Astropy v0.4rc3.dev9437" href="../index.html" />
     <link rel="up" title="Models and Fitting (astropy.modeling)" href="index.html" />
     <link rel="next" title="Algorithms" href="algorithms.html" />
     <link rel="prev" title="Fitting Models to Data" href="fitting.html" />
@@ -69,7 +69,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	<a href="../index.html">Astropy v0.4rc3.dev9437</a>
 	 &raquo;
       </li>
       <li><a href="index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
@@ -155,7 +155,7 @@ attribute being assigned that Parameter.  As such, Parameters take their name
 from this attribute by default.  In other words, <tt class="docutils literal"><span class="pre">amplitude</span> <span class="pre">=</span>
 <span class="pre">Parameter('amplitude')</span></tt> is equivalent to <tt class="docutils literal"><span class="pre">amplitude</span> <span class="pre">=</span> <span class="pre">Parameter()</span></tt>.  This
 differs from Astropy v0.3.x, where it was necessary to provide the name twice.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">FittableModel</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">,</span> <span class="n">formt_input</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">astropy.modeling</span> <span class="kn">import</span> <span class="n">FittableModel</span><span class="p">,</span> <span class="n">Parameter</span>
 
 <span class="k">class</span> <span class="nc">Gaussian1D</span><span class="p">(</span><span class="n">FittableModel</span><span class="p">):</span>
     <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">()</span>

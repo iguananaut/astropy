@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Chebyshev1D &mdash; Astropy v0.4rc3.dev9435</title>
+    <title>Chebyshev1D &mdash; Astropy v0.4rc3.dev9437</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4rc3.dev9435',
+        VERSION:     '0.4rc3.dev9437',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="top" title="Astropy v0.4rc3.dev9437" href="../index.html" />
     <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
     <link rel="next" title="Chebyshev2D" href="astropy.modeling.polynomial.Chebyshev2D.html" />
     <link rel="prev" title="PowerLaw1D" href="astropy.modeling.powerlaws.PowerLaw1D.html" />
@@ -69,7 +69,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	<a href="../index.html">Astropy v0.4rc3.dev9437</a>
 	 &raquo;
       </li>
       <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
@@ -173,19 +173,16 @@ may be used.</p>
 <col width="90%" />
 </colgroup>
 <tbody valign="top">
-<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.__call__" title="astropy.modeling.polynomial.Chebyshev1D.__call__"><tt class="xref py py-obj docutils literal"><span class="pre">__call__</span></tt></a>(x[,&nbsp;model_set_axis])</td>
-<td>Transforms data using this model.</td>
-</tr>
-<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.clenshaw" title="astropy.modeling.polynomial.Chebyshev1D.clenshaw"><tt class="xref py py-obj docutils literal"><span class="pre">clenshaw</span></tt></a>(x,&nbsp;coeffs)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.clenshaw" title="astropy.modeling.polynomial.Chebyshev1D.clenshaw"><tt class="xref py py-obj docutils literal"><span class="pre">clenshaw</span></tt></a>(x,&nbsp;coeffs)</td>
 <td>Evaluates the polynomial using Clenshaw&#8217;s algorithm.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.evaluate" title="astropy.modeling.polynomial.Chebyshev1D.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;*coeffs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.evaluate" title="astropy.modeling.polynomial.Chebyshev1D.evaluate"><tt class="xref py py-obj docutils literal"><span class="pre">evaluate</span></tt></a>(x,&nbsp;*coeffs)</td>
 <td></td>
 </tr>
-<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.fit_deriv" title="astropy.modeling.polynomial.Chebyshev1D.fit_deriv"><tt class="xref py py-obj docutils literal"><span class="pre">fit_deriv</span></tt></a>(x,&nbsp;*params)</td>
+<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.fit_deriv" title="astropy.modeling.polynomial.Chebyshev1D.fit_deriv"><tt class="xref py py-obj docutils literal"><span class="pre">fit_deriv</span></tt></a>(x,&nbsp;*params)</td>
 <td>Computes the Vandermonde matrix.</td>
 </tr>
-<tr class="row-odd"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.prepare_inputs" title="astropy.modeling.polynomial.Chebyshev1D.prepare_inputs"><tt class="xref py py-obj docutils literal"><span class="pre">prepare_inputs</span></tt></a>(x,&nbsp;**kwargs)</td>
+<tr class="row-even"><td><a class="reference internal" href="#astropy.modeling.polynomial.Chebyshev1D.prepare_inputs" title="astropy.modeling.polynomial.Chebyshev1D.prepare_inputs"><tt class="xref py py-obj docutils literal"><span class="pre">prepare_inputs</span></tt></a>(x,&nbsp;**kwargs)</td>
 <td></td>
 </tr>
 </tbody>
@@ -193,31 +190,13 @@ may be used.</p>
 <p class="rubric">Attributes Documentation</p>
 <dl class="attribute">
 <dt id="astropy.modeling.polynomial.Chebyshev1D.input_names">
-<tt class="descname">input_names</tt><em class="property"> = ['x']</em><a class="headerlink" href="#astropy.modeling.polynomial.Chebyshev1D.input_names" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">input_names</tt><em class="property"> = []</em><a class="headerlink" href="#astropy.modeling.polynomial.Chebyshev1D.input_names" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <p class="rubric">Methods Documentation</p>
-<dl class="method">
-<dt id="astropy.modeling.polynomial.Chebyshev1D.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>x</em>, <em>model_set_axis=None</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Chebyshev1D.__call__"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L402" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Chebyshev1D.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Transforms data using this model.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : scalar, list or array</p>
-<blockquote class="last">
-<div><p>input</p>
-</div></blockquote>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="staticmethod">
 <dt id="astropy.modeling.polynomial.Chebyshev1D.clenshaw">
-<em class="property">static </em><tt class="descname">clenshaw</tt><big>(</big><em>x</em>, <em>coeffs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Chebyshev1D.clenshaw"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L416" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Chebyshev1D.clenshaw" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">clenshaw</tt><big>(</big><em>x</em>, <em>coeffs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Chebyshev1D.clenshaw"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L402" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Chebyshev1D.clenshaw" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates the polynomial using Clenshaw&#8217;s algorithm.</p>
 </dd></dl>
 

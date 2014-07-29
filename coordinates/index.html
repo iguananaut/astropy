@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Astronomical Coordinate Systems (astropy.coordinates) &mdash; Astropy v0.4rc3.dev9435</title>
+    <title>Astronomical Coordinate Systems (astropy.coordinates) &mdash; Astropy v0.4rc3.dev9437</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4rc3.dev9435',
+        VERSION:     '0.4rc3.dev9437',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="top" title="Astropy v0.4rc3.dev9437" href="../index.html" />
     <link rel="next" title="Working with Angles" href="angles.html" />
     <link rel="prev" title="TimeYearDayTime" href="../api/astropy.time.TimeYearDayTime.html" />
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,600' rel='stylesheet' type='text/css'>
@@ -68,7 +68,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	<a href="../index.html">Astropy v0.4rc3.dev9437</a>
 	 &raquo;
       </li>
       
@@ -436,21 +436,21 @@ preferred order when two trasnformation paths have the same number
 of steps.  These priorities are defined such that path with a
 <em>smaller</em> total priority are favored over one with larger.</p>
 <p class="graphviz">
-<img src="../_images/graphviz-f2315cd647f10f7c73a89ebc905015e2fb0385c5.png" alt="digraph AstropyCoordinateTransformGraph {
-ICRS [shape=oval label=&quot;ICRS\n`icrs`&quot;]; FK5 [shape=oval label=&quot;FK5\n`fk5`&quot;]; Galactic [shape=oval label=&quot;Galactic\n`galactic`&quot;]; FK4NoETerms [shape=oval label=&quot;FK4NoETerms\n`fk4noeterms`&quot;]; FK4 [shape=oval label=&quot;FK4\n`fk4`&quot;]; AltAz[ shape=oval ];
-ICRS -&gt; FK5[ label = &quot;1.0&quot; ];
+<img src="../_images/graphviz-d720d2855931235a8e2bf5ed486c40f0e6f2dd6b.png" alt="digraph AstropyCoordinateTransformGraph {
+Galactic [shape=oval label=&quot;Galactic\n`galactic`&quot;]; FK5 [shape=oval label=&quot;FK5\n`fk5`&quot;]; FK4NoETerms [shape=oval label=&quot;FK4NoETerms\n`fk4noeterms`&quot;]; ICRS [shape=oval label=&quot;ICRS\n`icrs`&quot;]; FK4 [shape=oval label=&quot;FK4\n`fk4`&quot;]; AltAz[ shape=oval ];
 Galactic -&gt; FK5[ label = &quot;1.0&quot; ];
 Galactic -&gt; FK4NoETerms[ label = &quot;1.0&quot; ];
-FK5 -&gt; ICRS[ label = &quot;1.0&quot; ];
 FK5 -&gt; Galactic[ label = &quot;1.0&quot; ];
 FK5 -&gt; FK5[ label = &quot;1.0&quot; ];
+FK5 -&gt; ICRS[ label = &quot;1.0&quot; ];
 FK5 -&gt; FK4NoETerms[ label = &quot;1.0&quot; ];
+ICRS -&gt; FK5[ label = &quot;1.0&quot; ];
 FK4NoETerms -&gt; Galactic[ label = &quot;1.0&quot; ];
-FK4NoETerms -&gt; FK5[ label = &quot;1.0&quot; ];
 FK4NoETerms -&gt; FK4[ label = &quot;1.0&quot; ];
 FK4NoETerms -&gt; FK4NoETerms[ label = &quot;1.0&quot; ];
-FK4 -&gt; FK4NoETerms[ label = &quot;1.0&quot; ];
+FK4NoETerms -&gt; FK5[ label = &quot;1.0&quot; ];
 FK4 -&gt; FK4[ label = &quot;1.0&quot; ];
+FK4 -&gt; FK4NoETerms[ label = &quot;1.0&quot; ];
 
 overlap=false
 }" />

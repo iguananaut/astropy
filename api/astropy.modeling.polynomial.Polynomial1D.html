@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Polynomial1D &mdash; Astropy v0.4rc3.dev9435</title>
+    <title>Polynomial1D &mdash; Astropy v0.4rc3.dev9437</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4rc3.dev9435',
+        VERSION:     '0.4rc3.dev9437',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="Astropy v0.4rc3.dev9435" href="../index.html" />
+    <link rel="top" title="Astropy v0.4rc3.dev9437" href="../index.html" />
     <link rel="up" title="Models and Fitting (astropy.modeling)" href="../modeling/index.html" />
     <link rel="next" title="Polynomial2D" href="astropy.modeling.polynomial.Polynomial2D.html" />
     <link rel="prev" title="Legendre2D" href="astropy.modeling.polynomial.Legendre2D.html" />
@@ -69,7 +69,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">Astropy v0.4rc3.dev9435</a>
+	<a href="../index.html">Astropy v0.4rc3.dev9437</a>
 	 &raquo;
       </li>
       <li><a href="../modeling/index.html" accesskey="U">Models and Fitting (<tt class="docutils literal"><span class="pre">astropy.modeling</span></tt>)</a> &raquo;</li>
@@ -88,7 +88,7 @@
 <h1>Polynomial1D<a class="headerlink" href="#polynomial1d" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="astropy.modeling.polynomial.Polynomial1D">
-<em class="property">class </em><tt class="descclassname">astropy.modeling.polynomial.</tt><tt class="descname">Polynomial1D</tt><big>(</big><em>degree, domain=[-1, 1], window=[-1, 1], n_models=None, model_set_axis=None, **params</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L523" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">astropy.modeling.polynomial.</tt><tt class="descname">Polynomial1D</tt><big>(</big><em>degree, domain=[-1, 1], window=[-1, 1], n_models=None, model_set_axis=None, **params</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L509" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="astropy.modeling.polynomial.PolynomialModel.html#astropy.modeling.polynomial.PolynomialModel" title="astropy.modeling.polynomial.PolynomialModel"><tt class="xref py py-class docutils literal"><span class="pre">astropy.modeling.polynomial.PolynomialModel</span></tt></a></p>
 <p>1D Polynomial model.</p>
 <table class="docutils field-list" frame="void" rules="none">
@@ -196,12 +196,12 @@ may be used.</p>
 <p class="rubric">Methods Documentation</p>
 <dl class="classmethod">
 <dt id="astropy.modeling.polynomial.Polynomial1D.evaluate">
-<em class="property">classmethod </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>*coeffs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L560" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.evaluate" title="Permalink to this definition">¶</a></dt>
+<em class="property">classmethod </em><tt class="descname">evaluate</tt><big>(</big><em>x</em>, <em>*coeffs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.evaluate"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L546" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="astropy.modeling.polynomial.Polynomial1D.fit_deriv">
-<tt class="descname">fit_deriv</tt><big>(</big><em>x</em>, <em>*params</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.fit_deriv"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L564" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.fit_deriv" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">fit_deriv</tt><big>(</big><em>x</em>, <em>*params</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.fit_deriv"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L550" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.fit_deriv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the Vandermonde matrix.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -229,12 +229,12 @@ may be used.</p>
 
 <dl class="staticmethod">
 <dt id="astropy.modeling.polynomial.Polynomial1D.horner">
-<em class="property">static </em><tt class="descname">horner</tt><big>(</big><em>x</em>, <em>coeffs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.horner"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L588" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.horner" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">horner</tt><big>(</big><em>x</em>, <em>coeffs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.horner"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L574" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.horner" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="astropy.modeling.polynomial.Polynomial1D.prepare_inputs">
-<tt class="descname">prepare_inputs</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.prepare_inputs"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L549" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.prepare_inputs" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">prepare_inputs</tt><big>(</big><em>x</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/astropy/modeling/polynomial.html#Polynomial1D.prepare_inputs"><span class="viewcode-link">[source]</span></a><a class="reference external" href="http://github.com/astropy/astropy/tree/master/astropy/modeling/polynomial.py#L535" title="Push the Edit button on the next page"><span class="edit-on-github viewcode-link">&nbsp;[edit on github]</span></a><a class="headerlink" href="#astropy.modeling.polynomial.Polynomial1D.prepare_inputs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>

@@ -31,7 +31,6 @@ Chebyshev1D
 
    .. autosummary::
    
-      ~Chebyshev1D.__call__
       ~Chebyshev1D.clenshaw
       ~Chebyshev1D.evaluate
       ~Chebyshev1D.fit_deriv
@@ -57,7 +56,6 @@ Chebyshev1D
    .. rubric:: Methods Documentation
 
    
-   .. automethod:: __call__
    .. automethod:: clenshaw
    .. automethod:: evaluate
    .. automethod:: fit_deriv
