@@ -202,6 +202,9 @@ Bug Fixes
 
 - ``astropy.io.fits``
 
+  - Fixed crash when reading gzip-compressed FITS tables through the Astropy
+    ``Table`` interface. [#2783]
+
 - ``astropy.io.misc``
 
   - Fixed a bug that prevented h5py ``Dataset`` objects from being
