@@ -56,6 +56,16 @@ class Projection(Model):
         """
 
 
+class Pix2SkyProjection(Projection):
+    inputs = ('x', 'y')
+    outputs = ('phi', 'theta')
+
+
+class Sky2PixProjection(Projection):
+    inputs = ('phi', 'theta')
+    outputs = ('x', 'y')
+
+
 class Zenithal(Projection):
     """
     Base class for all Zenithal projections.
@@ -63,7 +73,7 @@ class Zenithal(Projection):
     """
 
 
-class Pix2Sky_AZP(Zenithal):
+class Pix2Sky_AZP(Pix2SkyProjection, Zenithal):
     """
     AZP : Zenital perspective projection - pixel to sky.
 
@@ -133,7 +143,7 @@ class Pix2Sky_AZP(Zenithal):
         return np.sqrt(x ** 2 + y ** 2 * (np.cos(gamma)) ** 2)
 
 
-class Sky2Pix_AZP(Zenithal):
+class Sky2Pix_AZP(Sky2PixProjection, Zenithal):
     """
     AZP : Zenital perspective projection - sky to pixel.
 
@@ -188,7 +198,7 @@ class Sky2Pix_AZP(Zenithal):
                  np.cos(theta) * np.cos(phi) * np.tan(gamma)))
 
 
-class Pix2Sky_TAN(Zenithal):
+class Pix2Sky_TAN(Pix2SkyProjection, Zenithal):
     """
     TAN : Gnomonic projection - pixel to sky.
     """
@@ -210,7 +220,7 @@ class Pix2Sky_TAN(Zenithal):
         return np.sqrt(x ** 2 + y ** 2)
 
 
-class Sky2Pix_TAN(Zenithal):
+class Sky2Pix_TAN(Sky2PixProjection, Zenithal):
     """
     TAN : Gnomonic Projection - sky to pixel.
     """
@@ -239,7 +249,7 @@ class Sky2Pix_TAN(Zenithal):
         return 1 / np.tan(theta)
 
 
-class Pix2Sky_STG(Zenithal):
+class Pix2Sky_STG(Pix2SkyProjection, Zenithal):
     """
     STG : Stereographic Projection - pixel to sky.
     """
@@ -261,7 +271,7 @@ class Pix2Sky_STG(Zenithal):
         return np.sqrt(x ** 2 + y ** 2)
 
 
-class Sky2Pix_STG(Zenithal):
+class Sky2Pix_STG(Sky2PixProjection, Zenithal):
     """
     STG : Stereographic Projection - sky to pixel.
     """
@@ -290,7 +300,7 @@ class Sky2Pix_STG(Zenithal):
         return (cls.r0 * 2 * np.cos(theta)) / (1 + np.sin(theta))
 
 
-class Pix2Sky_SIN(Zenithal):
+class Pix2Sky_SIN(Pix2SkyProjection, Zenithal):
     """
     SIN : Slant orthographic projection - pixel to sky.
     """
@@ -312,7 +322,7 @@ class Pix2Sky_SIN(Zenithal):
         return np.sqrt(x ** 2 + y ** 2)
 
 
-class Sky2Pix_SIN(Zenithal):
+class Sky2Pix_SIN(Sky2PixProjection, Zenithal):
     """
     SIN : Slant othographic projection - sky to pixel.
     """
@@ -346,7 +356,7 @@ class Cylindrical(Projection):
     """
 
 
-class Pix2Sky_CYP(Cylindrical):
+class Pix2Sky_CYP(Pix2SkyProjection, Cylindrical):
     """
     CYP : Cylindrical perspective - pixel to sky.
     """
@@ -387,7 +397,7 @@ class Pix2Sky_CYP(Cylindrical):
         return phi, np.rad2deg(theta)
 
 
-class Sky2Pix_CYP(Cylindrical):
+class Sky2Pix_CYP(Sky2PixProjection, Cylindrical):
     """
     CYP : Cylindrical Perspective - sky to pixel.
     """
@@ -430,7 +440,7 @@ class Sky2Pix_CYP(Cylindrical):
             phi, theta, model_set_axis=model_set_axis)
 
 
-class Pix2Sky_CEA(Cylindrical):
+class Pix2Sky_CEA(Pix2SkyProjection, Cylindrical):
     """
     CEA : Cylindrical equal area projection - pixel to sky.
     """
@@ -452,7 +462,7 @@ class Pix2Sky_CEA(Cylindrical):
         return phi, theta
 
 
-class Sky2Pix_CEA(Cylindrical):
+class Sky2Pix_CEA(Sky2PixProjection, Cylindrical):
     """
     CEA: Cylindrical equal area projection - sky to pixel.
     """
@@ -479,7 +489,7 @@ class Sky2Pix_CEA(Cylindrical):
             phi, theta, model_set_axis=model_set_axis)
 
 
-class Pix2Sky_CAR(Cylindrical):
+class Pix2Sky_CAR(Pix2SkyProjection, Cylindrical):
     """
     CAR: Plate carree projection - pixel to sky.
     """
@@ -497,7 +507,7 @@ class Pix2Sky_CAR(Cylindrical):
         return phi, theta
 
 
-class Sky2Pix_CAR(Cylindrical):
+class Sky2Pix_CAR(Sky2PixProjection, Cylindrical):
     """
     CAR: Plate carree projection - sky to pixel.
     """
@@ -519,7 +529,7 @@ class Sky2Pix_CAR(Cylindrical):
             phi, theta, model_set_axis=model_set_axis)
 
 
-class Pix2Sky_MER(Cylindrical):
+class Pix2Sky_MER(Pix2SkyProjection, Cylindrical):
     """
     MER: Mercator - pixel to sky.
     """
@@ -536,7 +546,7 @@ class Pix2Sky_MER(Cylindrical):
         return phi, theta
 
 
-class Sky2Pix_MER(Cylindrical):
+class Sky2Pix_MER(Sky2PixProjection, Cylindrical):
     """
     MER: Mercator - sky to pixel.
     """
@@ -573,8 +583,9 @@ class AffineTransformation2D(Model):
         translation to apply to the inputs
     """
 
-    n_inputs = 2
-    n_outputs = 2
+    inputs = ('x', 'y')
+    outputs = ('x', 'y')
+
     standard_broadcasting = False
 
     matrix = Parameter(
