@@ -17,10 +17,10 @@ from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
 import abc
+import inspect
 import itertools
 import copy
 import functools
-import inspect
 import warnings
 
 import numpy as np
@@ -74,19 +74,6 @@ class _ModelMeta(abc.ABCMeta):
                     "them.")
             parameters[value.name] = value
 
-        # Determine in the names of the inputs to the __call__ method; this
-        # is a temporary hack to retain some basic functionality while I
-        # merge different branches
-        # TODO: Remove me once input/output names are fully integrated
-        call_method = members.get('__call__') or bases[0].__call__
-        n_inputs = members.get('n_inputs') or bases[0].n_inputs
-        if isinstance(n_inputs, int):
-            argspec = inspect.getargspec(call_method)
-            members['input_names'] = argspec.args[1:1 + n_inputs]
-        else:
-            # Hack doesn't work in this case; no matter for temporary purposes
-            members['input_names'] = []
-
         # If no parameters were defined get out early--this is especially
         # important for PolynomialModels which take a different approach to
         # parameters, since they can have a variable number of them
@@ -125,6 +112,14 @@ class _ModelMeta(abc.ABCMeta):
             members['eval'] = deprecate(members['evaluate'])
 
         return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+
+    @property
+    def n_inputs(cls):
+        return len(cls.inputs)
+
+    @property
+    def n_outputs(cls):
+        return len(cls.outputs)
 
 
 @six.add_metaclass(_ModelMeta)
@@ -225,8 +220,9 @@ class Model(object):
     some other property of the model, such as the degree.
     """
 
-    n_inputs = 1
-    n_outputs = 1
+    inputs = ('x',)
+    outputs = ('y',)
+
     standard_broadcasting = True
     fittable = False
     linear = True
@@ -262,6 +258,14 @@ class Model(object):
     @deprecated('0.4', alternative='len(model)')
     def param_dim(self):
         return self._n_models
+
+    @property
+    def n_inputs(self):
+        return len(self.inputs)
+
+    @property
+    def n_outputs(self):
+        return len(self.outputs)
 
     @property
     def model_set_axis(self):
@@ -415,7 +419,7 @@ class Model(object):
             # inputs
             return inputs, ()
 
-        _validate_input_shapes(inputs, self.input_names, n_models,
+        _validate_input_shapes(inputs, self.inputs, n_models,
                                model_set_axis, self.standard_broadcasting)
 
         # The input formatting required for single models versus a multiple
@@ -952,6 +956,22 @@ class _CompositeModel(Model):
             parts.append(indent(str(tr), width=4))
         return '\n'.join(parts)
 
+    @property
+    def n_inputs(self):
+        return self._n_inputs
+
+    @n_inputs.setter
+    def n_inputs(self, val):
+        self._n_inputs = val
+
+    @property
+    def n_outputs(self):
+        return self._n_outputs
+
+    @n_inputs.setter
+    def n_outputs(self, val):
+        self._n_outputs = val
+
     def add_model(self, transf, inmap, outmap):
         self[transf] = [inmap, outmap]
 
@@ -1228,8 +1248,8 @@ class Fittable2DModel(FittableModel):
     Examples can be found in `astropy.modeling.functional_models`.
     """
 
-    n_inputs = 2
-    n_outputs = 1
+    inputs = ('x', 'y')
+    outputs = ('z',)
 
     def __call__(self, x, y, model_set_axis=None):
         """
@@ -1414,7 +1434,7 @@ def _prepare_inputs_single_model(model, params, inputs, **kwargs):
                 raise ValueError(
                     "Model input argument {0!r} of shape {1!r} cannot be "
                     "broadcast with parameter {2!r} of shape "
-                    "{3!r}.".format(model.input_names[idx], input_shape,
+                    "{3!r}.".format(model.inputs[idx], input_shape,
                                     param.name, param.shape))
 
             if len(broadcast) > len(max_broadcast):
@@ -1473,7 +1493,7 @@ def _prepare_inputs_model_set(model, params, inputs, n_models, model_set_axis,
                 raise ValueError(
                     "Model input argument {0!r} of shape {1!r} cannot be "
                     "broadcast with parameter {2!r} of shape "
-                    "{3!r}.".format(model.input_names[idx], input_shape,
+                    "{3!r}.".format(model.inputs[idx], input_shape,
                                     param.name, param.shape))
 
             if len(param.shape) > len(max_param_shape):
