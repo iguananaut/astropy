@@ -121,9 +121,6 @@ class RotateNative2Celestial(EulerAngleRotation):
 
         return alpha_C, delta_C
 
-    def __call__(self, phi_N, theta_N):
-        return super(RotateNative2Celestial, self).__call__(phi_N, theta_N)
-
 
 class RotateCelestial2Native(EulerAngleRotation):
     """
@@ -173,9 +170,6 @@ class RotateCelestial2Native(EulerAngleRotation):
             phi_N -= 360
 
         return phi_N, theta_N
-
-    def __call__(self, alpha_C, delta_C):
-        return super(RotateCelestial2Native, self).__call__(alpha_C, delta_C)
 
 
 class Rotation2D(Model):

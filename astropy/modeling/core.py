@@ -55,6 +55,26 @@ class _ModelMeta(abc.ABCMeta):
     """
 
     def __new__(mcls, name, bases, members):
+        mcls._handle_parameters(members)
+        mcls._handle_backwards_compat(members, name)
+
+        cls = super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+
+        mcls._handle_special_methods(members, cls)
+
+        return cls
+
+    @property
+    def n_inputs(cls):
+        return len(cls.inputs)
+
+    @property
+    def n_outputs(cls):
+        return len(cls.outputs)
+
+    @classmethod
+    def _handle_parameters(mcls, members):
+        # Handle parameters
         param_names = members.get('param_names', [])
         parameters = {}
         for key, value in members.items():
@@ -74,11 +94,11 @@ class _ModelMeta(abc.ABCMeta):
                     "them.")
             parameters[value.name] = value
 
-        # If no parameters were defined get out early--this is especially
-        # important for PolynomialModels which take a different approach to
-        # parameters, since they can have a variable number of them
         if not parameters:
-            return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+            # If no parameters were defined get out early--this is especially
+            # important for PolynomialModels which take a different approach to
+            # parameters, since they can have a variable number of them
+            return
 
         # If param_names was declared explicitly we use only the parameters
         # listed manually in param_names, but still check that all listed
@@ -97,6 +117,8 @@ class _ModelMeta(abc.ABCMeta):
             members['_param_orders'] = \
                     dict((name, idx) for idx, name in enumerate(param_names))
 
+    @classmethod
+    def _handle_backwards_compat(mcls, members, name):
         # Backwards compatibility check for 'eval' -> 'evaluate'
         # TODO: Remove sometime after Astropy 1.0 release.
         if 'eval' in members and 'evaluate' not in members:
@@ -111,15 +133,20 @@ class _ModelMeta(abc.ABCMeta):
             deprecate = deprecated('1.0', alternative=alt, name='eval')
             members['eval'] = deprecate(members['evaluate'])
 
-        return super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
+    @classmethod
+    def _handle_special_methods(mcls, members, cls):
+        # Handle init creation from inputs
+        if '__call__' not in members and 'inputs' in members:
+            inputs = members['inputs']
+            # Done create a custom __call__ for classes that already have one
+            # explicitly defined (this includes the Model base class, and any
+            # other classes that manually override __call__
+            def __call__(self, *inputs, **kwargs):
+                return super(cls, self).__call__(*inputs, **kwargs)
 
-    @property
-    def n_inputs(cls):
-        return len(cls.inputs)
-
-    @property
-    def n_outputs(cls):
-        return len(cls.outputs)
+            args = ('self',) + inputs
+            cls.__call__ = make_func_with_sig(__call__, *args,
+                                              model_set_axis=None)
 
 
 @six.add_metaclass(_ModelMeta)
@@ -220,8 +247,8 @@ class Model(object):
     some other property of the model, such as the degree.
     """
 
-    inputs = ('x',)
-    outputs = ('y',)
+    inputs = ()
+    outputs = ()
 
     standard_broadcasting = True
     fittable = False
@@ -1219,25 +1246,8 @@ class Fittable1DModel(FittableModel):
     Examples can be found in `astropy.modeling.functional_models`.
     """
 
-    def __call__(self, x, model_set_axis=None):
-        """
-        Transforms data using this model.
-
-        Parameters
-        ----------
-        x : array-like or numeric value
-            Input coordinate values.
-
-        model_set_axis : `int` or `False`, optional
-            For `Model` instances representing a multiple-model set, this picks
-            out which axis of the input array is used to map inputs to specific
-            models in the set.  If `False`, this indicates that the input array
-            has no such axis, and instead the same input should be broadcast to
-            all models in the set.
-        """
-
-        return super(Fittable1DModel, self).__call__(
-            x, model_set_axis=model_set_axis)
+    inputs = ('x',)
+    outputs = ('y',)
 
 
 class Fittable2DModel(FittableModel):
@@ -1250,29 +1260,6 @@ class Fittable2DModel(FittableModel):
 
     inputs = ('x', 'y')
     outputs = ('z',)
-
-    def __call__(self, x, y, model_set_axis=None):
-        """
-        Transforms data using this model.
-
-        Parameters
-        ----------
-        x : array-like or numeric value
-            First input coordinate values.
-
-        y : array-like or numeric value
-            Second input coordinate values.
-
-        model_set_axis : `int` or `False`, optional
-            For `Model` instances representing a multiple-model set, this picks
-            out which axis of the input array is used to map inputs to specific
-            models in the set.  If `False`, this indicates that the input array
-            has no such axis, and instead the same input should be broadcast to
-            all models in the set.
-        """
-
-        return super(Fittable2DModel, self).__call__(
-            x, y, model_set_axis=model_set_axis)
 
 
 def custom_model(func, func_fit_deriv=None):
@@ -1371,6 +1358,12 @@ def custom_model(func, func_fit_deriv=None):
     else:
         input_names = argspec.args
 
+    # TODO: Maybe have a clever scheme for default output name?
+    if input_names:
+        output_names = (input_names[0],)
+    else:
+        output_names = ('x',)
+
     init_args = ['self']
     init_kwargs = []
     call_args = ['self'] + list(input_names)
@@ -1393,7 +1386,8 @@ def custom_model(func, func_fit_deriv=None):
     members = {
         '__module__': modname,
         '__doc__': func.__doc__,
-        'n_inputs': len(input_names),
+        'inputs': tuple(input_names),
+        'outputs': output_names,
         'evaluate': staticmethod(func),
     }
 
