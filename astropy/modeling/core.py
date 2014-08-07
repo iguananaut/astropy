@@ -55,12 +55,12 @@ class _ModelMeta(abc.ABCMeta):
     """
 
     def __new__(mcls, name, bases, members):
-        mcls._handle_parameters(members)
+        parameters = mcls._handle_parameters(members)
         mcls._handle_backwards_compat(members, name)
 
         cls = super(_ModelMeta, mcls).__new__(mcls, name, bases, members)
 
-        mcls._handle_special_methods(members, cls)
+        mcls._handle_special_methods(members, cls, parameters)
 
         return cls
 
@@ -75,7 +75,7 @@ class _ModelMeta(abc.ABCMeta):
     @classmethod
     def _handle_parameters(mcls, members):
         # Handle parameters
-        param_names = members.get('param_names', [])
+        param_names = members.get('param_names', ())
         parameters = {}
         for key, value in members.items():
             if not isinstance(value, Parameter):
@@ -98,7 +98,7 @@ class _ModelMeta(abc.ABCMeta):
             # If no parameters were defined get out early--this is especially
             # important for PolynomialModels which take a different approach to
             # parameters, since they can have a variable number of them
-            return
+            return parameters
 
         # If param_names was declared explicitly we use only the parameters
         # listed manually in param_names, but still check that all listed
@@ -110,12 +110,14 @@ class _ModelMeta(abc.ABCMeta):
                         "Parameter {0!r} listed in {1}.param_names was not "
                         "declared in the class body.".format(param_name, name))
         else:
-            param_names = [param.name for param in
-                           sorted(parameters.values(),
-                                  key=lambda p: p._order)]
+            param_names = tuple(param.name for param in
+                                sorted(parameters.values(),
+                                       key=lambda p: p._order))
             members['param_names'] = param_names
             members['_param_orders'] = \
                     dict((name, idx) for idx, name in enumerate(param_names))
+
+        return parameters
 
     @classmethod
     def _handle_backwards_compat(mcls, members, name):
@@ -134,7 +136,7 @@ class _ModelMeta(abc.ABCMeta):
             members['eval'] = deprecate(members['evaluate'])
 
     @classmethod
-    def _handle_special_methods(mcls, members, cls):
+    def _handle_special_methods(mcls, members, cls, parameters):
         # Handle init creation from inputs
         if '__call__' not in members and 'inputs' in members:
             inputs = members['inputs']
@@ -145,8 +147,27 @@ class _ModelMeta(abc.ABCMeta):
                 return super(cls, self).__call__(*inputs, **kwargs)
 
             args = ('self',) + inputs
-            cls.__call__ = make_func_with_sig(__call__, *args,
-                                              model_set_axis=None)
+            cls.__call__ = make_func_with_sig(__call__, args,
+                                              [('model_set_axis', None)])
+
+        if '__init__' not in members and parameters:
+            # If *all* the parameters have default values we can make them
+            # keyword arguments; otherwise they must all be positional
+            # arguments
+            if all(p.default is not None
+                   for p in six.itervalues(parameters)):
+                args = ('self',)
+                kwargs = [(name, parameters[name].default)
+                          for name in cls.param_names]
+            else:
+                args = ('self',) + cls.param_names
+                kwargs = {}
+
+            def __init__(self, *params, **kwargs):
+                return super(cls, self).__init__(*params, **kwargs)
+
+            cls.__init__ = make_func_with_sig(__init__, args, kwargs,
+                                              varkwargs='kwargs')
 
 
 @six.add_metaclass(_ModelMeta)
@@ -234,14 +255,14 @@ class Model(object):
     True
     """
 
-    parameter_constraints = ['fixed', 'tied', 'bounds']
-    model_constraints = ['eqcons', 'ineqcons']
+    parameter_constraints = ('fixed', 'tied', 'bounds')
+    model_constraints = ('eqcons', 'ineqcons')
 
-    param_names = []
+    param_names = ()
     """
-    List of names of the parameters that describe models of this type.
+    Names of the parameters that describe models of this type.
 
-    The parameters in this list are in the same order they should be passed in
+    The parameters in this tuple are in the same order they should be passed in
     when initializing a model of a specific type.  Some types of models, such
     as polynomial models, have a different number of parameters depending on
     some other property of the model, such as the degree.
@@ -1404,8 +1425,8 @@ def custom_model(func, func_fit_deriv=None):
     def __call__(self, *args, **kwargs):
         return super(cls, self).__call__(*args, **kwargs)
 
-    cls.__init__ = make_func_with_sig(__init__, *(init_args + init_kwargs))
-    cls.__call__ = make_func_with_sig(__call__, *call_args)
+    cls.__init__ = make_func_with_sig(__init__, init_args, init_kwargs)
+    cls.__call__ = make_func_with_sig(__call__, call_args)
 
     return cls
 

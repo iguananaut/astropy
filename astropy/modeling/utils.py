@@ -84,7 +84,8 @@ the ASCII range and not beginning with '_' are allowed, currently.
 """
 
 
-def make_func_with_sig(func, *args, **kwargs):
+def make_func_with_sig(func, args=(), kwargs={}, varargs=None,
+                       varkwargs=None):
     """
     Make a new function from an existing function but with the desired
     signature.
@@ -92,14 +93,14 @@ def make_func_with_sig(func, *args, **kwargs):
     The desired signature must of course be compatible with the arguments
     actually accepted by the input function.
 
-    The ``*args`` are strings that should be the names of the positional
-    arguments.  ``**kwargs`` can map names of keyword arguments to their
-    default values.
+    The ``args`` are strings that should be the names of the positional
+    arguments.  ``kwargs`` can map names of keyword arguments to their
+    default values.  It may be either a ``dict`` or a list of ``(keyword,
+    default)`` tuples.
 
-    Alternatively, ``*args`` may be a list of zero or more strings *followed*
-    by 2-tuples of ``(keyword, value)`` pairs representing the keyword
-    arguments and their default values.  This ensures the order of keyword
-    arguments in the signature.
+    If ``varargs`` is a string it is added to the positional arguments as
+    ``*<varargs>``.  Likewise ``varkwargs`` can be the name for a variable
+    keyword argument placeholder like ``**<varkwargs>``.
 
     Note, the names may only be valid Python variable names.
     """
@@ -107,8 +108,19 @@ def make_func_with_sig(func, *args, **kwargs):
     pos_args = []
     key_args = []
 
+    if varargs and kwargs:
+        # Technically this would work on Python 3, but since it doesn't work
+        # on Python 2 we just disallow it entirely
+        raise SyntaxError('keyword arguments not allowed after '
+                          '*{0}'.format(varargs))
+
+    if isinstance(kwargs, dict):
+        iter_kwargs = iteritems(kwargs)
+    else:
+        iter_kwargs = iter(kwargs)
+
     # Check that all the argument names are valid
-    for item in itertools.chain(args, iteritems(kwargs)):
+    for item in itertools.chain(args, iter_kwargs):
         if isinstance(item, tuple):
             argname = item[0]
             key_args.append(item)
@@ -119,7 +131,16 @@ def make_func_with_sig(func, *args, **kwargs):
         if keyword.iskeyword(argname) or not _ARGNAME_RE.match(argname):
             raise SyntaxError('invalid argument name: {0}'.format(argname))
 
+    for item in (varargs, varkwargs):
+        if item is not None:
+            if keyword.iskeyword(item) or not _ARGNAME_RE.match(item):
+                raise SyntaxError('invalid argument name: {0}'.format(item))
+
     def_signature = [', '.join(pos_args)]
+
+    if varargs:
+        def_signature.append(', *{0}'.format(varags))
+
     call_signature = def_signature[:]
 
     name = func.__name__
@@ -134,8 +155,13 @@ def make_func_with_sig(func, *args, **kwargs):
         def_signature.append(', {0}={1}'.format(key, default_var))
         call_signature.append(', {0}={0}'.format(key))
 
+    if varkwargs:
+        def_signature.append(', **{0}'.format(varkwargs))
+        call_signature.append(', **{0}'.format(varkwargs))
+
     def_signature = ''.join(def_signature).lstrip(', ')
     call_signature = ''.join(call_signature).lstrip(', ')
+
     # The lstrip is in case there were *no* positional arguments (a rare case)
     # in any context this will actually be used...
     template = textwrap.dedent("""\
