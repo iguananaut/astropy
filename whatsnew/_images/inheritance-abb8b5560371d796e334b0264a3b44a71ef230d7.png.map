@@ -1,0 +1,29 @@
+<map id="inheritance4f082ddd10" name="inheritance4f082ddd10">
+<area shape="rect" id="node1" href="../api/astropy.time.OperandTypeError.html#astropy.time.OperandTypeError" title="OperandTypeError" alt="" coords="5,480,111,501"/>
+<area shape="rect" id="node2" href="../api/astropy.time.ScaleValueError.html#astropy.time.ScaleValueError" title="ScaleValueError" alt="" coords="11,442,105,463"/>
+<area shape="rect" id="node3" href="../api/astropy.time.Time.html#astropy.time.Time" title="Represent and manipulate times and dates for astronomy." alt="" coords="31,404,85,425"/>
+<area shape="rect" id="node16" href="../api/astropy.time.TimeDelta.html#astropy.time.TimeDelta" title="Represent the time difference between two times." alt="" coords="167,404,238,425"/>
+<area shape="rect" id="node4" href="../api/astropy.time.TimeBesselianEpoch.html#astropy.time.TimeBesselianEpoch" title="Besselian Epoch year as floating point value(s) like 1950.0" alt="" coords="293,4,413,25"/>
+<area shape="rect" id="node5" href="../api/astropy.time.TimeEpochDate.html#astropy.time.TimeEpochDate" title="Base class for support floating point Besselian and Julian epoch dates" alt="" coords="153,42,252,63"/>
+<area shape="rect" id="node37" href="../api/astropy.time.TimeJulianEpoch.html#astropy.time.TimeJulianEpoch" title="Julian Epoch year as floating point value(s) like 2000.0" alt="" coords="304,42,402,63"/>
+<area shape="rect" id="node7" href="../api/astropy.time.TimeBesselianEpochString.html#astropy.time.TimeBesselianEpochString" title="Besselian Epoch year as string value(s) like &#39;B1950.0&#39;" alt="" coords="615,194,763,215"/>
+<area shape="rect" id="node8" href="../api/astropy.time.TimeEpochDateString.html#astropy.time.TimeEpochDateString" title="Base class to support string Besselian and Julian epoch dates" alt="" coords="449,213,578,234"/>
+<area shape="rect" id="node39" href="../api/astropy.time.TimeJulianEpochString.html#astropy.time.TimeJulianEpochString" title="Julian Epoch year as string value(s) like &#39;J2000.0&#39;" alt="" coords="626,232,752,253"/>
+<area shape="rect" id="node10" href="../api/astropy.time.TimeCxcSec.html#astropy.time.TimeCxcSec" title="Chandra X&#45;ray Center seconds from 1998&#45;01&#45;01 00:00:00 TT." alt="" coords="313,80,393,101"/>
+<area shape="rect" id="node11" href="../api/astropy.time.TimeFromEpoch.html#astropy.time.TimeFromEpoch" title="Base class for times that represent the interval from a particular" alt="" coords="154,156,251,177"/>
+<area shape="rect" id="node29" href="../api/astropy.time.TimeGPS.html#astropy.time.TimeGPS" title="GPS time: seconds from 1980&#45;01&#45;06 00:00:00 UTC" alt="" coords="322,118,384,139"/>
+<area shape="rect" id="node43" href="../api/astropy.time.TimePlotDate.html#astropy.time.TimePlotDate" title="Matplotlib `~matplotlib.pyplot.plot_date` input:" alt="" coords="309,156,397,177"/>
+<area shape="rect" id="node47" href="../api/astropy.time.TimeUnix.html#astropy.time.TimeUnix" title="Unix time: seconds from 1970&#45;01&#45;01 00:00:00 UTC." alt="" coords="322,194,384,215"/>
+<area shape="rect" id="node13" href="../api/astropy.time.TimeDatetime.html#astropy.time.TimeDatetime" title="Represent date as Python standard library `~datetime.datetime` object" alt="" coords="307,232,399,253"/>
+<area shape="rect" id="node14" title="Base class for time formats that can uniquely create a time object" alt="" coords="165,251,240,272"/>
+<area shape="rect" id="node26" href="../api/astropy.time.TimeString.html#astropy.time.TimeString" title="Base class for string&#45;like time represetations." alt="" coords="318,270,388,291"/>
+<area shape="rect" id="node18" href="../api/astropy.time.TimeDeltaFormat.html#astropy.time.TimeDeltaFormat" title="Base class for time delta representations" alt="" coords="149,289,256,310"/>
+<area shape="rect" id="node21" href="../api/astropy.time.TimeDeltaJD.html#astropy.time.TimeDeltaJD" title="Time delta in Julian days (86400 SI seconds)" alt="" coords="313,308,393,329"/>
+<area shape="rect" id="node23" href="../api/astropy.time.TimeDeltaSec.html#astropy.time.TimeDeltaSec" title="Time delta in SI seconds" alt="" coords="309,346,397,367"/>
+<area shape="rect" id="node19" href="../api/astropy.time.TimeFormat.html#astropy.time.TimeFormat" title="Base class for time representations." alt="" coords="19,270,97,291"/>
+<area shape="rect" id="node35" href="../api/astropy.time.TimeJD.html#astropy.time.TimeJD" title="Julian Date time format." alt="" coords="175,327,230,348"/>
+<area shape="rect" id="node41" href="../api/astropy.time.TimeMJD.html#astropy.time.TimeMJD" title="Modified Julian Date time format." alt="" coords="171,365,234,387"/>
+<area shape="rect" id="node31" href="../api/astropy.time.TimeISO.html#astropy.time.TimeISO" title="ISO 8601 compliant date&#45;time format &quot;YYYY&#45;MM&#45;DD HH:MM:SS.sss...&quot;." alt="" coords="484,251,542,272"/>
+<area shape="rect" id="node33" href="../api/astropy.time.TimeISOT.html#astropy.time.TimeISOT" title="ISO 8601 compliant date&#45;time format &quot;YYYY&#45;MM&#45;DDTHH:MM:SS.sss...&quot;." alt="" coords="481,289,545,310"/>
+<area shape="rect" id="node49" href="../api/astropy.time.TimeYearDayTime.html#astropy.time.TimeYearDayTime" title="Year, day&#45;of&#45;year and time as &quot;YYYY:DOY:HH:MM:SS.sss...&quot;." alt="" coords="460,327,566,348"/>
+</map>

@@ -1,0 +1,46 @@
+
+
+OGIP
+=========================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: OGIP
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~OGIP.parse
+      ~OGIP.to_string
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: parse
+   .. automethod:: to_string
+
+   
+   

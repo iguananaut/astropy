@@ -1,0 +1,10 @@
+
+.. include:: ../wcs/references.txt
+
+
+InconsistentAxisTypesError
+======================================
+
+.. currentmodule:: astropy.wcs
+
+.. autoexception:: InconsistentAxisTypesError

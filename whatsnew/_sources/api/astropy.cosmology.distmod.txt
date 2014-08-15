@@ -1,0 +1,8 @@
+
+
+distmod
+=========================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: distmod

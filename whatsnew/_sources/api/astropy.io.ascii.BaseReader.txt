@@ -1,0 +1,73 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+BaseReader
+===========================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autoclass:: BaseReader
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~BaseReader.comment_lines
+      ~BaseReader.exclude_names
+      ~BaseReader.include_names
+      ~BaseReader.names
+      ~BaseReader.strict_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~BaseReader.inconsistent_handler
+      ~BaseReader.read
+      ~BaseReader.write
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: comment_lines
+   .. autoattribute:: exclude_names
+   .. autoattribute:: include_names
+   .. autoattribute:: names
+   .. autoattribute:: strict_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: inconsistent_handler
+   .. automethod:: read
+   .. automethod:: write
+
+   
+   

@@ -1,0 +1,8 @@
+
+
+logarithmic
+=========================
+
+.. currentmodule:: astropy.units
+
+.. autofunction:: logarithmic

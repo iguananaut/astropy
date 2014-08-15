@@ -1,0 +1,69 @@
+
+
+StdDevUncertainty
+================================
+
+.. currentmodule:: astropy.nddata
+
+.. autoclass:: StdDevUncertainty
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~StdDevUncertainty.array
+      ~StdDevUncertainty.parent_nddata
+      ~StdDevUncertainty.support_correlated
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~StdDevUncertainty.propagate_add
+      ~StdDevUncertainty.propagate_divide
+      ~StdDevUncertainty.propagate_multiply
+      ~StdDevUncertainty.propagate_subtract
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: array
+   .. autoattribute:: parent_nddata
+   .. autoattribute:: support_correlated
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: propagate_add
+   .. automethod:: propagate_divide
+   .. automethod:: propagate_multiply
+   .. automethod:: propagate_subtract
+
+   
+   

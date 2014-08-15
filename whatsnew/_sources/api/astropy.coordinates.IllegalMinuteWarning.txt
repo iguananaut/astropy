@@ -1,0 +1,10 @@
+
+.. include:: ../coordinates/references.txt
+
+
+IllegalMinuteWarning
+========================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoexception:: IllegalMinuteWarning

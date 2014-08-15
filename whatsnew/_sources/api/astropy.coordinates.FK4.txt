@@ -1,0 +1,52 @@
+
+.. include:: ../coordinates/references.txt
+
+
+FK4
+=======================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: FK4
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~FK4.default_representation
+      ~FK4.equinox
+      ~FK4.frame_specific_representation_info
+      ~FK4.name
+      ~FK4.obstime
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: default_representation
+   .. autoattribute:: equinox
+   .. autoattribute:: frame_specific_representation_info
+   .. autoattribute:: name
+   .. autoattribute:: obstime
+
+   
+   
+
+   
+   
+   

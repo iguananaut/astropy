@@ -1,0 +1,54 @@
+
+.. include:: ../time/references.txt
+
+
+TimeGPS
+====================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeGPS
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeGPS.epoch_format
+      ~TimeGPS.epoch_scale
+      ~TimeGPS.epoch_val
+      ~TimeGPS.epoch_val2
+      ~TimeGPS.name
+      ~TimeGPS.unit
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: epoch_format
+   .. autoattribute:: epoch_scale
+   .. autoattribute:: epoch_val
+   .. autoattribute:: epoch_val2
+   .. autoattribute:: name
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+   

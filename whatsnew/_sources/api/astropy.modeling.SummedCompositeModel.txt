@@ -1,0 +1,59 @@
+
+
+SummedCompositeModel
+=====================================
+
+.. currentmodule:: astropy.modeling
+
+.. autoclass:: SummedCompositeModel
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~SummedCompositeModel.input_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~SummedCompositeModel.__call__
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: input_names
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: __call__
+
+   
+   

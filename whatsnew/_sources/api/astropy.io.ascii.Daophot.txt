@@ -1,0 +1,46 @@
+
+.. include:: ../io/ascii/references.txt
+
+
+Daophot
+========================
+
+.. currentmodule:: astropy.io.ascii
+
+.. autoclass:: Daophot
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Daophot.write
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: write
+
+   
+   

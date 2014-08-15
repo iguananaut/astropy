@@ -1,0 +1,58 @@
+
+.. include:: ../table/references.txt
+
+
+Row
+=================
+
+.. currentmodule:: astropy.table
+
+.. autoclass:: Row
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Row.colnames
+      ~Row.columns
+      ~Row.data
+      ~Row.dtype
+      ~Row.index
+      ~Row.meta
+      ~Row.table
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: colnames
+   .. autoattribute:: columns
+   .. autoattribute:: data
+   .. autoattribute:: dtype
+   .. autoattribute:: index
+   .. autoattribute:: meta
+   .. autoattribute:: table
+
+   
+   
+
+   
+   
+   

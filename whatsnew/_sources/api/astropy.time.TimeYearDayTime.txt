@@ -1,0 +1,46 @@
+
+.. include:: ../time/references.txt
+
+
+TimeYearDayTime
+============================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeYearDayTime
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeYearDayTime.name
+      ~TimeYearDayTime.subfmts
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: name
+   .. autoattribute:: subfmts
+
+   
+   
+
+   
+   
+   

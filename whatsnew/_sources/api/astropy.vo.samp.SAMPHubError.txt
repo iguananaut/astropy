@@ -1,0 +1,10 @@
+
+.. include:: ../vo/samp/references.txt
+
+
+SAMPHubError
+============================
+
+.. currentmodule:: astropy.vo.samp
+
+.. autoexception:: SAMPHubError

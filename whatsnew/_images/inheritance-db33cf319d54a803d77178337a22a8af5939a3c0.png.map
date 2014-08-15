@@ -1,0 +1,5 @@
+<map id="inheritancee60c3de4ec" name="inheritancee60c3de4ec">
+<area shape="rect" id="node1" href="../api/astropy.modeling.optimizers.Optimization.html#astropy.modeling.optimizers.Optimization" title="Base class for optimizers." alt="" coords="5,30,115,58"/>
+<area shape="rect" id="node2" href="../api/astropy.modeling.optimizers.SLSQP.html#astropy.modeling.optimizers.SLSQP" title="Sequential Least Squares Programming optimization algorithm." alt="" coords="164,5,236,33"/>
+<area shape="rect" id="node4" href="../api/astropy.modeling.optimizers.Simplex.html#astropy.modeling.optimizers.Simplex" title="Neald&#45;Mead (downhill simplex) algorithm [1]." alt="" coords="163,55,237,83"/>
+</map>

@@ -1,0 +1,8 @@
+
+
+predict_search
+===========================================
+
+.. currentmodule:: astropy.vo.client.conesearch
+
+.. autofunction:: predict_search

@@ -1,0 +1,46 @@
+
+.. include:: ../time/references.txt
+
+
+TimeDeltaSec
+=========================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeDeltaSec
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeDeltaSec.name
+      ~TimeDeltaSec.unit
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: name
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,54 @@
+
+.. include:: ../time/references.txt
+
+
+TimeUnix
+=====================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeUnix
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeUnix.epoch_format
+      ~TimeUnix.epoch_scale
+      ~TimeUnix.epoch_val
+      ~TimeUnix.epoch_val2
+      ~TimeUnix.name
+      ~TimeUnix.unit
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: epoch_format
+   .. autoattribute:: epoch_scale
+   .. autoattribute:: epoch_val
+   .. autoattribute:: epoch_val2
+   .. autoattribute:: name
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+   

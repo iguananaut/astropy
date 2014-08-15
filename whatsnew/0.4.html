@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>What’s New in Astropy 0.4? &mdash; Astropy v0.4rc3.dev9437</title>
+    <title>What’s New in Astropy 0.4? &mdash; Astropy v1.0.dev9586</title>
     
     <link rel="stylesheet" href="../_static/bootstrap-astropy.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.4rc3.dev9437',
+        VERSION:     '1.0.dev9586',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -25,7 +25,7 @@
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <script type="text/javascript" src="../_static/sidebar.js"></script>
     <link rel="shortcut icon" href="../_static/astropy_logo.ico"/>
-    <link rel="top" title="Astropy v0.4rc3.dev9437" href="../index.html" />
+    <link rel="top" title="Astropy v1.0.dev9586" href="../index.html" />
     <link rel="up" title="Major Release History" href="index.html" />
     <link rel="next" title="What’s New in Astropy 0.3?" href="0.3.html" />
     <link rel="prev" title="Major Release History" href="index.html" />
@@ -69,7 +69,7 @@
 	 |
       </li>
       <li>
-	<a href="../index.html">Astropy v0.4rc3.dev9437</a>
+	<a href="../index.html">Astropy v1.0.dev9586</a>
 	 &raquo;
       </li>
       <li><a href="index.html" accesskey="U">Major Release History</a> &raquo;</li>
@@ -90,13 +90,15 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>Astropy 0.4 is a major release that adds new functionality since the
 0.3.x series of releases. A new sub-package is included (see <a class="reference internal" href="#samp">SAMP</a>),
+a major overhaul of the <a class="reference internal" href="../coordinates/index.html#astropy-coordinates"><em>Coordinates</em></a>
+sub-package has been completed (see <a class="reference internal" href="#coordinates">Coordinates</a>),
 and many new features and improvements have been implemented for the
 existing sub-packages. In addition to usability improvements, we have
 made a number of changes in the infrastructure for setting up/installing
 the package (see <a class="reference internal" href="#astropy-helpers-package">astropy-helpers package</a>), as well as reworking the
 configuration system (see <a class="reference internal" href="#configuration">Configuration</a>).</p>
 <p>In addition to these major changes, a large number of smaller
-improvements have occurred.  Since v0.3, By the numbers:</p>
+improvements have occurred.  Since v0.3, by the numbers:</p>
 <ul class="simple">
 <li>819 issues have been closed</li>
 <li>511 pull requests have been merged</li>
@@ -156,7 +158,7 @@ package</a>) that contains an
 implementation of the <a class="reference external" href="http://www.ivoa.net/documents/SAMP/">Simple Application Messaging Protocol (SAMP)</a> standard that allows communication
 with any SAMP-enabled application (such as <a class="reference external" href="http://www.star.bris.ac.uk/~mbt/topcat/">TOPCAT</a>, <a class="reference external" href="http://hea-www.harvard.edu/RD/ds9">SAO Ds9</a>, and <a class="reference external" href="http://aladin.u-strasbg.fr">Aladin</a>). This sub-package includes both classes for a
 hub and a client, as well as an <em>integrated client</em> which automatically
-starts up a hub and acts as a client:</p>
+connects to any running SAMP hub and acts as a client:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">astropy.vo.samp</span> <span class="kn">import</span> <span class="n">SAMPIntegratedClient</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span> <span class="o">=</span> <span class="n">SAMPIntegratedClient</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">client</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
@@ -196,6 +198,14 @@ inspecting the header(s) of a FITS file. With Astropy 0.4 installed, run
 <tt class="docutils literal"><span class="pre">fitsheader</span> <span class="pre">file.fits</span></tt> in your terminal to print the header information to
 the screen in a human-readable format. Run <tt class="docutils literal"><span class="pre">fitsheader</span> <span class="pre">--help</span></tt> to see the
 full usage documentation.</p>
+</div>
+<div class="section" id="reading-and-writing-html-tables">
+<h2>Reading and writing HTML tables<a class="headerlink" href="#reading-and-writing-html-tables" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference internal" href="../io/ascii/index.html#io-ascii"><em>ASCII Tables (astropy.io.ascii)</em></a> sub-package now provides the capability to read a table
+within an HTML file or web URL into an astropy <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> object.
+This requires the <a class="reference external" href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup4</a> package to be installed.
+Conversely a <a class="reference internal" href="../api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><tt class="xref py py-obj docutils literal"><span class="pre">Table</span></tt></a> object can now be written out as an HTML
+table.</p>
 </div>
 <div class="section" id="documentation-url-changes">
 <h2>Documentation URL changes<a class="headerlink" href="#documentation-url-changes" title="Permalink to this headline">¶</a></h2>
@@ -239,10 +249,10 @@ to the new mechanism.</p>
 <ul class="simple">
 <li><tt class="docutils literal"><span class="pre">Quantity</span></tt> comparisons with <tt class="docutils literal"><span class="pre">==</span></tt> or <tt class="docutils literal"><span class="pre">!=</span></tt> now always return <tt class="docutils literal"><span class="pre">True</span></tt>
 or <tt class="docutils literal"><span class="pre">False</span></tt>, even if units do not match (for which case a <tt class="docutils literal"><span class="pre">UnitsError</span></tt>
-used to be raised).  [#2328]</li>
+used to be raised).  [<a class="reference external" href="https://github.com/astropy/astropy/issues/2328">#2328</a>]</li>
 <li>The functional interface for <a class="reference internal" href="../cosmology/index.html#module-astropy.cosmology" title="astropy.cosmology"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.cosmology</span></tt></a> (e.g.
 <tt class="docutils literal"><span class="pre">cosmology.H(z=0.5)</span></tt> is now deprecated in favor of the
-objected-oriented approach (<tt class="docutils literal"><span class="pre">WMAP9.H(z=0.5)</span></tt>). [#2343]</li>
+objected-oriented approach (<tt class="docutils literal"><span class="pre">WMAP9.H(z=0.5)</span></tt>). [<a class="reference external" href="https://github.com/astropy/astropy/issues/2343">#2343</a>]</li>
 <li>The <a class="reference internal" href="../coordinates/index.html#module-astropy.coordinates" title="astropy.coordinates"><tt class="xref py py-obj docutils literal"><span class="pre">astropy.coordinates</span></tt></a> sub-package has undergone major changes for
 implementing the
 <a class="reference external" href="https://github.com/astropy/astropy-APEs/blob/master/APE5.rst">APE5</a> plan
@@ -253,7 +263,7 @@ package should be adapted to the new framework.  Additionally, the
 compatibility layer cannot be used for convenience functions (like the
 <tt class="docutils literal"><span class="pre">match_catalog_*()</span></tt> functions), as these have been moved to
 <a class="reference internal" href="../api/astropy.coordinates.SkyCoord.html#astropy.coordinates.SkyCoord" title="astropy.coordinates.SkyCoord"><tt class="xref py py-obj docutils literal"><span class="pre">SkyCoord</span></tt></a>. From this point on, major changes to the
-coordinates classes are not expected.  [#2422]</li>
+coordinates classes are not expected.  [<a class="reference external" href="https://github.com/astropy/astropy/issues/2422">#2422</a>]</li>
 <li>The configuration framework has been re-designed to the scheme of
 <a class="reference external" href="https://github.com/astropy/astropy-APEs/blob/master/APE3.rst">APE3</a>.
 The previous framework based on <a class="reference internal" href="../api/astropy.config.ConfigurationItem.html#astropy.config.ConfigurationItem" title="astropy.config.ConfigurationItem"><tt class="xref py py-obj docutils literal"><span class="pre">ConfigurationItem</span></tt></a> is
@@ -263,6 +273,11 @@ who have customized their configuration file should migrate to the new
 configuration approach.  Until they do, warnings will appear prompting
 them to do so.</li>
 </ul>
+</div>
+<div class="section" id="full-change-log">
+<h2>Full change log<a class="headerlink" href="#full-change-log" title="Permalink to this headline">¶</a></h2>
+<p>To see a detailed list of all changes in version 0.4 and prior, please see the
+<a class="reference internal" href="../changelog.html#changelog"><em>Full Changelog</em></a>.</p>
 </div>
 <div class="section" id="note-on-future-versions">
 <h2>Note on future versions<a class="headerlink" href="#note-on-future-versions" title="Permalink to this headline">¶</a></h2>
@@ -284,10 +299,12 @@ release (1.0) will drop support for Python 3.1 and 3.2.</p>
 <li><a class="reference internal" href="#samp">SAMP</a></li>
 <li><a class="reference internal" href="#quantity">Quantity</a></li>
 <li><a class="reference internal" href="#inspecting-fits-headers-from-the-command-line">Inspecting FITS headers from the command line</a></li>
+<li><a class="reference internal" href="#reading-and-writing-html-tables">Reading and writing HTML tables</a></li>
 <li><a class="reference internal" href="#documentation-url-changes">Documentation URL changes</a></li>
 <li><a class="reference internal" href="#astropy-helpers-package">astropy-helpers package</a></li>
 <li><a class="reference internal" href="#configuration">Configuration</a></li>
 <li><a class="reference internal" href="#deprecation-and-backward-incompatible-changes">Deprecation and backward-incompatible changes</a></li>
+<li><a class="reference internal" href="#full-change-log">Full change log</a></li>
 <li><a class="reference internal" href="#note-on-future-versions">Note on future versions</a></li>
 </ul>
 </li>
@@ -307,7 +324,7 @@ release (1.0) will drop support for Python 3.1 and 3.2.</p>
   <p>
     &copy; Copyright 2011-2014, The Astropy Developers.<br/>
     Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2. &nbsp;
-    Last built 29 Jul 2014. <br/>
+    Last built 15 Aug 2014. <br/>
   </p>
 </footer>
   </body>

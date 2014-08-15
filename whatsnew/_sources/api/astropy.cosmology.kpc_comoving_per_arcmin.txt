@@ -1,0 +1,8 @@
+
+
+kpc_comoving_per_arcmin
+=========================================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: kpc_comoving_per_arcmin

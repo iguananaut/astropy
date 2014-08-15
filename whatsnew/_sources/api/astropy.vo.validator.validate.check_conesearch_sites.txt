@@ -1,0 +1,8 @@
+
+
+check_conesearch_sites
+====================================================
+
+.. currentmodule:: astropy.vo.validator.validate
+
+.. autofunction:: check_conesearch_sites

@@ -1,0 +1,59 @@
+
+.. include:: ../time/references.txt
+
+
+TimeDeltaFormat
+============================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeDeltaFormat
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeDeltaFormat.value
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~TimeDeltaFormat.set_jds
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: value
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: set_jds
+
+   
+   

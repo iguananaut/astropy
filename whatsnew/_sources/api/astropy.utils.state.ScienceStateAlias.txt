@@ -1,0 +1,8 @@
+
+
+state.ScienceStateAlias
+=====================================
+
+.. currentmodule:: astropy.utils
+
+.. autoattribute:: state.ScienceStateAlias

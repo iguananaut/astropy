@@ -1,0 +1,9 @@
+<map id="inheritance8c2e51a893" name="inheritance8c2e51a893">
+<area shape="rect" id="node1" href="../../api/astropy.vo.client.exceptions.BaseVOError.html#astropy.vo.client.exceptions.BaseVOError" title="Base class for VO exceptions." alt="" coords="7,55,113,83"/>
+<area shape="rect" id="node2" href="../../api/astropy.vo.client.exceptions.ConeSearchError.html#astropy.vo.client.exceptions.ConeSearchError" title="General Cone Search exception." alt="" coords="164,30,297,58"/>
+<area shape="rect" id="node5" href="../../api/astropy.vo.client.exceptions.VOSError.html#astropy.vo.client.exceptions.VOSError" title="General VO service exception." alt="" coords="189,81,272,109"/>
+<area shape="rect" id="node4" href="../../api/astropy.vo.client.exceptions.DuplicateCatalogName.html#astropy.vo.client.exceptions.DuplicateCatalogName" title="VO catalog of the same title already exists." alt="" coords="347,5,525,33"/>
+<area shape="rect" id="node7" href="../../api/astropy.vo.client.exceptions.DuplicateCatalogURL.html#astropy.vo.client.exceptions.DuplicateCatalogURL" title="VO catalog of the same access URL already exists." alt="" coords="353,55,519,83"/>
+<area shape="rect" id="node9" href="../../api/astropy.vo.client.exceptions.InvalidAccessURL.html#astropy.vo.client.exceptions.InvalidAccessURL" title="Invalid access URL." alt="" coords="367,106,505,134"/>
+<area shape="rect" id="node11" href="../../api/astropy.vo.client.exceptions.MissingCatalog.html#astropy.vo.client.exceptions.MissingCatalog" title="VO catalog is missing." alt="" coords="375,157,497,185"/>
+</map>

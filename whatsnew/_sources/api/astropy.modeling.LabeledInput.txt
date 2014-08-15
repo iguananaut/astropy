@@ -1,0 +1,46 @@
+
+
+LabeledInput
+=============================
+
+.. currentmodule:: astropy.modeling
+
+.. autoclass:: LabeledInput
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~LabeledInput.add
+      ~LabeledInput.copy
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: add
+   .. automethod:: copy
+
+   
+   

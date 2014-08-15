@@ -1,0 +1,83 @@
+
+.. include:: ../coordinates/references.txt
+
+
+EarthLocation
+=================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: EarthLocation
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~EarthLocation.ellipsoid
+      ~EarthLocation.geocentric
+      ~EarthLocation.geodetic
+      ~EarthLocation.height
+      ~EarthLocation.latitude
+      ~EarthLocation.longitude
+      ~EarthLocation.x
+      ~EarthLocation.y
+      ~EarthLocation.z
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~EarthLocation.from_geocentric
+      ~EarthLocation.from_geodetic
+      ~EarthLocation.to
+      ~EarthLocation.to_geocentric
+      ~EarthLocation.to_geodetic
+
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: ellipsoid
+   .. autoattribute:: geocentric
+   .. autoattribute:: geodetic
+   .. autoattribute:: height
+   .. autoattribute:: latitude
+   .. autoattribute:: longitude
+   .. autoattribute:: x
+   .. autoattribute:: y
+   .. autoattribute:: z
+
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: from_geocentric
+   .. automethod:: from_geodetic
+   .. automethod:: to
+   .. automethod:: to_geocentric
+   .. automethod:: to_geodetic
+
+   
+   

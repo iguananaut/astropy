@@ -1,0 +1,48 @@
+
+
+ProgressBar
+=================================
+
+.. currentmodule:: astropy.utils.console
+
+.. autoclass:: ProgressBar
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~ProgressBar.iterate
+      ~ProgressBar.map
+      ~ProgressBar.update
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: iterate
+   .. automethod:: map
+   .. automethod:: update
+
+   
+   

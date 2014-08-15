@@ -1,0 +1,29 @@
+
+
+MexicanHat2DKernel
+======================================
+
+.. currentmodule:: astropy.convolution
+
+.. autoclass:: MexicanHat2DKernel
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

@@ -1,0 +1,10 @@
+
+.. include:: ../table/references.txt
+
+
+join
+==================
+
+.. currentmodule:: astropy.table
+
+.. autofunction:: join

@@ -1,0 +1,9 @@
+<map id="inheritanced1c8716f0d" name="inheritanced1c8716f0d">
+<area shape="rect" id="node1" href="../api/astropy.utils.exceptions.AstropyWarning.html#astropy.utils.exceptions.AstropyWarning" title="The base warning class from which all Astropy warnings should inherit." alt="" coords="15,157,140,185"/>
+<area shape="rect" id="node8" href="../api/astropy.config.ConfigurationMissingWarning.html#astropy.config.ConfigurationMissingWarning" title="A Warning that is issued when the configuration directory cannot be" alt="" coords="212,131,423,159"/>
+<area shape="rect" id="node10" href="../api/astropy.config.InvalidConfigurationItemWarning.html#astropy.config.InvalidConfigurationItemWarning" title="A Warning that is issued when the configuration value specified in the" alt="" coords="199,182,436,210"/>
+<area shape="rect" id="node2" href="../api/astropy.config.ConfigAlias.html#astropy.config.ConfigAlias" title="A class that exists to support backward compatibility only." alt="" coords="271,30,364,58"/>
+<area shape="rect" id="node3" href="../api/astropy.config.ConfigItem.html#astropy.config.ConfigItem" title="A setting and associated value stored in a configuration file." alt="" coords="29,55,125,83"/>
+<area shape="rect" id="node6" href="../api/astropy.config.ConfigurationItem.html#astropy.config.ConfigurationItem" title="A backward&#45;compatibility layer to support the old" alt="" coords="245,81,389,109"/>
+<area shape="rect" id="node5" href="../api/astropy.config.ConfigNamespace.html#astropy.config.ConfigNamespace" title="A namespace of configuration items. &#160;Each subpackage with" alt="" coords="5,5,149,33"/>
+</map>

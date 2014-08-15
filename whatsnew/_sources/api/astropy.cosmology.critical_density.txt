@@ -1,0 +1,8 @@
+
+
+critical_density
+==================================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: critical_density

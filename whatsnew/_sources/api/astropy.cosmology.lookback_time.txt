@@ -1,0 +1,8 @@
+
+
+lookback_time
+===============================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: lookback_time

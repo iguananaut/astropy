@@ -1,0 +1,8 @@
+
+
+kpc_proper_per_arcmin
+=======================================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: kpc_proper_per_arcmin

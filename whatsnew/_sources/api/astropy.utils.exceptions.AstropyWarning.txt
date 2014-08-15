@@ -1,0 +1,8 @@
+
+
+AstropyWarning
+=======================================
+
+.. currentmodule:: astropy.utils.exceptions
+
+.. autoexception:: AstropyWarning

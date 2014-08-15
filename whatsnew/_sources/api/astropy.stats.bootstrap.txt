@@ -1,0 +1,8 @@
+
+
+bootstrap
+=======================
+
+.. currentmodule:: astropy.stats
+
+.. autofunction:: bootstrap

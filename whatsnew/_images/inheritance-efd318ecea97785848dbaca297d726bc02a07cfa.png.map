@@ -1,0 +1,6 @@
+<map id="inheritance77b4864455" name="inheritance77b4864455">
+<area shape="rect" id="node1" href="../api/astropy.constants.Constant.html#astropy.constants.Constant" title="A physical or astronomical constant." alt="" coords="256,5,341,33"/>
+<area shape="rect" id="node4" href="../api/astropy.constants.EMConstant.html#astropy.constants.EMConstant" title="An electromagnetic constant." alt="" coords="389,5,496,33"/>
+<area shape="rect" id="node2" href="../api/astropy.units.quantity.Quantity.html#astropy.units.quantity.Quantity" title="A `Quantity` represents a number with some associated unit." alt="" coords="125,5,208,33"/>
+<area shape="rect" id="node6" title="ndarray(shape, dtype=float, buffer=None, offset=0," alt="" coords="5,5,77,33"/>
+</map>

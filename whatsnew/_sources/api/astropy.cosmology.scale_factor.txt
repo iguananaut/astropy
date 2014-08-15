@@ -1,0 +1,8 @@
+
+
+scale_factor
+==============================
+
+.. currentmodule:: astropy.cosmology
+
+.. autofunction:: scale_factor

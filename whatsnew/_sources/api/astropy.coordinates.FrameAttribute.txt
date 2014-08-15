@@ -1,0 +1,46 @@
+
+.. include:: ../coordinates/references.txt
+
+
+FrameAttribute
+==================================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoclass:: FrameAttribute
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~FrameAttribute.convert_input
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: convert_input
+
+   
+   

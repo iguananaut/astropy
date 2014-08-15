@@ -1,0 +1,46 @@
+
+
+Generic
+============================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: Generic
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Generic.parse
+      ~Generic.to_string
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: parse
+   .. automethod:: to_string
+
+   
+   

@@ -1,0 +1,42 @@
+
+
+IrreducibleUnit
+=============================
+
+.. currentmodule:: astropy.units
+
+.. autoclass:: IrreducibleUnit
+   :show-inheritance:
+
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~IrreducibleUnit.decompose
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: decompose
+
+   
+   

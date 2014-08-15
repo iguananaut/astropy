@@ -1,0 +1,10 @@
+
+.. include:: ../wcs/references.txt
+
+
+NonseparableSubimageCoordinateSystemError
+=====================================================
+
+.. currentmodule:: astropy.wcs
+
+.. autoexception:: NonseparableSubimageCoordinateSystemError

@@ -1,0 +1,10 @@
+
+.. include:: ../time/references.txt
+
+
+OperandTypeError
+=============================
+
+.. currentmodule:: astropy.time
+
+.. autoexception:: OperandTypeError

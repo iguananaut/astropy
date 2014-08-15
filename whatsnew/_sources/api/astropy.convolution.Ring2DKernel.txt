@@ -1,0 +1,29 @@
+
+
+Ring2DKernel
+================================
+
+.. currentmodule:: astropy.convolution
+
+.. autoclass:: Ring2DKernel
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

@@ -1,0 +1,9 @@
+<map id="inheritanceb72993dc76" name="inheritanceb72993dc76">
+<area shape="rect" id="node1" href="../api/astropy.modeling.powerlaws.BrokenPowerLaw1D.html#astropy.modeling.powerlaws.BrokenPowerLaw1D" title="One dimensional power law model with a break." alt="" coords="507,5,664,33"/>
+<area shape="rect" id="node2" href="../api/astropy.modeling.Fittable1DModel.html#astropy.modeling.Fittable1DModel" title="Base class for one&#45;dimensional fittable models." alt="" coords="288,81,421,109"/>
+<area shape="rect" id="node4" href="../api/astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D.html#astropy.modeling.powerlaws.ExponentialCutoffPowerLaw1D" title="One dimensional power law model with an exponential cutoff." alt="" coords="469,55,701,83"/>
+<area shape="rect" id="node10" href="../api/astropy.modeling.powerlaws.LogParabola1D.html#astropy.modeling.powerlaws.LogParabola1D" title="One dimensional log parabola model (sometimes called curved power law)." alt="" coords="525,106,645,134"/>
+<area shape="rect" id="node12" href="../api/astropy.modeling.powerlaws.PowerLaw1D.html#astropy.modeling.powerlaws.PowerLaw1D" title="One dimensional power law model." alt="" coords="531,157,640,185"/>
+<area shape="rect" id="node6" href="../api/astropy.modeling.FittableModel.html#astropy.modeling.FittableModel" title="Base class for models that can be fitted using the built&#45;in fitting" alt="" coords="125,81,240,109"/>
+<area shape="rect" id="node8" href="../api/astropy.modeling.Model.html#astropy.modeling.Model" title="Base class for all models." alt="" coords="5,81,77,109"/>
+</map>

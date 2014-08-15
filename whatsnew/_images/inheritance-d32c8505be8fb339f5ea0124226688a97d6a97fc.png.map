@@ -1,0 +1,4 @@
+<map id="inheritance4b680c0f66" name="inheritance4b680c0f66">
+<area shape="rect" id="node1" href="../../api/astropy.vo.validator.exceptions.BaseVOValidationError.html#astropy.vo.validator.exceptions.BaseVOValidationError" title="Base class for VO validation exceptions." alt="" coords="7,5,177,33"/>
+<area shape="rect" id="node2" href="../../api/astropy.vo.validator.exceptions.ValidationMultiprocessingError.html#astropy.vo.validator.exceptions.ValidationMultiprocessingError" title="Validation using multiprocessing failed." alt="" coords="228,5,449,33"/>
+</map>

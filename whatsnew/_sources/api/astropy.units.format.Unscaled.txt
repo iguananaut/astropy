@@ -1,0 +1,27 @@
+
+
+Unscaled
+=============================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: Unscaled
+   :show-inheritance:
+
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   

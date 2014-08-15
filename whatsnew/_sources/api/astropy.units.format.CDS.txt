@@ -1,0 +1,46 @@
+
+
+CDS
+========================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: CDS
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~CDS.parse
+      ~CDS.to_string
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: parse
+   .. automethod:: to_string
+
+   
+   

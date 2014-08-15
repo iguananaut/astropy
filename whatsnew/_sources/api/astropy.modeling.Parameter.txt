@@ -1,0 +1,62 @@
+
+
+Parameter
+==========================
+
+.. currentmodule:: astropy.modeling
+
+.. autoclass:: Parameter
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~Parameter.bounds
+      ~Parameter.default
+      ~Parameter.fixed
+      ~Parameter.max
+      ~Parameter.min
+      ~Parameter.name
+      ~Parameter.shape
+      ~Parameter.size
+      ~Parameter.tied
+      ~Parameter.value
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: bounds
+   .. autoattribute:: default
+   .. autoattribute:: fixed
+   .. autoattribute:: max
+   .. autoattribute:: min
+   .. autoattribute:: name
+   .. autoattribute:: shape
+   .. autoattribute:: size
+   .. autoattribute:: tied
+   .. autoattribute:: value
+
+   
+   
+
+   
+   
+   

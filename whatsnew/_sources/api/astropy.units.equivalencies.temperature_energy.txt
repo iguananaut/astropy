@@ -1,0 +1,8 @@
+
+
+temperature_energy
+==============================================
+
+.. currentmodule:: astropy.units.equivalencies
+
+.. autofunction:: temperature_energy

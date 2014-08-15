@@ -1,0 +1,44 @@
+
+
+Console
+============================
+
+.. currentmodule:: astropy.units.format
+
+.. autoclass:: Console
+   :show-inheritance:
+
+   
+     
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Summary
+
+   .. autosummary::
+   
+      ~Console.to_string
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Methods Documentation
+
+   
+   .. automethod:: to_string
+
+   
+   

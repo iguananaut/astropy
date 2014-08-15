@@ -1,0 +1,8 @@
+
+
+call_vo_service
+=============================================
+
+.. currentmodule:: astropy.vo.client.vos_catalog
+
+.. autofunction:: call_vo_service

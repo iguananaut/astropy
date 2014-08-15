@@ -1,0 +1,10 @@
+
+.. include:: ../io/votable/references.txt
+
+
+validate_schema
+==========================================
+
+.. currentmodule:: astropy.io.votable.xmlutil
+
+.. autofunction:: validate_schema

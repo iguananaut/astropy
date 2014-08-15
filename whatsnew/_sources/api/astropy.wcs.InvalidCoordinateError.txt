@@ -1,0 +1,10 @@
+
+.. include:: ../wcs/references.txt
+
+
+InvalidCoordinateError
+==================================
+
+.. currentmodule:: astropy.wcs
+
+.. autoexception:: InvalidCoordinateError

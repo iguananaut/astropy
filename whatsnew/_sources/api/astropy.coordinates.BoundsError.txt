@@ -1,0 +1,10 @@
+
+.. include:: ../coordinates/references.txt
+
+
+BoundsError
+===============================
+
+.. currentmodule:: astropy.coordinates
+
+.. autoexception:: BoundsError

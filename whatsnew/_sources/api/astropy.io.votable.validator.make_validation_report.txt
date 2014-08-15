@@ -1,0 +1,10 @@
+
+.. include:: ../io/votable/references.txt
+
+
+make_validation_report
+===================================================
+
+.. currentmodule:: astropy.io.votable.validator
+
+.. autofunction:: make_validation_report

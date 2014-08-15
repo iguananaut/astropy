@@ -1,0 +1,50 @@
+
+.. include:: ../time/references.txt
+
+
+TimeJulianEpoch
+============================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeJulianEpoch
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeJulianEpoch.epoch_to_jd
+      ~TimeJulianEpoch.jd_to_epoch
+      ~TimeJulianEpoch.name
+      ~TimeJulianEpoch.unit
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: epoch_to_jd
+   .. autoattribute:: jd_to_epoch
+   .. autoattribute:: name
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+   

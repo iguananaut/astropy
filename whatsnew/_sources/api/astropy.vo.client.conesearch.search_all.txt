@@ -1,0 +1,8 @@
+
+
+search_all
+=======================================
+
+.. currentmodule:: astropy.vo.client.conesearch
+
+.. autofunction:: search_all

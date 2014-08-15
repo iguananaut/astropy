@@ -1,0 +1,10 @@
+
+.. include:: ../table/references.txt
+
+
+TableMergeError
+=============================
+
+.. currentmodule:: astropy.table
+
+.. autoexception:: TableMergeError

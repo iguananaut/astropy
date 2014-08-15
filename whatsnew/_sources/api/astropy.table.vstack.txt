@@ -1,0 +1,10 @@
+
+.. include:: ../table/references.txt
+
+
+vstack
+====================
+
+.. currentmodule:: astropy.table
+
+.. autofunction:: vstack

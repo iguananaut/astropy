@@ -1,0 +1,54 @@
+
+.. include:: ../time/references.txt
+
+
+TimeCxcSec
+=======================
+
+.. currentmodule:: astropy.time
+
+.. autoclass:: TimeCxcSec
+   :show-inheritance:
+
+   
+
+   
+   
+
+   .. rubric:: Attributes Summary
+
+   .. autosummary::
+   
+      ~TimeCxcSec.epoch_format
+      ~TimeCxcSec.epoch_scale
+      ~TimeCxcSec.epoch_val
+      ~TimeCxcSec.epoch_val2
+      ~TimeCxcSec.name
+      ~TimeCxcSec.unit
+
+   
+   
+
+   
+   
+   
+
+   
+   
+
+   .. rubric:: Attributes Documentation
+
+   
+   .. autoattribute:: epoch_format
+   .. autoattribute:: epoch_scale
+   .. autoattribute:: epoch_val
+   .. autoattribute:: epoch_val2
+   .. autoattribute:: name
+   .. autoattribute:: unit
+
+   
+   
+
+   
+   
+   
