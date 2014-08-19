@@ -15,7 +15,7 @@ from ...io import fits
 from ... import wcs
 from ...utils.data import get_pkg_data_filename
 from ...tests.helper import pytest
-n.seterr(all='raise')
+
 
 def test_Projection_properties():
     projection = projections.Sky2Pix_CAR()
@@ -32,6 +32,15 @@ pars = [
     ('CAR', projections.Sky2Pix_CAR, {}),
     ('MER', projections.Sky2Pix_MER, {})
 ]
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 @pytest.mark.parametrize(('ID', 'model', 'args'), pars)

@@ -25,16 +25,24 @@ from ..core import (LabeledInput, SerialCompositeModel, SummedCompositeModel,
                     Fittable1DModel, Fittable2DModel)
 from ..polynomial import PolynomialModel
 from ...tests.helper import pytest
-
 from ...extern import six
 from ...extern.six.moves import copyreg as copy_reg
-np.seterr(all='raise')
+
 
 try:
     from scipy import optimize  # pylint: disable=W0611
     HAS_SCIPY = True
 except ImportError:
     HAS_SCIPY = False
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 class TestSerialComposite(object):

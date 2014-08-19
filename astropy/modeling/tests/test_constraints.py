@@ -14,13 +14,22 @@ from numpy.testing import utils
 from numpy.random import RandomState
 from ...tests.helper import pytest
 from .utils import ignore_non_integer_warning
-np.seterr(all='raise')
+
 
 try:
     from scipy import optimize
     HAS_SCIPY = True
 except ImportError:
     HAS_SCIPY = False
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 class TestNonLinearConstraints(object):

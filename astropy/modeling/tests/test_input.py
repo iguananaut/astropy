@@ -16,7 +16,6 @@ from ..core import Model, Fittable1DModel
 from ..parameters import Parameter
 from ...tests.helper import pytest
 
-np.seterr(all='raise')
 
 try:
     from scipy import optimize  # pylint: disable=W0611
@@ -38,6 +37,15 @@ model2d_params = [
     (models.Legendre2D, [1, 2]),
     (models.Chebyshev2D, [1, 2])
 ]
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 class TestInputType(object):

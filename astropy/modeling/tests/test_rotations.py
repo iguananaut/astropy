@@ -3,10 +3,20 @@
 from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
-from .. import models
+import numpy as np
 from numpy.testing import utils
+
+from .. import models
 from ...tests.helper import pytest
-np.seterr(all='raise')
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 def test_RotateNative2Celestial():

@@ -21,7 +21,6 @@ from ...utils import NumpyRNGContext
 from ...utils.data import get_pkg_data_filename
 from ...tests.helper import pytest
 from .utils import ignore_non_integer_warning
-np.seterr(all='raise')
 
 try:
     from scipy import optimize
@@ -33,6 +32,15 @@ except ImportError:
 fitters = [SimplexLSQFitter, SLSQPLSQFitter]
 
 _RANDOM_SEED = 0x1337
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 class TestPolynomial2D(object):

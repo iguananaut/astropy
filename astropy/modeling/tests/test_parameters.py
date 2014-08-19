@@ -17,7 +17,15 @@ from ..core import Model, FittableModel, ModelDefinitionError
 from ..parameters import Parameter, InputParameterError
 from ...utils.data import get_pkg_data_filename
 from ...tests.helper import pytest
-np.seterr(all='raise')
+
+
+def setup_module(mod):
+    mod._old_numpy_seterr = np.seterr(all='raise')
+
+
+def teardown_module(mod):
+    np.seterr(**mod._old_numpy_seterr)
+    del mod._old_numpy_seterr
 
 
 class TestParModel(Model):
