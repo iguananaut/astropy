@@ -160,8 +160,8 @@ class _ModelMeta(abc.ABCMeta):
                 return super(cls, self).__call__(*inputs, **kwargs)
 
             args = ('self',) + inputs
-            cls.__call__ = make_func_with_sig(__call__, args,
-                                              [('model_set_axis', None)])
+            cls.__call__ = make_function_with_signature(
+                    __call__, args, [('model_set_axis', None)])
 
         if '__init__' not in members and parameters:
             # If *all* the parameters have default values we can make them
@@ -179,8 +179,8 @@ class _ModelMeta(abc.ABCMeta):
             def __init__(self, *params, **kwargs):
                 return super(cls, self).__init__(*params, **kwargs)
 
-            cls.__init__ = make_func_with_sig(__init__, args, kwargs,
-                                              varkwargs='kwargs')
+            cls.__init__ = make_function_with_signature(
+                    __init__, args, kwargs, varkwargs='kwargs')
 
 
 @six.add_metaclass(_ModelMeta)
