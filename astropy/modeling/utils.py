@@ -7,17 +7,11 @@ This module provides utility functions for the models package
 from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
-import inspect
-import itertools
-import keyword
-import re
-import textwrap
 
 import numpy as np
 
-from ..extern.six import iteritems
 from ..extern.six.moves import xrange, zip_longest
-from ..utils import find_current_module
+
 
 __all__ = ['check_broadcast', 'poly_map_domain', 'comb']
 
@@ -74,118 +68,6 @@ def check_broadcast(*shapes):
         full_shape.append(max_dim)
 
     return tuple(full_shape[::-1])
-
-
-_ARGNAME_RE = re.compile(r'^[A-Za-z][A-Za-z_]*')
-"""
-Regular expression used my make_func which limits the allowed argument
-names for the created function.  Only valid Python variable names in
-the ASCII range and not beginning with '_' are allowed, currently.
-"""
-
-
-def make_func_with_sig(func, args=(), kwargs={}, varargs=None,
-                       varkwargs=None):
-    """
-    Make a new function from an existing function but with the desired
-    signature.
-
-    The desired signature must of course be compatible with the arguments
-    actually accepted by the input function.
-
-    The ``args`` are strings that should be the names of the positional
-    arguments.  ``kwargs`` can map names of keyword arguments to their
-    default values.  It may be either a ``dict`` or a list of ``(keyword,
-    default)`` tuples.
-
-    If ``varargs`` is a string it is added to the positional arguments as
-    ``*<varargs>``.  Likewise ``varkwargs`` can be the name for a variable
-    keyword argument placeholder like ``**<varkwargs>``.
-
-    Note, the names may only be valid Python variable names.
-    """
-
-    pos_args = []
-    key_args = []
-
-    if varargs and kwargs:
-        # Technically this would work on Python 3, but since it doesn't work
-        # on Python 2 we just disallow it entirely
-        raise SyntaxError('keyword arguments not allowed after '
-                          '*{0}'.format(varargs))
-
-    if isinstance(kwargs, dict):
-        iter_kwargs = iteritems(kwargs)
-    else:
-        iter_kwargs = iter(kwargs)
-
-    # Check that all the argument names are valid
-    for item in itertools.chain(args, iter_kwargs):
-        if isinstance(item, tuple):
-            argname = item[0]
-            key_args.append(item)
-        else:
-            argname = item
-            pos_args.append(item)
-
-        if keyword.iskeyword(argname) or not _ARGNAME_RE.match(argname):
-            raise SyntaxError('invalid argument name: {0}'.format(argname))
-
-    for item in (varargs, varkwargs):
-        if item is not None:
-            if keyword.iskeyword(item) or not _ARGNAME_RE.match(item):
-                raise SyntaxError('invalid argument name: {0}'.format(item))
-
-    def_signature = [', '.join(pos_args)]
-
-    if varargs:
-        def_signature.append(', *{0}'.format(varags))
-
-    call_signature = def_signature[:]
-
-    name = func.__name__
-
-    global_vars = {'__{0}__func'.format(name): func}
-    local_vars = {}
-    # Make local variables to handle setting the default args
-    for idx, item in enumerate(key_args):
-        key, value = item
-        default_var = '_kwargs{0}'.format(idx)
-        local_vars[default_var] = value
-        def_signature.append(', {0}={1}'.format(key, default_var))
-        call_signature.append(', {0}={0}'.format(key))
-
-    if varkwargs:
-        def_signature.append(', **{0}'.format(varkwargs))
-        call_signature.append(', **{0}'.format(varkwargs))
-
-    def_signature = ''.join(def_signature).lstrip(', ')
-    call_signature = ''.join(call_signature).lstrip(', ')
-
-    # The lstrip is in case there were *no* positional arguments (a rare case)
-    # in any context this will actually be used...
-    template = textwrap.dedent("""\
-    def {name}({sig1}):
-        return __{name}__func({sig2})
-    """.format(name=name, sig1=def_signature, sig2=call_signature))
-
-    mod = find_current_module(2)
-    if mod:
-        filename = mod.__file__
-        modname = mod.__name__
-    else:
-        filename = '<string>'
-        modname = '__main__'
-
-    code = compile(template, filename, 'single')
-
-    eval(code, global_vars, local_vars)
-
-    new_func = local_vars[name]
-    new_func.__module__ = modname
-    new_func.__doc__ = func.__doc__
-
-    return new_func
 
 
 def poly_map_domain(oldx, domain, window):
