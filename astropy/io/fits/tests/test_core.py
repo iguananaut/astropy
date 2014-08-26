@@ -681,8 +681,26 @@ class TestFileFunctions(FitsTestCase):
         finally:
             gf.close()
 
+    def test_read_open_astropy_gzip_file(self):
+        """
+        Regression test for https://github.com/astropy/astropy/issues/2774
+
+        This tests reading from a ``GzipFile`` object from Astropy's
+        compatibility copy of the ``gzip`` module.
+        """
+
+        from ....utils.compat import gzip
+
+        gf = gzip.GzipFile(self._make_gzip_file())
+        try:
+            assert len(fits.open(gf)) == 5
+        finally:
+            gf.close()
+
     def test_open_gzip_file_for_writing(self):
-        """Regression test for https://aeon.stsci.edu/ssb/trac/pyfits/ticket/195."""
+        """
+        Regression test for https://aeon.stsci.edu/ssb/trac/pyfits/ticket/195
+        """
 
         gf = self._make_gzip_file()
         with fits.open(gf, mode='update') as h:
