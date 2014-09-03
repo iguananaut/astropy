@@ -7,6 +7,7 @@ This module provides utility functions for the models package
 from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
+import math
 import textwrap
 
 from collections import deque
@@ -146,7 +147,7 @@ class ExpressionTree(object):
     # TODO: This could still use a lot of improvement; in particular the trees
     # it outputs are often too wide, and could be made more compactly.  More
     # formatting control would be useful too.
-    def format_tree_ascii(self, format_leaf=lambda i, l: str(l)):
+    def format_tree_ascii(self, format_leaf=None):
         """
         Format the tree using an ASCII character representation.
 
@@ -160,42 +161,100 @@ class ExpressionTree(object):
         stack = deque()
         leaf_idx = 0
 
+        if format_leaf is None:
+            format_leaf = lambda i, l: '[{0}]'.format(i)
+
         for node in self.traverse_postorder():
             if node.isleaf:
                 text = format_leaf(leaf_idx, node.value)
-                stack.append((len(text), [text]))
+                width = len(text)
+                anchor = int(math.ceil(width / 2))
+                stack.append((width, anchor, [text]))
                 leaf_idx += 1
                 continue
 
-            right_width, right = stack.pop()
-            left_width, left = stack.pop()
+            right_width, right_anchor, right = stack.pop()
+            left_width, left_anchor, left = stack.pop()
 
-            if left_width > right_width:
-                right = [r.center(left_width) for r in right]
-                child_width = left_width
-            elif right_width > left_width:
-                left = [l.center(right_width) for l in left]
-                child_width = right_width
-            else:
-                child_width = left_width  # without loss of generality
+            #if left_width > right_width:
+            #    right = [r.center(left_width) for r in right]
+            #    child_width = left_width
+            #elif right_width > left_width:
+            #    left = [l.center(right_width) for l in left]
+            #    child_width = right_width
+            #else:
+            #    child_width = left_width  # without loss of generality
 
+            #root = '[{0}]'.format(node.value)
+            #spine = '/   \\'
+            ##fill = ' ' * len(spine)
+            #fill = ' ' * 7
+            ##width = 2 * child_width + len(fill)
+            #width = left_width + len(fill) + right_width
             root = '[{0}]'.format(node.value)
-            spine = '/   \\'
-            fill = ' ' * len(spine)
-            width = 2 * child_width + len(fill)
 
-            offset = child_width - (child_width % 2)
-            spine = spine.center(width - 2 - offset, '_').center(width)
-            root = root.center(width)
+            # Here we deterine the optimal spacing between the left and right
+            # subtrees.  To begin with there is at least *one* space.  Then the
+            # distance is calculated between the anchor point on the left
+            # subtree and the right subtree.
+            # This distance must be at *least* with width of the root node plus
+            # two (for the diagonal edges coming off the root)  If not,
+            # additional spaces are added until they are.  If it is already
+            # more than that then the edges are extended to reach the anchors
+            min_dist = len(root) + 2
+            dist = (left_width - left_anchor) + right_anchor
 
-            lines = [root, spine]
-            for l, r in zip_longest(left, right,
-                                    fillvalue=' ' * child_width):
-                lines.append(l + fill + r)
+            if dist < min_dist:
+                fill = ' ' * (min_dist - dist + 1)
+            else:
+                fill = ' '
 
-            stack.append((width, lines))
+            dist = max(dist, min_dist)
+            root_offset = left_anchor + (dist // 2) - (len(root) // 2)
 
-        return textwrap.dedent('\n'.join(stack[0][1]))
+            spine_left = (' ' * left_anchor +
+                          '_' * (root_offset - left_anchor - 1) + '/')
+            import sys
+            sys.stderr.write(str(right_anchor - len(root) // 2 - len(fill) - 1) + '\n')
+            spine_right = '\\' + '_' * (dist - len(root) - right_anchor - 1)
+
+            spine = spine_left + ' ' * len(root) + spine_right
+
+            lines = [' ' * root_offset + root, spine]
+
+            #spine_left = '_' * left_anchor + '/'
+            #spine_right = '\\' + '_' * right_anchor
+            #root_center = math.ceil(len(root) / 2)
+            #left_offset = left_width - left_anchor
+
+            #spine = spine_left + ' ' * len(root) + spine_right
+
+            #offset = child_width - (child_width % 2)
+            #spine = spine.center(width - 2 - offset, '_').center(width)
+            #root = root.center(width)
+            #fill = ' ' * (left_offset + right_offset + len(root))
+            #fill = ' ' * len(root)
+
+            #lines = [' ' * left_width + root,
+            #         ' ' * left_offset + spine]
+
+            if len(right) > len(left):
+                fillvalue = ' ' * left_width
+            else:
+                fillvalue = ''
+
+            for l, r in zip_longest(left, right, fillvalue=fillvalue):
+                lines.append(l.ljust(left_width) + fill + r)
+
+            width = left_width + len(fill) + right_width
+            #anchor = left_width + root_center
+            anchor = root_offset + math.ceil(len(root) / 2)
+            import sys
+            sys.stderr.write('{0}:\n'.format(node.value))
+            sys.stderr.write('{0} {1}\n'.format(width, anchor))
+            stack.append((width, anchor, lines))
+
+        return textwrap.dedent('\n'.join(stack[0][2]))
 
 
 class IncompatibleShapeError(ValueError):
