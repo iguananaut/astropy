@@ -36,6 +36,7 @@ from ..table import Table
 from ..utils import deprecated, sharedmethod, find_current_module
 from ..utils.codegen import make_function_with_signature
 from ..utils.exceptions import AstropyDeprecationWarning
+from ..utils.compat.odict import OrderedDict
 from .utils import (array_repr_oneline, check_broadcast, combine_labels,
                     make_binary_operator_eval, ExpressionTree,
                     IncompatibleShapeError)
@@ -1124,6 +1125,56 @@ class Fittable2DModel(FittableModel):
     outputs = ('z',)
 
 
+class Mapping(Model):
+    def __init__(self, mapping):
+        self._inputs = tuple('x' + str(idx)
+                             for idx in range(max(mapping) + 1))
+        self._outputs = tuple('x' + str(idx) for idx in range(len(mapping)))
+        self._mapping = mapping
+        super(Mapping, self).__init__()
+
+    def __call__(self, *args):
+        return self.evaluate(*args)
+
+    @property
+    def name(self):
+        return 'Mapping({0})'.format(self.mapping)
+
+    @property
+    def inputs(self):
+        return self._inputs
+
+    @property
+    def outputs(self):
+        return self._outputs
+
+    @property
+    def mapping(self):
+        return self._mapping
+
+    def evaluate(self, *args):
+        if len(args) < self.n_inputs:
+            raise TypeError('{0} expects at most {1} inputs; got {2}'.format(
+                self.name, self.n_inputs, len(args)))
+
+        result = tuple(args[idx] for idx in self._mapping)
+
+        if self.n_outputs == 1:
+            return result[0]
+
+        return result
+
+
+class Identity(Mapping):
+    def __init__(self, n_inputs):
+        mapping = tuple(range(n_inputs))
+        super(Identity, self).__init__(mapping)
+
+    @property
+    def name(self):
+        return 'Identity({0})'.format(self.n_inputs)
+
+
 def _make_compound_model(left, right, operator):
     name = str('CompoundModel{0}'.format(_CompoundModelMeta._nextid))
     _CompoundModelMeta._nextid += 1
@@ -1215,7 +1266,7 @@ BINARY_OPERATORS = {
 }
 
 
-_ORDER_OF_OPERATORS = [('+', '-'), ('*', '/'), ('**',), ('|',)]
+_ORDER_OF_OPERATORS = [('+', '-'), ('*', '/'), ('**',), ('&',), ('|',)]
 OPERATOR_PRECEDENCE = {}
 for idx, ops in enumerate(_ORDER_OF_OPERATORS):
     for op in ops:
@@ -1716,7 +1767,7 @@ def _validate_input_shapes(inputs, argnames, n_models, model_set_axis,
 # TODO: These could prehaps be rewritten on top of the new composite model
 # framework, but keeping the legacy API for backwards-compatibility.
 
-class LabeledInput(dict):
+class LabeledInput(OrderedDict):
     """
     Used by `SerialCompositeModel` and `SummedCompositeModel` to choose input
     data using labels.
@@ -1751,26 +1802,32 @@ class LabeledInput(dict):
     """
 
     def __init__(self, data, labels):
-        dict.__init__(self)
         if len(labels) != len(data):
             raise TypeError("Number of labels and data doesn't match")
-        self.labels = [l.strip() for l in labels]
-        for coord, label in zip(data, labels):
-            self[label] = coord
-            setattr(self, '_' + label, coord)
-        self._set_properties(self.labels)
 
-    def _getlabel(self, name):
-        par = getattr(self, '_' + name)
-        return par
+        super(LabeledInput, self).__init__(zip(labels, data))
 
-    def _setlabel(self, name, val):
-        setattr(self, '_' + name, val)
-        self[name] = val
+    def __getattr__(self, label):
+        try:
+            return self[label]
+        except KeyError:
+            raise AttributeError(label)
 
-    def _dellabel(self, name):
-        delattr(self, '_' + name)
-        del self[name]
+    def __setattr__(self, label, data):
+        if label.startswith('_'):
+            super(LabeledInput, self).__setattr__(label, data)
+        else:
+            self[label] = data
+
+    def __delattr__(self, label):
+        try:
+            del self[label]
+        except KeyError:
+            raise AttributeError(label)
+
+    @property
+    def labels(self):
+        return tuple(self.keys())
 
     def add(self, label=None, value=None, **kw):
         """
@@ -1786,39 +1843,21 @@ class LabeledInput(dict):
             if given this is a dictionary of ``{label: value}`` pairs
         """
 
-        if kw:
-            if label is None or value is None:
-                self.update(kw)
-            else:
-                kw[label] = value
-                self.update(kw)
-        else:
-            kw = dict({label: value})
-            if label is None or value is None:
-                raise TypeError("Expected label and value to be defined")
-            self[label] = value
+        if ((label is None and value is not None) or
+                (label is not None and value is None)):
+            raise TypeError("Expected label and value to be defined")
 
-        for key in kw:
-            self.__setattr__('_' + key, kw[key])
-        self._set_properties(kw.keys())
+        kw[label] = value
 
-    def _set_properties(self, attributes):
-        for attr in attributes:
-            setattr(self.__class__, attr, property(lambda self, attr=attr:
-                                                   self._getlabel(attr),
-                    lambda self, value, attr=attr:
-                                                   self._setlabel(attr, value),
-                    lambda self, attr=attr:
-                                                   self._dellabel(attr)
-                                                   )
-                    )
+        self.update(kw)
 
     def copy(self):
-        data = [self[label] for label in self.labels]
-        return LabeledInput(data, self.labels)
+        return LabeledInput(self.values(), self.labels)
 
 
 class _CompositeModel(Model):
+    _operator = None
+
     def __init__(self, transforms, n_inputs, n_outputs):
         """Base class for all composite models."""
 
@@ -1831,6 +1870,7 @@ class _CompositeModel(Model):
         self.n_inputs = n_inputs
         self.n_outputs = n_outputs
         self.fittable = False
+        self._basic_transform = None
 
     def __repr__(self):
         return '<{0}([\n{1}\n])>'.format(
@@ -1860,20 +1900,7 @@ class _CompositeModel(Model):
     def n_outputs(self, val):
         self._n_outputs = val
 
-    def add_model(self, transf, inmap, outmap):
-        self[transf] = [inmap, outmap]
-
     def invert(self):
-        raise NotImplementedError("Subclasses should implement this")
-
-    @staticmethod
-    def evaluate(x, y, *coeffs):
-        # TODO: Refactor how these are evaluated so that they can work like
-        # other models
-        raise NotImplementedError("Needs refactoring")
-
-    def __call__(self):
-        # implemented by subclasses
         raise NotImplementedError("Subclasses should implement this")
 
     @property
@@ -1887,6 +1914,54 @@ class _CompositeModel(Model):
         raise NotImplementedError(
             "Composite models do not currently support the .parameters "
             "array.")
+
+    @staticmethod
+    def evaluate():
+        raise NotImplementedError(
+            "This method only exists by requirement of the new `Model` "
+            "API, but is not used by this backwards compatibility interface.")
+
+    def __call__(self, *inputs):
+        """
+        Specialized `Model.__call__` implementation that allows
+        `LabeledInput` inputs to be handled when calling this model.
+        """
+
+        if len(inputs) == 1 and isnstance(inputs[0], LabeledInput):
+            transform = self._make_labeled_transform(inputs[0])
+            labeled_input = inputs[0]
+            inputs = [labeled_input[label] for label in self._inmap[0]]
+            result = transform(**inputs)
+            return LabeledInput(transform(**inputs),
+                                inputs[0].labels)
+        else:
+            if self._basic_transform is None:
+                transform = self._transforms[0]
+                for t in self._transforms[1:]:
+                    transform = self._operator(transform, t)
+
+                self._basic_transform = transform
+
+            return transform(*data)
+
+    def _make_labeled_transform(self, labled_input):
+        """
+        Build up a transformation graph that incorporates the instructions
+        encoded in the `LabeledInput` object.
+
+        This requires use of the ``_inmap`` and ``_outmap`` attributes set
+        when instantiating this `_CompositeModel`.
+        """
+
+        if self._inmap is None:
+            raise TypeError("Parameter 'inmap' must be provided when "
+                            "input is a labeled object.")
+        if self._outmap is None:
+            raise TypeError("Parameter 'outmap' must be provided when "
+                            "input is a labeled object")
+
+        #for
+
 
 
 class SerialCompositeModel(_CompositeModel):
