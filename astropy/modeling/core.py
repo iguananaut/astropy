@@ -150,7 +150,8 @@ class _ModelMeta(abc.ABCMeta):
             modname = '__main__'
 
         new_cls = type(name, (cls,), {})
-        new_cls.__module__ = modname
+        # On Python 2 __module__ must be a str, not unicode
+        new_cls.__module__ = str(modname)
 
         if hasattr(cls, '__qualname__'):
             if new_cls.__module__ == '__main__':
@@ -1257,7 +1258,7 @@ def _make_compound_model(left, right, operator):
                # for handling inputs/outputs
                'inputs': inputs,
                'outputs': outputs,
-               '__module__': modname}
+               '__module__': str(modname)}
 
     new_cls = _CompoundModelMeta(name, (_CompoundModel,), members)
 
@@ -1605,7 +1606,7 @@ def _custom_model_wrapper(func, fit_deriv=None):
         modname = '__main__'
 
     members = {
-        '__module__': modname,
+        '__module__': str(modname),
         '__doc__': func.__doc__,
         'inputs': tuple(input_names),
         'outputs': output_names,
