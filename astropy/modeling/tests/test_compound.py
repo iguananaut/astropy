@@ -86,9 +86,12 @@ def test_two_model_mixed_arithmetic_1d(expr, result):
         assert cls.n_inputs == 1
         assert cls.n_outputs == 1
 
-    # Takes only one argument--the one unspecified amplitude
-    s1 = S1(2)
-    s2 = S2(3)
+    # Requires values for both amplitudes even though one of them them has a
+    # default
+    # TODO: We may wish to fix that eventually, so that if a parameter has a
+    # default it doesn't *have* to be given in the init
+    s1 = S1(2, 3)
+    s2 = S2(2, 3)
 
     for out in (s1(0), s2(0)):
         assert out == result
