@@ -117,3 +117,27 @@ def array_repr_oneline(array):
 
     r = np.array2string(array, separator=',', suppress_small=True)
     return ' '.join(l.strip() for l in r.splitlines())
+
+
+def asarray(value, dtype=None):
+    """
+    Convert a value to float or float array, or complex if necessary.
+    """
+
+    if dtype is None:
+        dtype = np.float
+
+    if (isinstance(value, complex) or
+            isinstance(value, np.ndarray) and
+            np.issubdtype(value.dtype, np.complex)):
+        dtype = np.complex
+
+    try:
+        return np.asanyarray(value, dtype=dtype)
+    except TypeError as exc:
+        if str(exc) == "can't convert complex to float":
+            # The value was a list, perhaps, containing complex values;
+            # Try again creating a complex array
+            return _asarray(value, dtype=np.complex)
+
+        raise ValueError

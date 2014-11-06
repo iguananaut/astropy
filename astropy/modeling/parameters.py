@@ -10,6 +10,7 @@ define their own models.
 from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
+import collections
 import inspect
 import functools
 import numbers
@@ -19,39 +20,13 @@ import numpy as np
 from ..utils import isiterable
 from ..utils.compat import ignored
 from ..extern import six
+from .utils import check_broadcast, IncompatibleShapeError, asarray
 
 __all__ = ['Parameter', 'InputParameterError']
 
 
 class InputParameterError(ValueError):
     """Used for incorrect input parameter values and definitions."""
-
-
-def _tofloat(value):
-    """Convert a parameter to float or float array"""
-
-    if isiterable(value):
-        try:
-            value = np.array(value, dtype=np.float)
-        except (TypeError, ValueError):
-            # catch arrays with strings or user errors like different
-            # types of parameters in a parameter set
-            raise InputParameterError(
-                "Parameter of {0} could not be converted to "
-                "float".format(type(value)))
-    elif isinstance(value, np.ndarray):
-        # A scalar/dimensionless array
-        value = float(value.item())
-    elif isinstance(value, (numbers.Number, np.number)):
-        value = float(value)
-    elif isinstance(value, bool):
-        raise InputParameterError(
-            "Expected parameter to be of numerical type, not boolean")
-    else:
-        raise InputParameterError(
-            "Don't know how to convert parameter of {0} to "
-            "float".format(type(value)))
-    return value
 
 
 class Parameter(object):
@@ -127,29 +102,14 @@ class Parameter(object):
         self._default_max = max
 
         self._order = None
-        self._shape = None
         self._model = model
 
-        # The getter/setter functions take one or two arguments: The first
-        # argument is always the value itself (either the value returned or the
-        # value being set).  The second argument is optional, but if present
-        # will contain a reference to the model object tied to a parameter (if
-        # it exists)
-        if getter is not None:
-            self._getter = self._create_value_wrapper(getter, model)
-        else:
-            self._getter = None
-        if setter is not None:
-            self._setter = self._create_value_wrapper(setter, model)
-        else:
-            self._setter = None
+        self._getter = getter
+        self._wrapped_getter = None
+        self._setter = setter
+        self._wrapped_setter = None
 
-        if model is not None:
-            with ignored(AttributeError):
-                # This can only work if the parameter's value has been set by
-                # the model
-                _, self._shape = self._validate_value(model, self.value)
-        else:
+        if model is None:
             # Only Parameters declared as class-level descriptors require
             # and ordering ID
             self._order = self._get_nextid()
@@ -165,13 +125,19 @@ class Parameter(object):
                               max=self._default_max, model=obj)
 
     def __set__(self, obj, value):
-        value, shape = self._validate_value(obj, value)
+        try:
+            value = asarray(value)
+        except ValueError:
+            raise InputParameterError(
+                "Value {0} for parameter '{1}' could not be converted to a "
+                "floating point (or complex) array.".format(
+                    value, self._name))
 
         if self._setter is not None:
             setter = self._create_value_wrapper(self._setter, obj)
             value = setter(value)
 
-        self._set_model_value(obj, value)
+        obj._parameters[self._name] = value
 
     def __len__(self):
         if self._model is None:
@@ -229,6 +195,8 @@ class Parameter(object):
     def default(self):
         """Parameter default value"""
 
+        return self._default  # Just for now...
+
         if (self._model is None or self._default is None or
                 len(self._model) == 1):
             return self._default
@@ -260,7 +228,12 @@ class Parameter(object):
         if self._model is None:
             raise AttributeError('Parameter definition does not have a value')
 
-        value = self._get_model_value(self._model)
+        if not hasattr(self._model, '_parameters'):
+            # The _parameters array hasn't been initialized yet; just translate
+            # this to an AttributeError
+            raise AttributeError(self._name)
+
+        value = self._model._parameters[self._name]
 
         if self._getter is None:
             return value
@@ -276,13 +249,49 @@ class Parameter(object):
         if self._setter is not None:
             val = self._setter(value)
 
-        self._set_model_value(self._model, value)
+        self._model._parameters[self._name] = value
+
+    @property
+    def getter(self):
+        if self._getter is None:
+            return None
+
+        # The getter/setter functions take one or two arguments: The first
+        # argument is always the value itself (either the value returned or the
+        # value being set).  The second argument is optional, but if present
+        # will contain a reference to the model object tied to a parameter (if
+        # this is a bound parameter)
+        if self._wrapped_getter is None:
+            self._wrapped_getter = self._create_value_wrapper(self._getter,
+                                                              self._model)
+
+        return self._wrapped_getter
+
+    @property
+    def setter(self):
+        if self._setter is None:
+            return None
+
+        if self._wrapped_setter is None:
+            self._wrapped_setter = self._create_value_wrapper(self._setter,
+                                                              self._model)
+
+        return self._wrapped_setter
 
     @property
     def shape(self):
         """The shape of this parameter's value array."""
 
-        return self._shape
+        if self._model._parameters.n_models == 1:
+            return np.shape(self.value)
+        else:
+            shape = np.shape(self.value)
+            model_axis = self._model._parameters._model_set_axis
+            if model_axis < 0:
+                model_axis = len(shape) + model_axis
+            shape = shape[:model_axis] + shape[model_axis + 1:]
+
+            return shape
 
     @property
     def size(self):
@@ -417,72 +426,8 @@ class Parameter(object):
         cls._nextid += 1
         return nextid
 
-    def _get_model_value(self, model):
-        """
-        This method implements how to retrieve the value of this parameter from
-        the model instance.  See also `Parameter._set_model_value`.
-
-        These methods take an explicit model argument rather than using
-        self._model so that they can be used from unbound `Parameter`
-        instances.
-        """
-
-        if not hasattr(model, '_parameters'):
-            # The _parameters array hasn't been initialized yet; just translate
-            # this to an AttributeError
-            raise AttributeError(self._name)
-
-        # Use the _param_metrics to extract the parameter value from the
-        # _parameters array
-        param_slice, param_shape = model._param_metrics[self._name]
-        value = model._parameters[param_slice]
-        if param_shape:
-            value = value.reshape(param_shape)
-        else:
-            value = value[0]
-        return value
-
-    def _set_model_value(self, model, value):
-        """
-        This method implements how to store the value of a parameter on the
-        model instance.
-
-        Currently there is only one storage mechanism (via the ._parameters
-        array) but other mechanisms may be desireable, in which case really the
-        model class itself should dictate this and *not* `Parameter` itself.
-        """
-
-        # TODO: Maybe handle exception on invalid input shape
-        param_slice, param_shape = model._param_metrics[self._name]
-        param_size = np.prod(param_shape)
-
-        if np.size(value) != param_size:
-            raise InputParameterError(
-                "Input value for parameter {0!r} does not have {1} elements "
-                "as the current value does".format(self._name, param_size))
-
-        model._parameters[param_slice] = np.array(value).ravel()
-
-    def _validate_value(self, model, value):
-        if model is None:
-            return
-
-        n_models = len(model)
-        value = _tofloat(value)
-        if n_models == 1:
-            # Just validate the value with _tofloat
-            return value, np.shape(value)
-        else:
-            shape = np.shape(value)
-            model_axis = model._model_set_axis
-            if model_axis < 0:
-                model_axis = len(shape) + model_axis
-            shape = shape[:model_axis] + shape[model_axis + 1:]
-
-            return value, shape
-
     def _create_value_wrapper(self, wrapper, model):
-        """Wrappers a getter/setter function to support optionally passing in
+        """Wraps a getter/setter function to support optionally passing in
         a reference to the model object as the second argument.
 
         If a model is tied to this parameter and its getter/setter supports
@@ -587,3 +532,265 @@ class Parameter(object):
 
     def __abs__(self):
         return np.abs(self.value)
+
+
+class Parameters(object):
+    def __init__(self, parameters, param_names=None, n_models=None,
+                 model_set_axis=None):
+
+        if param_names is None:
+            param_names = tuple(parameters.keys())
+
+        if model_set_axis is None:
+            if n_models is not None and n_models > 1:
+                # Default to zero
+                model_set_axis = 0
+            else:
+                # Otherwise disable
+                model_set_axis = False
+
+        self._param_names = param_names
+        self._model_set_axis = model_set_axis
+
+        total_size = 0
+        dtype = np.float
+        param_values = {}
+        param_metrics = collections.defaultdict(lambda: {})
+
+        for name in param_names:
+            value = asarray(parameters[name]['value'])
+            # TODO: Keep track of parameters with complex values
+            param_values[name] = value
+            param_size = np.size(value)
+            param_slice = slice(total_size, total_size + param_size)
+            total_size += param_size
+            param_metrics[name] = {'slice': param_slice,
+                                   'shape': np.shape(value)}
+
+        self._param_metrics = param_metrics
+
+        # Determine the number of model sets: If the model_set_axis is
+        # None then there is just one parameter set; otherwise it is determined
+        # by the size of that axis on the first parameter--if the other
+        # parameters don't have the right number of axes or the sizes of their
+        # model_set_axis don't match an error is raised
+        if model_set_axis is not False and n_models != 1:
+            max_ndim = 0
+            if model_set_axis < 0:
+                min_ndim = abs(model_set_axis)
+            else:
+                min_ndim = model_set_axis + 1
+
+            for name, value in six.iteritems(param_values):
+                param_ndim = np.ndim(value)
+                if param_ndim < min_ndim:
+                    raise InputParameterError(
+                        "All parameter values must be arrays of dimension "
+                        "at least {0} for model_set_axis={1} (the value "
+                        "given for {2!r} is only {3}-dimensional)".format(
+                            min_ndim, model_set_axis, name, param_ndim))
+
+                max_ndim = max(max_ndim, param_ndim)
+
+                if n_models is None:
+                    # Use the dimensions of the first parameter to determine
+                    # the number of model sets
+                    n_models = value.shape[model_set_axis]
+                elif value.shape[model_set_axis] != n_models:
+                    raise InputParameterError(
+                        "Inconsistent dimensions for parameter {0!r} for "
+                        "{1} model sets.  The length of axis {2} must be the "
+                        "same for all input parameter values".format(
+                        name, n_models, model_set_axis))
+
+            self._check_param_broadcast(param_values, max_ndim,
+                                        model_set_axis)
+        else:
+            if n_models is None:
+                n_models = 1
+
+            self._check_param_broadcast(param_values, None, None)
+
+        self._n_models = n_models
+
+        offset = 0
+        array = np.empty(total_size, dtype=dtype)
+        for name in param_names:
+            value = param_values[name]
+            size = np.size(value)
+            array[offset:offset + size] = value.ravel()
+            offset += size
+
+        self._array = array
+
+    @property
+    def param_names(self):
+        return self._param_names
+
+    @property
+    def array(self):
+        return self._array
+
+    @property
+    def n_models(self):
+        return self._n_models
+
+    def __getitem__(self, index):
+        if isinstance(index, int):
+            index = self._param_names[index]
+
+        return self._get_parameter_value(index)
+
+    def __setitem__(self, index, value):
+        if isinstance(index, slice):
+            self._array[index] = value
+            return
+
+        if isinstance(index, int):
+            index = self._param_names[index]
+
+        self._set_parameter_value(index, value)
+
+    def __iter__(self):
+        for name in self._param_names:
+            yield self._get_parameter_value(name)
+
+    def __array__(self):
+        return self._array
+
+    def __len__(self):
+        return len(self._array)
+
+    def __eq__(self, other):
+        return self._array == other
+
+    def iter_broadcasted(self):
+        param_metrics = self._param_metrics
+        get_value = self._get_parameter_value
+        for name in self._param_names:
+            value = get_value(name)
+            broadcast_shape = param_metrics[name].get('broadcast_shape')
+            if broadcast_shape is not None:
+                value = value.reshape(broadcast_shape)
+            if self._n_models == 1:
+                # Always add an additional dimension representing the "model
+                # set axis" even when there is only one parameter set, just for
+                # consistency's sake
+                value = np.expand_dims(value, 0)
+            yield value
+
+    def _get_parameter_value(self, name):
+        """
+        This method implements how to retrieve the value of this parameter from
+        the model instance.  See also `Parameter._set_model_value`.
+
+        These methods take an explicit model argument rather than using
+        self._model so that they can be used from unbound `Parameter`
+        instances.
+        """
+
+        # Use the _param_metrics to extract the parameter value from the
+        # _parameters array
+        param_metrics = self._param_metrics[name]
+        param_slice = param_metrics['slice']
+        param_shape = param_metrics['shape']
+        value = self._array[param_slice]
+        if param_shape:
+            value = value.reshape(param_shape)
+        else:
+            value = value[0]
+        return value
+
+    def _set_parameter_value(self, name, value):
+        """
+        This method implements how to store the value of a parameter on the
+        model instance.
+
+        Currently there is only one storage mechanism (via the ._parameters
+        array) but other mechanisms may be desireable, in which case really the
+        model class itself should dictate this and *not* `Parameter` itself.
+        """
+
+        # TODO: Maybe handle exception on invalid input shape
+        param_metrics = self._param_metrics[name]
+        param_slice = param_metrics['slice']
+        param_shape = param_metrics['shape']
+        param_size = np.prod(param_shape)
+
+        value = asarray(value)
+
+        if np.size(value) != param_size:
+            raise InputParameterError(
+                "Input value for parameter {0!r} does not have {1} elements "
+                "as the current value does".format(name, param_size))
+
+        self._array[param_slice] = value.ravel()
+
+    def _check_param_broadcast(self, params, max_ndim, model_set_axis):
+        """
+        This subroutine checks that all parameter arrays can be broadcast
+        against each other, and determimes the shapes parameters must have in
+        order to broadcast correctly.
+
+        If model_set_axis is None this merely checks that the parameters
+        broadcast and returns an empty dict if so.  This mode is only used for
+        single model sets.
+        """
+
+        param_metrics = self._param_metrics
+        all_shapes = []
+        param_names = []
+
+        for name in self._param_names:
+            # Previously this just used iteritems(params), but we loop over all
+            # param_names instead just to ensure some determinism in the
+            # ordering behavior
+            if name not in params:
+                continue
+
+            value = params[name]
+            param_names.append(name)
+            # We've already checked that each parameter array is compatible in
+            # the model_set_axis dimension, but now we need to check the
+            # dimensions excluding that axis
+            # Split the array dimensions into the axes before model_set_axis
+            # and after model_set_axis
+            param_shape = np.shape(value)
+
+            param_ndim = len(param_shape)
+            if max_ndim is not None and param_ndim < max_ndim:
+                # All arrays have the same number of dimensions up to the
+                # model_set_axis dimension, but after that they may have a
+                # different number of trailing axes.  The number of trailing
+                # axes must be extended for mutual compatibility.  For example
+                # if max_ndim = 3 and model_set_axis = 0, an array with the
+                # shape (2, 2) must be extended to (2, 1, 2).  However, an
+                # array with shape (2,) is extended to (2, 1).
+                new_axes = (1,) * (max_ndim - param_ndim)
+
+                if self._model_set_axis < 0:
+                    # Just need to prepend axes to make up the difference
+                    broadcast_shape = new_axes + param_shape
+                else:
+                    broadcast_shape = (
+                        param_shape[:self._model_set_axis + 1] + new_axes +
+                        param_shape[self._model_set_axis + 1:])
+                param_metrics[name]['broadcast_shape'] = broadcast_shape
+                all_shapes.append(broadcast_shape)
+            else:
+                all_shapes.append(param_shape)
+
+        # Now check mutual broadcastability of all shapes
+        try:
+            check_broadcast(*all_shapes)
+        except IncompatibleShapeError as exc:
+            shape_a, shape_a_idx, shape_b, shape_b_idx = exc.args
+            param_a = param_names[shape_a_idx]
+            param_b = param_names[shape_b_idx]
+
+            raise InputParameterError(
+                "Parameter {0!r} of shape {1!r} cannot be broadcast with "
+                "parameter {2!r} of shape {3!r}.  All parameter arrays "
+                "must have shapes that are mutually compatible according "
+                "to the broadcasting rules.".format(param_a, shape_a,
+                                                    param_b, shape_b))

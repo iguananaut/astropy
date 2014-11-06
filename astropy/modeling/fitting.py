@@ -687,7 +687,7 @@ class JointFitter(object):
             params = [p.flatten() for p in model.parameters]
             joint_params = self.jointparams[model]
             for param_name in joint_params:
-                slc = model._param_metrics[param_name][0]
+                slc = model.parameters._param_metrics[param_name]['slice']
                 del params[slc]
             fparams.extend(params)
         return fparams
@@ -725,6 +725,7 @@ class JointFitter(object):
             del fitparams[:numfp]
             # recreate the model parameters
             mparams = []
+            param_metrics = model.parameters._param_metrics
             for param_name in model.param_names:
                 if param_name in joint_params:
                     index = joint_params.index(param_name)
@@ -732,7 +733,7 @@ class JointFitter(object):
                     # parameter is not a number
                     mparams.extend([jointfitparams[index]])
                 else:
-                    slc = model._param_metrics[param_name][0]
+                    slc = param_metrics[param_name]['slice']
                     plen = slc.stop - slc.start
                     mparams.extend(mfparams[:plen])
                     del mfparams[:plen]
@@ -783,6 +784,7 @@ class JointFitter(object):
             del fparams[:numfp]
             # recreate the model parameters
             mparams = []
+            param_metrics = model.parameters._param_metrics
             for param_name in model.param_names:
                 if param_name in joint_params:
                     index = joint_params.index(param_name)
@@ -790,7 +792,7 @@ class JointFitter(object):
                     # is not a number
                     mparams.extend([jointfitparams[index]])
                 else:
-                    slc = model._param_metrics[param_name][0]
+                    slc = param_metrics[param_name]['slice']
                     plen = slc.stop - slc.start
                     mparams.extend(mfparams[:plen])
                     del mfparams[:plen]
@@ -864,11 +866,13 @@ def _fitter_to_model_params(model, fps):
 
     fit_param_indices = set(fit_param_indices)
     offset = 0
+    param_metrics = model.parameters._param_metrics
     for idx, name in enumerate(model.param_names):
         if idx not in fit_param_indices:
             continue
 
-        slice_, shape = model._param_metrics[name]
+        slice_ = param_metrics[name]['slice']
+        shape = param_metrics[name]['shape']
         # This is determining which range of fps (the fitted parameters) maps
         # to parameters of the model
         size = reduce(operator.mul, shape, 1)
@@ -894,7 +898,7 @@ def _fitter_to_model_params(model, fps):
         for idx, name in enumerate(model.param_names):
             if model.tied[name] != False:
                 value = model.tied[name](model)
-                slice_ = model._param_metrics[name][0]
+                slice_ = param_metrics[name]['slice']
                 model.parameters[slice_] = value
 
 
@@ -912,14 +916,15 @@ def _model_to_fit_params(model):
     fitparam_indices = list(range(len(model.param_names)))
     if any(model.fixed.values()) or any(model.tied.values()):
         params = list(model.parameters)
+        param_metrics = model.parameters._param_metrics
         for idx, name in list(enumerate(model.param_names))[::-1]:
             if model.fixed[name] or model.tied[name]:
-                sl = model._param_metrics[name][0]
-                del params[sl]
+                slice_ = param_metrics[name]['slice']
+                del params[slice_]
                 del fitparam_indices[idx]
         return (np.array(params), fitparam_indices)
     else:
-        return (model.parameters, fitparam_indices)
+        return (model.parameters.array, fitparam_indices)
 
 
 def _validate_constraints(supported_constraints, model):

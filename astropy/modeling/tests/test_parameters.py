@@ -236,7 +236,7 @@ class TestParameters(object):
         """
         new_model = self.linear_fitter(self.model, self.x, self.y)
         print(self.y, self.x)
-        utils.assert_allclose(new_model.parameters,
+        utils.assert_allclose(new_model.parameters.array,
                               np.array(
                                   [4826.1066602783685, 952.8943813407858,
                                    12.641236013982386,
@@ -247,16 +247,17 @@ class TestParameters(object):
     def testPolynomial1D(self):
         d = {'c0': 11, 'c1': 12, 'c2': 13, 'c3': 14}
         p1 = models.Polynomial1D(3, **d)
-        utils.assert_equal(p1.parameters, [11, 12, 13, 14])
+        utils.assert_equal(p1.parameters.array, [11, 12, 13, 14])
 
     def test_poly1d_multiple_sets(self):
         p1 = models.Polynomial1D(3, n_models=3)
-        utils.assert_equal(p1.parameters, [0.0, 0.0, 0.0, 0, 0, 0,
-                                           0, 0, 0, 0, 0, 0])
+        utils.assert_equal(p1.parameters.array,
+                           [0.0, 0.0, 0.0, 0, 0, 0,
+                            0, 0, 0, 0, 0, 0])
         utils.assert_equal(p1.c0, [0, 0, 0])
         p1.c0 = [10, 10, 10]
-        utils.assert_equal(p1.parameters, [10.0, 10.0, 10.0, 0, 0,
-                                           0, 0, 0, 0, 0, 0, 0])
+        utils.assert_equal(p1.parameters.array, [10.0, 10.0, 10.0, 0, 0,
+                                                 0, 0, 0, 0, 0, 0, 0])
 
     def test_par_slicing(self):
         """
@@ -264,20 +265,21 @@ class TestParameters(object):
         """
         p1 = models.Polynomial1D(3, n_models=3)
         p1.c0[:2] = [10, 10]
-        utils.assert_equal(p1.parameters, [10.0, 10.0, 0.0, 0, 0,
-                                           0, 0, 0, 0, 0, 0, 0])
+        utils.assert_equal(p1.parameters.array, [10.0, 10.0, 0.0, 0, 0,
+                                                 0, 0, 0, 0, 0, 0, 0])
 
     def test_poly2d(self):
         p2 = models.Polynomial2D(degree=3)
         p2.c0_0 = 5
-        utils.assert_equal(p2.parameters, [5, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+        utils.assert_equal(p2.parameters.array,
+                           [5, 0, 0, 0, 0, 0, 0, 0, 0, 0])
 
     def test_poly2d_multiple_sets(self):
         kw = {'c0_0': [2, 3], 'c1_0': [1, 2], 'c2_0': [4, 5],
               'c0_1': [1, 1], 'c0_2': [2, 2], 'c1_1': [5, 5]}
         p2 = models.Polynomial2D(2, **kw)
-        utils.assert_equal(p2.parameters, [2, 3, 1, 2, 4, 5,
-                                           1, 1, 2, 2, 5, 5])
+        utils.assert_equal(p2.parameters.array, [2, 3, 1, 2, 4, 5,
+                                                 1, 1, 2, 2, 5, 5])
 
     def test_non_fittable_model_parameters1d(self):
         sh1 = models.Shift(2)
