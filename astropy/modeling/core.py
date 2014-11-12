@@ -1586,6 +1586,9 @@ class _CompoundModelMeta(_ModelMeta):
                 # the parameter descriptors, so we just make one up basically,
                 # with a default value of zero.  This value will just be thrown
                 # away, basically.
+                # TODO: Remove this special case once the legacy interfaces
+                # have been removed (basically this entire if statement--keep
+                # only the parts in the else: clause.
                 new_param = Parameter(name=param_name, default=0)
             else:
                 if isinstance(submodel, Model):
