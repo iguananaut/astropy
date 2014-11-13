@@ -766,8 +766,8 @@ class Model(object):
         return new_model
 
     # *** Internal methods ***
-    @classmethod
-    def _from_existing(cls, existing, param_names):
+    @sharedmethod
+    def _from_existing(self, existing, param_names):
         """
         Creates a new instance of ``cls`` that shares its underlying parameter
         values with an existing model instance given by ``existing``.
@@ -782,8 +782,15 @@ class Model(object):
 
         # Basically this is an alternative __init__
         # TODO: Support constraints properly
-        dummy_args = (0,) * len(param_names)
-        self = cls.__new__(cls, *dummy_args)
+        if isinstance(self, type):
+            # self is a class, not an instance
+            needs_initialization = True
+            dummy_args = (0,) * len(param_names)
+            self = self.__new__(self, *dummy_args)
+        else:
+            needs_initialization = False
+            self = self.copy()
+
         self._initialize_constraints({})
         self._n_models = existing._n_models
         self._model_set_axis = existing._model_set_axis
@@ -796,7 +803,8 @@ class Model(object):
             # the new model
             self._param_metrics[param_a] = existing._param_metrics[param_b]
 
-        self.__init__(*dummy_args)
+        if needs_initialization:
+            self.__init__(*dummy_args)
 
         return self
 
@@ -1757,14 +1765,6 @@ class _CompoundModel(Model):
     def __getitem__(self, index):
         index = self.__class__._normalize_index(index)
         model = self.__class__[index]
-
-        # TODO: This is no longer the correct behavior for compound models
-        # build from model instances; we still need to *copy* the model
-        # instance and update ths parameters to be connected to the compound
-        # model's parameters; some variation of _from_existing but that works
-        # with instances.  Probably need to rethink model copying again...
-        if isinstance(model, Model):
-            return model
 
         if isinstance(index, slice):
             param_names = model.param_names
