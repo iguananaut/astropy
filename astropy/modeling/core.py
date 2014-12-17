@@ -1682,14 +1682,18 @@ class _CompoundModelMeta(_ModelMeta):
 
         Negative integers are converted to positive integers.
         """
-
         def get_index_from_name(name):
             try:
                 return cls.submodel_names.index(name)
             except ValueError:
                 raise IndexError(
                     'Compound model {0} does not have a component named '
-                    '{1}'.format(cls.name, index))
+                    '{1}'.format(cls.name, name))
+
+        def check_index(index):
+            if index < 0 or index >= len(cls.submodel_names):
+                raise IndexError("Model index {0} out of range.".format(index))
+            return index
 
         if isinstance(index, six.string_types):
             return get_index_from_name(index)
@@ -1702,12 +1706,15 @@ class _CompoundModelMeta(_ModelMeta):
                     "Step not supported for compound model slicing.")
             start = index.start if index.start is not None else 0
             stop = (index.stop
-                    if index.stop is not None else len(cls.submodel_names))
+                    if index.stop is not None else get_index_from_name(cls.submodel_names[-1]))
             if isinstance(start, six.string_types):
-                start = cls.submodel_names.index(start)
-            if isinstance(stop, six.string_types):
-                stop = cls.submodel_names.index(stop) + 1
+                start = get_index_from_name(start)
 
+            if isinstance(stop, six.string_types):
+                stop = get_index_from_name(stop) + 1
+                
+            start = check_index(start)
+            stop = check_index(stop)
             length = stop - start
 
             if length == 1:
@@ -1719,10 +1726,8 @@ class _CompoundModelMeta(_ModelMeta):
         elif isinstance(index, int):
             if index < 0:
                 index = len(cls.submodel_names) + index
-
-            if index < 0 or index >= len(cls.submodel_names):
-                # If still < 0 then this is an invalid index
-                raise IndexError("Model index out of range.")
+            # If still < 0 then this is an invalid index
+            index = check_index(index)
             return index
 
         raise TypeError(
