@@ -2177,13 +2177,18 @@ def _prepare_outputs_single_model(model, outputs, format_info):
     outputs = list(outputs)
 
     for idx, output in enumerate(outputs):
-        broadcast_shape = broadcasts[idx]
-        if broadcast_shape is not None:
-            if not broadcast_shape:
-                # Shape is (), i.e. a scalar should be returned
-                outputs[idx] = np.asscalar(output)
-            else:
-                outputs[idx] = output.reshape(broadcast_shape)
+        try:
+            broadcast_shape = broadcasts[idx]
+            if broadcast_shape is not None:
+                if not broadcast_shape:
+                    # Shape is (), i.e. a scalar should be returned
+                    outputs[idx] = np.asscalar(output)
+                else:
+                    outputs[idx] = output.reshape(broadcast_shape)
+        # handle case when n_outputs > n_inputs
+        except IndexError:
+            # assume outputs have the same shape
+            outputs[idx] = output.reshape(broadcast_shape)
 
     if model.n_outputs == 1:
         return outputs[0]
