@@ -84,6 +84,8 @@ KEYWORD_ATTRIBUTES = ['name', 'format', 'unit', 'null', 'bscale', 'bzero',
                       'disp', 'start', 'dim']
 """This is a list of the attributes that can be set on `Column` objects."""
 
+# TODO: Define a list of default comments to associate with each table keyword
+
 # TFORMn regular expression
 TFORMAT_RE = re.compile(r'(?P<repeat>^[0-9]*)(?P<format>[LXBIJKAEDCMPQ])'
                         r'(?P<option>[!-~]*)', re.I)
@@ -350,11 +352,153 @@ class _FormatQ(_FormatP):
     _descriptor_format = '2i8'
 
 
+class _ColumnAttribute(object):
+    """
+    Descriptor for attributes of `Column` that are associated with keywords
+    in the FITS header and describe properties of the column as specified in
+    the FITS standard.
+
+    Each `_ColumnAttribute` may have a couple methods defined on it that
+    determine how to update that attribute:
+
+    - ``validator``: Validates values set on this attribute to ensure that they
+      meet the FITS standard.  Invalid values will raise a warning and will not
+      be used in formatting the column.  The validator should take two
+      arguments--the `Column` it is being assigned to, and the new value for
+      the attribute, and it must raise an `AssertionError` if the value is
+      invalid.
+
+    - ``data_updater``: A method that updates any `FITS_rec` this `Column` is
+      attached to in order to reflect changes to this attribute's value.  It
+      takes as arguments the `Column`, the index of the column, the new value,
+      and the `FITS_rec` instance to update.  It should not raise any
+      exceptions.
+
+    The ``validator`` and ``data_updater`` methods on this class are decorators
+    that can be used to define the ``validator`` and ``data_updater`` for each
+    column attribute.  For example::
+
+        @Column.name.validator
+        def _validate_name(col, name):
+            assert isinstance(name, str)
+
+    The setter for `_ColumnAttribute` also updates the header of any table
+    HDU this column is attached to in order to reflect the change.  The
+    ``validator`` should ensure that the value is valid for inclusion in a FITS
+    header.
+    """
+
+    def __init__(self, keyword):
+        self._keyword = keyword
+        self._validator = None
+        self._data_updater = None
+
+        # The name of the attribute associated with this keyword is currently
+        # determined from the KEYWORD_NAMES/ATTRIBUTES lists.  This could be
+        # make more flexible in the future, for example, to support custom
+        # column attributes.
+        self._attr = KEYWORD_ATTRIBUTES[KEYWORD_NAMES.index(self._keyword)]
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        else:
+            return getattr(obj, '_' + self._attr)
+
+    def __set__(self, obj, value):
+        if obj._listeners is not None:
+            # First update the header
+            for hdu, idx in obj._listeners:
+                self._update_header(hdu.header, value, idx)
+
+                if hdu._data_loaded and self._data_updater is not None:
+                    self._data_updater(obj, idx, value, hdu.data)
+
+        setattr(obj, '_' + self._attr, value)
+
+    @property
+    def validator(self):
+        """
+        If this column attribute's ``validator`` has not been set this
+        returns a decorator that can set it.  Otherwise this returns the
+        ``validator`` that has already been set.
+        """
+
+        if self._validator is None:
+            def set_validator(func):
+                self._validator = func
+
+            return set_validator
+        else:
+            return self._validator
+
+    @property
+    def data_updater(self):
+        """
+        If this column attribute's ``data_updater`` has not been set this
+        returns a decorator that can set it.  Otherwise this returns the
+        data_updater that has already been set.
+        """
+
+        if self._data_updater is None:
+            def set_data_updater(func):
+                self._data_updater = func
+
+            return set_data_updater
+        else:
+            return self._data_updater
+
+    def __repr__(self):
+        return "{0}('{1}')".format(self.__class__.__name__, self._keyword)
+
+    def _update_header(self, header, value, col_idx):
+        """
+        Update the header that the column this is attached to is associated
+        with.
+        """
+
+        keyword = self._keyword + str(col_idx + 1)
+
+        if keyword in header:
+            header[keyword] = value
+        else:
+            keyword_idx = KEYWORD_NAMES.index(self._keyword)
+            # Determine the appropriate keyword to insert this one before/after
+            # if it did not already exist in the header
+            for before_keyword in reversed(KEYWORD_NAMES[:keyword_idx]):
+                before_keyword += str(col_idx + 1)
+                if before_keyword in header:
+                    header.insert(before_keyword, (keyword, value),
+                                  after=True)
+                    break
+            else:
+                for after_keyword in KEYWORD_NAMES[keyword_idx + 1:]:
+                    after_keyword += str(idx + 1)
+                    if after_keyword in header:
+                        header.insert(after_keyword, (keyword, value))
+                        break
+                else:
+                    # Just append
+                    header[keyword] = value
+
+
 class Column(object):
     """
     Class which contains the definition of one column, e.g.  ``ttype``,
     ``tform``, etc. and the array containing values for the column.
     """
+
+    name = _ColumnAttribute('TTYPE')
+    format = _ColumnAttribute('TFORM')
+    unit = _ColumnAttribute('TUNIT')
+    null = _ColumnAttribute('TNULL')
+    bscale = _ColumnAttribute('TSCAL')
+    bzero = _ColumnAttribute('TZERO')
+    disp = _ColumnAttribute('TDISP')
+    start = _ColumnAttribute('TBCOL')
+    dim = _ColumnAttribute('TDIM')
+
+    _listeners = None
 
     def __init__(self, name=None, format=None, unit=None, null=None,
                  bscale=None, bzero=None, disp=None, start=None, dim=None,
@@ -808,6 +952,27 @@ class Column(object):
 
         return format, recformat
 
+    def _add_listener(self, hdu, idx):
+        """
+        Add a table to listen for changes to this column.  This also requires
+        the index of this column in the table it belongs to.
+
+        This creates a `weakproxy` to the HDU object that is removed from
+        the listeners list when the HDU has no other references to it.
+        """
+
+        if self._listeners is None:
+            self._listeners = []
+
+        def remove(p):
+            for idx, listener in enumerate(self._listeners[:]):
+                if listener[0] is p:
+                    del self._listeners[idx]
+                    break
+
+        p = weakref.proxy(hdu, remove)
+        self._listeners.append((p, idx))
+
     def _convert_to_valid_data_type(self, array):
         # Convert the format to a type we understand
         if isinstance(array, Delayed):
@@ -1053,7 +1218,9 @@ class ColDefs(object):
 
         # now build the columns
         self.columns = [Column(**attrs) for attrs in col_keywords]
-        self._listener = weakref.proxy(table)
+
+        for idx, column in enumerate(self.columns):
+            column._add_listener(table, idx)
 
     def __copy__(self):
         return self.__class__(self)
@@ -1145,6 +1312,16 @@ class ColDefs(object):
     @lazyproperty
     def _recformats(self):
         return [fmt.recformat for fmt in self.formats]
+        #recformats = []
+        #for idx, fmt in enumerate(self.formats):
+        #    array = self._arrays[idx]
+        #    if isinstance(array, np.ndarray):
+        #        byteorder = array.dtype.byteorder
+        #    else:
+        #        # By default FITS arrays should be big-endian
+        #        byteorder = '>'
+        #    recformats.append(byteorder + fmt.recformat)
+        #return recformats
 
     @lazyproperty
     def _dims(self):
@@ -1455,6 +1632,17 @@ class _AsciiColDefs(ColDefs):
 
         self._spans = spans
         self._width = end_col
+
+
+# Column attribute updaters
+@Column.name.data_updater
+def _name_data_updater(col, col_idx, name, data):
+    dtype = data.dtype
+    # Updating the names on the dtype should suffice
+    dtype.names = dtype.names[:col_idx] + (name,) + dtype.names[col_idx + 1:]
+
+
+# Utilities
 
 
 class _VLF(np.ndarray):
