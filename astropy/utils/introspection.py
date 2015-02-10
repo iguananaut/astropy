@@ -60,7 +60,7 @@ def resolve_name(name):
         cursor = len(parts) - 1
         attr_name = parts[-1]
 
-    module_name = str(parts[:cursor])
+    module_name = parts[:cursor]
 
     while cursor > 0:
         try:
