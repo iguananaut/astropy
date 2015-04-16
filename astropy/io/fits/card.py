@@ -302,6 +302,8 @@ class Card(_Verify):
 
     # String for a FITS standard compliant (FSC) keyword.
     _keywd_FSC_RE = re.compile(r'^[A-Z0-9_-]{0,%d}$' % KEYWORD_LENGTH)
+    # A mostly FITS standard compliant keyword--just case-insensitive
+    _keywd_FSC_CI_RE = re.compile(r'^[A-Za-z0-9_-]{0,%d}$' % KEYWORD_LENGTH)
     # This will match any printable ASCII character excluding '='
     _keywd_hierarch_RE = re.compile(r'^(?:HIERARCH +)?(?:^[ -<>-~]+ ?)+$',
                                     re.I)
@@ -838,14 +840,19 @@ class Card(_Verify):
         if match:
             return '.'.join((match.group('keyword').strip().upper(),
                              match.group('field_specifier')))
-        elif len(keyword) > 9 and keyword[:9].upper() == 'HIERARCH ':
+        elif cls._keywd_FSC_CI_RE.match(keyword):
+            # A normal FITS keyword, but provided in non-standard case
+            return keyword.strip().upper()
+        elif cls._keywd_hierarch_RE.match(keyword):
             # Remove 'HIERARCH' from HIERARCH keywords; this could lead to
             # ambiguity if there is actually a keyword card containing
             # "HIERARCH HIERARCH", but shame on you if you do that.
-            return keyword[9:].strip()
+            if keyword.startswith('HIERARCH '):
+                keyword = keyword[9:]
+            return keyword.strip()
         else:
-            # A normal FITS keyword, but provided in non-standard case
-            return keyword.strip().upper()
+            # Not sure; return the keyword as-is
+            return keyword.strip()
 
     def _check_if_rvkc(self, *args):
         """
