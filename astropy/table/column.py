@@ -100,7 +100,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
                 dtype=None, shape=(), length=0,
                 description=None, unit=None, format=None, meta=None,
                 copy=False):
-
+        indices = []
         if data is None:
             dtype = (np.dtype(dtype).str, shape)
             self_data = np.zeros(length, dtype=dtype)
@@ -120,6 +120,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
                 meta = deepcopy(data.meta)
             if name is None:
                 name = data.name
+            indices = data.indices ##TODO: think about deep copy
         elif isinstance(data, Quantity):
             if unit is None:
                 self_data = np.array(data, dtype=dtype, copy=copy)
@@ -143,7 +144,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
         self.description = description
         self.meta = meta
         self._parent_table = None
-        self.indices = []
+        self.indices = indices ##TODO: composite indices
 
         return self
 
