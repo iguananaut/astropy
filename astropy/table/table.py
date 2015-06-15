@@ -1408,6 +1408,10 @@ class Table(object):
               2 0.2   y
               3 0.3   z
         """
+        # Update indices
+        for index in self.indices:
+            index.remove_rows(row_specifier)
+
         keep_mask = np.ones(len(self), dtype=np.bool)
         keep_mask[row_specifier] = False
 
@@ -1417,15 +1421,11 @@ class Table(object):
             newcol.info.parent_table = self
             columns[name] = newcol
 
-        self.columns = columns
+        self._replace_cols(columns)
 
         # Revert groups to default (ungrouped) state
         if hasattr(self, '_groups'):
             del self._groups
-
-        # Update indices
-        for index in self.indices:
-            index.remove_rows(row_specifier, col)
 
     def remove_column(self, name):
         """
@@ -1884,6 +1884,7 @@ class Table(object):
                     newcol.mask[index] = mask_
 
                 columns[name] = newcol
+
             # insert row in indices
             for table_index in self.indices:
                 table_index.insert_row(index, vals, self.columns.values())
@@ -1892,11 +1893,19 @@ class Table(object):
             raise ValueError("Unable to insert row because of exception in column '{0}':\n{1}"
                              .format(name, err))
         else:
-            self.columns = columns
+            self._replace_cols(columns)
 
             # Revert groups to default (ungrouped) state
             if hasattr(self, '_groups'):
                 del self._groups
+
+    def _replace_cols(self, columns):
+        for col, new_col in zip(self.columns.values(), columns.values()):
+            for index in col.indices:
+                index.columns[index.columns.index(col)] = new_col
+                new_col.add_index(index)
+
+        self.columns = columns
 
     def argsort(self, keys=None, kind=None):
         """
