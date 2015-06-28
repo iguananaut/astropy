@@ -142,7 +142,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
         self.description = description
         self.meta = meta
         self._parent_table = None
-        self.indices = data.indices if hasattr(data, 'indices') else []
+        self.indices = deepcopy(data.indices) if hasattr(data, 'indices') else []
   
         return self
 
@@ -616,7 +616,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
             val = getattr(obj, attr, None)
             setattr(self, attr, val)
         self.meta = deepcopy(getattr(obj, 'meta', {}))
-        self.indices = obj.indices if hasattr(obj, 'indices') else []
+        self.indices = obj.indices[:] if hasattr(obj, 'indices') else []
 
 
 class Column(BaseColumn):
