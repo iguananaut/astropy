@@ -329,6 +329,10 @@ New Features
 
 - ``astropy.utils``
 
+  - Added an optional ``backup`` (default False) argument to
+    ``clear_download_cache`` to create a backup of the cache before deleting
+    it. [#3754]
+
 - ``astropy.vo``
 
 - ``astropy.wcs``
@@ -423,6 +427,10 @@ Bug Fixes
     the namespace clash with the default units. [#3873]
 
 - ``astropy.utils``
+
+  - When calling ``download_file``, create a new download cache if the
+    existing cache was written with a database format not understood by the
+    current Python version in use. [#3754]
 
 - ``astropy.vo``
 
