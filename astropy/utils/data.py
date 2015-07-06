@@ -27,6 +27,12 @@ from warnings import warn
 from .. import config as _config
 from ..utils.exceptions import AstropyWarning
 
+try:
+    import anydbm as dbm
+except ImportError:
+    # On Python 3 this is just the 'dbm' module
+    import dbm
+
 
 __all__ = [
     'Conf', 'conf', 'get_readable_fileobj', 'get_file_contents',
@@ -823,6 +829,25 @@ def _find_hash_fn(hash):
         return None
 
 
+def _make_unique_filename(base):
+    """
+    Append integers to the end of a base filename until a name that is not
+    already in use is found.
+    """
+
+    base = os.path.abspath(base)
+
+    idx = 0
+    while True:
+        filename = base + str(idx)
+        if os.path.exists(filename):
+            idx += 1
+        else:
+            break
+
+    return filename
+
+
 def get_free_space_in_dir(path):
     """
     Given a path to a directory, returns the amount of free space (in
@@ -944,17 +969,33 @@ def download_file(remote_url, cache=False, show_progress=True, timeout=None):
 
     try:
         if cache:
+            clear_cache = False
+
             try:
                 # We don't need to acquire the lock here, since we are only
                 # reading
                 with _open_shelve(urlmapfn, True) as url2hash:
                     if url_key in url2hash:
                         return url2hash[url_key]
-            except ImportError:
+            except ImportError as exc:
+                msg = ('Download cache could not be read--it was saved in a '
+                       'format not supported by your Python installation '
+                       '(the {0!r} module is not installed).'.format(exc.name))
+                clear_cache = True
+            except dbm.error as exc:
+                msg = ('Download cache could not be read--{0} (this means '
+                       'your Python installation is missing the required '
+                       'db module).'.format(exc))
+                clear_cache = True
+
+            if clear_cache:
                 # Loading the cache may fail if it's in a different
                 # database format (ImportError).  In that case, delete
                 # the cache file and move on.
-                clear_download_cache()
+                cache_backups = clear_download_cache(backup=True)
+                warn(msg + '  A new cache will be created, but a backup of '
+                     'the old cache was saved to {0} and {1}.'.format(
+                     *cache_backups), AstropyWarning)
 
         with contextlib.closing(urllib.request.urlopen(
                 remote_url, timeout=timeout)) as remote:
@@ -1111,7 +1152,7 @@ def _deltemps():
                 os.remove(fn)
 
 
-def clear_download_cache(hashorurl=None):
+def clear_download_cache(hashorurl=None, backup=False):
     """ Clears the data file cache by deleting the local file(s).
 
     Parameters
@@ -1121,6 +1162,20 @@ def clear_download_cache(hashorurl=None):
         hash for the cached file that is supposed to be deleted, or a URL that
         has previously been downloaded to the cache.
 
+    backup : bool
+        If True, and ``hashorurl`` is None (i.e. the whole cache file is being
+        cleared, save a backup of the old download cache by appending .bakN to
+        the cache directory name and urlmap, where N is an integer (default:
+        False).  If a specific ``hashorurl`` is specified this argument is
+        ignored.
+
+    Returns
+    -------
+    backups : tuple
+        If ``hashorurl`` was None and ``backup`` was True, returns a tuple of
+        the backup locations for the download cache directory and the
+        url database.  Otherwise returns ``(None, None)``.
+
     Raises
     ------
     OSEerror
@@ -1129,7 +1184,7 @@ def clear_download_cache(hashorurl=None):
     """
 
     try:
-        dldir, urlmapfn = _get_download_cache_locs()
+        dldir, urlmap = _get_download_cache_locs()
     except (IOError, OSError) as e:
         msg = 'Not clearing data cache - cache inacessable due to '
         estr = '' if len(e.args) < 1 else (': ' + str(e))
@@ -1139,35 +1194,54 @@ def clear_download_cache(hashorurl=None):
     _acquire_download_cache_lock()
     try:
         if hashorurl is None:
+            dldir_bak = urlmapfn_bak = None
             if os.path.exists(dldir):
+                if backup:
+                    dldir_bak = _make_unique_filename(dldir + '.bak')
+                    shutil.copytree(dldir, dldir_bak)
+                    # Also remove the lock from the backup dir:
+                    lockdir = os.path.join(dldir_bak, 'lock')
+                    if os.path.exists(lockdir):
+                        shutil.rmtree(lockdir)
                 shutil.rmtree(dldir)
+
+            if six.PY2:
+                urlmapfn = urlmap
+            else:
+                urlmapfn = urlmap + '.db'
+
             if os.path.exists(urlmapfn):
+                if backup:
+                    urlmapfn_bak = _make_unique_filename(urlmapfn + '.bak')
+                    shutil.copy2(urlmapfn, urlmapfn_bak)
                 os.unlink(urlmapfn)
-        else:
-            with _open_shelve(urlmapfn, True) as url2hash:
-                filepath = os.path.join(dldir, hashorurl)
-                assert _is_inside(filepath, dldir), \
-                       ("attempted to use clear_download_cache on a path "
-                        "outside the data cache directory")
 
-                # shelve DBs don't accept unicode strings as keys in Python 2
-                if six.PY2 and isinstance(hashorurl, six.text_type):
-                    hash_key = hashorurl.encode('utf-8')
-                else:
-                    hash_key = hashorurl
+            return dldir_bak, urlmapfn_bak
 
-                if os.path.exists(filepath):
-                    for k, v in list(six.iteritems(url2hash)):
-                        if v == filepath:
-                            del url2hash[k]
-                    os.unlink(filepath)
-                elif hash_key in url2hash:
-                    filepath = url2hash[hash_key]
-                    del url2hash[hash_key]
-                    os.unlink(filepath)
-                else:
-                    msg = 'Could not find file or url {0}'
-                    raise OSError(msg.format(hashorurl))
+        with _open_shelve(urlmap, True) as url2hash:
+            filepath = os.path.join(dldir, hashorurl)
+            assert _is_inside(filepath, dldir), \
+                   ("attempted to use clear_download_cache on a path "
+                    "outside the data cache directory")
+
+            # shelve DBs don't accept unicode strings as keys in Python 2
+            if six.PY2 and isinstance(hashorurl, six.text_type):
+                hash_key = hashorurl.encode('utf-8')
+            else:
+                hash_key = hashorurl
+
+            if os.path.exists(filepath):
+                for k, v in list(six.iteritems(url2hash)):
+                    if v == filepath:
+                        del url2hash[k]
+                os.unlink(filepath)
+            elif hash_key in url2hash:
+                filepath = url2hash[hash_key]
+                del url2hash[hash_key]
+                os.unlink(filepath)
+            else:
+                msg = 'Could not find file or url {0}'
+                raise OSError(msg.format(hashorurl))
     finally:
         # the lock will be gone if rmtree was used above, but release otherwise
         if os.path.exists(os.path.join(_get_download_cache_locs()[0], 'lock')):
@@ -1185,6 +1259,7 @@ def _get_download_cache_locs():
     shelveloc : str
         The path to the shelve object that stores the cache info.
     """
+
     from ..config.paths import get_cache_dir
 
     datadir = os.path.join(get_cache_dir(), 'download')
@@ -1200,9 +1275,14 @@ def _get_download_cache_locs():
         msg = 'Data cache directory {0} is not a directory'
         raise IOError(msg.format(datadir))
 
-    if os.path.isdir(shelveloc):
+    if six.PY2:
+        shelvefn = shelveloc
+    else:
+        shelvefn = shelveloc + '.db'
+
+    if os.path.isdir(shelvefn):
         msg = 'Data cache shelve object location {0} is a directory'
-        raise IOError(msg.format(shelveloc))
+        raise IOError(msg.format(shelvefn))
 
     return datadir, shelveloc
 
