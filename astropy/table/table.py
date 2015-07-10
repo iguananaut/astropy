@@ -207,14 +207,15 @@ class Table(object):
         return data
 
     def __init__(self, data=None, masked=None, names=None, dtype=None,
-                 meta=None, copy=True, rows=None):
+                 meta=None, copy=True, rows=None, copy_indices=True):
 
         # Set up a placeholder empty table
         self._set_masked(masked)
         self.columns = self.TableColumns()
         self.meta = meta
         self.formatter = self.TableFormatter()
-        self._copy_indices = True # copy indices by default
+        self._copy_indices = True # copy indices from this Table by default
+        self._init_indices = copy_indices # whether to copy indices in init
 
         # Must copy if dtype are changing
         if not copy and dtype is not None:
@@ -578,7 +579,7 @@ class Table(object):
             if isinstance(col, (Column, MaskedColumn)):
                 col = self.ColumnClass(name=(name or col.info.name or def_name),
                                        data=col, dtype=dtype,
-                                       copy=copy, copy_indices=self._copy_indices)
+                                       copy=copy, copy_indices=self._init_indices)
             elif self._add_as_mixin_column(col):
                 # Copy the mixin column attributes if they exist since the copy below
                 # may not get this attribute.
@@ -588,7 +589,7 @@ class Table(object):
                 col.info.name = name or col.info.name or def_name
             elif isinstance(col, np.ndarray) or isiterable(col):
                 col = self.ColumnClass(name=(name or def_name), data=col, dtype=dtype,
-                                       copy=copy, copy_indices=self._copy_indices)
+                                       copy=copy, copy_indices=self._init_indices)
             else:
                 raise ValueError('Elements in list initialization must be '
                                  'either Column or list-like')
@@ -670,6 +671,7 @@ class Table(object):
         newcols = [self._convert_col_for_table(col) for col in cols]
         self._make_table_from_cols(self, newcols)
 
+
     def _new_from_slice(self, slice_):
         """Create a new table as a referenced slice from self."""
 
@@ -677,7 +679,11 @@ class Table(object):
         table.meta.clear()
         table.meta.update(deepcopy(self.meta))
         cols = self.columns.values()
+        for col in cols:
+            col._copy_indices = self._copy_indices
         newcols = [col[slice_] for col in cols]
+        for col in cols:
+            col._copy_indices = True
 
         self._make_table_from_cols(table, newcols)
 
@@ -991,7 +997,8 @@ class Table(object):
                 raise ValueError('Slice name(s) {0} not valid column name(s)'
                                  .format(', '.join(bad_names)))
             out = self.__class__([self[x] for x in item],
-                                 meta=deepcopy(self.meta))
+                                 meta=deepcopy(self.meta),
+                                 copy_indices=self._copy_indices)
             out._groups = groups.TableGroups(out, indices=self.groups._indices,
                                              keys=self.groups._keys)
             return out
