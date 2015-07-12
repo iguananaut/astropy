@@ -689,7 +689,6 @@ class Table(object):
 
         for index in table.indices:
             index.refresh(table.columns) # this doesn't happen in Table initialization
-
         return table
 
     @staticmethod

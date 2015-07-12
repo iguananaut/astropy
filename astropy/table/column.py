@@ -261,16 +261,15 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
         elif isinstance(item, slice):
             self._slice = True
             col_slice = super(BaseColumn, self).__getitem__(item)
-            col_slice.indices = [x[item] for x in self.indices] if \
-                                self.parent_table._copy_indices else []
+            col_slice.indices = [x[item] for x in self.indices]
             self._slice = False
         else:
             col_slice = super(BaseColumn, self).__getitem__(item)
 
-            if isinstance(col_slice, BaseColumn) and col_slice.indices \
-               and isinstance(item, np.ndarray) and item.dtype.kind == 'b':
-                # boolean mask
-                item = np.where(item)[0]
+            if isinstance(col_slice, BaseColumn) and col_slice.indices:
+                if isinstance(item, np.ndarray) and item.dtype.kind == 'b':
+                    # boolean mask
+                    item = np.where(item)[0]
                 for index in col_slice.indices:
                     index.replace_rows(item)
 
@@ -1121,14 +1120,13 @@ class MaskedColumn(Column, _MaskedColumnGetitemShim, ma.MaskedArray):
             if isinstance(item, np.ndarray) and item.dtype.kind == 'b':
                 # boolean mask
                 item = np.where(item)[0]
-            else: ##TODO: make sure slice is handled correctly
-                return out
 
-            value.indices = []
-            for index in self.indices:
-                index = deepcopy(index)
-                index.replace_rows(item)
-                value.indices.append(index)
+            if not isinstance(item, slice): # deep copy indices
+                value.indices = []
+                for index in self.indices:
+                    index = deepcopy(index)
+                    index.replace_rows(item)
+                    value.indices.append(index)
 
             value.parent_table = None
             value._copy_attrs(self, copy_indices=False)
