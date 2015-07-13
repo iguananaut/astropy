@@ -254,6 +254,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
     def __getslice__(self, start, stop):
         return self.__getitem__(slice(start, stop))
 
+    
     def __getitem__(self, item):
         if isinstance(item, INTEGER_TYPES):
             return self.data[item]  # Return as plain ndarray or ma.MaskedArray
@@ -274,6 +275,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
                     index.replace_rows(item)
 
         return col_slice
+    
 
 >>>>>>> Fixed index deep copies in static_indices context
     # avoid == and != to be done based on type of subclass
