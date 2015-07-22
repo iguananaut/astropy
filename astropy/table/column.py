@@ -59,13 +59,16 @@ def col_copy(col):
     # manner.
 
     parent_table = col.info.parent_table
+    indices = col.info.indices
     col.info.parent_table = None
+    col.info.indices = []
 
     try:
         newcol = col.copy() if hasattr(col, 'copy') else deepcopy(col)
         newcol.info = col.info
     finally:
         col.info.parent_table = parent_table
+        col.info.indices = indices
 
     return newcol
 
@@ -850,9 +853,6 @@ class Column(BaseColumn):
         out.__array_finalize__(self)
         return out
 
-    def add_index(self, index):
-        self.indices.append(index)
-
     # We do this to make the methods show up in the API docs
     name = BaseColumn.name
     unit = BaseColumn.unit
@@ -1133,4 +1133,3 @@ class MaskedColumn(Column, _MaskedColumnGetitemShim, ma.MaskedArray):
     pprint = BaseColumn.pprint
     pformat = BaseColumn.pformat
     convert_unit_to = BaseColumn.convert_unit_to
-    add_index = Column.add_index
