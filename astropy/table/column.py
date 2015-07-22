@@ -580,7 +580,6 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
         out : Column
             New column with groups attribute set accordingly
         """
-        ##TODO: possibly replace this with indices
         return groups.column_group_by(self, keys)
 
     def _copy_groups(self, out):
