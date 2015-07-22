@@ -1119,7 +1119,6 @@ class MaskedColumn(Column, _MaskedColumnGetitemShim, ma.MaskedArray):
     # to the (faster) Column version which uses an ndarray view.  This doesn't
     # copy the mask properly. See test_setting_from_masked_column test.
     def __setitem__(self, index, value):
-        ##TODO: check this out!
         # update indices
         self._adjust_indices(index, value)
         ma.MaskedArray.__setitem__(self, index, value)
