@@ -879,16 +879,22 @@ class Quantity(np.ndarray):
                 "'{cls}' object with a scalar value does not support "
                 "indexing".format(cls=self.__class__.__name__))
         out = super(Quantity, self).__getitem__(key)
-        return self._new_view(out)
+        out = self._new_view(out)
+        # adjust indices of slice as necessary
+        if not out.isscalar and out.info.indices:
+            out = self.info.slice_indices(out, key)
+        return out
 
     def __setitem__(self, i, value):
         # update indices
-        self.info.adjust_indices(i, value, len(self))
+        if not self.isscalar:
+            self.info.adjust_indices(i, value, len(self))
         self.view(np.ndarray).__setitem__(i, self._to_own_unit(value))
 
     def __setslice__(self, i, j, value):
         # update indices
-        self.info.adjust_indices(slice(i, j), value, len(self))
+        if not self.isscalar:
+            self.info.adjust_indices(slice(i, j), value, len(self))
         self.view(np.ndarray).__setslice__(i, j, self._to_own_unit(value))
 
     # __contains__ is OK

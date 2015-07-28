@@ -829,6 +829,9 @@ class Time(object):
         if 'info' in self.__dict__:
             tm.info = self.info
 
+        if not tm.isscalar and tm.info.indices:
+            # update indices based on slice
+            tm = self.info.slice_indices(tm, item)
         return tm
 
     def reshape(self, *args, **kwargs):
