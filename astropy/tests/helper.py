@@ -444,8 +444,8 @@ def treat_deprecations_as_exceptions():
             DeprecationWarning)
         warnings.filterwarnings(
             "ignore",
-            "The value of convert_charrefs will become True in 3\.5\. "
-            "You are encouraged to set the value explicitly\.",
+            r"The value of convert_charrefs will become True in 3\.5\. "
+            r"You are encouraged to set the value explicitly\.",
             DeprecationWarning)
 
     if sys.version_info[:2] >= (3, 5):
