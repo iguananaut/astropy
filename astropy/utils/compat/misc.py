@@ -17,11 +17,12 @@ from __future__ import (absolute_import, division, print_function,
 from ...extern import six
 
 import functools
+import inspect
 import sys
 
 
 __all__ = ['invalidate_caches', 'override__dir__', 'ignored',
-           'possible_filename']
+           'possible_filename', 'getargspec']
 
 
 def possible_filename(filename):
@@ -118,3 +119,19 @@ except ImportError:
             yield
         except exceptions:
             pass
+
+
+if sys.version_info[:2] >= (3, 4):
+    # Deprecation: getargspec doesn't handle keyword-only arguments,
+    # so the results will be incorrect in that case.  Eventually, all
+    # calls to this should be upgraded to be aware of that case.
+
+    def getargspec(func):
+        args, varargs, varkw, defaults, kwonlyargs, kwonlydefaults, ann = \
+            inspect.getfullargspec(func)
+        if kwonlyargs or ann:
+            raise ValueError("Function has keyword-only arguments or annotations"
+                             ", use getfullargspec() API which can support them")
+        return inspect.ArgSpec(args, varargs, varkw, defaults)
+else:
+    getargspec = inspect.getargspec

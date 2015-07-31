@@ -10,7 +10,6 @@ define their own models.
 from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
-import inspect
 import functools
 import numbers
 import types
@@ -18,7 +17,7 @@ import types
 import numpy as np
 
 from ..utils import isiterable
-from ..utils.compat import ignored
+from ..utils.compat import ignored, getargspec
 from ..extern import six
 
 __all__ = ['Parameter', 'InputParameterError']
@@ -670,7 +669,7 @@ class Parameter(object):
             # Just allow non-wrappers to fall through silently, for convenience
             return None
         else:
-            wrapper_args = inspect.getargspec(wrapper)
+            wrapper_args = getargspec(wrapper)
             nargs = len(wrapper_args.args)
 
             if nargs == 1:

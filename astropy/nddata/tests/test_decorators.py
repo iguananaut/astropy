@@ -9,6 +9,7 @@ import numpy as np
 
 from ...tests.helper import catch_warnings, pytest
 from ... import units as u
+from ...utils.compat import getargspec
 
 from ..nddata import NDData
 from ..decorators import support_nddata
@@ -178,6 +179,6 @@ def test_wrap_preserve_signature_docstring():
     if wrapped_function_6.__doc__ is not None:
         assert wrapped_function_6.__doc__.strip() == "An awesome function"
 
-    signature = inspect.formatargspec(*inspect.getargspec(wrapped_function_6))
+    signature = inspect.formatargspec(*getargspec(wrapped_function_6))
 
     assert signature == "(data, wcs=None, unit=None)"

@@ -13,6 +13,7 @@ import numpy as np
 from .. import constants as const
 from .. import units as u
 from ..utils import isiterable, deprecated
+from ..utils.compat import getargspec
 from ..utils.state import ScienceState, ScienceStateAlias
 
 from . import parameters
@@ -437,8 +438,7 @@ class FLRW(Cosmology):
             return self
 
         # Get constructor arguments
-        import inspect
-        arglist = inspect.getargspec(self.__init__).args
+        arglist = getargspec(self.__init__).args
 
         # Build the dictionary of values used to construct this
         #  object.  This -assumes- every argument to __init__ has a

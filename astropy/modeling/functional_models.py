@@ -13,6 +13,7 @@ from .core import (Fittable1DModel, Fittable2DModel, Model,
                    ModelDefinitionError, custom_model)
 from .parameters import Parameter, InputParameterError
 from ..utils import deprecated
+from ..utils.compat import getargspec
 from ..extern import six
 
 __all__ = sorted([
@@ -1648,7 +1649,7 @@ class Sersic2D(Fittable2DModel):
 @deprecated('1.0', alternative='astropy.modeling.models.custom_model',
             pending=True)
 def custom_model_1d(func, func_fit_deriv=None):
-    argspec = inspect.getargspec(func)
+    argspec = getargspec(func)
     param_values = argspec.defaults
     nparams = len(param_values)
 

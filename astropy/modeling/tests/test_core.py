@@ -3,15 +3,14 @@
 from __future__ import (absolute_import, unicode_literals, division,
                         print_function)
 
-import collections
-import inspect
-
 import pytest
 import numpy as np
 from numpy.testing.utils import assert_allclose
 from ..core import Model, InputParameterError, custom_model
 from ..parameters import Parameter
 from .. import models
+
+from ...utils.compat import getargspec
 
 
 class NonFittableModel(Model):
@@ -114,9 +113,9 @@ def test_custom_model_signature():
 
     assert model_a.param_names == ()
     assert model_a.n_inputs == 1
-    argspec = inspect.getargspec(model_a.__init__)
+    argspec = getargspec(model_a.__init__)
     assert argspec.args == ['self']
-    argspec = inspect.getargspec(model_a.__call__)
+    argspec = getargspec(model_a.__call__)
     assert argspec.args == ['self', 'x', 'model_set_axis']
 
     @custom_model
@@ -125,10 +124,10 @@ def test_custom_model_signature():
 
     assert model_b.param_names == ('a', 'b')
     assert model_b.n_inputs == 1
-    argspec = inspect.getargspec(model_b.__init__)
+    argspec = getargspec(model_b.__init__)
     assert argspec.args == ['self', 'a', 'b']
     assert argspec.defaults == (1, 2)
-    argspec = inspect.getargspec(model_b.__call__)
+    argspec = getargspec(model_b.__call__)
     assert argspec.args == ['self', 'x', 'model_set_axis']
 
     @custom_model
@@ -137,10 +136,10 @@ def test_custom_model_signature():
 
     assert model_c.param_names == ('a', 'b')
     assert model_c.n_inputs == 2
-    argspec = inspect.getargspec(model_c.__init__)
+    argspec = getargspec(model_c.__init__)
     assert argspec.args == ['self', 'a', 'b']
     assert argspec.defaults == (1, 2)
-    argspec = inspect.getargspec(model_c.__call__)
+    argspec = getargspec(model_c.__call__)
     assert argspec.args == ['self', 'x', 'y', 'model_set_axis']
 
 
@@ -162,9 +161,9 @@ def test_custom_model_subclass():
     assert b.a == 1
     assert b(1) == -1
 
-    argspec = inspect.getargspec(model_b.__init__)
+    argspec = getargspec(model_b.__init__)
     assert argspec.args == ['self', 'a']
-    argspec = inspect.getargspec(model_b.__call__)
+    argspec = getargspec(model_b.__call__)
     assert argspec.args == ['self', 'x', 'model_set_axis']
 
 

@@ -4,7 +4,6 @@ from __future__ import division
 
 
 import datetime
-import inspect
 import os
 import warnings
 
@@ -20,7 +19,7 @@ from ..verify import _Verify, _ErrList
 
 from ....extern.six import string_types
 from ....utils import lazyproperty, deprecated
-from ....utils.compat import ignored
+from ....utils.compat import ignored, getargspec
 from ....utils.exceptions import AstropyUserWarning
 
 
@@ -490,7 +489,7 @@ class _BaseHDU(object):
         # self._kwargs.  self._kwargs contains any number of optional arguments
         # that may or may not be valid depending on the HDU type
         cls = _hdu_class_from_header(cls, header)
-        args, varargs, varkwargs, defaults = inspect.getargspec(cls.__init__)
+        args, varargs, varkwargs, defaults = getargspec(cls.__init__)
         new_kwargs = kwargs.copy()
         if not varkwargs:
             # If __init__ accepts arbitrary keyword arguments, then we can go

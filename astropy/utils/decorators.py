@@ -750,8 +750,9 @@ else:
         for `make_function_with_signature`.  This requires different
         implementations on Python 2 versus Python 3.
         """
+        from .misc import getargspec
 
-        argspec = inspect.getargspec(func)
+        argspec = getargspec(func)
 
         if argspec.defaults:
             args = argspec.args[:-len(argspec.defaults)]

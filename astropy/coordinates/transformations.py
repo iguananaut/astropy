@@ -26,7 +26,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from ..utils.compat import ignored
+from ..utils.compat import ignored, getargspec
 from ..extern import six
 
 
@@ -686,8 +686,6 @@ class FunctionTransform(CoordinateTransform):
 
     """
     def __init__(self, func, fromsys, tosys, priority=1, register_graph=None):
-        from inspect import getargspec
-
         if not six.callable(func):
             raise TypeError('func must be callable')
 

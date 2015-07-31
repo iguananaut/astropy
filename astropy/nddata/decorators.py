@@ -3,11 +3,11 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import inspect
 import warnings
 
 from ..utils import wraps
 from ..utils.exceptions import AstropyUserWarning
+from ..utils.compat import getargspec
 
 from .nddata import NDData
 
@@ -76,7 +76,7 @@ def support_nddata(_func=None, accepts=NDData, repack=False, returns=None):
     def support_nddata_decorator(func):
 
         # Find out args and kwargs
-        wrapped_argspec = inspect.getargspec(func)
+        wrapped_argspec = getargspec(func)
 
         # Find out the args and kwargs
         if wrapped_argspec.defaults:

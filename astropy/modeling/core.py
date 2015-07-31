@@ -36,7 +36,7 @@ from ..table import Table
 from ..utils import (deprecated, sharedmethod, find_current_module,
                      InheritDocstrings)
 from ..utils.codegen import make_function_with_signature
-from ..utils.compat import ignored
+from ..utils.compat import ignored, getargspec
 from ..utils.exceptions import AstropyDeprecationWarning
 from .utils import (array_repr_oneline, check_broadcast, combine_labels,
                     make_binary_operator_eval, ExpressionTree,
@@ -2268,7 +2268,7 @@ def _custom_model_wrapper(func, fit_deriv=None):
             "callable object")
 
     model_name = func.__name__
-    argspec = inspect.getargspec(func)
+    argspec = getargspec(func)
     param_values = argspec.defaults or ()
 
     nparams = len(param_values)
