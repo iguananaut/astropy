@@ -580,8 +580,8 @@ class Polynomial2D(PolynomialBase):
             x = poly_map_domain(x, self.x_domain, self.x_window)
         if self.y_domain is not None:
             y = poly_map_domain(y, self.y_domain, self.y_window)
-        invcoeff = self.invlex_coeff(coeffs)
-        result = self.multivariate_horner(x, y, invcoeff)
+
+        result = self.multivariate_horner(x, y, coeffs)
 
         # Special case for degree==0 to ensure that the shape of the output is
         # still as expected by the broadcasting rules, even though the x and y
@@ -647,38 +647,61 @@ class Polynomial2D(PolynomialBase):
                     invlex_coeffs.append(coeff)
         return invlex_coeffs[::-1]
 
-    def multivariate_horner(self, x, y, coeffs):
+    @classmethod
+    def multivariate_horner(cls, x, y, coeffs):
         """
         Multivariate Horner's scheme
 
         Parameters
         ----------
         x, y : array
-        coeff : array of coefficients in inverse lexical order
+        coeff : array of coefficients
         """
 
-        alpha = self._invlex()
-        r0 = coeffs[0]
+        table = cls._inverse_lexical_table
+
+        r0 = coeffs[table[0]]
         r1 = r0 * 0.0
         r2 = r0 * 0.0
-        karr = np.diff(alpha, axis=0)
-        for n in range(len(karr)):
-            if karr[n, 1] != 0:
+        for n, k in enumerate(cls._ks[:, 1]):
+            if k != 0:
                 r2 = y * (r0 + r1 + r2)
-                r1 = coeffs[0] * 0.
+                r1 = coeffs[table[-1]] * 0.
             else:
                 r1 = x * (r0 + r1)
-            r0 = coeffs[n + 1]
+            r0 = coeffs[table[n + 1]]
         return r0 + r1 + r2
 
-    def _invlex(self):
-        c = []
-        lencoeff = self.degree + 1
-        for i in range(lencoeff):
-            for j in range(lencoeff):
-                if i + j <= self.degree:
-                    c.append((j, i))
-        return c[::-1]
+    @classproperty(lazy=True)
+    def _ks(cls):
+        """
+        Array of differences between inverse lexical ordered coefficient
+        indicies, used in the multivariate Horner algorithm.
+        """
+
+        return np.diff(list(cls._inverse_lexical_terms()), axis=0)
+
+    @classmethod
+    def _inverse_lexical_terms(cls):
+        d = cls.degree
+        for indices in itertools.product(*((range(d, -1, -1),) * 2)):
+            if sum(indices) <= d:
+                yield indices[::-1]
+
+    @classproperty(lazy=True)
+    def _inverse_lexical_table(cls):
+        """
+        A lookup table mapping the indices of the coefficients in
+        inverse lexical ordering to their indices as model parameters.
+        """
+
+        mapping = {}
+
+        for idx, indices in enumerate(cls._inverse_lexical_terms()):
+            coeff_name = cls._coefficient_name(*indices)
+            mapping[cls.param_names.index(coeff_name)] = idx
+
+        return sorted(mapping, key=lambda x: mapping[x])
 
 
 class OrthoPolynomialBase(Polynomial2D):
