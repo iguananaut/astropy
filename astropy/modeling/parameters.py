@@ -17,8 +17,10 @@ import types
 import numpy as np
 
 from ..utils import isiterable
-from ..utils.compat import ignored, getargspec
+from ..utils.compat import ignored
 from ..extern import six
+
+from .utils import get_inputs_and_params
 
 __all__ = ['Parameter', 'InputParameterError']
 
@@ -669,8 +671,8 @@ class Parameter(object):
             # Just allow non-wrappers to fall through silently, for convenience
             return None
         else:
-            wrapper_args = getargspec(wrapper)
-            nargs = len(wrapper_args.args)
+            inputs, params = get_inputs_and_params(wrapper)
+            nargs = len(inputs)
 
             if nargs == 1:
                 pass
@@ -678,7 +680,7 @@ class Parameter(object):
                 if model is not None:
                     # Don't make a partial function unless we're tied to a
                     # specific model instance
-                    model_arg = wrapper_args.args[1]
+                    model_arg = inputs.args[1].name
                     wrapper = functools.partial(wrapper, **{model_arg: model})
             else:
                 raise TypeError("Parameter getter/setter must be a function "

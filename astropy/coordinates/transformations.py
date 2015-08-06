@@ -26,7 +26,8 @@ from collections import defaultdict
 
 import numpy as np
 
-from ..utils.compat import ignored, getargspec
+from ..utils.compat import ignored
+from ..utils.compat.funcsigs import signature
 from ..extern import six
 
 
@@ -690,11 +691,10 @@ class FunctionTransform(CoordinateTransform):
             raise TypeError('func must be callable')
 
         with ignored(TypeError):
-            # TypeError raised for things getargspec can't process.  We'll trust
-            # the transform designer knows what they're doing, though, because
-            # sometimes this is fine..
-            argspec = getargspec(func)
-            if (len(argspec[0]) - len(argspec[3]) != 2) and not argspec[1]:
+            sig = signature(func)
+            kinds = [x.kind for x in sig.parameters.values()]
+            if (len(x for x in kinds if x == sig.POSITIONAL_ONLY) != 2
+                and not sig.VAR_POSITIONAL in kinds):
                 raise ValueError('provided function does not accept two arguments')
 
         self.func = func

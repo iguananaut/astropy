@@ -25,7 +25,7 @@ from ...extern import six
 from ...extern.six import u, string_types
 from ...extern.six.moves import zip, xrange, reduce
 from ...utils import indent
-from ...utils.compat import getargspec
+from ...utils.compat.funcsigs import signature
 from .card import Card, BLANK_CARD
 from .header import Header
 # HDUList is used in one of the doctests
@@ -108,10 +108,10 @@ class _BaseDiff(object):
             ['*']
         """
 
-        args, _, _, _ = getargspec(cls.__init__)
+        sig = signature(cls.__init__)
         # The first 3 arguments of any Diff initializer are self, a, and b.
         kwargs = {}
-        for arg in args[3:]:
+        for arg in sig.parameters.keys()[3:]:
             if hasattr(other, arg):
                 kwargs[arg] = getattr(other, arg)
 

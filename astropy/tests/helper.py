@@ -448,13 +448,6 @@ def treat_deprecations_as_exceptions():
             r"You are encouraged to set the value explicitly\.",
             DeprecationWarning)
 
-    if sys.version_info[:2] >= (3, 5):
-        # getargspec is deprecated, but things like pytest still use it.
-        warnings.filterwarnings(
-            "ignore",
-            r"inspect\.getargspec\(\) is deprecated, use inspect\.signature\(\) instead",
-            DeprecationWarning)
-
 
 class catch_warnings(warnings.catch_warnings):
     """

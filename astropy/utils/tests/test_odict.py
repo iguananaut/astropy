@@ -12,6 +12,7 @@ from __future__ import (absolute_import, division, print_function,
 
 from ...extern import six
 
+import inspect
 import unittest
 import pickle
 import copy
@@ -20,7 +21,6 @@ from random import shuffle
 from . import odict_mapping as mapping_tests
 from ..compat.odict import OrderedDict
 from ...tests.helper import pytest
-from ..compat import getargspec
 
 #Skips all of these tests if the builtin ordered dict is available
 pytestmark = pytest.mark.skipif(str("sys.version_info >= (2,7)"))
@@ -46,7 +46,7 @@ class TestOrderedDict(unittest.TestCase):
                                           c=3, e=5).items()), pairs)                # mixed input
 
         # make sure no positional args conflict with possible kwdargs
-        self.assertEqual(getargspec(OrderedDict.__dict__['__init__']).args,
+        self.assertEqual(inspect.getargspec(OrderedDict.__dict__['__init__']).args,
                          ['self'])
 
         # Make sure that direct calls to __init__ do not clear previous contents
