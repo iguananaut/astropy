@@ -1993,7 +1993,7 @@ class Table(object):
         else:
             return data.argsort(**kwargs)
 
-    def sort(self, keys):
+    def sort(self, keys=None):
         '''
         Sort the table according to one or more keys. This operates
         on the existing table and does not return a new table.
@@ -2001,7 +2001,8 @@ class Table(object):
         Parameters
         ----------
         keys : str or list of str
-            The key(s) to order the table by
+            The key(s) to order the table by. If None, use the
+            primary index of the Table.
 
         Examples
         --------
@@ -2026,6 +2027,10 @@ class Table(object):
                    Jo  Miller  15
                   Max  Miller  12
         '''
+        if keys is None:
+            if not self.indices:
+                raise ValueError("Table sort requires input keys or a table index")
+            keys = [x.info.name for x in self.indices[0].columns]
         if type(keys) is not list:
             keys = [keys]
 
