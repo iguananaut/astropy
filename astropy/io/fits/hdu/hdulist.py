@@ -135,7 +135,7 @@ def fitsopen(name, mode='readonly', memmap=None, save_backup=False,
     Returns
     -------
         hdulist : an `HDUList` object
-            `HDUList` containing all of the header data units in the
+            `HDUList` containing all of the header data units in thesdsdfsf
             file.
 
     """
