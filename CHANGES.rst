@@ -149,6 +149,11 @@ astropy.utils
 - ``get_free_space_in_dir`` now takes a new ``unit`` keyword and
   ``check_free_space_in_dir`` takes ``size`` defined as ``Quantity``. [#10627]
 
+- Added ``ssl_context`` and ``allow_insecure`` options to ``download_file``,
+  as well as the ability to optionally use the ``certifi`` package to
+  provide root CA certificates when downloading from sites secured with
+  TLS/SSL. [#10434]
+
 astropy.visualization
 ^^^^^^^^^^^^^^^^^^^^^
 
